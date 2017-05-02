@@ -1,5 +1,5 @@
 {
-  "name": "epilogos",
+  "name": "epilogos-web",
   "version": "1.0.0",
   "description": "visualization and analysis of chromatin state model data",
   "main": "index.js",
@@ -25,6 +25,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Altius/epilogos-web/epilogos-web.git"
+    "url": "git+https://github.com/Altius/epilogos-web.git"
   }
 }
