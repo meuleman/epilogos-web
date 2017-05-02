@@ -15,13 +15,17 @@ var config = {
       {
         test : /\.jsx?/,
         include : APP_DIR,
-        loader : 'babel-loader'
+        loader: 'babel-loader',
+        query:
+        {
+            presets:['es2015', 'react']
+        }
       }
     ]
   },
   resolve: {
     modules: ['node_modules', 'src'],
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx']
   }
 };
 

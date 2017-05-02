@@ -39,6 +39,28 @@ class Navigation extends React.Component {
   }
 
   render() {
+    
+    let aboutEpilogos =
+      <div>
+        <h4>about</h4>
+        <p>
+          <b>epilogos</b> is a system for the visualization and analysis of chromatin state model data. It scales up easily to hundreds of epigenomes, provides an intuitive overview of genomic regions of interest, and allows for precise modeling and inference of epigenomic data sets.
+        </p>
+        <h4>who</h4>
+        <p>
+          The idea behind epilogos was conceived and developed by <b>Wouter Meuleman</b> at MIT. Many people have generously offered their support at various stages, including:
+        </p>
+        <ul className="about-modal-list">
+          <li><b>Manolis Kellis</b> (supervision and resources)</li>
+          <li><b>Soheil Feizi</b> (information theory)</li>
+          <li><b>Apostolos Papadopoulos</b>, <b>Terrance Liang</b>, <b>Kevin Liu</b>, <b>Tiffany Chen</b> & <b>Miguel Medrano</b> (web-application)</li>
+          <li><b>Ting Wang</b>, <b>Xin Zhou</b> & <b>Daofeng Li</b> (WashU browser integration)</li>
+          <li><b>Luca Pinello</b> & <b>Nezar Abdennur</b> (website technology)</li>
+          <li><b>Anshul Kundaje</b> & <b>Jin Wook Lee</b> (Roadmap supplementary website)</li>
+          <li><b>Spritely.net</b> team (header animation concept)</li>
+        </ul>
+      </div>;
+    
     return (
       <div>
         <div className="nav-title">
@@ -73,10 +95,10 @@ class Navigation extends React.Component {
         </Navbar>
         <Modal show={this.state.showAboutModal} onHide={this.closeAboutModal}>
           <Modal.Header closeButton>
-            <Modal.Title>{this.props.brandTitle}<br/><div className="brand-subtitle">{this.props.brandSubtitle}</div></Modal.Title>
+            <Modal.Title><div className="brand-title">{this.props.brandTitle}</div><div className="brand-subtitle">{this.props.brandSubtitle}</div></Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            TBD
+            {aboutEpilogos}
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.closeAboutModal}>Close</Button>

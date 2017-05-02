@@ -1,16 +1,16 @@
 # Epilogos
 
-This document serves as a description of development and deployment targets for this web application.
+This document serves as a description of development and deployment targets for the Epilogos web application.
 
 ## Development
 
-To watch changes to the `src/client/app` folder during development, run the following command:
+To have webpack watch changes to the `src/client/app` folder during development, run the following command:
 
 ```
 $ npm run dev
 ```
 
-This will keep Webpack running until you type Cmd-C twice.
+This will keep it running and rebuilding a development bundle until you type Cmd-C.
 
 ## Production
 
