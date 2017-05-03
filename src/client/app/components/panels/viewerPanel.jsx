@@ -10,8 +10,6 @@ class ViewerPanel extends React.Component {
       clientMargin: 12,
       clientPadding: 12,
       washuLabelColumnWidth: 70,
-      washuGenome: 'hg19',
-      washuCoordinate: 'chr1:35611313-35696453',
       navbarHeight: 52
     }
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -55,8 +53,8 @@ class ViewerPanel extends React.Component {
       container : document.getElementById('viewer-container'),
       noDeleteButton : true,
       noDefaultTrack : true,
-      genome : this.state.washuGenome,
-      coordinate : this.state.washuCoordinate,
+      genome : this.props.genome,
+      coordinate : this.props.coordinateRange,
       datahub : this.props.datahubURL
     });
   }

@@ -10,7 +10,25 @@ class Navigation extends React.Component {
     this.state = {
       pq_type: this.props.pqType,
       comparison_type: this.props.comparisonType,
-      showAboutModal: false
+      showAboutModal: false,
+      pqLevels: [
+        { type:'pq', value:'PQ', text:'KL' },
+        { type:'pq', value:'PQs', text:'KL*' },
+        { type:'pq', value:'PQss', text:'KL**' }
+      ],
+      conditions: [
+        { type:'comparison', value:'ESC_vs_ES-deriv', text:'ESC vs ES-deriv' },
+        { type:'comparison', value:'ESC_vs_iPSC', text:'ESC vs. iPSC' },
+        { type:'comparison', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC_B-cell vs. Blood_T-cell' },
+        { type:'comparison', value:'Brain_vs_Neurosph', text:'HSC_B-cell vs. Blood_T-cell' },
+        { type:'comparison', value:'Brain_vs_Other', text:'Brain vs. Other' },
+        { type:'comparison', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs. Sm._Muscle' },
+        { type:'comparison', value:'CellLine_vs_PrimaryCell', text:'CellLine vs. PrimaryCell' },
+        { type:'comparison', value:'PrimaryTissue_vs_PrimaryCell', text:'PrimaryTissue vs. PrimaryCell' },
+        { type:'comparison', value:'Male_vs_Female', text:'Male vs. Female' },
+        { type:'comparison', value:'cord_blood_sample_vs_cord_blood_reference', text:'cord_blood_sample vs. cord_blood_reference' },
+        { type:'comparison', value:'adult_blood_sample_vs_adult_blood_reference', text:'adult_blood_sample vs. adult_blood_reference' },
+      ]
     };
     this.handleNavDropdownClick = this.handleNavDropdownClick.bind(this);
     this.closeAboutModal = this.closeAboutModal.bind(this);
@@ -61,6 +79,14 @@ class Navigation extends React.Component {
         </ul>
       </div>;
     
+    let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
+      <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
+    );
+    
+    let conditionComponents = this.state.conditions.map(condition =>
+      <MenuItem key={condition.value} eventKey={condition}>{condition.text}</MenuItem>
+    );
+    
     return (
       <div>
         <div className="nav-title">
@@ -71,22 +97,10 @@ class Navigation extends React.Component {
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
             <NavDropdown title="Samples" id="basic-nav-dropdown" onSelect={this.handleNavDropdownClick}>
               <MenuItem header>PQ level</MenuItem>
-              <MenuItem eventKey={{type:'pq',value:'PQ'}}>KL</MenuItem>
-              <MenuItem eventKey={{type:'pq',value:'PQs'}}>KL*</MenuItem>
-              <MenuItem eventKey={{type:'pq',value:'PQss'}}>KL**</MenuItem>
+              {pqLevelComponents}
               <MenuItem divider />
               <MenuItem header>Comparison</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'ESC_vs_ES-deriv'}}>ESC vs ES-deriv</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'ESC_vs_iPSC'}}>ESC vs. iPSC</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'HSC_B-cell_vs_Blood_T-cell'}}>HSC_B-cell vs. Blood_T-cell</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'Brain_vs_Neurosph'}}>Brain vs. Neurosph</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'Brain_vs_Other'}}>Brain vs. Other</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'Muscle_vs_Sm._Muscle'}}>Muscle vs. Sm._Muscle</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'CellLine_vs_PrimaryCell'}}>CellLine vs. PrimaryCell</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'PrimaryTissue_vs_PrimaryCell'}}>PrimaryTissue vs. PrimaryCell</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'Male_vs_Female'}}>Male vs. Female</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'cord_blood_sample_vs_cord_blood_reference'}}>cord_blood_sample vs. cord_blood_reference</MenuItem>
-              <MenuItem eventKey={{type:'comparison',value:'adult_blood_sample_vs_adult_blood_reference'}}>adult_blood_sample vs. adult_blood_reference</MenuItem>
+              {conditionComponents}
             </NavDropdown>
           </Nav>
           <Nav pullRight>

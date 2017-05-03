@@ -14,9 +14,12 @@ class App extends React.Component {
       brandSubtitle: "visualization and analysis of chromatin state model data",
       pq_type : "PQss",
       comparison_type : "Male_vs_Female",
-      title: "Male vs Female (PQss)",
-      dataURL : "https://epilogos.altiusinstitute.org/assets/data",
-      datahubURL : null
+      title: null,
+      datahubURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
+      datahubURL : null,
+      genome: 'hg19',
+      coordinateRange: 'chr1:35611313-35696453',
+      
     }
     this.onSettingsChanged = this.onSettingsChanged.bind(this);
   }
@@ -26,21 +29,21 @@ class App extends React.Component {
     this.setState({
       pq_type: newSettingsState.pq_type,
       comparison_type: newSettingsState.comparison_type,
-      datahubURL : this.state.dataURL + "/qcat_" + newSettingsState.pq_type + "_" + newSettingsState.comparison_type + ".json",
+      datahubURL : this.state.datahubURLPrefix + "/qcat_" + newSettingsState.pq_type + "_" + newSettingsState.comparison_type + ".json",
       title: newTitle,
     }, function() {
       console.log('PQ type is now: ' + this.state.pq_type);
       console.log('Comparison type is now: ' + this.state.comparison_type);
       console.log('Datahub URL is now: ' + this.state.datahubURL);
-    })
+    });
   }
   
   componentDidMount() {
+    let newTitle = this.state.comparison_type.replace(/_/g, " ") + " (" + this.state.pq_type + ")";
     this.setState({
-      datahubURL : this.state.dataURL + "/qcat_" + this.state.pq_type + "_" + this.state.comparison_type + ".json"
-    }, function() {
-      console.log("Datahub URL is", this.state.datahubURL);
-    })
+      datahubURL : this.state.datahubURLPrefix + "/qcat_" + this.state.pq_type + "_" + this.state.comparison_type + ".json",
+      title: newTitle,
+    });
   }
 
   render() {
@@ -57,7 +60,9 @@ class App extends React.Component {
           <Panels panelSide="right-side" id="right-side-container" ref="rightSideContainer">
             <ViewerPanel
               id="viewer-container"
-              datahubURL={this.state.datahubURL} />
+              datahubURL={this.state.datahubURL}
+              genome={this.state.genome}
+              coordinateRange={this.state.coordinateRange} />
           </Panels>
         </div>
       </div>
