@@ -10,7 +10,7 @@ To have webpack watch changes to the `src/client/app` folder during development,
 $ npm run dev
 ```
 
-This will keep it running and rebuilding a development bundle until you type Cmd-C.
+This will keep it running and rebuilding a development bundle until you type Ctrl-C.
 
 ## Production
 
