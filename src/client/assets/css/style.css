@@ -65,6 +65,12 @@ body {
     pointer-events: none;
 }
 
+.test-table {
+    width: 320px;
+    height: 320px;
+    background-color: red;
+}
+
 /* viewer */
 
 .viewer-container {
@@ -179,4 +185,140 @@ label {
 
 .about-modal-list {
     list-style-type: square;
+}
+
+/* states */
+
+.ReactTable {
+    min-width: 500px !important;
+    max-height: calc(100vh - 100px);
+    overflow-y: scroll;
+}
+
+.state0 {
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+    border: 1px;
+}
+
+.state1 {
+    background-color: #ff0000;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state2 {
+    background-color: #ff4500;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state3 {
+    background-color: #32cd32;
+    width:20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state4 {
+    background-color: #008000;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state5 {
+    background-color: #006400;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state6 {
+    background-color: #c2e105;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state7 {
+    background-color: #ffff00;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state8 {
+    background-color: #66cdaa;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state9 {
+    background-color: #8a91d0;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state10 {
+    background-color: #cd5c5c;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state11 {
+    background-color: #e9967a;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state12 {
+    background-color: #bdb76b;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state13 {
+    background-color: #808080;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state14 {
+    background-color: #c0c0c0;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
+}
+
+.state15 {
+    background-color: #ffffff;
+    width: 20;
+    float: left;
+    display: inline;
+    padding: .2em;
 }

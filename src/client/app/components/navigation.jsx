@@ -2,14 +2,17 @@ import React from 'react';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Modal, Button } from 'react-bootstrap';
 
 import BrandPanel from 'client/app/components/panels/brandPanel.jsx';
+import TopScoringRegions from 'client/app/components/topScoringRegions.jsx';
 
 class Navigation extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      pq_type: this.props.pqType,
-      comparison_type: this.props.comparisonType,
+      topScoringRegionsKey: 0,
+      topScoringRegionsKeyPrefix: 'topScoringRegions-',
+      pqType: this.props.pqType,
+      comparisonType: this.props.comparisonType,
       showAboutModal: false,
       pqLevels: [
         { type:'pq', value:'PQ', text:'KL' },
@@ -30,20 +33,24 @@ class Navigation extends React.Component {
         { type:'comparison', value:'adult_blood_sample_vs_adult_blood_reference', text:'adult_blood_sample vs. adult_blood_reference' },
       ]
     };
-    this.handleNavDropdownClick = this.handleNavDropdownClick.bind(this);
+    this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
     this.closeAboutModal = this.closeAboutModal.bind(this);
     this.openAboutModal = this.openAboutModal.bind(this);
+    this.randomInt = this.randomInt.bind(this);
   }
   
-  handleNavDropdownClick(eventKey) {
+  handleNavDropdownSelect(eventKey) {
     if (eventKey.type == 'pq') {
-      this.state.pq_type = eventKey.value;
+      this.state.pqType = eventKey.value;
+      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.props.updateSettings(this.state);
     }
     if (eventKey.type == 'comparison') {
-      this.state.comparison_type = eventKey.value;
+      this.state.comparisonType = eventKey.value;
+      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.props.updateSettings(this.state);
     }
+    document.activeElement.blur();
   }
   
   closeAboutModal() {
@@ -54,6 +61,12 @@ class Navigation extends React.Component {
   openAboutModal() {
     document.activeElement.blur();
     this.setState({ showAboutModal: true });
+  }
+  
+  randomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
   }
 
   render() {
@@ -95,12 +108,20 @@ class Navigation extends React.Component {
         <Navbar collapseOnSelect className="nav-custom">
           <Nav>
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
-            <NavDropdown title="Samples" id="basic-nav-dropdown" onSelect={this.handleNavDropdownClick}>
+            <NavDropdown title="Samples" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               <MenuItem header>PQ level</MenuItem>
               {pqLevelComponents}
               <MenuItem divider />
               <MenuItem header>Comparison</MenuItem>
               {conditionComponents}
+            </NavDropdown>
+            <NavDropdown title="Differential regions" id="basic-nav-dropdown">
+              <TopScoringRegions
+                key={this.state.topScoringRegionsKey}
+                pqType={this.props.pqType}
+                comparisonType={this.props.comparisonType}
+                dataURLPrefix={this.props.dataURLPrefix}
+                onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
             </NavDropdown>
           </Nav>
           <Nav pullRight>

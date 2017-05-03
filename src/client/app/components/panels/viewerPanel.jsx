@@ -55,7 +55,7 @@ class ViewerPanel extends React.Component {
       noDefaultTrack : true,
       genome : this.props.genome,
       coordinate : this.props.coordinateRange,
-      datahub : this.props.datahubURL
+      datahub : this.props.hubURL
     });
   }
 
