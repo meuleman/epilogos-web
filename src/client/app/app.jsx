@@ -31,7 +31,7 @@ class App extends React.Component {
   
   onSettingsChanged(newSettingsState) {
     let fixedGroupTypeName = newSettingsState.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
-    let newTitle = fixedGroupTypeName + " | " + newSettingsState.pqType;
+    let newTitle = fixedGroupTypeName + " | " + newSettingsState.pqType + " | " + this.state.genome;
     this.setState({
       pqType: newSettingsState.pqType,
       groupType: newSettingsState.groupType,
@@ -59,7 +59,7 @@ class App extends React.Component {
   
   componentDidMount() {
     let fixedGroupTypeName = this.state.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
-    let newTitle = fixedGroupTypeName + " | " + this.state.pqType;
+    let newTitle = fixedGroupTypeName + " | " + this.state.pqType + " | " + this.state.genome;
     this.setState({
       hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
       title: newTitle,

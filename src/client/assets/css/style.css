@@ -196,13 +196,13 @@ label {
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-paired] {
     left: 20px;
-    max-height: 75vh;
+    max-height: calc(100vh - 280px);
     overflow-y: scroll;
 }
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-single] {
     left: 20px;
-    max-height: 75vh;
+    max-height: calc(100vh - 250px);
     overflow-y: scroll;
 }
 
