@@ -6,3 +6,6 @@ all:
 	./fix_json_assets_from_altiusinstitute_to_make_correct_json.sh
 	./split_correct_json_assets_from_altiusinstitute.sh
 	./cleanup.sh
+	mv qcat_PQ_Sm__Muscle.json qcat_PQ_Sm._Muscle.json
+	mv qcat_PQs_Sm__Muscle.json qcat_PQs_Sm._Muscle.json
+	mv qcat_PQss_Sm__Muscle.json qcat_PQss_Sm._Muscle.json

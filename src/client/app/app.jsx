@@ -9,12 +9,14 @@ import ViewerPanel from 'client/app/components/panels/viewerPanel.jsx';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.coordinateRange = 'chr1:35611313-35696453';
     this.state = { 
       brandTitle: "epilogos",
       brandSubtitle: "visualization and analysis of chromatin state model data",
       pqType : "PQss",
       groupType : "Male_vs_Female",
       groupSubtype : "paired",
+      groupText : "Male vs Female",
       title: null,
       dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
       hubURL : null,
@@ -22,7 +24,6 @@ class App extends React.Component {
       viewerPanelKey: 0,
       viewerPanelKeyPrefix: 'viewerPanelKey-',
     }
-    this.coordinateRange = 'chr1:35611313-35696453';
     this.onSettingsChanged = this.onSettingsChanged.bind(this);
     this.onWashuBrowserRegionChanged = this.onWashuBrowserRegionChanged.bind(this);
     this.onWashuBrowserRegionChangedViaEmbeddedControls = this.onWashuBrowserRegionChangedViaEmbeddedControls.bind(this);
@@ -30,15 +31,17 @@ class App extends React.Component {
   }
   
   onSettingsChanged(newSettingsState) {
-    let fixedGroupTypeName = newSettingsState.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
-    let newTitle = fixedGroupTypeName + " | " + newSettingsState.pqType + " | " + this.state.genome;
+    let newTitle = newSettingsState.groupText + " | " + newSettingsState.pqType + " | " + this.state.genome;
     this.setState({
       pqType: newSettingsState.pqType,
       groupType: newSettingsState.groupType,
+      groupSubtype: newSettingsState.groupSubtype,
+      groupText: newSettingsState.groupText,
       hubURL : this.state.dataURLPrefix + "/qcat_" + newSettingsState.pqType + "_" + newSettingsState.groupType + ".json",
       title: newTitle,
       viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000),
     }, function() {
+      console.log('Title is now: ' + this.state.title);
       console.log('PQ type is now: ' + this.state.pqType);
       console.log('Group type is now: ' + this.state.groupType);
       console.log('Datahub URL is now: ' + this.state.hubURL);
@@ -60,8 +63,7 @@ class App extends React.Component {
   }
   
   componentDidMount() {
-    let fixedGroupTypeName = this.state.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
-    let newTitle = fixedGroupTypeName + " | " + this.state.pqType + " | " + this.state.genome;
+    let newTitle = this.state.groupText + " | " + this.state.pqType + " | " + this.state.genome;
     this.setState({
       hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
       title: newTitle,
@@ -82,6 +84,7 @@ class App extends React.Component {
           pqType={this.state.pqType}
           groupType={this.state.groupType}
           groupSubtype={this.state.groupSubtype}
+          groupText={this.state.groupText}
           updateSettings={this.onSettingsChanged}
           title={this.state.title}
           dataURLPrefix={this.state.dataURLPrefix}

@@ -6,6 +6,7 @@ body {
     line-height: 1.2 !important;
     letter-spacing: 0.025em !important;
     background-color: #e5e5e5;
+    background: url(../img/texture_bg.jpg) repeat repeat;
 }
 
 /* main components */
@@ -29,7 +30,7 @@ body {
 
 .right-side {
     position: absolute;
-    background-color: #c6c6c6;
+    /* background-color: #c6c6c6; */
     /* margin-left: 320px; */
     /* width: calc(100vw - 320px); */
     width: 100vw;
@@ -46,8 +47,9 @@ body {
 }
 
 .navbar {
-    margin-bottom: 0px !important;
-    border-bottom: 1px dotted black;
+    margin-bottom: 10px !important;
+    /*border-bottom: 1px dotted black;*/
+    box-shadow: 1px 2px 2px 1px rgba(0, 0, 0, 0.25) !important;
 }
 
 .navbar-right {
@@ -61,7 +63,7 @@ body {
     z-index: 100;
     width: 100vw;
     text-align: center;
-    top: 15px;
+    top: 16px;
     pointer-events: none;
 }
 
@@ -74,8 +76,8 @@ body {
 /* viewer */
 
 .viewer-container {
-    padding: 12px;
-    margin: 12px; 
+    padding: 12px 12px 12px 12px;
+    margin: 2px 12px 12px 12px;
     background-color: white;
     height: calc(100vh - 24px - 52px - 2px);
     box-shadow: 0px 1px 4px #3c3c3c !important;

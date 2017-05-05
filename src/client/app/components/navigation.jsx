@@ -14,6 +14,7 @@ class Navigation extends React.Component {
       pqType: this.props.pqType,
       groupType: this.props.groupType,
       groupSubtype: this.props.groupSubtype,
+      groupText: this.props.groupText,
       showAboutModal: false,
       pqLevels: [
         { type:'pq', value:'PQ', text:'KL' },
@@ -70,6 +71,7 @@ class Navigation extends React.Component {
     if (eventKey.type == 'group') {
       this.state.groupType = eventKey.value;
       this.state.groupSubtype = eventKey.subtype;
+      this.state.groupText = eventKey.text;
       this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.props.updateSettings(this.state);
     }
@@ -127,12 +129,14 @@ class Navigation extends React.Component {
       <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
     );
     
+    let cw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    
     return (
       <div>
-        <div className="nav-title">
+        <div className="nav-title" style={ ((this.state.groupSubtype == 'paired') && (document.body.clientWidth < 1280)) && {paddingLeft:'320px'} || {paddingLeft:'0px'}}>
           {this.props.title}
         </div>
-        <Navbar collapseOnSelect className="nav-custom">
+        <Navbar collapseOnSelect className="nav-custom" ref="navbar">
           <Nav>
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
             <NavDropdown title="Parameters" id="basic-nav-dropdown-groups" onSelect={this.handleNavDropdownSelect}>
