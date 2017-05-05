@@ -17,13 +17,13 @@ class ViewerPanel extends React.Component {
   
   updateDimensions() {
     if (this.refs && this.refs.viewerContainer) {
-      console.log("updateDims()");
+      //console.log("updateDims()");
       let { clientHeight, clientWidth } = this.refs.viewerContainer;
       this.setState({
         clientWidth: clientWidth - (2 * this.state.clientMargin) - (2 * this.state.clientPadding) - this.state.washuLabelColumnWidth,
         clientHeight: clientHeight - (2 * this.state.clientMargin) - (2 * this.state.clientPadding) - this.state.navbarHeight
       });
-      console.log("viewer-container is", this.state.clientWidth, "x", this.state.clientHeight);
+      //console.log("viewer-container is", this.state.clientWidth, "x", this.state.clientHeight);
     }
   }
   

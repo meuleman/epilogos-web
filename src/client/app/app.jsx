@@ -13,7 +13,8 @@ class App extends React.Component {
       brandTitle: "epilogos",
       brandSubtitle: "visualization and analysis of chromatin state model data",
       pqType : "PQss",
-      comparisonType : "Male_vs_Female",
+      groupType : "Male_vs_Female",
+      groupSubtype : "paired",
       title: null,
       dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
       hubURL : null,
@@ -29,16 +30,17 @@ class App extends React.Component {
   }
   
   onSettingsChanged(newSettingsState) {
-    let newTitle = newSettingsState.comparisonType.replace(/_/g, " ") + " (" + newSettingsState.pqType + ")";
+    let fixedGroupTypeName = newSettingsState.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
+    let newTitle = fixedGroupTypeName + " | " + newSettingsState.pqType;
     this.setState({
       pqType: newSettingsState.pqType,
-      comparisonType: newSettingsState.comparisonType,
-      hubURL : this.state.dataURLPrefix + "/qcat_" + newSettingsState.pqType + "_" + newSettingsState.comparisonType + ".json",
+      groupType: newSettingsState.groupType,
+      hubURL : this.state.dataURLPrefix + "/qcat_" + newSettingsState.pqType + "_" + newSettingsState.groupType + ".json",
       title: newTitle,
       viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000),
     }, function() {
       console.log('PQ type is now: ' + this.state.pqType);
-      console.log('Comparison type is now: ' + this.state.comparisonType);
+      console.log('Group type is now: ' + this.state.groupType);
       console.log('Datahub URL is now: ' + this.state.hubURL);
     });
   }
@@ -56,9 +58,10 @@ class App extends React.Component {
   }
   
   componentDidMount() {
-    let newTitle = this.state.comparisonType.replace(/_/g, " ") + " (" + this.state.pqType + ")";
+    let fixedGroupTypeName = this.state.groupType.replace(/_/g, " ").toLowerCase().split(" ").map(function(word) { return word[0].toUpperCase() + word.substr(1); }).join(' ').replace(" Vs ", " vs ");
+    let newTitle = fixedGroupTypeName + " | " + this.state.pqType;
     this.setState({
-      hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.comparisonType + ".json",
+      hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
       title: newTitle,
     });
   }
@@ -70,7 +73,8 @@ class App extends React.Component {
           brandTitle={this.state.brandTitle}
           brandSubtitle={this.state.brandSubtitle}
           pqType={this.state.pqType}
-          comparisonType={this.state.comparisonType}
+          groupType={this.state.groupType}
+          groupSubtype={this.state.groupSubtype}
           updateSettings={this.onSettingsChanged}
           title={this.state.title}
           dataURLPrefix={this.state.dataURLPrefix}

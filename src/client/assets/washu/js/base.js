@@ -6818,6 +6818,7 @@ req.onreadystatechange= function() {
 		var t=req.responseText;
 		try {
 			var data = eval('('+t+')');
+			//console.log("t:", t);
 		} catch(err) {
 			// unrecoverable??
 			gflag.badjson.push(t);
@@ -6839,6 +6840,7 @@ var req= new XMLHttpRequest();
 req.onreadystatechange= function() { 
 	if(req.readyState==4 && req.status==200) {
 		var t=req.responseText;
+		//console.log("t:", t);
 		if(t.substr(0,5)=='ERROR') {
 			print2console('Failed to post data to server',3);
 			callback(null);
@@ -6858,6 +6860,7 @@ var req= new XMLHttpRequest();
 req.onreadystatechange= function() { 
 	if(req.readyState==4 && req.status==200) {
 		var t=req.responseText;
+		//console.log("t:", t);
 		if(t.substr(0,5)=='ERROR') {
 			print2console(t.substr(6),3);
 			callback(null);

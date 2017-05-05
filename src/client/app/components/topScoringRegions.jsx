@@ -85,12 +85,12 @@ class TopScoringRegions extends React.Component {
   
   renderTable() {
     const reactTableColumns = [
-      { header: '', accessor: 'index', maxWidth: 30, render: props => <div style={{ width:'15px', height:'15px', color:'black', fontWeight:'bold', textAlign:'center', fontSize:'0.9em' }} >{props.value}</div> },
-      { header: '', accessor: 'state', maxWidth: 30, render: props => <div style={{ width:'15px', height:'15px', backgroundColor:`${props.value}`, border:'1px solid lightgrey' }} /> },
-      { header: 'Chromatin state', accessor: 'name' },
-      { header: 'Region', accessor: 'region', sortable: false, render: props => <tt>{props.value.raw}</tt> },
+      { header: 'Rank', accessor: 'index', minWidth: 42, maxWidth: 42, headerStyle: {fontWeight:'bold'}, render: props => <div style={{ height:'15px', color:'black', fontWeight:'bold', textAlign:'center', fontSize:'0.9em' }} >{props.value}</div> },
+      { header: '', accessor: 'state', minWidth: 26, maxWidth: 26, render: props => <div style={{ textAlign:'center', width:'15px', height:'15px', backgroundColor:`${props.value}`, border:'1px solid lightgrey' }} /> },
+      { header: 'Chromatin state', accessor: 'name', headerStyle: {fontWeight:'bold', textAlign:'left'} },
+      { header: 'Region', accessor: 'region', headerStyle: {fontWeight:'bold', textAlign:'left'}, render: props => <tt>{props.value.raw}</tt> },
     ];
-    let tsu = this.props.dataURLPrefix + "/top_scoring_regions" + "/top_scores_" + this.state.state + "_" + this.props.pqType + "_" + this.props.comparisonType + ".txt";
+    let tsu = this.props.dataURLPrefix + "/top_scoring_regions" + "/top_scores_" + this.state.state + "_" + this.props.pqType + "_" + this.props.groupType + ".txt";
     this.state.topScoringURL = tsu;
     axios.get(tsu)
       .then(res => {

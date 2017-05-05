@@ -189,6 +189,23 @@ label {
 
 /* states */
 
+.nav-dropdown > a {
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-menu[aria-labelledby = basic-nav-dropdown-paired] {
+    left: 20px;
+    max-height: 75vh;
+    overflow-y: scroll;
+}
+
+.dropdown-menu[aria-labelledby = basic-nav-dropdown-single] {
+    left: 20px;
+    max-height: 75vh;
+    overflow-y: scroll;
+}
+
 .ReactTable {
     min-width: 500px !important;
     max-height: calc(100vh - 100px);

@@ -12,25 +12,47 @@ class Navigation extends React.Component {
       topScoringRegionsKey: 0,
       topScoringRegionsKeyPrefix: 'topScoringRegions-',
       pqType: this.props.pqType,
-      comparisonType: this.props.comparisonType,
+      groupType: this.props.groupType,
+      groupSubtype: this.props.groupSubtype,
       showAboutModal: false,
       pqLevels: [
         { type:'pq', value:'PQ', text:'KL' },
         { type:'pq', value:'PQs', text:'KL*' },
         { type:'pq', value:'PQss', text:'KL**' }
       ],
-      conditions: [
-        { type:'comparison', value:'ESC_vs_ES-deriv', text:'ESC vs ES-deriv' },
-        { type:'comparison', value:'ESC_vs_iPSC', text:'ESC vs. iPSC' },
-        { type:'comparison', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC_B-cell vs. Blood_T-cell' },
-        { type:'comparison', value:'Brain_vs_Neurosph', text:'HSC_B-cell vs. Blood_T-cell' },
-        { type:'comparison', value:'Brain_vs_Other', text:'Brain vs. Other' },
-        { type:'comparison', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs. Sm._Muscle' },
-        { type:'comparison', value:'CellLine_vs_PrimaryCell', text:'CellLine vs. PrimaryCell' },
-        { type:'comparison', value:'PrimaryTissue_vs_PrimaryCell', text:'PrimaryTissue vs. PrimaryCell' },
-        { type:'comparison', value:'Male_vs_Female', text:'Male vs. Female' },
-        { type:'comparison', value:'cord_blood_sample_vs_cord_blood_reference', text:'cord_blood_sample vs. cord_blood_reference' },
-        { type:'comparison', value:'adult_blood_sample_vs_adult_blood_reference', text:'adult_blood_sample vs. adult_blood_reference' },
+      single: [
+        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample' },
+        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference' },
+        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell' },
+        { type:'group', subtype:'single', value:'Brain', text:'Brain' },
+        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line' },
+        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample' },
+        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference' },
+        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-deriv' },
+        { type:'group', subtype:'single', value:'ESC', text:'ESC' },
+        { type:'group', subtype:'single', value:'Female', text:'Female' },
+        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell' },
+        { type:'group', subtype:'single', value:'iPSC', text:'iPSC' },
+        { type:'group', subtype:'single', value:'Male', text:'Male' },
+        { type:'group', subtype:'single', value:'Muscle', text:'Muscle' },
+        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosph' },
+        { type:'group', subtype:'single', value:'Other', text:'Other' },
+        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell' },
+        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue' },
+        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle' },
+      ],
+      pairs: [
+        { type:'group', subtype:'paired', value:'adult_blood_sample_vs_adult_blood_reference', text:'Adult Blood Sample vs Adult Blood Reference' },
+        { type:'group', subtype:'paired', value:'Brain_vs_Neurosph', text:'Brain vs Neurosph' },
+        { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other' },
+        { type:'group', subtype:'paired', value:'CellLine_vs_PrimaryCell', text:'Cell Line vs Primary Cell' },
+        { type:'group', subtype:'paired', value:'cord_blood_sample_vs_cord_blood_reference', text:'Cord Blood Sample vs Cord Blood Reference' },
+        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-deriv' },
+        { type:'group', subtype:'paired', value:'ESC_vs_iPSC', text:'ESC vs iPSC' },
+        { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell' },
+        { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female' },
+        { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle' },
+        { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell' },
       ]
     };
     this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
@@ -45,8 +67,9 @@ class Navigation extends React.Component {
       this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.props.updateSettings(this.state);
     }
-    if (eventKey.type == 'comparison') {
-      this.state.comparisonType = eventKey.value;
+    if (eventKey.type == 'group') {
+      this.state.groupType = eventKey.value;
+      this.state.groupSubtype = eventKey.subtype;
       this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.props.updateSettings(this.state);
     }
@@ -96,8 +119,12 @@ class Navigation extends React.Component {
       <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
     );
     
-    let conditionComponents = this.state.conditions.map(condition =>
-      <MenuItem key={condition.value} eventKey={condition}>{condition.text}</MenuItem>
+    let singleComponents = this.state.single.map(group =>
+      <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+    );
+    
+    let pairedComponents = this.state.pairs.map(group =>
+      <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
     );
     
     return (
@@ -108,21 +135,28 @@ class Navigation extends React.Component {
         <Navbar collapseOnSelect className="nav-custom">
           <Nav>
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
-            <NavDropdown title="Samples" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+            <NavDropdown title="Parameters" id="basic-nav-dropdown-groups" onSelect={this.handleNavDropdownSelect}>
               <MenuItem header>PQ level</MenuItem>
               {pqLevelComponents}
               <MenuItem divider />
-              <MenuItem header>Comparison</MenuItem>
-              {conditionComponents}
+              <MenuItem header>Groups</MenuItem>
+              <NavDropdown title="Single" id="basic-nav-dropdown-single" className="nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+                {singleComponents}
+              </NavDropdown>
+              <NavDropdown title="Paired" id="basic-nav-dropdown-paired" className="nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+                {pairedComponents}
+              </NavDropdown>
             </NavDropdown>
-            <NavDropdown title="Differential regions" id="basic-nav-dropdown">
-              <TopScoringRegions
-                key={this.state.topScoringRegionsKey}
-                pqType={this.props.pqType}
-                comparisonType={this.props.comparisonType}
-                dataURLPrefix={this.props.dataURLPrefix}
-                onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
-            </NavDropdown>
+            {this.state.groupSubtype == 'paired' &&
+              <NavDropdown title="Differential regions" id="basic-nav-dropdown">
+                <TopScoringRegions
+                  key={this.state.topScoringRegionsKey}
+                  pqType={this.props.pqType}
+                  groupType={this.props.groupType}
+                  dataURLPrefix={this.props.dataURLPrefix}
+                  onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
+              </NavDropdown>
+            }
           </Nav>
           <Nav pullRight>
             <NavItem onClick={this.openAboutModal}>About</NavItem>
