@@ -14791,6 +14791,8 @@ if(hd && hd.allowupdate) {
 						r1[0]+':'+this.dspBoundary.vstartc+'-'+this.dspBoundary.vstopc :
 						'from '+r1[0]+', '+this.dspBoundary.vstartc+' to '+r2[0]+', '+this.dspBoundary.vstopc) :
 					(month2sstr[Math.floor(this.dspBoundary.vstartc/100)]+' '+(this.dspBoundary.vstartc%100)+', '+r1[0]+' to '+month2sstr[Math.floor(this.dspBoundary.vstopc/100)]+' '+(this.dspBoundary.vstopc%100)+', '+r2[0]));
+			var e = new CustomEvent('washUBrowserViewableCoordinateRangeUpdated', { 'detail' : { 'region' : hd.innerHTML } });
+			document.dispatchEvent(e);
 		}
 	}
 }

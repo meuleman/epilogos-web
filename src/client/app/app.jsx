@@ -19,13 +19,13 @@ class App extends React.Component {
       dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
       hubURL : null,
       genome: 'hg19',
-      coordinateRange: 'chr1:35611313-35696453',
       viewerPanelKey: 0,
       viewerPanelKeyPrefix: 'viewerPanelKey-',
-      
     }
+    this.coordinateRange = 'chr1:35611313-35696453';
     this.onSettingsChanged = this.onSettingsChanged.bind(this);
     this.onWashuBrowserRegionChanged = this.onWashuBrowserRegionChanged.bind(this);
+    this.onWashuBrowserRegionChangedViaEmbeddedControls = this.onWashuBrowserRegionChangedViaEmbeddedControls.bind(this);
     this.randomInt = this.randomInt.bind(this);
   }
   
@@ -46,9 +46,11 @@ class App extends React.Component {
   }
   
   onWashuBrowserRegionChanged(region) {
-    this.setState({
-      coordinateRange: region
-    });
+    this.coordinateRange = region;
+  }
+  
+  onWashuBrowserRegionChangedViaEmbeddedControls(event) {
+    this.coordinateRange = event.detail.region;
   }
   
   randomInt(min, max) {
@@ -64,6 +66,11 @@ class App extends React.Component {
       hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
       title: newTitle,
     });
+    document.addEventListener("washUBrowserViewableCoordinateRangeUpdated", this.onWashuBrowserRegionChangedViaEmbeddedControls);
+  }
+  
+  componentWillUnmount() {
+    document.removeEventListener("washUBrowserViewableCoordinateRangeUpdated", this.onWashuBrowserRegionChangedViaEmbeddedControls);
   }
 
   render() {
@@ -86,7 +93,7 @@ class App extends React.Component {
               id="viewer-container"
               hubURL={this.state.hubURL}
               genome={this.state.genome}
-              coordinateRange={this.state.coordinateRange} />
+              coordinateRange={this.coordinateRange} />
           </Panels>
         </div>
       </div>
