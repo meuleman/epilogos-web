@@ -4571,7 +4571,9 @@ if(this.trunk) {
 }
 // highlight region
 if(!this.is_gsv()) {
+  //console.log(this.highlight_regions);
 	for(var i=0; i<this.highlight_regions.length; i++) {
+  	  break;
 		var pos=this.region2showpos(this.highlight_regions[i]);
 		if(!pos) continue;
 		var hc=colorstr2int(colorCentral.hl);
