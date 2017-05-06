@@ -133,12 +133,13 @@ class Navigation extends React.Component {
     
     return (
       <div>
-        <div className="nav-title" style={ ((this.state.groupSubtype == 'paired') && (document.body.clientWidth < 1280)) && {paddingLeft:'320px'} || {paddingLeft:'0px'}}>
+        <div className="nav-title">
           {this.props.title}
         </div>
         <Navbar collapseOnSelect className="nav-custom" ref="navbar">
           <Nav>
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
+            <NavItem onClick={this.openAboutModal}>About</NavItem>
             <NavDropdown title="Parameters" id="basic-nav-dropdown-groups" onSelect={this.handleNavDropdownSelect}>
               <MenuItem header>PQ level</MenuItem>
               {pqLevelComponents}
@@ -161,9 +162,6 @@ class Navigation extends React.Component {
                   onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
               </NavDropdown>
             }
-          </Nav>
-          <Nav pullRight>
-            <NavItem onClick={this.openAboutModal}>About</NavItem>
           </Nav>
         </Navbar>
         <Modal show={this.state.showAboutModal} onHide={this.closeAboutModal}>

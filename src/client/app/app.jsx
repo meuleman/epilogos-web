@@ -9,7 +9,6 @@ import ViewerPanel from 'client/app/components/panels/viewerPanel.jsx';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.coordinateRange = 'chr1:35611313-35696453';
     this.state = { 
       brandTitle: "epilogos",
       brandSubtitle: "visualization and analysis of chromatin state model data",
@@ -21,17 +20,29 @@ class App extends React.Component {
       dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
       hubURL : null,
       genome: 'hg19',
+      coordinateRange: 'chr1:35611131-35696271',
       viewerPanelKey: 0,
       viewerPanelKeyPrefix: 'viewerPanelKey-',
     }
+    this.title = this.title.bind(this);
+    this.randomInt = this.randomInt.bind(this);
     this.onSettingsChanged = this.onSettingsChanged.bind(this);
     this.onWashuBrowserRegionChanged = this.onWashuBrowserRegionChanged.bind(this);
     this.onWashuBrowserRegionChangedViaEmbeddedControls = this.onWashuBrowserRegionChangedViaEmbeddedControls.bind(this);
-    this.randomInt = this.randomInt.bind(this);
+  }
+  
+  title(group, pq, genome) {
+    return genome + " | " + pq + " | " + group;
+  }
+  
+  randomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
   }
   
   onSettingsChanged(newSettingsState) {
-    let newTitle = newSettingsState.groupText + " | " + newSettingsState.pqType + " | " + this.state.genome;
+    let newTitle = this.title(newSettingsState.groupText, newSettingsState.pqType, this.state.genome);
     this.setState({
       pqType: newSettingsState.pqType,
       groupType: newSettingsState.groupType,
@@ -49,21 +60,18 @@ class App extends React.Component {
   }
   
   onWashuBrowserRegionChanged(region) {
-    this.coordinateRange = region;
+    this.setState({
+      coordinateRange: region,
+      viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000)
+    })
   }
   
   onWashuBrowserRegionChangedViaEmbeddedControls(event) {
-    this.coordinateRange = event.detail.region;
-  }
-  
-  randomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
+    this.state.coordinateRange = event.detail.region;
   }
   
   componentDidMount() {
-    let newTitle = this.state.groupText + " | " + this.state.pqType + " | " + this.state.genome;
+    let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
     this.setState({
       hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
       title: newTitle,
@@ -96,7 +104,7 @@ class App extends React.Component {
               id="viewer-container"
               hubURL={this.state.hubURL}
               genome={this.state.genome}
-              coordinateRange={this.coordinateRange} />
+              coordinateRange={this.state.coordinateRange} />
           </Panels>
         </div>
       </div>

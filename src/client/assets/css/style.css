@@ -62,7 +62,8 @@ body {
     position: absolute;
     z-index: 100;
     width: 100vw;
-    text-align: center;
+    text-align: right;
+    padding-right: 30px;
     top: 16px;
     pointer-events: none;
 }

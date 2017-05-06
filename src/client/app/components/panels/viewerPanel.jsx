@@ -10,9 +10,12 @@ class ViewerPanel extends React.Component {
       clientMargin: 12,
       clientPadding: 12,
       washuLabelColumnWidth: 70,
-      navbarHeight: 52
+      navbarHeight: 52,
+      genome: this.props.genome,
+      coordinateRange: this.props.coordinateRange,
     }
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.onWashuBrowserRegionChangedViaEmbeddedControls = this.onWashuBrowserRegionChangedViaEmbeddedControls.bind(this);
   }
   
   updateDimensions() {
@@ -34,14 +37,22 @@ class ViewerPanel extends React.Component {
   
   componentDidMount() {
     window.addEventListener("resize", this.updateDimensions);
+    document.addEventListener("washUBrowserViewableCoordinateRangeUpdated", this.onWashuBrowserRegionChangedViaEmbeddedControls);
   }
   
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateDimensions);
+    document.removeEventListener("washUBrowserViewableCoordinateRangeUpdated", this.onWashuBrowserRegionChangedViaEmbeddedControls);
   }
   
   componentDidUpdate() {
     this.embedWashuBrowserContainer();
+  }
+  
+  onWashuBrowserRegionChangedViaEmbeddedControls(event) {
+    if (this.state) {
+      this.state.coordinateRange = event.detail.region;
+    }
   }
   
   embedWashuBrowserContainer() {
@@ -51,8 +62,8 @@ class ViewerPanel extends React.Component {
       container : document.getElementById('viewer-container'),
       noDeleteButton : true,
       noDefaultTrack : true,
-      genome : this.props.genome,
-      coordinate : this.props.coordinateRange,
+      genome : this.state.genome,
+      coordinate : this.state.coordinateRange,
       datahub : this.props.hubURL
     });
   }
