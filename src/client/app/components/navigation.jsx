@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Modal, Button } from 'react-bootstrap';
+import FaExternalLink from 'react-icons/lib/fa/external-link';
 
 import BrandPanel from 'client/app/components/panels/brandPanel.jsx';
 import TopScoringRegions from 'client/app/components/topScoringRegions.jsx';
@@ -16,6 +17,8 @@ class Navigation extends React.Component {
       groupSubtype: this.props.groupSubtype,
       groupText: this.props.groupText,
       showAboutModal: false,
+      showPermalinkModal: false,
+      permalink: null,
       pqLevels: [
         { type:'pq', value:'PQ', text:'KL' },
         { type:'pq', value:'PQs', text:'KL*' },
@@ -59,6 +62,9 @@ class Navigation extends React.Component {
     this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
     this.closeAboutModal = this.closeAboutModal.bind(this);
     this.openAboutModal = this.openAboutModal.bind(this);
+    this.epilogosPermalinkUpdated = this.epilogosPermalinkUpdated.bind(this);
+    this.closePermalinkModal = this.closePermalinkModal.bind(this);
+    this.openPermalinkModal = this.openPermalinkModal.bind(this);
     this.randomInt = this.randomInt.bind(this);
   }
   
@@ -88,10 +94,36 @@ class Navigation extends React.Component {
     this.setState({ showAboutModal: true });
   }
   
+  closePermalinkModal() {
+    document.activeElement.blur();
+    this.setState({ showPermalinkModal: false });
+  }
+  
+  epilogosPermalinkUpdated(e) {
+    this.setState({
+      permalink: e.detail.permalink
+    }, function() {
+      this.openPermalinkModal();
+    })
+  }
+  
+  openPermalinkModal() {
+    document.activeElement.blur();
+    this.setState({ showPermalinkModal: true });
+  }
+  
   randomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
+  }
+  
+  componentDidMount() {
+    document.addEventListener("epilogosPermalinkUpdated", this.epilogosPermalinkUpdated);
+  }
+  
+  componentWillUnmount() {
+    document.removeEventListener("epilogosPermalinkUpdated", this.epilogosPermalinkUpdated);
   }
 
   render() {
@@ -116,6 +148,17 @@ class Navigation extends React.Component {
           <li><b>Spritely.net</b> team (header animation concept)</li>
         </ul>
       </div>;
+      
+    let permalinkEpilogos =
+      <div>
+        <h4>permalink</h4>
+        <p>
+          The following link will load this site with the current settings:
+        </p>
+        <p>
+          <a href={this.state.permalink}>{this.state.permalink}</a>
+        </p>
+      </div>;
     
     let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
       <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
@@ -133,9 +176,6 @@ class Navigation extends React.Component {
     
     return (
       <div>
-        <div className="nav-title">
-          {this.props.title}
-        </div>
         <Navbar collapseOnSelect className="nav-custom" ref="navbar">
           <Nav>
             <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
@@ -162,8 +202,13 @@ class Navigation extends React.Component {
                   onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
               </NavDropdown>
             }
+            <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem>
+          </Nav>
+          <Nav pullRight>
+            <NavItem>{this.props.title}</NavItem>
           </Nav>
         </Navbar>
+        
         <Modal show={this.state.showAboutModal} onHide={this.closeAboutModal}>
           <Modal.Header closeButton>
             <Modal.Title><div className="brand-title">{this.props.brandTitle}</div><div className="brand-subtitle">{this.props.brandSubtitle}</div></Modal.Title>
@@ -175,6 +220,19 @@ class Navigation extends React.Component {
             <Button onClick={this.closeAboutModal}>Close</Button>
           </Modal.Footer>
         </Modal>
+        
+        <Modal show={this.state.showPermalinkModal} onHide={this.closePermalinkModal}>
+          <Modal.Header closeButton>
+            <Modal.Title><div className="brand-title">{this.props.brandTitle}</div><div className="brand-subtitle">{this.props.brandSubtitle}</div></Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {permalinkEpilogos}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.closePermalinkModal}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+        
       </div>
     );
   }

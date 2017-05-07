@@ -4,7 +4,6 @@ body {
     overflow: hidden;
     font-family: ".SFNSDisplay-Regular", -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Helvetica", "Calibri", sans-serif !important;
     line-height: 1.2 !important;
-    letter-spacing: 0.025em !important;
     background-color: #e5e5e5;
     background: url(../img/texture_bg.jpg) repeat repeat;
 }
@@ -68,10 +67,9 @@ body {
     pointer-events: none;
 }
 
-.test-table {
-    width: 320px;
-    height: 320px;
-    background-color: red;
+.title {
+    font-weight: bold;
+    font-size: larger;
 }
 
 /* viewer */
