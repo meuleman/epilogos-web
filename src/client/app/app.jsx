@@ -92,18 +92,20 @@ class App extends React.Component {
           let archivedState = response.data;
           console.log("archivedState", archivedState);
           let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
-          self.setState({
-            hubURL : self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
-            title: newTitle,
-            coordinateRange: archivedState.coordinateRange,
-            groupType: archivedState.group.type,
-            groupSubtype: archivedState.group.subtype,
-            groupText: archivedState.group.text,
-            pqType: archivedState.pq,
-            genome: archivedState.genome,
-            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
-            navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
-          })
+          timer.setTimeout('refreshFromArchivedState', function() {
+            self.setState({
+              hubURL : self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              title: newTitle,
+              coordinateRange: archivedState.coordinateRange,
+              groupType: archivedState.group.type,
+              groupSubtype: archivedState.group.subtype,
+              groupText: archivedState.group.text,
+              pqType: archivedState.pq,
+              genome: archivedState.genome,
+              viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+              navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
+            });
+          }, 500);
         })
         .catch(function(error) {
           console.log(error);
