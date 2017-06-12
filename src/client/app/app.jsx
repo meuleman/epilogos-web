@@ -85,7 +85,7 @@ class App extends React.Component {
   
   componentDidMount() {
     let query = queryString.parse(location.search);
-    if ('id' in query) {
+    if (('id' in query) && !('range' in query) && !(('chr' in query) && ('start' in query) && ('stop' in query))) {
       let self = this;
       axios.post('/assets/services/pid.py', { id : query.id })
         .then(function(response) {
@@ -97,6 +97,70 @@ class App extends React.Component {
               hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
               title: newTitle,
               coordinateRange: archivedState.coordinateRange,
+              groupType: archivedState.group.type,
+              groupSubtype: archivedState.group.subtype,
+              groupText: archivedState.group.text,
+              pqType: archivedState.pq,
+              genome: archivedState.genome,
+              viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+              navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
+            });
+          }, 500);
+        })
+        .catch(function(error) {
+          console.log(error);
+          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.genome);
+          self.setState({
+            hubURL : self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+            title: newTitle,
+          });
+        });
+    }
+    else if (('id' in query) && ('range' in query)) {
+      let newRange = decodeURI(query.range);
+      let self = this;
+      axios.post('/assets/services/pid.py', { id : query.id })
+        .then(function(response) {
+          let archivedState = response.data;
+          console.log("archivedState", archivedState);
+          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
+          timer.setTimeout('refreshFromArchivedState', function() {
+            self.setState({
+              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              title: newTitle,
+              coordinateRange: newRange,
+              groupType: archivedState.group.type,
+              groupSubtype: archivedState.group.subtype,
+              groupText: archivedState.group.text,
+              pqType: archivedState.pq,
+              genome: archivedState.genome,
+              viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+              navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
+            });
+          }, 500);
+        })
+        .catch(function(error) {
+          console.log(error);
+          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.genome);
+          self.setState({
+            hubURL : self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+            title: newTitle,
+          });
+        });
+    }
+    else if (('id' in query) && (('chr' in query) && ('start' in query) && ('stop' in query))) {
+      let newRange = query.chr + ":" + parseInt(query.start) + "-" + parseInt(query.stop);
+      let self = this;
+      axios.post('/assets/services/pid.py', { id : query.id })
+        .then(function(response) {
+          let archivedState = response.data;
+          console.log("archivedState", archivedState);
+          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
+          timer.setTimeout('refreshFromArchivedState', function() {
+            self.setState({
+              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              title: newTitle,
+              coordinateRange: newRange,
               groupType: archivedState.group.type,
               groupSubtype: archivedState.group.subtype,
               groupText: archivedState.group.text,
