@@ -94,7 +94,7 @@ class App extends React.Component {
           let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
           timer.setTimeout('refreshFromArchivedState', function() {
             self.setState({
-              hubURL : self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
               title: newTitle,
               coordinateRange: archivedState.coordinateRange,
               groupType: archivedState.group.type,
@@ -116,10 +116,36 @@ class App extends React.Component {
           });
         });
     }
+    else if ('range' in query) {
+      let newRange = decodeURI(query.range);
+      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
+      let self = this;
+      timer.setTimeout('refreshFromSpecifiedRange', function() {
+        self.setState({
+          hubURL: self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+          coordinateRange: newRange,
+          title: newTitle,
+          viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+        });
+      }, 500);
+    }
+    else if (('chr' in query) && ('start' in query) && ('stop' in query)) {
+      let newRange = query.chr + ":" + parseInt(query.start) + "-" + parseInt(query.stop);
+      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
+      let self = this;
+      timer.setTimeout('refreshFromSpecifiedRange', function() {
+        self.setState({
+          hubURL: self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+          coordinateRange: newRange,
+          title: newTitle,
+          viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+        });
+      }, 500);
+    }
     else {
       let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
       this.setState({
-        hubURL : this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
+        hubURL: this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
         title: newTitle,
       });
     }

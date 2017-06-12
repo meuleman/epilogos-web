@@ -22,3 +22,4 @@ yarn-error.log*
 src/client/ids
 src/client/assets/data/archives/
 src/client/assets/data/chromHMM/
+src/client/assets/washu/test/
