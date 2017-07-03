@@ -23,3 +23,10 @@ src/client/ids
 src/client/assets/data/archives/
 src/client/assets/data/chromHMM/
 src/client/assets/washu/test/
+src/client/assets/epilogos/v06_16_2017/
+src/client/assets/data/archives.pre06_16_2017.backup/
+src/client/assets/data/json.pre06_16_2017.backup/
+src/client/assets/data/top_scoring_regions.pre06_16_2017.backup/
+src/client/assets/washu/js/base.duplicate.js
+src/client/assets/washu/js/embed.duplicate.js
+src/client/assets/washu/js/personality.duplicate.js

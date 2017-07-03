@@ -2,28 +2,30 @@ import React from 'react';
 import {render} from 'react-dom';
 import axios from 'axios';
 
-import Navigation from 'client/app/components/navigation.jsx';
+import ViewerNavigation from 'client/app/components/viewerNavigation.jsx';
 import Panels from 'client/app/components/panels.jsx';
 import SettingsPanel from 'client/app/components/panels/settingsPanel.jsx';
 import ViewerPanel from 'client/app/components/panels/viewerPanel.jsx';
+import * as AppConst from 'client/app/appConstants.js';
 
 const hash = require('object-hash');
 const timer = require('react-native-timer');
 const queryString = require('query-string');
 
-class App extends React.Component {
+class Viewer extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
       brandTitle: "epilogos",
       brandSubtitle: "visualization and analysis of chromatin state model data",
-      pqType : "PQss",
+      stateModel: "15",
+      pqType : "KLss",
       groupType : "Male_vs_Female",
       groupSubtype : "paired",
       groupText : "Male vs Female",
       groupColorScheme : "default",
       title: null,
-      dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/data",
+      dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/epilogos/v06_16_2017/state_model",
       hubURL : null,
       genome: 'hg19',
       coordinateRange: 'chr1:35611131-35696271',
@@ -33,6 +35,7 @@ class App extends React.Component {
       navbarKeyPrefix: 'navbarKey-',
       tsrKey: 0,
       tsrKeyPrefix: 'tsrKey-',
+      selectedExemplarRegionsColumnAccessorID: 'index',
     }
     this.permalinkTimer = null;
     this.title = this.title.bind(this);
@@ -44,8 +47,8 @@ class App extends React.Component {
     this.onWashuBrowserRegionChangedViaEmbeddedControls = this.onWashuBrowserRegionChangedViaEmbeddedControls.bind(this);
   }
   
-  title(group, pq, genome) {
-    return (<div className="title">{genome} | {pq} | {group}</div>);
+  title(group, pq, model, genome) {
+    return (<div className="title">{genome} | {pq} | {model}-state | {group}</div>);
   }
   
   randomInt(min, max) {
@@ -55,13 +58,14 @@ class App extends React.Component {
   }
   
   onSettingsChanged(newSettingsState) {
-    let newTitle = this.title(newSettingsState.groupText, newSettingsState.pqType, this.state.genome);
+    let newTitle = this.title(newSettingsState.groupText, newSettingsState.pqType, newSettingsState.stateModel, this.state.genome);
     this.setState({
+      stateModel: newSettingsState.stateModel,
       pqType: newSettingsState.pqType,
       groupType: newSettingsState.groupType,
       groupSubtype: newSettingsState.groupSubtype,
       groupText: newSettingsState.groupText,
-      hubURL : this.state.dataURLPrefix + "/qcat_" + newSettingsState.pqType + "_" + newSettingsState.groupType + ".json",
+      hubURL: this.state.dataURLPrefix + "/" + newSettingsState.stateModel + "/json/" + newSettingsState.groupType + "." + newSettingsState.pqType + ".json",
       title: newTitle,
       viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000),
     });
@@ -85,21 +89,55 @@ class App extends React.Component {
   
   componentDidMount() {
     let query = queryString.parse(location.search);
-    if (('id' in query) && !('range' in query) && !(('chr' in query) && ('start' in query) && ('stop' in query))) {
+    if ('mode' in query) {
+      let self = this;
+      let newMode = decodeURI(query.mode);
+      if (newMode == 'single') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerSingleGroupText, 
+                                  AppConst.defaultEpilogosViewerSingleKL, 
+                                  AppConst.defaultEpilogosViewerSingleStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerSingleStateModel + "/json/" + AppConst.defaultEpilogosViewerSingleGroup + "." + AppConst.defaultEpilogosViewerSingleKL + ".json",
+            title: newTitle,
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          });
+        }, 500);
+      }
+      else if (newMode == 'paired') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerPairedGroupText, 
+                                  AppConst.defaultEpilogosViewerPairedKL, 
+                                  AppConst.defaultEpilogosViewerPairedStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerPairedStateModel + "/json/" + AppConst.defaultEpilogosViewerPairedGroup + "." + AppConst.defaultEpilogosViewerPairedKL + ".json",
+            title: newTitle,
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          });
+        }, 500);
+      }
+    }
+    else if (('id' in query) && !('range' in query) && !(('chr' in query) && ('start' in query) && ('stop' in query))) {
       let self = this;
       axios.post('/assets/services/pid.py', { id : query.id })
         .then(function(response) {
           let archivedState = response.data;
           console.log("archivedState", archivedState);
-          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
+          if (!archivedState.stateModel) {
+            archivedState.stateModel = this.state.stateModel;
+          }
+          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.stateModel, archivedState.genome);
           timer.setTimeout('refreshFromArchivedState', function() {
             self.setState({
-              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              hubURL: self.state.dataURLPrefix + "/" + archivedState.stateModel + "/json/" + archivedState.group.type + "." + archivedState.pq + ".json",
               title: newTitle,
               coordinateRange: archivedState.coordinateRange,
               groupType: archivedState.group.type,
               groupSubtype: archivedState.group.subtype,
               groupText: archivedState.group.text,
+              stateModel: archivedState.stateModel,
               pqType: archivedState.pq,
               genome: archivedState.genome,
               viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
@@ -109,9 +147,9 @@ class App extends React.Component {
         })
         .catch(function(error) {
           console.log(error);
-          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.genome);
+          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.stateModel, self.state.genome);
           self.setState({
-            hubURL : self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+            hubURL: self.state.dataURLPrefix + "/" + self.state.stateModel + "/json/" + self.state.groupType + "." + self.state.pqType + ".json",
             title: newTitle,
           });
         });
@@ -123,15 +161,19 @@ class App extends React.Component {
         .then(function(response) {
           let archivedState = response.data;
           console.log("archivedState", archivedState);
-          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
+          if (!archivedState.stateModel) {
+            archivedState.stateModel = this.state.stateModel;
+          }
+          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.stateModel, archivedState.genome);
           timer.setTimeout('refreshFromArchivedState', function() {
             self.setState({
-              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              hubURL: self.state.dataURLPrefix + "/" + archivedState.stateModel + "/json/" + archivedState.group.type + "." + archivedState.pq + ".json",
               title: newTitle,
               coordinateRange: newRange,
               groupType: archivedState.group.type,
               groupSubtype: archivedState.group.subtype,
               groupText: archivedState.group.text,
+              stateModel: archivedState.stateModel,
               pqType: archivedState.pq,
               genome: archivedState.genome,
               viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
@@ -141,9 +183,9 @@ class App extends React.Component {
         })
         .catch(function(error) {
           console.log(error);
-          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.genome);
+          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.stateModel, self.state.genome);
           self.setState({
-            hubURL : self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+            hubURL: self.state.dataURLPrefix + "/" + self.state.stateModel + "/json/" + self.state.groupType + "." + self.state.pqType + ".json",
             title: newTitle,
           });
         });
@@ -155,15 +197,19 @@ class App extends React.Component {
         .then(function(response) {
           let archivedState = response.data;
           console.log("archivedState", archivedState);
-          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.genome);
+          if (!archivedState.stateModel) {
+            archivedState.stateModel = this.state.stateModel;
+          }
+          let newTitle = self.title(archivedState.group.text, archivedState.pq, archivedState.stateModel, archivedState.genome);
           timer.setTimeout('refreshFromArchivedState', function() {
             self.setState({
-              hubURL: self.state.dataURLPrefix + "/qcat_" + archivedState.pq + "_" + archivedState.group.type + ".json",
+              hubURL: self.state.dataURLPrefix + "/" + archivedState.stateModel + "/json/" + archivedState.group.type + "." + archivedState.pq + ".json",
               title: newTitle,
               coordinateRange: newRange,
               groupType: archivedState.group.type,
               groupSubtype: archivedState.group.subtype,
               groupText: archivedState.group.text,
+              stateModel: archivedState.stateModel,
               pqType: archivedState.pq,
               genome: archivedState.genome,
               viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
@@ -173,20 +219,20 @@ class App extends React.Component {
         })
         .catch(function(error) {
           console.log(error);
-          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.genome);
+          let newTitle = self.title(self.state.groupText, self.state.pqType, self.state.stateModel, self.state.genome);
           self.setState({
-            hubURL : self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+            hubURL: self.state.dataURLPrefix + "/" + self.state.stateModel + "/json/" + self.state.groupType + "." + self.state.pqType + ".json",
             title: newTitle,
           });
         });
     }
     else if ('range' in query) {
       let newRange = decodeURI(query.range);
-      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
+      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.stateModel, this.state.genome);
       let self = this;
       timer.setTimeout('refreshFromSpecifiedRange', function() {
         self.setState({
-          hubURL: self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+          hubURL: self.state.dataURLPrefix + "/" + self.state.stateModel + "/json/" + self.state.groupType + "." + self.state.pqType + ".json",
           coordinateRange: newRange,
           title: newTitle,
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
@@ -195,11 +241,11 @@ class App extends React.Component {
     }
     else if (('chr' in query) && ('start' in query) && ('stop' in query)) {
       let newRange = query.chr + ":" + parseInt(query.start) + "-" + parseInt(query.stop);
-      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
+      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.stateModel, this.state.genome);
       let self = this;
       timer.setTimeout('refreshFromSpecifiedRange', function() {
         self.setState({
-          hubURL: self.state.dataURLPrefix + "/qcat_" + self.state.pqType + "_" + self.state.groupType + ".json",
+          hubURL: self.state.dataURLPrefix + "/" + self.state.stateModel + "/json/" + self.state.groupType + "." + self.state.pqType + ".json",
           coordinateRange: newRange,
           title: newTitle,
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
@@ -207,9 +253,9 @@ class App extends React.Component {
       }, 500);
     }
     else {
-      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.genome);
+      let newTitle = this.title(this.state.groupText, this.state.pqType, this.state.stateModel, this.state.genome);
       this.setState({
-        hubURL: this.state.dataURLPrefix + "/qcat_" + this.state.pqType + "_" + this.state.groupType + ".json",
+        hubURL: this.state.dataURLPrefix + "/" + this.state.stateModel + "/json/" + this.state.groupType + "." + this.state.pqType + ".json",
         title: newTitle,
       });
     }
@@ -232,6 +278,7 @@ class App extends React.Component {
   updatePermalink() {
     // a state object should contain sufficient information to rebuild the browser state
     let stateObj = {
+      stateModel : this.state.stateModel,
       pq : this.state.pqType,
       group : {
         type : this.state.groupType,
@@ -251,7 +298,7 @@ class App extends React.Component {
     axios.post('/assets/services/cid.py', { state : stateObj })
       .then(function(response) {
         let id = response.data;
-        history.pushState(null, null, '/?id=' + id);
+        history.pushState(null, null, 'https://epilogos.altiusinstitute.org/viewer/?id=' + id);
         var e = new CustomEvent('epilogosPermalinkUpdated', { 'detail' : { 'permalink' : window.location.href } });
         document.dispatchEvent(e);
       })
@@ -265,13 +312,14 @@ class App extends React.Component {
   }
 
   render() {
-    console.log("app - render()");
+    console.log("viewer - render()");
     return (
       <div>
-        <Navigation 
+        <ViewerNavigation 
           key={this.state.viewerPanelKey}
           brandTitle={this.state.brandTitle}
           brandSubtitle={this.state.brandSubtitle}
+          stateModel={this.state.stateModel}
           pqType={this.state.pqType}
           groupType={this.state.groupType}
           groupSubtype={this.state.groupSubtype}
@@ -296,4 +344,4 @@ class App extends React.Component {
   }
 }
 
-render(<App/>, document.getElementById('app'));
+render(<Viewer/>, document.getElementById('viewer'));

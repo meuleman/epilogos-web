@@ -1,6 +1,6 @@
 var bb, cc;
 var horcrux={};
-var washUver='42';
+var washUver='42.3';
 var washUtag='\
 <span style="color:#3a81ba;">W<span style="font-size:80%;">ASH</span>U</span> \
 <span style="color:#ff9900;">E<span style="font-size:80%;">PI</span></span>\
@@ -115,8 +115,8 @@ var max_viewable_chrcount=200;
 var FT_nottk=-1,
 FT_bed_n=0,
 FT_bed_c=1,
-FT_bigbed_n=40,
-FT_bigbed_c=41,
+FT_bigbed_n=31,
+FT_bigbed_c=32,
 FT_bedgraph_n=2,
 FT_bedgraph_c=3,
 FT_sam_n=4,
@@ -147,6 +147,7 @@ FT_qcats=27,
 FT_huburl=100;
 var FT2native=[];
 FT2native[FT_bed_n]='bed';
+FT2native[FT_bigbed_n]='bigbed';
 FT2native[FT_bedgraph_n]='bedgraph';
 FT2native[FT_bigwighmtk_n]='bigwig';
 FT2native[FT_bam_n]='bam';
@@ -179,7 +180,8 @@ var FT2verbal = ['bed', 'bed', 'bedgraph', 'bedgraph', 'sam', 'sam', 'pwc', 'hte
 'ld',
 'quantitativecategoryseries', //27
 'unknown', //28
-'hic','hic'    //29,30
+'hic','hic',    //29,30
+'bigbed','bigbed' //31, 32
 ];
 
 var M_hide=0,
@@ -4571,9 +4573,7 @@ if(this.trunk) {
 }
 // highlight region
 if(!this.is_gsv()) {
-  //console.log(this.highlight_regions);
 	for(var i=0; i<this.highlight_regions.length; i++) {
-  	  break;
 		var pos=this.region2showpos(this.highlight_regions[i]);
 		if(!pos) continue;
 		var hc=colorstr2int(colorCentral.hl);
@@ -4581,7 +4581,7 @@ if(!this.is_gsv()) {
 			var w=pos[j][1];
 			if(!w || w>this.hmSpan*.75) continue;
 			ctx.fillStyle='rgba('+hc[0]+','+hc[1]+','+hc[2]+','+0.5*(1-w/(this.hmSpan*.75))+')';
-			ctx.fillRect(pos[j][0],0,Math.max(2,w),tc.height);
+			//ctx.fillRect(pos[j][0],0,Math.max(2,w),tc.height);
 		}
 	}
 }
@@ -6820,7 +6820,6 @@ req.onreadystatechange= function() {
 		var t=req.responseText;
 		try {
 			var data = eval('('+t+')');
-			//console.log("t:", t);
 		} catch(err) {
 			// unrecoverable??
 			gflag.badjson.push(t);
@@ -6842,7 +6841,6 @@ var req= new XMLHttpRequest();
 req.onreadystatechange= function() { 
 	if(req.readyState==4 && req.status==200) {
 		var t=req.responseText;
-		//console.log("t:", t);
 		if(t.substr(0,5)=='ERROR') {
 			print2console('Failed to post data to server',3);
 			callback(null);
@@ -6851,6 +6849,7 @@ req.onreadystatechange= function() {
 		}
 	}
 };
+req.open('POST', gflag.cors_host+'/cgi-bin/postdeposit', true);
 req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 req.send(data2post);
 }
@@ -6858,11 +6857,11 @@ req.send(data2post);
 Browser.prototype.ajaxText=function(url, callback)
 {
 // don't use with long url
+console.log(url);
 var req= new XMLHttpRequest();
 req.onreadystatechange= function() { 
 	if(req.readyState==4 && req.status==200) {
 		var t=req.responseText;
-		//console.log("t:", t);
 		if(t.substr(0,5)=='ERROR') {
 			print2console(t.substr(6),3);
 			callback(null);
@@ -7521,7 +7520,7 @@ if(param.track_order) {
 			var t=this.findTrack(o.name,
 				(this.weaver && this.weaver.iscotton)?this.genome.name:null);
 			if(!t) {
-				print2console(this.genome.name+'Missing track for reordering: '+o.name,2);
+				print2console(this.genome.name+' Missing track for reordering: '+o.name,2);
 			} else {
 				t.where=o.where;
 				newlst.push(t);
@@ -7780,7 +7779,7 @@ return ''+
 	(lst[FT_cat_c].length>0 ? '&hmtk13='+lst[FT_cat_c].join(",") : '')+
 	(lst[FT_bed_n].length>0 ? '&decor0='+lst[FT_bed_n].join(',') : '') +
 	(lst[FT_bed_c].length>0 ? '&decor1='+lst[FT_bed_c].join(',') : '') +
-	(lst[FT_bigbed_c].length>0 ? '&decor41='+lst[FT_bigbed_c].join(',') : '') +
+	(lst[FT_bigbed_c].length>0 ? '&decor32='+lst[FT_bigbed_c].join(',') : '') +
 	(lst[FT_lr_n].length>0 ? '&decor9='+lst[FT_lr_n].join(',') : '') +
 	(lst[FT_lr_c].length>0 ? '&decor10='+lst[FT_lr_c].join(',') : '') +
 	(lst[FT_hi_c].length>0 ? '&decor30='+lst[FT_hi_c].join(',') : '') +
@@ -14793,7 +14792,7 @@ if(hd && hd.allowupdate) {
 						r1[0]+':'+this.dspBoundary.vstartc+'-'+this.dspBoundary.vstopc :
 						'from '+r1[0]+', '+this.dspBoundary.vstartc+' to '+r2[0]+', '+this.dspBoundary.vstopc) :
 					(month2sstr[Math.floor(this.dspBoundary.vstartc/100)]+' '+(this.dspBoundary.vstartc%100)+', '+r1[0]+' to '+month2sstr[Math.floor(this.dspBoundary.vstopc/100)]+' '+(this.dspBoundary.vstopc%100)+', '+r2[0]));
-			var e = new CustomEvent('washUBrowserViewableCoordinateRangeUpdated', { 'detail' : { 'region' : hd.innerHTML } });
+      var e = new CustomEvent('washUBrowserViewableCoordinateRangeUpdated', { 'detail' : { 'region' : hd.innerHTML } });
 			document.dispatchEvent(e);
 		}
 	}
@@ -16077,6 +16076,8 @@ make doms for display
 
 TODO pwc, htest, bev?
 */
+console.log(name);
+console.log(ft);
 var oobj=this.genome.getTkregistryobj(name,ft);
 if(!oobj) {
 	print2console('Cannot make track, no registry object found for '+name,2);
@@ -18187,9 +18188,9 @@ for(var i=0; i<b.tklst.length; i++) {
 	for(var j=0; j<b2.tklst.length; j++) {
 		var t3=b2.tklst[j];
 		if(isCustom(t3.ft)) {
-			wtk.tracks.push(b.genome.replicatetk(t3));
+			wtk.tracks.push(b2.genome.replicatetk(t3)); //dli change b to b2
 		} else {
-			nativelst.push(b.genome.replicatetk(t3));
+			nativelst.push(b2.genome.replicatetk(t3)); //dli change b to b2
 		}
 	}
 	if(nativelst.length>0) {
@@ -21451,7 +21452,8 @@ function facet_tklst_addSelected()
 {
 // called by clicking big green butt from the menu
 if(menu.facettklstdiv.submit.count==0) return;
-var bbj=gflag.menu.bbj;
+//var bbj=gflag.menu.bbj; // dli comment
+var bbj=apps.hmtk.bbj; //dli add
 var lst=menu.facettklsttable.firstChild.childNodes;
 var addlst=[];
 for(var i=0; i<lst.length; i++) {
@@ -24662,7 +24664,7 @@ if(url.length <= 8) {
 	print2console("URL looks invalid", 3);
 	return true;
 }
-if(url.substr(0,4).toLowerCase()!='http' && url.substr(0,5).toLowerCase()!='https' && url.substr(0,3).toLowerCase()!='ftp') {
+if(url.substr(0,4).toLowerCase()!='http' && url.substr(0,3).toLowerCase()!='ftp') {
 	print2console("unrecognizable URL", 3);
 	return true;
 }
@@ -25274,7 +25276,7 @@ return j;
 function hubtagistrack(tag)
 {
 // this supports longrange to be backward compatible
-if(tag=='bedgraph' || tag=='bigwig' || tag=='bed' || 
+if(tag=='bedgraph' || tag=='bigwig' || tag=='bed' || tag=='bigbed' || 
 tag=='longrange' || tag=='interaction' || tag=='hic' ||
 tag=='bam' || tag=='categorical' ||
 tag=='methylc'||tag=='ld'||
@@ -26328,6 +26330,7 @@ for(var i=0; i<ibp.tklst.length; i++) {
 	}
 	delete t.juxtapose;
 }
+
 
 if(this.__golden_loadhubcb) {
 	// to prevent default processing of tracks

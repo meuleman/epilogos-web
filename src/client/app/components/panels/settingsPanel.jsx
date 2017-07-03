@@ -34,9 +34,9 @@ class SettingsPanel extends React.Component {
         <div className="panel-body">
           <label htmlFor="settings-PQ-type"><span className="label-title-button-group">PQ Type</span>
             <ButtonGroup bsSize="xsmall" className="btn-group-panel-custom" onClick={this.handlePQTypeClick}>
-              <Button value="PQ" active={this.state.pq_type === 'PQ'}>KL</Button>
-              <Button value="PQs" active={this.state.pq_type === 'PQs'}>KL*</Button>
-              <Button value="PQss" active={this.state.pq_type === 'PQss'}>KL**</Button>
+              <Button value="KL" active={this.state.pq_type === 'KL'}>KL</Button>
+              <Button value="KLs" active={this.state.pq_type === 'KLs'}>KL*</Button>
+              <Button value="KLss" active={this.state.pq_type === 'KLss'}>KL**</Button>
             </ButtonGroup>
           </label>
           <label htmlFor="settings-comparison-type" className="label-outer-next"><span className="label-title-dropdown">Comparison</span>

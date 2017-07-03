@@ -5,13 +5,14 @@ import FaExternalLink from 'react-icons/lib/fa/external-link';
 import BrandPanel from 'client/app/components/panels/brandPanel.jsx';
 import TopScoringRegions from 'client/app/components/topScoringRegions.jsx';
 
-class Navigation extends React.Component {
+class ViewerNavigation extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       topScoringRegionsKey: 0,
       topScoringRegionsKeyPrefix: 'topScoringRegions-',
+      stateModel: this.props.stateModel,
       pqType: this.props.pqType,
       groupType: this.props.groupType,
       groupSubtype: this.props.groupSubtype,
@@ -19,14 +20,20 @@ class Navigation extends React.Component {
       showAboutModal: false,
       showPermalinkModal: false,
       permalink: null,
+      stateModels: [
+        { type:'stateModel', value:'15', text:'15-state (observed)' },
+        { type:'stateModel', value:'18', text:'18-state (observed, aux.)' },
+        { type:'stateModel', value:'25', text:'25-state (imputed)' }
+      ],
       pqLevels: [
-        { type:'pq', value:'PQ', text:'KL' },
-        { type:'pq', value:'PQs', text:'KL*' },
-        { type:'pq', value:'PQss', text:'KL**' }
+        { type:'pq', value:'KL', text:'KL' },
+        { type:'pq', value:'KLs', text:'KL*' },
+        { type:'pq', value:'KLss', text:'KL**' }
       ],
       single: [
         { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample' },
         { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference' },
+        { type:'group', subtype:'single', value:'all', text:'All' },
         { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell' },
         { type:'group', subtype:'single', value:'Brain', text:'Brain' },
         { type:'group', subtype:'single', value:'CellLine', text:'Cell Line' },
@@ -69,6 +76,11 @@ class Navigation extends React.Component {
   }
   
   handleNavDropdownSelect(eventKey) {
+    if (eventKey.type == 'stateModel') {
+      this.state.stateModel = eventKey.value;
+      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      this.props.updateSettings(this.state);
+    }
     if (eventKey.type == 'pq') {
       this.state.pqType = eventKey.value;
       this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
@@ -160,6 +172,10 @@ class Navigation extends React.Component {
         </p>
       </div>;
     
+    let stateModelComponents = this.state.stateModels.map(sm =>
+      <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
+    );
+    
     let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
       <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
     );
@@ -178,9 +194,17 @@ class Navigation extends React.Component {
       <div>
         <Navbar collapseOnSelect className="nav-custom" ref="navbar">
           <Nav>
-            <NavItem><BrandPanel brandTitle={this.props.brandTitle} brandSubtitle={this.props.brandSubtitle} /></NavItem>
+            <NavItem>
+              <BrandPanel brandClassName="brand-container-viewer"
+                          brandTitle={this.props.brandTitle} 
+                          brandSubtitle={this.props.brandSubtitle} 
+                          showSubtitle={false} />
+            </NavItem>
             <NavItem onClick={this.openAboutModal}>About</NavItem>
             <NavDropdown title="Parameters" id="basic-nav-dropdown-groups" onSelect={this.handleNavDropdownSelect}>
+              <MenuItem header>Chromatin state model</MenuItem>
+              {stateModelComponents}
+              <MenuItem divider />
               <MenuItem header>PQ level</MenuItem>
               {pqLevelComponents}
               <MenuItem divider />
@@ -192,16 +216,15 @@ class Navigation extends React.Component {
                 {pairedComponents}
               </NavDropdown>
             </NavDropdown>
-            {this.state.groupSubtype == 'paired' &&
-              <NavDropdown title="Differential regions" id="basic-nav-dropdown">
-                <TopScoringRegions
-                  key={this.state.topScoringRegionsKey}
-                  pqType={this.props.pqType}
-                  groupType={this.props.groupType}
-                  dataURLPrefix={this.props.dataURLPrefix}
-                  onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
-              </NavDropdown>
-            }
+            <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
+              <TopScoringRegions
+                key={this.state.topScoringRegionsKey}
+                stateModel={this.props.stateModel}
+                pqType={this.props.pqType}
+                groupType={this.props.groupType}
+                dataURLPrefix={this.props.dataURLPrefix}
+                onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
+            </NavDropdown>
             <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem>
           </Nav>
           <Nav pullRight>
@@ -238,4 +261,4 @@ class Navigation extends React.Component {
   }
 }
 
-export default Navigation;
+export default ViewerNavigation;

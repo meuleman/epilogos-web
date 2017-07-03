@@ -77,20 +77,57 @@ class TopScoringRegions extends React.Component {
       }]
     };
     this.convertScoresToReactTableDataObj = this.convertScoresToReactTableDataObj.bind(this);
+    this.sortedChange = this.sortedChange.bind(this);
   }
   
   componentDidMount() {
     this.renderTable();
   }
   
+  sortedChange(column, shiftKey) {
+/*
+    this.setState({
+      selectedColumnAccessorID: column.id
+    })
+*/
+  }
+  
   renderTable() {
     const reactTableColumns = [
-      { header: 'Rank', accessor: 'index', minWidth: 42, maxWidth: 42, headerStyle: {fontWeight:'bold'}, render: props => <div style={{ height:'15px', color:'black', fontWeight:'bold', textAlign:'center', fontSize:'0.9em' }} >{props.value}</div> },
-      { header: '', accessor: 'state', minWidth: 26, maxWidth: 26, render: props => <div style={{ textAlign:'center', width:'15px', height:'15px', backgroundColor:`${props.value}`, border:'1px solid lightgrey' }} /> },
-      { header: 'Chromatin state', accessor: 'name', headerStyle: {fontWeight:'bold', textAlign:'left'} },
-      { header: 'Region', accessor: 'region', headerStyle: {fontWeight:'bold', textAlign:'left'}, render: props => <tt>{props.value.raw}</tt> },
+      { 
+        Header: 'Rank', 
+        accessor: 'index', 
+        minWidth: 42, 
+        maxWidth: 42, 
+        headerStyle: { fontWeight:'bold' }, 
+        Cell: row => (
+          <div style={{ height:'15px', color:'black', fontWeight:'bold', textAlign:'center', fontSize:'0.9em' }} >{row.value}</div>
+        )
+      },
+      {
+        Header: '', 
+        accessor: 'state', 
+        minWidth: 26, 
+        maxWidth: 26, 
+        Cell: row => ( 
+          <div style={{ textAlign:'center', width:'15px', height:'15px', backgroundColor:`${row.value}`, border:'1px solid lightgrey' }} /> 
+        )
+      },
+      {
+        Header: 'Chromatin state', 
+        accessor: 'name', 
+        headerStyle: { fontWeight:'bold', textAlign:'left' } 
+      },
+      {
+        Header: 'Region', 
+        accessor: 'region', 
+        headerStyle: { fontWeight:'bold', textAlign:'left' }, 
+        Cell: row => ( 
+          <tt>{ row.value }</tt>
+        )
+      },
     ];
-    let tsu = this.props.dataURLPrefix + "/top_scoring_regions" + "/top_scores_" + this.state.state + "_" + this.props.pqType + "_" + this.props.groupType + ".txt";
+    let tsu = this.props.dataURLPrefix + "/" + this.props.stateModel + "/exemplar/" + this.props.groupType + "." + this.props.pqType + ".top100.txt";
     this.state.topScoringURL = tsu;
     axios.get(tsu)
       .then(res => {
@@ -102,13 +139,21 @@ class TopScoringRegions extends React.Component {
               data={reactTableData} 
               columns={reactTableColumns} 
               defaultPageSize={100}
+              defaultSorted={[{
+                id: 'index',
+                desc: false
+              }]}
               showPagination={false}
               style={{ fontSize:'smaller' }}
+              onSortedChange={(c, s) => { this.sortedChange(c, s) }}
               getTdProps={(state, rowInfo, column, instance) => {
                 return {
                   onClick: e => {
-                    console.log(rowInfo.row.region.raw, rowInfo.row.region.padded);
-                    this.props.onWashuBrowserRegionChanged(rowInfo.row.region.padded);
+                    console.log(rowInfo.row.region);
+                    let padding = 10000;
+                    let regionElements = rowInfo.row.region.split(/[:-]/);
+                    let widenedCoordsRegion = regionElements[0] + ":" + (+regionElements[1] - padding) + "-" + (+regionElements[2] + padding);
+                    this.props.onWashuBrowserRegionChanged(widenedCoordsRegion);
                     $(".dropdown").removeClass("open"); // no choice but to use jQuery here, darn
                   }
                 }
@@ -127,17 +172,24 @@ class TopScoringRegions extends React.Component {
   convertScoresToReactTableDataObj(data) {
     let objs = [];
     let lines = data.split('\n');
+    var model = "observed";
+    if (this.props.stateModel == '18') {
+      model = "observed_aux";
+    }
+    else if (this.props.stateModel == '25') {
+      model = "imputed";
+    }
     for (let line = 0; line < 100; line++) {
       let tabs = lines[line].split('\t');
-      let widenedCoords = tabs[0] + ":" + (+tabs[1]-10000) + "-" + (+tabs[2]+10000);
-      let chromatinState = this.state.chromStates[0]["observed"][tabs[3]][1];
-      let chromatinStateName = this.state.chromStates[0]["observed"][tabs[3]][0];
+      let rawCoordsRegion = tabs[0] + ":" + tabs[1] + "-" + tabs[2];
+      let chromatinState = this.state.chromStates[0][model][tabs[3]][1];
+      let chromatinStateName = this.state.chromStates[0][model][tabs[3]][0];
       let chromatinStateRegion = tabs[7];
       var obj = { 
         'index' : line + 1,
         'state' : chromatinState,
         'name' : chromatinStateName,
-        'region' : { raw: chromatinStateRegion, padded: widenedCoords }
+        'region' : rawCoordsRegion
       }
       objs.push(obj);
     }

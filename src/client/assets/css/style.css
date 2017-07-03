@@ -1,4 +1,9 @@
+html {
+    height: 100vh;
+}
+
 body {
+    height: 100vh;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -11,6 +16,7 @@ body {
 /* main components */
 
 .parent-container {
+    height: 100%;
     width: 100%;
     float: right;
     margin-left: -320px;
@@ -70,22 +76,131 @@ body {
 .title {
     font-weight: bold;
     font-size: larger;
+    color: #333333;
 }
 
-/* viewer */
+/* portal/viewer */
 
-.viewer-container {
+#portal {
+    height: calc(100vh - 24px - 72px - 2px);
+}
+
+.portal-container, .viewer-container {
     padding: 12px 12px 12px 12px;
     margin: 2px 12px 12px 12px;
     background-color: white;
-    height: calc(100vh - 24px - 52px - 2px);
     box-shadow: 0px 1px 4px #3c3c3c !important;
     overflow-y: scroll;
 }
 
+.viewer-container {
+    height: calc(100vh - 24px - 52px - 2px);
+}
+
+.portal-container {
+    height: calc(100vh - 24px - 72px - 2px);
+    max-height: calc(100vh - 24px - 72px - 2px);
+}
+
+.portal-content-body-paragraph {
+    margin: 0px;
+    padding-bottom: 10px;
+}
+
+.portal-content-footer-paragraph {
+    margin: 0px;
+}
+
+/* partition heights needed some customization for Firefox compatibility */
+
+.portal-corner-partition {
+    width: calc(50% - 6px); 
+    height: calc(50vh - 68px); 
+    float: left;
+}
+
+.portal-ns-partition {
+    width: 100%;
+    height: calc(25vh - 40px);
+    float: left;  
+}
+
+.portal-corner-partition-content-header, .portal-ns-partition-content-header {
+}
+
+.portal-corner-partition-content-body, .portal-ns-partition-content-body {
+}
+
+.portal-corner-partition-content-top-section, .portal-ns-partition-content-top-section {
+    height: 50%;
+}
+
+.portal-corner-partition-content-bottom-section, .portal-ns-partition-content-bottom-section {
+    height: 50%;
+}
+
+.portal-corner-partition-content-bottom-aligner, .portal-ns-partition-content-bottom-aligner {
+    display: inline-block;
+    height: 100%;
+    vertical-align: bottom;
+}
+
+.portal-corner-partition-content-bottom-body, .portal-ns-partition-content-bottom-body {
+    display: inline-block;
+    width: 100%;
+}
+
+.portal-corner-partition-content-bottom-body-controls, .portal-ns-partition-content-bottom-body-controls {
+    float: left;
+}
+
+.portal-corner-partition-content-bottom-body-go, .portal-ns-partition-content-bottom-body-go {
+    float: right;
+}
+
+.portal-corner-partition-nw-content {
+}
+
+.portal-corner-partition-ne-content {
+}
+
+.portal-corner-partition-sw-content {
+}
+
+.portal-corner-partition-se-content {
+}
+
+.portal-corner-partition-nw {
+    margin-bottom: 6px;
+    margin-right: 6px;
+}
+
+.portal-corner-partition-ne {
+    margin-bottom: 6px;
+    margin-left: 6px;
+}
+
+.portal-corner-partition-sw {
+    margin-top: 6px;
+    margin-right: 6px;
+}
+
+.portal-corner-partition-se {
+    margin-top: 6px;
+    margin-left: 6px;
+}
+
+.portal-ns-partition-n {
+    margin-bottom: 6px;
+}
+
+.portal-ns-partition-s {
+    margin-top: 6px;
+}
+
 /* brand */
 
-.brand-container {
+.brand-container-viewer {
     top: -2px;
     position: relative;
 }
@@ -100,7 +215,7 @@ body {
     left: 3px;
     font-size: 1.2em;
     font-weight: 600;
-    color:#333333;
+    color: #333333;
 }
 
 .brand-title {
@@ -112,6 +227,8 @@ body {
 .brand-subtitle {
     font-size: 0.9em;
     font-weight: 100;
+    pointer-events: none !important;
+    opacity: 1 !important;
 }
 
 /* panel */
@@ -197,13 +314,13 @@ label {
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-paired] {
     left: 20px;
-    max-height: calc(100vh - 280px);
+    max-height: calc(100vh - 415px);
     overflow-y: scroll;
 }
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-single] {
     left: 20px;
-    max-height: calc(100vh - 250px);
+    max-height: calc(100vh - 390px);
     overflow-y: scroll;
 }
 
@@ -339,4 +456,8 @@ label {
     float: left;
     display: inline;
     padding: .2em;
+}
+
+.react-bootstrap-button-custom-style {
+    font-weight: 500;
 }

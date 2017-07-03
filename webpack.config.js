@@ -5,10 +5,13 @@ var BUILD_DIR = path.resolve(__dirname, 'src/client/public');
 var APP_DIR = path.resolve(__dirname, 'src/client/app');
 
 var config = {
-  entry: APP_DIR + '/app.jsx',
+  entry: {
+    portal: APP_DIR + '/portal.jsx',
+    viewer: APP_DIR + '/viewer.jsx'
+  },
   output: {
     path: BUILD_DIR,
-    filename: 'bundle.js'
+    filename: "[name].bundle.js"
   },
   module : {
     loaders : [

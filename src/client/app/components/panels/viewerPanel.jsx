@@ -56,6 +56,7 @@ class ViewerPanel extends React.Component {
   }
   
   embedWashuBrowserContainer() {
+    console.log("datahub", this.props.hubURL);
     embed_washugb({
       panelWidth : this.state.clientWidth,
       host : 'https://epilogos-washu.altiusinstitute.org',
