@@ -10,6 +10,10 @@ class TopScoringRegions extends React.Component {
       state: 0,
       topScoringURL: null,
       chromStates: [{
+        'DNase_2states':{
+          1:['Absence', '#ffffff'],
+          2:['Presence', '#ff0000']
+        },
         'observed':{
           1:['Active TSS','#ff0000'],
           2:['Flanking Active TSS','#ff4500'],
@@ -130,6 +134,7 @@ class TopScoringRegions extends React.Component {
     ];
     let tsu = this.props.dataURLPrefix + "/" + this.props.stateModel + "/exemplar/" + this.props.groupType + "." + this.props.pqType + ".top100.txt";
     this.state.topScoringURL = tsu;
+    console.log("tsu", tsu);
     axios.get(tsu)
       .then(res => {
         let reactTableData = this.convertScoresToReactTableDataObj(res.data);
@@ -179,6 +184,9 @@ class TopScoringRegions extends React.Component {
     }
     else if (this.props.stateModel == '25') {
       model = "imputed";
+    }
+    else if (this.props.stateModel == 'DNase_2states') {
+      model = "DNase_2states";
     }
     for (let line = 0; line < 100; line++) {
       let tabs = lines[line].split('\t');

@@ -1,8 +1,12 @@
 export const epilogosViewerURL = "https://epilogos.altiusinstitute.org/viewer/"
 
+export const epilogosViewerRefreshTime = 750;
+export const epilogosRangeRefreshTime = 750;
+
 export const epilogosViewerModes = [ 
   'single',
-  'paired'
+  'paired',
+  'DHS'
 ];
 
 export const defaultEpilogosViewerMode = 'paired';
@@ -19,11 +23,32 @@ export const defaultEpilogosViewerPairedGroup = 'Male_vs_Female';
 export const defaultEpilogosViewerPairedGroupText = 'Male vs Female';
 export const defaultEpilogosViewerPairedKL = 'KL';
 
+export const defaultEpilogosViewerDHSStateModel = 'DNase_2states';
+export const defaultEpilogosViewerDHSGroup = '827samples';
+export const defaultEpilogosViewerDHSGroupText = '827-Sample Master List';
+export const defaultEpilogosViewerDHSKL = 'KL';
+
 export const defaultEpilogosViewerStateModel = defaultEpilogosViewerPairedStateModel;
 export const defaultEpilogosViewerGroup = defaultEpilogosViewerPairedGroup;
 export const defaultEpilogosViewerKL = defaultEpilogosViewerPairedKL;
 
+export const epilogosKLMetadata = {
+  'KL' : { type:'pq', value:'KL', text:'KL', titleText:'KL' },
+  'KLs' : { type:'pq', value:'KLs', text:'KL*', titleText:'KL*' },
+  'KLss' : { type:'pq', value:'KLss', text:'KL**', titleText:'KL**' },
+  'KL_stacked' : { type:'pq', value:'KL_stacked', text:'KL/KL*/KL**', titleText:'KL/KL*/KL**' },
+}
+
+export const epilogosStateModelMetadata = {
+  'DNase_2states' : { type:'stateModel', value:'DNase_2states', text:'2-state', titleText:'2-state' },
+  '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state' },
+  '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state' },
+  '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state' },
+  'sm_stacked' : { type:'stateModel', value:'sm_stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state' },
+}
+
 export const epilogosGroupMetadata = {
+  '827samples' : { type:'group', subtype:'dhs', value:'827samples', text:'827-Sample Master List' },
   'adult_blood_sample' : { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample' },
   'adult_blood_reference' :  { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference' },
   'all' : { type:'group', subtype:'single', value:'all', text:'All' },

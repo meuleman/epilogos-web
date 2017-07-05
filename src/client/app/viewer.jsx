@@ -49,7 +49,9 @@ class Viewer extends React.Component {
   }
   
   title(group, pq, model, genome) {
-    return (<div className="title">{genome} | {pq} | {model}-state | {group}</div>);
+    let pqTitleText = AppConst.epilogosKLMetadata[pq]['titleText'];
+    let modelTitleText = AppConst.epilogosStateModelMetadata[model]['titleText'];
+    return (<div className="title">{genome} | {pqTitleText} | {modelTitleText} | {group}</div>);
   }
   
   randomInt(min, max) {
@@ -82,7 +84,7 @@ class Viewer extends React.Component {
       setTimeout(function() {
         var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
         document.dispatchEvent(e);
-      }, 500);
+      }, AppConst.epilogosRangeRefreshTime);
     })
   }
   
@@ -90,9 +92,12 @@ class Viewer extends React.Component {
     this.state.coordinateRange = event.detail.region;
     this.updateEpilogosViewerURLFromState();
     setTimeout(function() {
-      var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
-      document.dispatchEvent(e);
-    }, 500);
+      try {
+        var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
+        document.dispatchEvent(e);
+      }
+      catch(err) { }
+    }, AppConst.epilogosRangeRefreshTime);
   }
   
   updateEpilogosViewerURLFromState() {
@@ -138,7 +143,7 @@ class Viewer extends React.Component {
             tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           }, function() { this.updateEpilogosViewerURLFromState(); });
-        }, 750);
+        }, AppConst.epilogosViewerRefreshTime);
       }
       else if (newMode == 'paired') {
         let newTitle = this.title(AppConst.defaultEpilogosViewerPairedGroupText, 
@@ -159,7 +164,28 @@ class Viewer extends React.Component {
             tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           }, function() { this.updateEpilogosViewerURLFromState(); });
-        }, 750);
+        }, AppConst.epilogosViewerRefreshTime);
+      }
+      else if (newMode == 'dhs') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerDHSGroupText, 
+                                  AppConst.defaultEpilogosViewerDHSKL, 
+                                  AppConst.defaultEpilogosViewerDHSStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerDHSStateModel + "/json/" + AppConst.defaultEpilogosViewerDHSGroup + "." + AppConst.defaultEpilogosViewerDHSKL + ".json",
+            title: newTitle,
+            coordinateRange: newRange,
+            groupType: AppConst.defaultEpilogosViewerDHSGroup,
+            groupSubtype: newMode,
+            groupText: AppConst.defaultEpilogosViewerDHSGroupText,
+            stateModel: AppConst.defaultEpilogosViewerDHSStateModel,
+            pqType: AppConst.defaultEpilogosViewerDHSKL,
+            genome: AppConst.defaultEpilogosViewerGenome,
+            tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          }, function() { this.updateEpilogosViewerURLFromState(); });
+        }, AppConst.epilogosViewerRefreshTime);
       }
     }
     else if (('model' in query) && ('KL' in query) && ('group' in query) && ('chr' in query) && ('start' in query) && ('stop' in query)) {
@@ -194,7 +220,7 @@ class Viewer extends React.Component {
           tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
         }, function() { this.updateEpilogosViewerURLFromState(); });
-      }, 750);
+      }, AppConst.epilogosViewerRefreshTime);
     }
     else if (('model' in query) && ('KL' in query) && ('group' in query)) {
       let self = this;
@@ -223,7 +249,7 @@ class Viewer extends React.Component {
           tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
         }, function() { this.updateEpilogosViewerURLFromState(); });
-      }, 750);
+      }, AppConst.epilogosViewerRefreshTime);
     }
     else if (('mode' in query) && !('model' in query) && !('KL' in query) && !('group' in query)) {
       let self = this;
@@ -246,7 +272,7 @@ class Viewer extends React.Component {
             tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           }, function() { this.updateEpilogosViewerURLFromState(); });
-        }, 750);
+        }, AppConst.epilogosViewerRefreshTime);
       }
       else if (newMode == 'paired') {
         let newTitle = this.title(AppConst.defaultEpilogosViewerPairedGroupText, 
@@ -266,7 +292,27 @@ class Viewer extends React.Component {
             tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           }, function() { this.updateEpilogosViewerURLFromState(); });
-        }, 750);
+        }, AppConst.epilogosViewerRefreshTime);
+      }
+      else if (newMode == 'dhs') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerDHSGroupText, 
+                                  AppConst.defaultEpilogosViewerDHSKL, 
+                                  AppConst.defaultEpilogosViewerDHSStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerDHSStateModel + "/json/" + AppConst.defaultEpilogosViewerDHSGroup + "." + AppConst.defaultEpilogosViewerDHSKL + ".json",
+            title: newTitle,
+            groupType: AppConst.defaultEpilogosViewerDHSGroup,
+            groupSubtype: newMode,
+            groupText: AppConst.defaultEpilogosViewerDHSGroupText,
+            stateModel: AppConst.defaultEpilogosViewerDHSStateModel,
+            pqType: AppConst.defaultEpilogosViewerDHSKL,
+            genome: AppConst.defaultEpilogosViewerGenome,
+            tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          }, function() { this.updateEpilogosViewerURLFromState(); });
+        }, AppConst.epilogosViewerRefreshTime);
       }
     }
     else if (('id' in query) && !('range' in query) && !(('chr' in query) && ('start' in query) && ('stop' in query))) {
@@ -297,7 +343,7 @@ class Viewer extends React.Component {
               navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
               tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             }, function() { this.updateEpilogosViewerURLFromState(); });
-          }, 500);
+          }, AppConst.epilogosViewerRefreshTime);
         })
         .catch(function(error) {
           console.log(error);
@@ -340,7 +386,7 @@ class Viewer extends React.Component {
               navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
               tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             }, function() { this.updateEpilogosViewerURLFromState(); });
-          }, 500);
+          }, AppConst.epilogosViewerRefreshTime);
         })
         .catch(function(error) {
           console.log(error);
@@ -383,7 +429,7 @@ class Viewer extends React.Component {
               navbarKey: self.state.navbarKeyPrefix + self.randomInt(0, 1000000),
               tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             }, function() { this.updateEpilogosViewerURLFromState(); });
-          }, 500);
+          }, AppConst.epilogosViewerRefreshTime);
         })
         .catch(function(error) {
           console.log(error);
@@ -412,7 +458,7 @@ class Viewer extends React.Component {
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
         }, function() { this.updateEpilogosViewerURLFromState(); });
-      }, 500);
+      }, AppConst.epilogosViewerRefreshTime);
     }
     else if (('chr' in query) && ('start' in query) && ('stop' in query)) {
       let newRange = query.chr + ":" + parseInt(query.start) + "-" + parseInt(query.stop);
@@ -429,7 +475,7 @@ class Viewer extends React.Component {
           viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
         }, function() { this.updateEpilogosViewerURLFromState(); });
-      }, 500);
+      }, AppConst.epilogosViewerRefreshTime);
     }
     else {
       let newTitle = this.title(this.state.groupText, 
@@ -454,7 +500,7 @@ class Viewer extends React.Component {
     if (this.permalinkTimer) {
       timer.clearTimeout(this.permalinkTimer);
     }
-    this.permalinkTimer = timer.setTimeout('updatePermalink', this.updatePermalink, 500);
+    this.permalinkTimer = timer.setTimeout('updatePermalink', this.updatePermalink, AppConst.epilogosViewerRefreshTime);
   }
 */
   

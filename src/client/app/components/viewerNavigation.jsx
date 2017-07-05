@@ -24,15 +24,20 @@ class ViewerNavigation extends React.Component {
       showAboutModal: false,
       showPermalinkModal: false,
       permalink: null,
+      dhsStateModels: [
+        { type:'stateModel', value:'DNase_2states', text:'2-state', titleText:'2-state (presence/absence)' },
+      ],
       stateModels: [
         { type:'stateModel', value:'15', text:'15-state (observed)' },
         { type:'stateModel', value:'18', text:'18-state (observed, aux.)' },
-        { type:'stateModel', value:'25', text:'25-state (imputed)' }
+        { type:'stateModel', value:'25', text:'25-state (imputed)' },
+        { type:'stateModel', value:'sm_stacked', text:'Stacked (15-/18-/25-state)' },
       ],
       pqLevels: [
         { type:'pq', value:'KL', text:'KL' },
         { type:'pq', value:'KLs', text:'KL*' },
-        { type:'pq', value:'KLss', text:'KL**' }
+        { type:'pq', value:'KLss', text:'KL**' },
+        { type:'pq', value:'KL_stacked', text:'Stacked (KL/KL*/KL**)' },
       ],
       single: [
         { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample' },
@@ -43,7 +48,7 @@ class ViewerNavigation extends React.Component {
         { type:'group', subtype:'single', value:'CellLine', text:'Cell Line' },
         { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample' },
         { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference' },
-        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-deriv' },
+        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived' },
         { type:'group', subtype:'single', value:'ESC', text:'ESC' },
         { type:'group', subtype:'single', value:'Female', text:'Female' },
         { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell' },
@@ -62,16 +67,20 @@ class ViewerNavigation extends React.Component {
         { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other' },
         { type:'group', subtype:'paired', value:'CellLine_vs_PrimaryCell', text:'Cell Line vs Primary Cell' },
         { type:'group', subtype:'paired', value:'cord_blood_sample_vs_cord_blood_reference', text:'Cord Blood Sample vs Cord Blood Reference' },
-        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-deriv' },
+        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-derived' },
         { type:'group', subtype:'paired', value:'ESC_vs_iPSC', text:'ESC vs iPSC' },
         { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell' },
         { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female' },
         { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle' },
         { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell' },
       ],
+      dhs: [
+        { type:'group', subtype:'dhs', value:'827samples', text:'827-Sample Master List' },
+      ],
       modes: [
         { type:'mode', subtype:'single', value:'single', text:'Single' },
-        { type:'mode', subtype:'paired', value:'paired', text:'Paired' }
+        { type:'mode', subtype:'paired', value:'paired', text:'Paired' },
+        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list' },
       ]
     };
     this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
@@ -207,9 +216,16 @@ class ViewerNavigation extends React.Component {
         </p>
       </div>;
     
-    let stateModelComponents = this.state.stateModels.map(sm =>
-      sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
-    );
+    if (this.state.groupSubtype === 'paired') {
+      var stateModelComponents = this.state.stateModels.map(sm =>
+        sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
+      );
+    }
+    else if (this.state.groupSubtype === 'dhs') {
+      var stateModelComponents = this.state.dhsStateModels.map(sm =>
+        sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
+      );
+    }
     
     let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
       pqLevel.value == this.state.pqType ? <MenuItem key={pqLevel.value} eventKey={pqLevel}><div className="selected-item">{pqLevel.text}</div></MenuItem> : <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
@@ -220,6 +236,10 @@ class ViewerNavigation extends React.Component {
     );
     
     let pairedComponents = this.state.pairs.map(group =>
+      group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+    );
+    
+    let dhsComponents = this.state.dhs.map(group =>
       group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
     );
     
@@ -243,7 +263,9 @@ class ViewerNavigation extends React.Component {
               {modeComponents}
             </NavDropdown>
             <NavDropdown title="Groups" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
-              {this.state.groupSubtype === 'single' ? singleComponents : pairedComponents}
+              { this.state.groupSubtype === 'single' && singleComponents }
+              { this.state.groupSubtype === 'paired' && pairedComponents }
+              { this.state.groupSubtype === 'dhs'    && dhsComponents    }
             </NavDropdown>
             <NavDropdown title="KL level" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {pqLevelComponents}
@@ -251,16 +273,20 @@ class ViewerNavigation extends React.Component {
             <NavDropdown title="State model" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {stateModelComponents}
             </NavDropdown>
-            <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
-              <TopScoringRegions
-                key={this.props.tsrKey}
-                stateModel={this.props.stateModel}
-                pqType={this.props.pqType}
-                groupType={this.props.groupType}
-                dataURLPrefix={this.props.dataURLPrefix}
-                onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
-            </NavDropdown>
-            { /* <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem> */ }
+            { (this.props.pqType != "KL_stacked") && (this.props.stateModel != "sm_stacked") &&
+              <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
+                <TopScoringRegions
+                  key={this.props.tsrKey}
+                  stateModel={this.props.stateModel}
+                  pqType={this.props.pqType}
+                  groupType={this.props.groupType}
+                  dataURLPrefix={this.props.dataURLPrefix}
+                  onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
+              </NavDropdown> 
+            }
+            { 
+              /* <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem> */ 
+            }
           </Nav>
           <Nav pullRight>
             <NavItem disabled><div>{this.props.title}</div><div className="nav-subtitle">{this.state.coordinateRange}</div></NavItem>
