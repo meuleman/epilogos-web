@@ -77,12 +77,22 @@ class Viewer extends React.Component {
     this.setState({
       coordinateRange: region,
       viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000)
-    }, function() { this.updateEpilogosViewerURLFromState(); })
+    }, function() { 
+      this.updateEpilogosViewerURLFromState();
+      setTimeout(function() {
+        var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
+        document.dispatchEvent(e);
+      }, 500);
+    })
   }
   
   onWashuBrowserRegionChangedViaEmbeddedControls(event) {
     this.state.coordinateRange = event.detail.region;
     this.updateEpilogosViewerURLFromState();
+    setTimeout(function() {
+      var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
+      document.dispatchEvent(e);
+    }, 500);
   }
   
   updateEpilogosViewerURLFromState() {
@@ -96,11 +106,63 @@ class Viewer extends React.Component {
     queryComponents.push('stop=' + encodeURI(coordComponents[2]));
     var queryStr = queryComponents.join("&");
     history.pushState(null, null, AppConst.epilogosViewerURL + '?' + queryStr);
+    var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
+    document.dispatchEvent(e);
   }
   
   componentDidMount() {
     let query = queryString.parse(location.search);
-    if (('model' in query) && ('KL' in query) && ('group' in query) && ('chr' in query) && ('start' in query) && ('stop' in query)) {
+    if (('mode' in query) && !('model' in query) && !('KL' in query) && !('group' in query) && ('chr' in query) && ('start' in query) && ('stop' in query)) {
+      let self = this;
+      let newMode = decodeURI(query.mode);
+      let newChr = decodeURI(query.chr);
+      let newStart = parseInt(decodeURI(query.start));
+      let newStop = parseInt(decodeURI(query.stop));
+      let newRange = newChr + ":" + newStart + "-" + newStop;
+      if (newMode == 'single') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerSingleGroupText, 
+                                  AppConst.defaultEpilogosViewerSingleKL, 
+                                  AppConst.defaultEpilogosViewerSingleStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerSingleStateModel + "/json/" + AppConst.defaultEpilogosViewerSingleGroup + "." + AppConst.defaultEpilogosViewerSingleKL + ".json",
+            title: newTitle,
+            coordinateRange: newRange,
+            groupType: AppConst.defaultEpilogosViewerSingleGroup,
+            groupSubtype: newMode,
+            groupText: AppConst.defaultEpilogosViewerSingleGroupText,
+            stateModel: AppConst.defaultEpilogosViewerSingleStateModel,
+            pqType: AppConst.defaultEpilogosViewerSingleKL,
+            genome: AppConst.defaultEpilogosViewerGenome,
+            tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          }, function() { this.updateEpilogosViewerURLFromState(); });
+        }, 750);
+      }
+      else if (newMode == 'paired') {
+        let newTitle = this.title(AppConst.defaultEpilogosViewerPairedGroupText, 
+                                  AppConst.defaultEpilogosViewerPairedKL, 
+                                  AppConst.defaultEpilogosViewerPairedStateModel, 
+                                  AppConst.defaultEpilogosViewerGenome);
+        timer.setTimeout('refreshFromSpecifiedMode', function() {
+          self.setState({
+            hubURL: self.state.dataURLPrefix + "/" + AppConst.defaultEpilogosViewerPairedStateModel + "/json/" + AppConst.defaultEpilogosViewerPairedGroup + "." + AppConst.defaultEpilogosViewerPairedKL + ".json",
+            title: newTitle,
+            coordinateRange: newRange,
+            groupType: AppConst.defaultEpilogosViewerPairedGroup,
+            groupSubtype: newMode,
+            groupText: AppConst.defaultEpilogosViewerPairedGroupText,
+            stateModel: AppConst.defaultEpilogosViewerPairedStateModel,
+            pqType: AppConst.defaultEpilogosViewerPairedKL,
+            genome: AppConst.defaultEpilogosViewerGenome,
+            tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
+            viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
+          }, function() { this.updateEpilogosViewerURLFromState(); });
+        }, 750);
+      }
+    }
+    else if (('model' in query) && ('KL' in query) && ('group' in query) && ('chr' in query) && ('start' in query) && ('stop' in query)) {
       let self = this;
       let newModel = decodeURI(query.model);
       let newKL = decodeURI(query.KL);
@@ -441,6 +503,7 @@ class Viewer extends React.Component {
           tsrKey={this.state.tsrKey}
           brandTitle={this.state.brandTitle}
           brandSubtitle={this.state.brandSubtitle}
+          coordinateRange={this.state.coordinateRange}
           stateModel={this.state.stateModel}
           pqType={this.state.pqType}
           groupType={this.state.groupType}

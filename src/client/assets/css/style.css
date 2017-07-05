@@ -51,6 +51,10 @@ body {
     width: 100% !important;
 }
 
+.nav {
+    padding-top: 8px !important;
+}
+
 .navbar {
     margin-bottom: 10px !important;
     /*border-bottom: 1px dotted black;*/
@@ -59,6 +63,7 @@ body {
 
 .navbar-right {
     margin-right: 0px !important;
+    padding-top: 0px !important;
 }
 
 .nav-title {
@@ -71,6 +76,13 @@ body {
     padding-right: 30px;
     top: 16px;
     pointer-events: none;
+}
+
+.nav-subtitle {
+    font-size: 0.9em;
+    text-align: right;
+    pointer-events: none;
+    color: #7f7f7f;
 }
 
 .title {
@@ -94,7 +106,7 @@ body {
 }
 
 .viewer-container {
-    height: calc(100vh - 24px - 52px - 2px);
+    height: calc(100vh - 24px - 72px - 2px);
 }
 
 .portal-container {
@@ -314,13 +326,13 @@ label {
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-paired] {
     left: 20px;
-    max-height: calc(100vh - 415px);
+    max-height: calc(100vh - 100px);
     overflow-y: scroll;
 }
 
 .dropdown-menu[aria-labelledby = basic-nav-dropdown-single] {
     left: 20px;
-    max-height: calc(100vh - 390px);
+    max-height: calc(100vh - 100px);
     overflow-y: scroll;
 }
 
@@ -460,4 +472,9 @@ label {
 
 .react-bootstrap-button-custom-style {
     font-weight: 500;
+}
+
+.selected-item {
+    font-weight: 700;
+    font-style: italic;
 }

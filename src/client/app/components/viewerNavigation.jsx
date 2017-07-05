@@ -4,6 +4,9 @@ import FaExternalLink from 'react-icons/lib/fa/external-link';
 
 import BrandPanel from 'client/app/components/panels/brandPanel.jsx';
 import TopScoringRegions from 'client/app/components/topScoringRegions.jsx';
+import * as AppConst from 'client/app/appConstants.js';
+
+const queryString = require('query-string');
 
 class ViewerNavigation extends React.Component {
 
@@ -12,6 +15,7 @@ class ViewerNavigation extends React.Component {
     this.state = {
       topScoringRegionsKey: this.props.tsrKey,
       topScoringRegionsKeyPrefix: 'topScoringRegions-',
+      coordinateRange: this.props.coordinateRange,
       stateModel: this.props.stateModel,
       pqType: this.props.pqType,
       groupType: this.props.groupType,
@@ -64,12 +68,17 @@ class ViewerNavigation extends React.Component {
         { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female' },
         { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle' },
         { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell' },
+      ],
+      modes: [
+        { type:'mode', subtype:'single', value:'single', text:'Single' },
+        { type:'mode', subtype:'paired', value:'paired', text:'Paired' }
       ]
     };
     this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
     this.closeAboutModal = this.closeAboutModal.bind(this);
     this.openAboutModal = this.openAboutModal.bind(this);
     this.epilogosPermalinkUpdated = this.epilogosPermalinkUpdated.bind(this);
+    this.epilogosRangeUpdated = this.epilogosRangeUpdated.bind(this);
     this.closePermalinkModal = this.closePermalinkModal.bind(this);
     this.openPermalinkModal = this.openPermalinkModal.bind(this);
     this.randomInt = this.randomInt.bind(this);
@@ -77,24 +86,39 @@ class ViewerNavigation extends React.Component {
   
   handleNavDropdownSelect(eventKey) {
     if (eventKey.type == 'stateModel') {
+      if (this.state.stateModel == eventKey.value) return;
       this.state.stateModel = eventKey.value;
       //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
     }
     if (eventKey.type == 'pq') {
+      if (this.state.pqType == eventKey.value) return;
       this.state.pqType = eventKey.value;
       //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
     }
     if (eventKey.type == 'group') {
+      if (this.state.groupType == eventKey.value) return;
       this.state.groupType = eventKey.value;
       this.state.groupSubtype = eventKey.subtype;
       this.state.groupText = eventKey.text;
       //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
+    }
+    if (eventKey.type == 'mode') {
+      if (this.state.groupSubtype == eventKey.value) return;
+      var viewerURL = AppConst.epilogosViewerURL + '?mode=' + eventKey.value;
+      let query = queryString.parse(location.search);
+      if (('chr' in query) && ('start' in query) && ('stop' in query)) {
+        let newChr = decodeURI(query.chr);
+        let newStart = parseInt(decodeURI(query.start));
+        let newStop = parseInt(decodeURI(query.stop));
+        viewerURL += "&chr=" + newChr + "&start=" + newStart + "&stop=" + newStop;
+      }
+      window.location.href = viewerURL;
     }
     document.activeElement.blur();
   }
@@ -119,7 +143,13 @@ class ViewerNavigation extends React.Component {
       permalink: e.detail.permalink
     }, function() {
       this.openPermalinkModal();
-    })
+    });
+  }
+  
+  epilogosRangeUpdated(e) {
+    this.setState({
+      coordinateRange: e.detail.range
+    });
   }
   
   openPermalinkModal() {
@@ -135,10 +165,12 @@ class ViewerNavigation extends React.Component {
   
   componentDidMount() {
     document.addEventListener("epilogosPermalinkUpdated", this.epilogosPermalinkUpdated);
+    document.addEventListener("epilogosRangeUpdated", this.epilogosRangeUpdated);
   }
   
   componentWillUnmount() {
     document.removeEventListener("epilogosPermalinkUpdated", this.epilogosPermalinkUpdated);
+    document.removeEventListener("epilogosRangeUpdated", this.epilogosRangeUpdated);
   }
 
   render() {
@@ -176,19 +208,23 @@ class ViewerNavigation extends React.Component {
       </div>;
     
     let stateModelComponents = this.state.stateModels.map(sm =>
-      <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
+      sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
     );
     
     let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
-      <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
+      pqLevel.value == this.state.pqType ? <MenuItem key={pqLevel.value} eventKey={pqLevel}><div className="selected-item">{pqLevel.text}</div></MenuItem> : <MenuItem key={pqLevel.value} eventKey={pqLevel}>{pqLevel.text}</MenuItem>
     );
     
     let singleComponents = this.state.single.map(group =>
-      <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+      group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
     );
     
     let pairedComponents = this.state.pairs.map(group =>
-      <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+      group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+    );
+    
+    let modeComponents = this.state.modes.map(mode =>
+      mode.value == this.state.groupSubtype ? <MenuItem key={mode.value} eventKey={mode}><div className="selected-item">{mode.text}</div></MenuItem> : <MenuItem key={mode.value} eventKey={mode}>{mode.text}</MenuItem>
     );
     
     let cw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -203,21 +239,17 @@ class ViewerNavigation extends React.Component {
                           brandSubtitle={this.props.brandSubtitle} 
                           showSubtitle={false} />
             </NavItem>
-            <NavItem onClick={this.openAboutModal}>About</NavItem>
-            <NavDropdown title="Parameters" id="basic-nav-dropdown-groups" onSelect={this.handleNavDropdownSelect}>
-              <MenuItem header>Chromatin state model</MenuItem>
-              {stateModelComponents}
-              <MenuItem divider />
-              <MenuItem header>KL level</MenuItem>
+            <NavDropdown title="Mode" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+              {modeComponents}
+            </NavDropdown>
+            <NavDropdown title="Groups" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+              {this.state.groupSubtype === 'single' ? singleComponents : pairedComponents}
+            </NavDropdown>
+            <NavDropdown title="KL level" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {pqLevelComponents}
-              <MenuItem divider />
-              <MenuItem header>Groups</MenuItem>
-              <NavDropdown title="Single" id="basic-nav-dropdown-single" className="nav-dropdown" onSelect={this.handleNavDropdownSelect}>
-                {singleComponents}
-              </NavDropdown>
-              <NavDropdown title="Paired" id="basic-nav-dropdown-paired" className="nav-dropdown" onSelect={this.handleNavDropdownSelect}>
-                {pairedComponents}
-              </NavDropdown>
+            </NavDropdown>
+            <NavDropdown title="State model" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+              {stateModelComponents}
             </NavDropdown>
             <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
               <TopScoringRegions
@@ -228,10 +260,10 @@ class ViewerNavigation extends React.Component {
                 dataURLPrefix={this.props.dataURLPrefix}
                 onWashuBrowserRegionChanged={this.props.onWashuBrowserRegionChanged} />
             </NavDropdown>
-            <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem>
+            { /* <NavItem onClick={this.props.updatePermalink}><FaExternalLink /> Permalink</NavItem> */ }
           </Nav>
           <Nav pullRight>
-            <NavItem>{this.props.title}</NavItem>
+            <NavItem disabled><div>{this.props.title}</div><div className="nav-subtitle">{this.state.coordinateRange}</div></NavItem>
           </Nav>
         </Navbar>
         
