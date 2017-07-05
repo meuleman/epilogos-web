@@ -18,7 +18,7 @@ class PortalCornerPartition extends React.Component {
     var partitionContentStyle = {
       width: '100%',
       height: '100%',
-      background: 'url(' + this.props.backgroundImageURL + ') right top no-repeat',
+      background: 'url(' + this.props.backgroundImageURL + ') left center no-repeat',
       backgroundSize: 'cover',
       overflow: 'hidden',
       color: 'white'
@@ -34,7 +34,7 @@ class PortalCornerPartition extends React.Component {
     var partitionBodyStyle = {
       borderTop: '1px dotted rgba(255, 255, 255, 0.5)',
       borderBottom: '1px dotted rgba(255, 255, 255, 0.5)',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(32, 32, 32, 0.5)',
       fontSize: '0.9em',
       color: 'white',
       paddingTop: '10px',
@@ -42,7 +42,8 @@ class PortalCornerPartition extends React.Component {
       paddingRight: '10px',
     };
     var partitionBottomBodyStyle = {
-      backgroundColor: 'rgba(0, 0, 0, 0.667)',
+      borderTop: '1px dotted rgba(255, 255, 255, 0.5)',
+      backgroundColor: 'rgba(32, 32, 32, 0.5)',
       fontSize: '0.9em',
       color: 'white',
       padding: '10px',

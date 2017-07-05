@@ -10,7 +10,7 @@ class ViewerNavigation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      topScoringRegionsKey: 0,
+      topScoringRegionsKey: this.props.tsrKey,
       topScoringRegionsKeyPrefix: 'topScoringRegions-',
       stateModel: this.props.stateModel,
       pqType: this.props.pqType,
@@ -78,19 +78,22 @@ class ViewerNavigation extends React.Component {
   handleNavDropdownSelect(eventKey) {
     if (eventKey.type == 'stateModel') {
       this.state.stateModel = eventKey.value;
-      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
     }
     if (eventKey.type == 'pq') {
       this.state.pqType = eventKey.value;
-      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
     }
     if (eventKey.type == 'group') {
       this.state.groupType = eventKey.value;
       this.state.groupSubtype = eventKey.subtype;
       this.state.groupText = eventKey.text;
-      this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
+      this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
     }
     document.activeElement.blur();
@@ -205,7 +208,7 @@ class ViewerNavigation extends React.Component {
               <MenuItem header>Chromatin state model</MenuItem>
               {stateModelComponents}
               <MenuItem divider />
-              <MenuItem header>PQ level</MenuItem>
+              <MenuItem header>KL level</MenuItem>
               {pqLevelComponents}
               <MenuItem divider />
               <MenuItem header>Groups</MenuItem>
@@ -218,7 +221,7 @@ class ViewerNavigation extends React.Component {
             </NavDropdown>
             <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
               <TopScoringRegions
-                key={this.state.topScoringRegionsKey}
+                key={this.props.tsrKey}
                 stateModel={this.props.stateModel}
                 pqType={this.props.pqType}
                 groupType={this.props.groupType}

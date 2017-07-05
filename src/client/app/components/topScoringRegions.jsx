@@ -81,6 +81,7 @@ class TopScoringRegions extends React.Component {
   }
   
   componentDidMount() {
+    console.log("componentDidMount() - tsr", this.state.topScoringURL);
     this.renderTable();
   }
   

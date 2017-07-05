@@ -82,7 +82,7 @@ body {
 /* portal/viewer */
 
 #portal {
-    height: calc(100vh - 24px - 72px - 2px);
+    height: calc(100vh - 24px - 72px - 6px);
 }
 
 .portal-container, .viewer-container {
@@ -98,8 +98,8 @@ body {
 }
 
 .portal-container {
-    height: calc(100vh - 24px - 72px - 2px);
-    max-height: calc(100vh - 24px - 72px - 2px);
+    height: calc(100vh - 24px - 72px - 6px);
+    max-height: calc(100vh - 24px - 72px - 6px);
 }
 
 .portal-content-body-paragraph {
