@@ -77,7 +77,8 @@ groups = ['adult_blood_reference',
           'ESC_vs_ES-deriv',
           'HSC_B-cell_vs_Blood_T-cell',
           'Muscle_vs_Sm._Muscle',
-          'Sm._Muscle']
+          'Sm._Muscle',
+          'ImmuneAndNeurosphCombinedIntoOneGroup']
           
 clean_dhs_group_names = { '827samples' : '827-sample master list' }
 
@@ -117,7 +118,8 @@ clean_group_names = { 'adult_blood_reference' : 'Adult blood reference',
                       'ESC_vs_ES-deriv' : 'ESC vs ESC derived',
                       'HSC_B-cell_vs_Blood_T-cell' : 'HSC B-cell vs blood T-cell',
                       'Muscle_vs_Sm._Muscle' : 'Muscle vs small muscle',
-                      'Sm._Muscle' : 'Small muscle' }
+                      'Sm._Muscle' : 'Small muscle',
+                      'ImmuneAndNeurosphCombinedIntoOneGroup' : 'Immune and neurosphere (combined)' }
 
 dhs_qcat_root_dir = '/home/erynes/topics/EpilogosPvals'
 dhs_exemplar_root_dir = '/home/erynes/topics/EpilogosPvals'
@@ -1030,6 +1032,31 @@ e_prefixes = { 'Adipose' : [ 'E063' ],
                                 'E111' ],
                'Thymus' : [ 'E093',
                             'E112' ],
+               'ImmuneAndNeurosphCombinedIntoOneGroup' : [ 'E033',
+                                                           'E034',
+                                                           'E037',
+                                                           'E038',
+                                                           'E039',
+                                                           'E040',
+                                                           'E041',
+                                                           'E042',
+                                                           'E043',
+                                                           'E044',
+                                                           'E045',
+                                                           'E047',
+                                                           'E048',
+                                                           'E062',
+                                                           'E029',
+                                                           'E030',
+                                                           'E031',
+                                                           'E032',
+                                                           'E035',
+                                                           'E036',
+                                                           'E046',
+                                                           'E050',
+                                                           'E051',
+                                                           'E053',
+                                                           'E054' ],
                'all' : [ 'E001',
                          'E002',
                          'E003',
@@ -1379,7 +1406,7 @@ def copy_dhs_groups():
     for state_level in dhs_state_levels:
         for pq_level in dhs_pq_levels:
             for group in dhs_groups:
-                qcat_gz_fn = os.path.join(dhs_qcat_root_dir, state_level, group, pq_level, qcat_src_fn)
+                qcat_gz_fn = os.path.join(dhs_qcat_root_dir, state_level, group, pq_level, dhs_qcat_src_fn)
                 if not os.path.exists(qcat_gz_fn):
                     raise SystemExit('Could not locate DHS presence/absence dataset [%s]\n' % (qcat_gz_fn))
                 dest_gz_fn = os.path.join(dest_dir_root, "state_model", state_level, "group", "%s.%s.bed.gz" % (group, pq_level))
@@ -1810,10 +1837,10 @@ def generate_public_hub_tracks():
                     with open(json_fn, 'w') as json_fh:
                         json.dump(json_obj, json_fh)
                 else:
-                    sys.stderr.write("Skipping over existing JSON [%s]\n" % (json_fn))
-                    #sys.stderr.write("Writing JSON [%s]\n" % (json_fn))
-                    #with open(json_fn, 'w') as json_fh:
-                    #    json.dump(json_obj, json_fh)
+                    #sys.stderr.write("Skipping over existing JSON [%s]\n" % (json_fn))
+                    sys.stderr.write("Writing JSON [%s]\n" % (json_fn))
+                    with open(json_fn, 'w') as json_fh:
+                        json.dump(json_obj, json_fh)
 
         #
         # per state-level, stacked KL levels
@@ -1860,6 +1887,29 @@ def generate_public_hub_tracks():
                   'category_set_index' : category_set_index
                 }
                 json_obj.append(chromHMM_obj)
+            else:
+                if '_vs_' not in group:
+                    e_keys = e_prefixes[group]
+                    for ordered_obj in m_map_ordered:
+                        e_key = ordered_obj.keys()[0]
+                        if e_key in e_keys:
+                            e_name = e_map[e_key]
+                            e_url = "%s/%s/marks/%s.gz" % (json_url_prefix, state_level, e_key)
+                            e_obj = {
+                                'type' : json_marks_track_type,
+                                'name' : "%s - %s" % (e_key, e_name),
+                                'url' : e_url,
+                                'mode' : json_marks_track_mode,
+                                'qtc' : json_marks_qtc,
+                                'metadata' : { 'group' : m_map[e_key] },
+                                #'categories' : categories
+                                'category_set_index' : category_set_index
+                            }
+                            e_fn = "%s/state_model/%s/marks/%s.gz" % (dest_dir_root, state_level, e_key)
+                            if os.path.exists(e_fn):
+                                json_obj.append(e_obj)
+                            else:
+                                sys.stderr.write("E-file does not exist [%s]\n" % (e_fn))
             json_obj.append(json_gencode_v19_obj)
             # export stacked-KL JSON
             json_fn = os.path.join(dest_dir_root, "state_model", state_level, "json", "%s.%s.json" % (group, custom_pq_level))
@@ -1868,10 +1918,10 @@ def generate_public_hub_tracks():
                 with open(json_fn, 'w') as json_fh:
                     json.dump(json_obj, json_fh)
             else:
-                sys.stderr.write("Skipping over existing JSON [%s]\n" % (json_fn))
-                #sys.stderr.write("Writing JSON [%s]\n" % (json_fn))
-                #with open(json_fn, 'w') as json_fh:
-                #    json.dump(json_obj, json_fh)
+                #sys.stderr.write("Skipping over existing JSON [%s]\n" % (json_fn))
+                sys.stderr.write("Writing JSON [%s]\n" % (json_fn))
+                with open(json_fn, 'w') as json_fh:
+                    json.dump(json_obj, json_fh)
 
 def main():
     # copy files
@@ -1880,16 +1930,16 @@ def main():
     #copy_efile_marks_from_wustl()
     #fix_efile_marks()
     sys.stderr.write("Copying groups...\n")
-    #copy_groups()
+    copy_groups()
     sys.stderr.write("Copying exemplar regions...\n")
-    #copy_exemplar_regions()
+    copy_exemplar_regions()
     sys.stderr.write("Copying DHS presence/absence groups...\n")
     #copy_dhs_groups()
     sys.stderr.write("Copying DHS exemplar regions...\n")
     #copy_dhs_exemplar_regions()
     # build JSON public hub tracks
     sys.stderr.write("Generating JSON public hub tracks...\n")
-    #generate_public_hub_tracks()
+    generate_public_hub_tracks()
     # build JSON public hub tracks for DHS datasets
     sys.stderr.write("Generating JSON public hub tracks for DHS datasets...\n")
     generate_dhs_public_hub_tracks()

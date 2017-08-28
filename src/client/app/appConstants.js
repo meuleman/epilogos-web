@@ -69,6 +69,7 @@ export const epilogosGroupMetadata = {
   'PrimaryCell' : { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell' },
   'PrimaryTissue' : { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue' },
   'Sm._Muscle' : { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle' },
+  'ImmuneAndNeurosphCombinedIntoOneGroup' : { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere (combined)' },
   'adult_blood_sample_vs_adult_blood_reference' : { type:'group', subtype:'paired', value:'adult_blood_sample_vs_adult_blood_reference', text:'Adult Blood Sample vs Adult Blood Reference' },
   'Brain_vs_Neurosph' : { type:'group', subtype:'paired', value:'Brain_vs_Neurosph', text:'Brain vs Neurosph' },
   'Brain_vs_Other' : { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other' },
@@ -79,5 +80,5 @@ export const epilogosGroupMetadata = {
   'HSC_B-cell_vs_Blood_T-cell' : { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell' },
   'Male_vs_Female' : { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female' },
   'Muscle_vs_Sm._Muscle' : { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle' },
-  'PrimaryTissue_vs_PrimaryCell' : { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell' }
+  'PrimaryTissue_vs_PrimaryCell' : { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell' },
 }

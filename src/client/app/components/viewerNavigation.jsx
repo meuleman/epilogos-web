@@ -52,6 +52,7 @@ class ViewerNavigation extends React.Component {
         { type:'group', subtype:'single', value:'ESC', text:'ESC' },
         { type:'group', subtype:'single', value:'Female', text:'Female' },
         { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell' },
+        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere (combined)' },
         { type:'group', subtype:'single', value:'iPSC', text:'iPSC' },
         { type:'group', subtype:'single', value:'Male', text:'Male' },
         { type:'group', subtype:'single', value:'Muscle', text:'Muscle' },
@@ -113,6 +114,9 @@ class ViewerNavigation extends React.Component {
       this.state.groupType = eventKey.value;
       this.state.groupSubtype = eventKey.subtype;
       this.state.groupText = eventKey.text;
+      if (eventKey.value == 'ImmuneAndNeurosphCombinedIntoOneGroup') {
+        this.state.stateModel = '15';
+      }
       //this.state.topScoringRegionsKey = this.state.topScoringRegionsKeyPrefix + this.randomInt(0, 1000000);
       this.state.topScoringRegionsKey = this.props.tsrKey;
       this.props.updateSettings(this.state);
@@ -216,13 +220,19 @@ class ViewerNavigation extends React.Component {
         </p>
       </div>;
     
-    if (this.state.groupSubtype === 'paired') {
-      var stateModelComponents = this.state.stateModels.map(sm =>
-        sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
-      );
+    if ((this.state.groupSubtype === 'single') || (this.state.groupSubtype === 'paired')) {
+      var stateModels = this.state.stateModels;
     }
     else if (this.state.groupSubtype === 'dhs') {
-      var stateModelComponents = this.state.dhsStateModels.map(sm =>
+      var stateModels = this.state.dhsStateModels;
+    }
+    if ((this.state.groupSubtype === 'single') && (this.state.groupType === 'ImmuneAndNeurosphCombinedIntoOneGroup')) {
+      var stateModelComponents = stateModels.map(sm =>
+        sm.value != '15' ? <MenuItem key={sm.value} eventKey={sm} disabled={true}><div className="disabled-item">{sm.text}</div></MenuItem>  : sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
+      );
+    } 
+    else {
+      var stateModelComponents = stateModels.map(sm =>
         sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
       );
     }
