@@ -9,7 +9,7 @@ class Portal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      brandTitle: "epilogos",
+      brandTitle: "epilogos-dev",
       brandSubtitle: "visualization and analysis of chromatin state model data",
       navbarKey: 0,
       navbarKeyPrefix: 'navbarKey-',
