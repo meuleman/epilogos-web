@@ -25,7 +25,7 @@ class Viewer extends React.Component {
       groupText : "Male vs Female",
       groupColorScheme : "default",
       title: null,
-      dataURLPrefix : "https://epilogos.altiusinstitute.org/assets/epilogos/v06_16_2017/state_model",
+      dataURLPrefix : "https://epilogos-dev.altiusinstitute.org/assets/epilogos/v06_16_2017/state_model",
       hubURL : null,
       genome: 'hg19',
       coordinateRange: 'chr1:35611131-35696271',

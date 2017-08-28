@@ -109,14 +109,14 @@ class PortalPanel extends React.Component {
       
         <PortalCornerPartition corner="nw"
                                isSplit={false}
-                               backgroundImageURL="https://epilogos.altiusinstitute.org/assets/img/portal/All_KLss_15.svg"
+                               backgroundImageURL="https://epilogos-dev.altiusinstitute.org/assets/img/portal/All_KLss_15.svg"
                                header="single view"
                                body={nwPortalBody}
                                footer={nwPortalFooter} />
 
         <PortalCornerPartition corner="ne"
                                isSplit={false}
-                               backgroundImageURL="https://epilogos.altiusinstitute.org/assets/img/portal/MaleVsFemale_KLss_15.svg"
+                               backgroundImageURL="https://epilogos-dev.altiusinstitute.org/assets/img/portal/MaleVsFemale_KLss_15.svg"
                                header="paired view"
                                body={nePortalBody}
                                footer={nePortalFooter} />
@@ -132,7 +132,7 @@ class PortalPanel extends React.Component {
                                isSplit={true}>
           <PortalNSPartition half="n" 
                              header="Altius DHS index regions"
-                             backgroundImageURL="https://epilogos.altiusinstitute.org/assets/img/portal/Altius.svg"
+                             backgroundImageURL="https://epilogos-dev.altiusinstitute.org/assets/img/portal/Altius.svg"
                              body={seNorthHalfPortalBody} />
           <PortalNSPartition half="s"
                              header="downloads"

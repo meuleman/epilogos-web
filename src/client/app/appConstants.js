@@ -1,4 +1,4 @@
-export const epilogosViewerURL = "https://epilogos.altiusinstitute.org/viewer/"
+export const epilogosViewerURL = "https://epilogos-dev.altiusinstitute.org/viewer/"
 
 export const epilogosViewerRefreshTime = 750;
 export const epilogosRangeRefreshTime = 750;
