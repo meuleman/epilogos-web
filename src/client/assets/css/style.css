@@ -110,13 +110,14 @@ body {
 }
 
 .portal-container {
-    height: calc(100vh - 24px - 72px - 6px);
+    height: calc(100vh - 24px - 72px - 12px);
     max-height: calc(100vh - 24px - 72px - 6px);
 }
 
 .portal-content-body-paragraph {
     margin: 0px;
     padding-bottom: 10px;
+    font-size: larger;
 }
 
 .portal-content-footer-paragraph {
@@ -137,36 +138,42 @@ body {
     float: left;  
 }
 
-.portal-corner-partition-content-header, .portal-ns-partition-content-header {
+.portal-partition {
+    width: 100%;
+    height: calc(100vh - 132px);
+    float: left;
 }
 
-.portal-corner-partition-content-body, .portal-ns-partition-content-body {
+.portal-corner-partition-content-header, .portal-ns-partition-content-header, .portal-partition-content-header {
 }
 
-.portal-corner-partition-content-top-section, .portal-ns-partition-content-top-section {
+.portal-corner-partition-content-body, .portal-ns-partition-content-body, .portal-partition-content-body {
+}
+
+.portal-corner-partition-content-top-section, .portal-ns-partition-content-top-section, .portal-partition-content-top-section {
     height: 50%;
 }
 
-.portal-corner-partition-content-bottom-section, .portal-ns-partition-content-bottom-section {
+.portal-corner-partition-content-bottom-section, .portal-ns-partition-content-bottom-section, .portal-partition-content-bottom-section {
     height: 50%;
 }
 
-.portal-corner-partition-content-bottom-aligner, .portal-ns-partition-content-bottom-aligner {
+.portal-corner-partition-content-bottom-aligner, .portal-ns-partition-content-bottom-aligner, .portal-partition-content-bottom-aligner {
     display: inline-block;
     height: 100%;
     vertical-align: bottom;
 }
 
-.portal-corner-partition-content-bottom-body, .portal-ns-partition-content-bottom-body {
+.portal-corner-partition-content-bottom-body, .portal-ns-partition-content-bottom-body, .portal-partition-content-bottom-body {
     display: inline-block;
     width: 100%;
 }
 
-.portal-corner-partition-content-bottom-body-controls, .portal-ns-partition-content-bottom-body-controls {
+.portal-corner-partition-content-bottom-body-controls, .portal-ns-partition-content-bottom-body-controls, .portal-partition-content-bottom-body-controls {
     float: left;
 }
 
-.portal-corner-partition-content-bottom-body-go, .portal-ns-partition-content-bottom-body-go {
+.portal-corner-partition-content-bottom-body-go, .portal-ns-partition-content-bottom-body-go, .portal-partition-content-bottom-body-go {
     float: right;
 }
 
@@ -472,6 +479,7 @@ label {
 
 .react-bootstrap-button-custom-style {
     font-weight: 500;
+    font-size: larger;
 }
 
 .selected-item {

@@ -269,9 +269,11 @@ class ViewerNavigation extends React.Component {
                           brandSubtitle={this.props.brandSubtitle} 
                           showSubtitle={false} />
             </NavItem>
+            { /*
             <NavDropdown title="Mode" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {modeComponents}
             </NavDropdown>
+            */ }
             <NavDropdown title="Groups" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               { this.state.groupSubtype === 'single' && singleComponents }
               { this.state.groupSubtype === 'paired' && pairedComponents }
