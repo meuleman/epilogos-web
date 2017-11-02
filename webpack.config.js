@@ -21,7 +21,7 @@ var config = {
         loader: 'babel-loader',
         query:
         {
-            presets:['es2015', 'react']
+            presets:['es2015', 'react', 'stage-2']
         }
       }
     ]
@@ -29,7 +29,15 @@ var config = {
   resolve: {
     modules: ['node_modules', 'src'],
     extensions: ['.js', '.jsx']
-  }
+  },
+  plugins: [
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.DefinePlugin({
+        'process.env': {
+            'NODE_ENV': JSON.stringify('production')
+        }
+    })
+  ]
 };
 
 module.exports = config;

@@ -9,7 +9,8 @@ class TopScoringRegions extends React.Component {
     this.state = {
       state: 0,
       topScoringURL: null,
-      chromStates: [{
+      chromStates: [],
+      chromStatesHg19: [{
         'DNase_2states':{
           1:['Absence', '#ffffff'],
           2:['Presence', '#ff0000']
@@ -78,14 +79,60 @@ class TopScoringRegions extends React.Component {
           24:['Repressed PolyComb','#808080'],
           25:['Quiescent/Low','#ffffff']
         }
+      }],
+      chromStatesHg38: [{
+        'observed':{
+          1:['Active TSS','#ff0000'],
+          2:['Flanking Active TSS','#ff4500'],
+          3:['Transcr at gene 5\' and 3\'','#32cd32'],
+          4:['Strong transcription','#008000'],
+          5:['Weak transcription','#006400'],
+          6:['Genic enhancers','#c2e105'],
+          7:['Enhancers','#ffff00'],
+          8:['ZNF genes + repeats','#66cdaa'],
+          9:['Heterochromatin','#8a91d0'],
+          10:['Bivalent/Poised TSS','#cd5c5c'],
+          11:['Flanking Bivalent TSS/Enh','#e9967a'],
+          12:['Bivalent Enhancer','#bdb76b'],
+          13:['Repressed PolyComb','#808080'],
+          14:['Weak Repressed PolyComb','#c0c0c0'],
+          15:['Quiescent/Low','#ffffff']
+        }
+      }],
+      chromStatesMm10: [{
+        'observed':{
+          1:['Promoter - Active','#0e6f37'], 
+          2:['Promoter - Weak/Inactive','#c7e4c0'], 
+          3:['Promoter - Bivalent','#cdcdcd'], 
+          4:['Promoter - Flanking','#41ac5e'], 
+          5:['Enhancer - Strong, TSS-distal','#f3eb1a'], 
+          6:['Enhancer - Strong, TSS-proximal','#f3eb1a'], 
+          7:['Enhancer - Weak, TSS-distal','#faf8c8'], 
+          8:['Enhancer - Poised, TSS-distal','#808080'], 
+          9:['Enhancer - Poised, TSS-proximal','#808080'], 
+          10:['Transcription - Strong','#0454a3'], 
+          11:['Transcription - Permissive','#deecf7'], 
+          12:['Transcription - Initiation','#4290cf'], 
+          13:['Heterochromatin - Polycomb','#f48c8f'], 
+          14:['Heterochromatin - H3K9me3','#fde2e5'], 
+          15:['No signal','#ffffff']
+        }
       }]
     };
     this.convertScoresToReactTableDataObj = this.convertScoresToReactTableDataObj.bind(this);
     this.sortedChange = this.sortedChange.bind(this);
+    if (this.props.groupGenome === 'hg19') {
+      this.state.chromStates = this.state.chromStatesHg19;
+    }
+    else if (this.props.groupGenome === 'hg38') {
+      this.state.chromStates = this.state.chromStatesHg38;
+    }
+    else if (this.props.groupGenome === 'mm10') {
+      this.state.chromStates = this.state.chromStatesMm10;
+    }
   }
   
   componentDidMount() {
-    console.log("componentDidMount() - tsr", this.state.topScoringURL);
     this.renderTable();
   }
   
@@ -132,9 +179,8 @@ class TopScoringRegions extends React.Component {
         )
       },
     ];
-    let tsu = this.props.dataURLPrefix + "/" + this.props.stateModel + "/exemplar/" + this.props.groupType + "." + this.props.pqType + ".top100.txt";
+    let tsu = this.props.dataURLPrefix + "/" + this.props.groupGenome + "/" + this.props.stateModel + "/exemplar/" + this.props.groupType + "." + this.props.pqType + ".top100.txt";
     this.state.topScoringURL = tsu;
-    console.log("tsu", tsu);
     axios.get(tsu)
       .then(res => {
         let reactTableData = this.convertScoresToReactTableDataObj(res.data);
@@ -155,7 +201,6 @@ class TopScoringRegions extends React.Component {
               getTdProps={(state, rowInfo, column, instance) => {
                 return {
                   onClick: e => {
-                    console.log(rowInfo.row.region);
                     let padding = 10000;
                     let regionElements = rowInfo.row.region.split(/[:-]/);
                     let widenedCoordsRegion = regionElements[0] + ":" + (+regionElements[1] - padding) + "-" + (+regionElements[2] + padding);

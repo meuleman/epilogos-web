@@ -66,7 +66,7 @@ menu.style.fontFamily='Arial';
 
 /* some user parameters need to be handled here */
 var bbj=new Browser();
-bbj.leftColumnWidth=param.leftSpaceWidth?Math.max(50,param.leftSpaceWidth):80;
+bbj.leftColumnWidth=param.leftSpaceWidth?Math.max(50,param.leftSpaceWidth):120;
 bbj.hmSpan=param.panelWidth?Math.max(500,param.panelWidth):800;
 var utils={};
 if(!param.noPanelwidthConfig) {

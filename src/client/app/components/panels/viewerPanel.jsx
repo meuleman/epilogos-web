@@ -9,9 +9,9 @@ class ViewerPanel extends React.Component {
       clientHeight: -1,
       clientMargin: 12,
       clientPadding: 12,
-      washuLabelColumnWidth: 70,
+      washuLabelColumnWidth: 110,
       navbarHeight: 52,
-      genome: this.props.genome,
+      genome: this.props.groupGenome,
       coordinateRange: this.props.coordinateRange,
     }
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -56,7 +56,7 @@ class ViewerPanel extends React.Component {
   }
   
   embedWashuBrowserContainer() {
-    console.log("datahub", this.props.hubURL);
+    //console.log("datahub", this.props.hubURL);
     embed_washugb({
       panelWidth : this.state.clientWidth,
       host : 'https://epilogos-washu.altiusinstitute.org',

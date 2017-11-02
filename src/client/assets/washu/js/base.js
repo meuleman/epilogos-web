@@ -6857,7 +6857,7 @@ req.send(data2post);
 Browser.prototype.ajaxText=function(url, callback)
 {
 // don't use with long url
-console.log(url);
+//console.log(url);
 var req= new XMLHttpRequest();
 req.onreadystatechange= function() { 
 	if(req.readyState==4 && req.status==200) {
@@ -16076,8 +16076,8 @@ make doms for display
 
 TODO pwc, htest, bev?
 */
-console.log(name);
-console.log(ft);
+//console.log(name);
+//console.log(ft);
 var oobj=this.genome.getTkregistryobj(name,ft);
 if(!oobj) {
 	print2console('Cannot make track, no registry object found for '+name,2);

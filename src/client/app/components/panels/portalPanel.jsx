@@ -89,7 +89,7 @@ class PortalPanel extends React.Component {
     </div>;
     
     let swPortalBody = <div>
-      <div className="portal-content-body-paragraph">Id laoreet mandamus praesent eos, sea mentitum nominavi constituam no. Duo ne utroque oporteat. Nostro option vim in, in facete integre tincidunt nec.</div> 
+      <div className="portal-content-body-paragraph">The epilogos MEME tool discovers the chromatin state logos in your genomic intervals or sequence data of interest.</div> 
     </div>;
     
     let swPortalFooter = <div>
