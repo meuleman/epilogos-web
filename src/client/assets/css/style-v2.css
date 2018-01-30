@@ -1,0 +1,270 @@
+html {
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  font-family: ".SFNSDisplay-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+  letter-spacing: .01em;
+  background-color: rgba(127, 127, 127, 0.3);
+  width: 100vw;
+}
+
+a {
+  font-weight: 600;
+}
+
+.portal {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.content {
+  display: inline-block;
+  background-color: white;
+}
+
+.brand {
+  text-align: center;
+  border-bottom: 1px dotted black;
+  background-color: rgba(127, 127, 127, 0.3);
+  padding-top: 20px;
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+}
+
+.brand-body {
+  width: 100vw;
+  text-align: left;
+  white-space: nowrap;
+  overflow-x: hidden;
+  padding-left: 30px;
+}
+
+.brand-logo {
+  position: relative;
+  top: -15px;
+  max-height: 50px;
+  max-width: 50px;
+  display: inline-block;
+}
+
+.brand-title {
+  display: inline-block;
+  text-align: left;
+  margin-left: 5px;
+  position: relative;
+  top: -3px;
+}
+
+.brand-title-text {
+  position: relative;
+  left: -2px;
+  top: 3px;
+  font-size: 1.8em;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.brand-subtitle-text {
+  font-size: 0.85em;
+  font-weight: 100;
+  letter-spacing: .03em;
+}
+
+.footer {
+  text-align: left;
+  background-color: rgba(127, 127, 127, 0.3);
+  padding-bottom: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.footer .footer-body {
+  padding-top: 20px;
+}
+
+.footer .placeholder-footer {
+  font-size: 0.8em;
+}
+
+.footer .placeholder-footer-header {
+  font-weight: 600;
+}
+
+.how-epilogos-works, .epilogos-views-and-tools {
+  background-color: rgba(127, 127, 127, 0.1); 
+}
+
+.section {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  border-bottom: 1px dotted black;
+}
+
+.section h4 {
+  text-align: center !important;
+  padding-bottom: 10px;
+  font-size: 1.6em !important;
+  letter-spacing: 0.05em;
+}
+
+.section .placeholder-title {
+  font-size: 1.4em !important;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+.section h5 {
+  text-align: center !important;
+  padding-top: 5px;
+  font-size: 1.1em !important;
+  font-weight: 600;
+}
+
+.section .column {
+  text-align: center !important;
+}
+
+.section .placeholder {
+  padding-top: 5px;
+  padding-bottom: 0px;
+  border:1px dashed rgba(127, 127, 127, 0.3);
+  background-color: rgba(255,255,255,0.9);
+}
+
+.section img {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px dotted black;
+}
+
+.section .placeholder-img-hew {
+  width: 90%;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 15px;
+  margin-top: 20px;
+}
+
+.section .placeholder-text {
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 1em;
+}
+
+.section .placeholder-help {
+  padding-top: 5px;
+  padding-bottom: 0px;
+  background-color: rgba(255,255,255,0.9);
+}
+
+.section .placeholder-help-text {
+  font-size: 1em;
+}
+
+.section .explore-form {
+  text-align: center;
+  font-size: 1.1em;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.section .explore-form-table {
+  margin-right: 5px;
+}
+
+.section .explore-form-group-panel, .section .explore-form-genome-panel {
+  display: inline-block !important;
+}
+
+.section .form-control-panel-genome-custom {
+  width: 140px !important;
+}
+
+.section .form-control-panel-group-custom {
+  width: 200px !important;
+}
+
+.section .explore-form-search-panel {
+  display: inline-block !important;
+}
+
+.section .explore-form-search-panel-input {
+  width: 265px;
+}
+
+.section .placeholder-alt {
+  background-color: rgba(127, 127, 127, 0.05);
+}
+
+.section .explore-form-button-submit {
+  position: relative;
+  top: 3px;
+}
+
+.section .button-submit-custom {
+  margin-bottom: 20px;
+}
+
+.section .button-submit-custom-jump {
+  margin-bottom: 10px;
+}
+
+.section .explore-lucky {
+  text-align: center;
+}
+
+.section .placeholder-example {
+  border: 1px dotted black;
+  padding: 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
+.example_scroller_znf {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_znf.png'); 
+}
+
+.example_scroller_sox2 {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_sox2.png'); 
+}
+
+.example_scroller_cnot3 {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_cnot3.png'); 
+}
+
+.example_scroller_xist {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_xist.png'); 
+}
+
+.example_scroller_chromobox4 {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_chromobox4.png'); 
+}
+
+.example_scroller_trat1 {
+  background-image: url('https://epilogos-dev.altiusinstitute.org/assets/img/portal/example_trat1.png'); 
+}
+
+.example_scroller {
+  background-size: cover;
+  background-repeat: repeat-x; 
+  background-position: right bottom;
+  -webkit-animation: slide 30s linear infinite;
+  width: 100%;
+  height: 240px;
+}
+
+@-webkit-keyframes slide {
+  from { background-position: left bottom; }
+	to { background-position: right bottom; }
+}
