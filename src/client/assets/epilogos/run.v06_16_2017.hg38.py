@@ -35,15 +35,99 @@ qcat_src_fn = "qcat.bed.gz"
 
 exemplar_src_fn = "exemplarRegions.txt"
 
-state_levels = ['15']
+state_levels = ['15',
+                '18',
+                '25']
 
-pq_levels = ['KL']
+pq_levels = ['KL', 
+             'KLs', 
+             'KLss']
 
-groups = ['all']
+groups = ['adult_blood_reference',
+          'Brain_vs_Neurosph',
+          'cord_blood_sample_vs_cord_blood_reference',
+          'ESC_vs_iPSC',
+          'iPSC',
+          'Neurosph',
+          'Thymus',
+          'adult_blood_sample',
+          'Brain_vs_Other',
+          'Digestive',
+          'ES-deriv',
+          'Male',
+          'Other',
+          'adult_blood_sample_vs_adult_blood_reference',
+          'CellLine',
+          'ENCODE2012',
+          'Female',
+          'Male_vs_Female',
+          'PrimaryCell',
+          'all',
+          'CellLine_vs_PrimaryCell',
+          'Epithelial',
+          'Heart',
+          'Mesench',
+          'PrimaryTissue',
+          'Blood_T-cell',
+          'Non-T-cell_Roadmap',
+          'cord_blood_reference',
+          'ESC',
+          'HSC_B-cell',
+          'Muscle',
+          'PrimaryTissue_vs_PrimaryCell',
+          'Brain',
+          'cord_blood_sample',
+          'ESC_vs_ES-deriv',
+          'HSC_B-cell_vs_Blood_T-cell',
+          'Muscle_vs_Sm._Muscle',
+          'Sm._Muscle',
+          'ImmuneAndNeurosphCombinedIntoOneGroup',
+          'Blood_T-cell_vs_Non-T-cell_Roadmap']
 
-clean_group_names = { 'all' : 'All' }
+clean_group_names = { 'adult_blood_reference' : 'Adult blood reference',
+                      'Brain_vs_Neurosph' : 'Brain vs neurospheres',
+                      'cord_blood_sample_vs_cord_blood_reference' : 'Cord blood sample vs reference',
+                      'ESC_vs_iPSC' : 'ESC vs iPSC',
+                      'iPSC' : 'iPSC',
+                      'Neurosph' : 'Neurospheres',
+                      'Thymus' : 'Thymus',
+                      'adult_blood_sample' : 'Adult blood sample',
+                      'Brain_vs_Other' : 'Brain vs other',
+                      'Digestive' : 'Digestive',
+                      'ES-deriv' : 'ESC derived',
+                      'Male' : 'Male',
+                      'Other' : 'Other',
+                      'adult_blood_sample_vs_adult_blood_reference' : 'Adult blood sample vs reference',
+                      'CellLine' : 'Cell line',
+                      'ENCODE2012' : 'ENCODE 2012',
+                      'Female' : 'Female',
+                      'Male_vs_Female' : 'Male vs female',
+                      'PrimaryCell' : 'Primary cell',
+                      'all' : 'All',
+                      'CellLine_vs_PrimaryCell' : 'Cell line vs primary cell',
+                      'Epithelial' : 'Epithelial',
+                      'Heart' : 'Heart',
+                      'Mesench' : 'Mesenchymal',
+                      'PrimaryTissue' : 'Primary tissue',
+                      'Blood_T-cell' : 'Blood T-cell',
+                      'Non-T-cell_Roadmap' : 'Non-blood T-cell',
+                      'cord_blood_reference' : 'Cord blood reference',
+                      'ESC' : 'ESC',
+                      'HSC_B-cell' : 'HSC B-cell',
+                      'Muscle' : 'Muscle',
+                      'PrimaryTissue_vs_PrimaryCell' : 'Primary tissue vs cell',
+                      'Brain' : 'Brain',
+                      'cord_blood_sample' : 'Cord blood sample',
+                      'ESC_vs_ES-deriv' : 'ESC vs ESC derived',
+                      'HSC_B-cell_vs_Blood_T-cell' : 'HSC B-cell vs blood T-cell',
+                      'Muscle_vs_Sm._Muscle' : 'Muscle vs small muscle',
+                      'Sm._Muscle' : 'Small muscle',
+                      'ImmuneAndNeurosphCombinedIntoOneGroup' : 'Immune and neurosphere (combined)',
+                      'Blood_T-cell_vs_Non-T-cell_Roadmap' : 'Blood T-cell vs Non-T-cell Roadmap' }
 
-e_url_roots = { '15' : 'http://egg2.wustl.edu/roadmap/data/byFileType/chromhmmSegmentations/ChmmModels/coreMarks/jointModel/final' }
+e_url_roots = { '15' : 'http://egg2.wustl.edu/roadmap/data/byFileType/chromhmmSegmentations/ChmmModels/coreMarks/jointModel/final',
+                '18' : 'http://egg2.wustl.edu/roadmap/data/byFileType/chromhmmSegmentations/ChmmModels/core_K27ac/jointModel/final',
+                '25' : 'http://egg2.wustl.edu/roadmap/data/byFileType/chromhmmSegmentations/ChmmModels/imputed12marks/jointModel/final' }
 
 e_map = { 'E017' : 'IMR90 fetal lung fibroblasts',
           'E002' : 'ES-WA7',
@@ -541,6 +625,119 @@ e_prefixes = { 'Adipose' : [ 'E063' ],
                                   'E047',
                                   'E048',
                                   'E062' ],
+               'Non-T-cell_Roadmap' : [ 'E001',
+                                        'E002',
+                                        'E003',
+                                        'E004',
+                                        'E005',
+                                        'E006',
+                                        'E007',
+                                        'E008',
+                                        'E009',
+                                        'E010',
+                                        'E011',
+                                        'E012',
+                                        'E013',
+                                        'E014',
+                                        'E015',
+                                        'E016',
+                                        'E017',
+                                        'E018',
+                                        'E019',
+                                        'E020',
+                                        'E021',
+                                        'E022',
+                                        'E023',
+                                        'E024',
+                                        'E025',
+                                        'E026',
+                                        'E027',
+                                        'E028',
+                                        'E029',
+                                        'E030',
+                                        'E031',
+                                        'E032',
+                                        'E035',
+                                        'E036',
+                                        'E046',
+                                        'E049',
+                                        'E050',
+                                        'E051',
+                                        'E052',
+                                        'E053',
+                                        'E054',
+                                        'E055',
+                                        'E056',
+                                        'E057',
+                                        'E058',
+                                        'E059',
+                                        'E061',
+                                        'E063',
+                                        'E065',
+                                        'E066',
+                                        'E067',
+                                        'E068',
+                                        'E069',
+                                        'E070',
+                                        'E071',
+                                        'E072',
+                                        'E073',
+                                        'E074',
+                                        'E075',
+                                        'E076',
+                                        'E077',
+                                        'E078',
+                                        'E079',
+                                        'E080',
+                                        'E081',
+                                        'E082',
+                                        'E083',
+                                        'E084',
+                                        'E085',
+                                        'E086',
+                                        'E087',
+                                        'E088',
+                                        'E089',
+                                        'E090',
+                                        'E091',
+                                        'E092',
+                                        'E093',
+                                        'E094',
+                                        'E095',
+                                        'E096',
+                                        'E097',
+                                        'E098',
+                                        'E099',
+                                        'E100',
+                                        'E101',
+                                        'E102',
+                                        'E103',
+                                        'E104',
+                                        'E105',
+                                        'E106',
+                                        'E107',
+                                        'E108',
+                                        'E109',
+                                        'E110',
+                                        'E111',
+                                        'E112',
+                                        'E113',
+                                        'E114',
+                                        'E115',
+                                        'E116',
+                                        'E117',
+                                        'E118',
+                                        'E119',
+                                        'E120',
+                                        'E121',
+                                        'E122',
+                                        'E123',
+                                        'E124',
+                                        'E125',
+                                        'E126',
+                                        'E127',
+                                        'E128',
+                                        'E129' ],
                'Brain' : [ 'E067',
                            'E068',
                            'E069',
@@ -1166,11 +1363,60 @@ json_categories_15 = { '1' : ['Active TSS', '#ff0000'],
                        '14' : ['Weak Repressed PolyComb', '#c0c0c0'], 
                        '15' : ['Quiescent/Low', '#ffffff']
                      }
+                     
+json_categories_18 = { '1' : ['Active TSS', '#FF0000'], 
+                       '2' : ['Flanking TSS', '#FF4500'], 
+                       '3' : ['Flanking TSS Upstream', '#FF4500'], 
+                       '4' : ['Flanking TSS Downstream', '#FF4500'], 
+                       '5' : ['Strong transcription', '#008000'], 
+                       '6' : ['Weak transcription', '#006400'], 
+                       '7' : ['Genic enhancer 1', '#C2E105'], 
+                       '8' : ['Genic enhancer 2', '#C2E105'], 
+                       '9' : ['Active Enhancer 1', '#FFC34D'], 
+                       '10' : ['Active Enhancer 2', '#FFC34D'], 
+                       '11' : ['Weak Enhancer', '#FFFF00'], 
+                       '12' : ['ZNF genes & repeats', '#66CDAA'], 
+                       '13' : ['Heterochromatin', '#8A91D0'], 
+                       '14' : ['Bivalent/Poised TSS', '#CD5C5C'], 
+                       '15' : ['Bivalent Enhancer', '#BDB76B'], 
+                       '16' : ['Repressed PolyComb', '#808080'], 
+                       '17' : ['Weak Repressed PolyComb', '#C0C0C0'], 
+                       '18' : ['Quiescent/Low', '#FFFFFF'] 
+                     }
+                     
+json_categories_25 = { '1' : ['Active TSS', '#ff0000'], 
+                       '2' : ['Promoter Upstream TSS', '#ff4500'], 
+                       '3' : ['Promoter Downstream TSS with DNase', '#ff4500'], 
+                       '4' : ['Promoter Downstream TSS', '#ff4500'], 
+                       '5' : ['Transcription 5\'', '#008000'], 
+                       '6' : ['Transcription', '#008000'], 
+                       '7' : ['Transcription 3\'', '#008000'], 
+                       '8' : ['Weak transcription', '#009600'], 
+                       '9' : ['Transcription Regulatory', '#c2e105'], 
+                       '10' : ['Transcription 5\' Enhancer', '#c2e105'], 
+                       '11' : ['Transcription 3\' Enhancer', '#c2e105'], 
+                       '12' : ['Transcription Weak Enhancer', '#c2e105'], 
+                       '13' : ['Active Enhancer 1', '#ffc34d'], 
+                       '14' : ['Active Enhancer 2', '#ffc34d'], 
+                       '15' : ['Active Enhancer Flank', '#ffc34d'], 
+                       '16' : ['Weak Enhancer 1', '#ffff00'], 
+                       '17' : ['Weak Enhancer 2', '#ffff00'], 
+                       '18' : ['Enhancer Acetylation Only', '#ffff00'], 
+                       '19' : ['DNase only', '#ffff66'], 
+                       '20' : ['ZNF genes & repeats', '#66cdaa'], 
+                       '21' : ['Heterochromatin', '#8a91d0'], 
+                       '22' : ['Poised Promoter', '#e6b8b7'], 
+                       '23' : ['Bivalent Promoter', '#7030a0'], 
+                       '24' : ['Repressed PolyComb', '#808080'], 
+                       '25' : ['Quiescent/Low', '#ffffff']
+                     }
 
 json_category_set = { 
                       'type' : 'category_set', 
                       'set' : { 
-                        1 : json_categories_15
+                        1 : json_categories_15,
+                        2 : json_categories_18,
+                        3 : json_categories_25
                       } 
                     }
                      
@@ -1201,6 +1447,10 @@ def copy_groups():
         state_intermediate_dir = None
         if state_level == '15':
             state_intermediate_dir = "FinalMetricsAndComparisons_observed_15states"
+        elif state_level == '18':
+            state_intermediate_dir = "FinalMetricsAndComparisons_observed_aux_18states"
+        elif state_level == '25':
+            state_intermediate_dir = "FinalMetricsAndComparisons_imputed_25states"
         if not state_intermediate_dir:
             raise SystemExit('Could not set intermediate state directory from state level [%s]' % (state_level))
         for pq_level in pq_levels:
@@ -1208,17 +1458,13 @@ def copy_groups():
             for group in groups:
                 #sys.stderr.write("group [%s]\n" % (group))
                 group_is_differential = False
-                if group == "all":
-                    remote_group = "all_hg38"
-                else:
-                    remote_group = group
-                qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, remote_group, pq_level, qcat_src_fn)
+                qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, reference_genome, group, pq_level, qcat_src_fn)
                 if not os.path.exists(qcat_gz_fn):
                     # try to prepend pq_level with 'D' character
                     alternate_pq_level = 'D%s' % (pq_level)
-                    alternate_qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, remote_group, alternate_pq_level, qcat_src_fn)
+                    alternate_qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, reference_genome, group, alternate_pq_level, qcat_src_fn)
                     if not os.path.exists(alternate_qcat_gz_fn):
-                        warnings.warn('Could not locate data for\n\tgroup [%s]\n\tqcat gz fn [%s]\n\talternate qcat gz fn [%s]\n' % (remote_group, qcat_gz_fn, alternate_qcat_gz_fn))
+                        warnings.warn('Could not locate data for\n\tgroup [%s]\n\tqcat gz fn [%s]\n\talternate qcat gz fn [%s]\n' % (group, qcat_gz_fn, alternate_qcat_gz_fn))
                         qcat_gz_fn = None
                     else:
                         group_is_differential = True
@@ -1226,14 +1472,14 @@ def copy_groups():
                 if qcat_gz_fn:
                     # copy qcat_fn to destination, if not present
                     dest_gz_fn = os.path.join(dest_dir_root, reference_genome, state_level, "group", "%s.%s.bed.gz" % (group, pq_level))
-                    if not os.path.exists(dest_gz_fn): # or group == "all" or group == "cord_blood_reference":
+                    if True: # not os.path.exists(dest_gz_fn): # or group == "all" or group == "cord_blood_reference":
                         sys.stderr.write("Copying qcat gz file [%s] to [%s]\n" % (qcat_gz_fn, dest_gz_fn))
                         shutil.copy(qcat_gz_fn, dest_gz_fn)
                     else:
                         sys.stderr.write("Skipping -- qcat gz file exists [%s]\n" % (dest_gz_fn))
                     # index it, if index is not present
                     dest_tbi_fn = os.path.join(dest_dir_root, reference_genome, state_level, "group", "%s.%s.bed.gz.tbi" % (group, pq_level))
-                    if not os.path.exists(dest_tbi_fn): # or group == "all" or group == "cord_blood_reference":
+                    if True: #not os.path.exists(dest_tbi_fn): # or group == "all" or group == "cord_blood_reference":
                         sys.stderr.write("Indexing copied qcat gz file [%s]\n" % (dest_gz_fn))
                         try:
                             result = subprocess.check_output("tabix -p bed %s" % (dest_gz_fn), shell=True)
@@ -1248,6 +1494,10 @@ def copy_exemplar_regions():
         state_intermediate_dir = None
         if state_level == '15':
             state_intermediate_dir = "FinalMetricsAndComparisons_observed_15states"
+        elif state_level == '18':
+            state_intermediate_dir = "FinalMetricsAndComparisons_observed_aux_18states"
+        elif state_level == '25':
+            state_intermediate_dir = "FinalMetricsAndComparisons_imputed_25states"
         if not state_intermediate_dir:
             raise SystemExit('Could not set intermediate state directory from state level [%s]' % (state_level))
         for pq_level in pq_levels:
@@ -1255,15 +1505,11 @@ def copy_exemplar_regions():
             for group in groups:
                 #sys.stderr.write("group [%s]\n" % (group))
                 group_is_differential = False
-                if group == "all":
-                    remote_group = "all_hg38"
-                else:
-                    remote_group = group
-                exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, remote_group, pq_level, exemplar_src_fn)
+                exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, reference_genome, group, pq_level, exemplar_src_fn)
                 if not os.path.exists(exemplar_fn):
                     # try to prepend pq_level with 'D' character
                     alternate_pq_level = 'D%s' % (pq_level)
-                    alternate_exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, remote_group, alternate_pq_level, exemplar_src_fn)
+                    alternate_exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, reference_genome, group, alternate_pq_level, exemplar_src_fn)
                     if not os.path.exists(alternate_exemplar_fn):
                         warnings.warn('Could not locate data for\n\tgroup [%s]\n\texemplar fn [%s]\n\talternate exemplar fn [%s]\n' % (group, exemplar_fn, alternate_exemplar_fn))
                         exemplar_fn = None
@@ -1273,14 +1519,14 @@ def copy_exemplar_regions():
                 if exemplar_fn:
                     # copy exemplar_fn to destination, if not present
                     dest_exemplar_fn = os.path.join(dest_dir_root, reference_genome, state_level, "exemplar", "%s.%s.all.txt" % (group, pq_level))
-                    if not os.path.exists(dest_exemplar_fn): # or group == "all" or group == "cord_blood_reference":
+                    if True: # not os.path.exists(dest_exemplar_fn): # or group == "all" or group == "cord_blood_reference":
                         sys.stderr.write("Copying exemplar file [%s] to [%s]\n" % (exemplar_fn, dest_exemplar_fn))
                         shutil.copy(exemplar_fn, dest_exemplar_fn)
                     else:
                         sys.stderr.write("Skipping -- exemplar file exists [%s]\n" % (dest_exemplar_fn))
                     # extract top 100 rows
                     dest_top_100_fn = os.path.join(dest_dir_root, reference_genome, state_level, "exemplar", "%s.%s.top100.txt" % (group, pq_level))
-                    if not os.path.exists(dest_top_100_fn): # or group == "all" or group == "cord_blood_reference":
+                    if True: # not os.path.exists(dest_top_100_fn): # or group == "all" or group == "cord_blood_reference":
                         sys.stderr.write("Creating exemplar file [%s]\n" % (dest_top_100_fn))
                         with open(dest_exemplar_fn, "r") as dest_exemplar_fh:
                             top_100 = list(itertools.islice(dest_exemplar_fh, 100))
@@ -1305,6 +1551,12 @@ def generate_public_hub_tracks():
                 if state_level == '15':
                     category_set_index = 1
                     categories = json_categories_15
+                elif state_level == '18':
+                    category_set_index = 2
+                    categories = json_categories_18
+                elif state_level == '25':
+                    category_set_index = 3
+                    categories = json_categories_25
                 qcat_gz_fn = os.path.join(dest_dir_root, reference_genome, state_level, "group", "%s.%s.bed.gz" % (group, pq_level))
                 qcat_height = json_differential_track_height
                 qcat_mode = json_differential_track_mode
@@ -1349,6 +1601,12 @@ def generate_public_hub_tracks():
                 if state_level == '15':
                     category_set_index = 1
                     categories = json_categories_15
+                elif state_level == '18':
+                    category_set_index = 2
+                    categories = json_categories_18
+                elif state_level == '25':
+                    category_set_index = 3
+                    categories = json_categories_25
                 qcat_gz_fn = os.path.join(dest_dir_root, reference_genome, state_level, "group", "%s.%s.bed.gz" % (group, pq_level))
                 qcat_height = json_single_track_height
                 qcat_mode = json_single_track_mode
@@ -1387,6 +1645,12 @@ def generate_public_hub_tracks():
         if state_level == '15':
             category_set_index = 1
             categories = json_categories_15
+        elif state_level == '18':
+            category_set_index = 2
+            categories = json_categories_18
+        elif state_level == '25':
+            category_set_index = 3
+            categories = json_categories_25
         for pq_level in pq_levels:
             for group in groups:
                 qcat_gz_fn = os.path.join(dest_dir_root, reference_genome, state_level, "group", "%s.%s.bed.gz" % (group, pq_level))
@@ -1434,6 +1698,28 @@ def generate_public_hub_tracks():
                     'category_set_index' : category_set_index
                 }
                 json_obj.append(qcat_obj)
+                if '_vs_' not in group:
+                    e_keys = e_prefixes[group]
+                    for ordered_obj in m_map_ordered:
+                        e_key = ordered_obj.keys()[0]
+                        if e_key in e_keys:
+                            e_name = e_map[e_key]
+                            e_url = "%s/%s/marks/%s.gz" % (json_url_prefix, state_level, e_key)
+                            e_obj = {
+                                'type' : json_marks_track_type,
+                                'name' : "%s - %s" % (e_key, e_name),
+                                'url' : e_url,
+                                'mode' : json_marks_track_mode,
+                                'qtc' : json_marks_qtc,
+                                'metadata' : { 'group' : m_map[e_key] },
+                                #'categories' : categories
+                                'category_set_index' : category_set_index
+                            }
+                            e_fn = "%s/%s/%s/marks/%s.gz" % (dest_dir_root, reference_genome, state_level, e_key)
+                            if os.path.exists(e_fn):
+                                json_obj.append(e_obj)
+                            else:
+                                sys.stderr.write("E-file does not exist [%s]\n" % (e_fn))
                 json_obj.append(json_dbSNP_v150_common_obj)
                 json_obj.append(json_gencode_v26_obj)
                 json_fn = os.path.join(dest_dir_root, reference_genome, state_level, "json", "%s.%s.json" % (group, pq_level))
@@ -1474,6 +1760,28 @@ def generate_public_hub_tracks():
                     'category_set_index' : category_set_index
                 }
                 json_obj.append(qcat_obj)
+            if '_vs_' not in group:
+                e_keys = e_prefixes[group]
+                for ordered_obj in m_map_ordered:
+                    e_key = ordered_obj.keys()[0]
+                    if e_key in e_keys:
+                        e_name = e_map[e_key]
+                        e_url = "%s/%s/marks/%s.gz" % (json_url_prefix, state_level, e_key)
+                        e_obj = {
+                            'type' : json_marks_track_type,
+                            'name' : "%s - %s" % (e_key, e_name),
+                            'url' : e_url,
+                            'mode' : json_marks_track_mode,
+                            'qtc' : json_marks_qtc,
+                            'metadata' : { 'group' : m_map[e_key] },
+                            #'categories' : categories
+                            'category_set_index' : category_set_index
+                        }
+                        e_fn = "%s/%s/%s/marks/%s.gz" % (dest_dir_root, reference_genome, state_level, e_key)
+                        if os.path.exists(e_fn):
+                            json_obj.append(e_obj)
+                        else:
+                            sys.stderr.write("E-file does not exist [%s]\n" % (e_fn))
             json_obj.append(json_dbSNP_v150_common_obj)
             json_obj.append(json_gencode_v26_obj)
             # export stacked-KL JSON
@@ -1490,14 +1798,14 @@ def generate_public_hub_tracks():
 
 def main():
     # copy files
-    sys.stderr.write("Copying marks...\n")
+    #sys.stderr.write("Copying marks...\n")
     #copy_chromHMM_segmentations_from_wustl()
     #copy_efile_marks_from_wustl()
     #fix_efile_marks()
-    sys.stderr.write("Copying groups...\n")
-    copy_groups()
-    sys.stderr.write("Copying exemplar regions...\n")
-    copy_exemplar_regions()
+    #sys.stderr.write("Copying groups...\n")
+    #copy_groups()
+    #sys.stderr.write("Copying exemplar regions...\n")
+    #copy_exemplar_regions()
     # build JSON public hub tracks
     sys.stderr.write("Generating JSON public hub tracks...\n")
     generate_public_hub_tracks()

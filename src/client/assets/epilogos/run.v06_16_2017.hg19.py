@@ -69,6 +69,7 @@ groups = ['adult_blood_reference',
           'Mesench',
           'PrimaryTissue',
           'Blood_T-cell',
+          'Non-T-cell_Roadmap',
           'cord_blood_reference',
           'ESC',
           'HSC_B-cell',
@@ -80,7 +81,8 @@ groups = ['adult_blood_reference',
           'HSC_B-cell_vs_Blood_T-cell',
           'Muscle_vs_Sm._Muscle',
           'Sm._Muscle',
-          'ImmuneAndNeurosphCombinedIntoOneGroup']
+          'ImmuneAndNeurosphCombinedIntoOneGroup',
+          'Blood_T-cell_vs_Non-T-cell_Roadmap']
           
 clean_dhs_group_names = { '827samples' : '827-sample master list' }
 
@@ -110,6 +112,7 @@ clean_group_names = { 'adult_blood_reference' : 'Adult blood reference',
                       'Mesench' : 'Mesenchymal',
                       'PrimaryTissue' : 'Primary tissue',
                       'Blood_T-cell' : 'Blood T-cell',
+                      'Non-T-cell_Roadmap' : 'Non-blood T-cell',
                       'cord_blood_reference' : 'Cord blood reference',
                       'ESC' : 'ESC',
                       'HSC_B-cell' : 'HSC B-cell',
@@ -121,7 +124,8 @@ clean_group_names = { 'adult_blood_reference' : 'Adult blood reference',
                       'HSC_B-cell_vs_Blood_T-cell' : 'HSC B-cell vs blood T-cell',
                       'Muscle_vs_Sm._Muscle' : 'Muscle vs small muscle',
                       'Sm._Muscle' : 'Small muscle',
-                      'ImmuneAndNeurosphCombinedIntoOneGroup' : 'Immune and neurosphere (combined)' }
+                      'ImmuneAndNeurosphCombinedIntoOneGroup' : 'Immune and neurosphere (combined)',
+                      'Blood_T-cell_vs_Non-T-cell_Roadmap' : 'Blood T-cell vs Non-T-cell Roadmap' }
 
 dhs_qcat_root_dir = '/home/erynes/topics/EpilogosPvals'
 dhs_exemplar_root_dir = '/home/erynes/topics/EpilogosPvals'
@@ -631,6 +635,119 @@ e_prefixes = { 'Adipose' : [ 'E063' ],
                                   'E047',
                                   'E048',
                                   'E062' ],
+               'Non-T-cell_Roadmap' : [ 'E001',
+                                        'E002',
+                                        'E003',
+                                        'E004',
+                                        'E005',
+                                        'E006',
+                                        'E007',
+                                        'E008',
+                                        'E009',
+                                        'E010',
+                                        'E011',
+                                        'E012',
+                                        'E013',
+                                        'E014',
+                                        'E015',
+                                        'E016',
+                                        'E017',
+                                        'E018',
+                                        'E019',
+                                        'E020',
+                                        'E021',
+                                        'E022',
+                                        'E023',
+                                        'E024',
+                                        'E025',
+                                        'E026',
+                                        'E027',
+                                        'E028',
+                                        'E029',
+                                        'E030',
+                                        'E031',
+                                        'E032',
+                                        'E035',
+                                        'E036',
+                                        'E046',
+                                        'E049',
+                                        'E050',
+                                        'E051',
+                                        'E052',
+                                        'E053',
+                                        'E054',
+                                        'E055',
+                                        'E056',
+                                        'E057',
+                                        'E058',
+                                        'E059',
+                                        'E061',
+                                        'E063',
+                                        'E065',
+                                        'E066',
+                                        'E067',
+                                        'E068',
+                                        'E069',
+                                        'E070',
+                                        'E071',
+                                        'E072',
+                                        'E073',
+                                        'E074',
+                                        'E075',
+                                        'E076',
+                                        'E077',
+                                        'E078',
+                                        'E079',
+                                        'E080',
+                                        'E081',
+                                        'E082',
+                                        'E083',
+                                        'E084',
+                                        'E085',
+                                        'E086',
+                                        'E087',
+                                        'E088',
+                                        'E089',
+                                        'E090',
+                                        'E091',
+                                        'E092',
+                                        'E093',
+                                        'E094',
+                                        'E095',
+                                        'E096',
+                                        'E097',
+                                        'E098',
+                                        'E099',
+                                        'E100',
+                                        'E101',
+                                        'E102',
+                                        'E103',
+                                        'E104',
+                                        'E105',
+                                        'E106',
+                                        'E107',
+                                        'E108',
+                                        'E109',
+                                        'E110',
+                                        'E111',
+                                        'E112',
+                                        'E113',
+                                        'E114',
+                                        'E115',
+                                        'E116',
+                                        'E117',
+                                        'E118',
+                                        'E119',
+                                        'E120',
+                                        'E121',
+                                        'E122',
+                                        'E123',
+                                        'E124',
+                                        'E125',
+                                        'E126',
+                                        'E127',
+                                        'E128',
+                                        'E129' ],
                'Brain' : [ 'E067',
                            'E068',
                            'E069',
@@ -1448,11 +1565,11 @@ def copy_groups():
             for group in groups:
                 #sys.stderr.write("group [%s]\n" % (group))
                 group_is_differential = False
-                qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, group, pq_level, qcat_src_fn)
+                qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, reference_genome, group, pq_level, qcat_src_fn)
                 if not os.path.exists(qcat_gz_fn):
                     # try to prepend pq_level with 'D' character
                     alternate_pq_level = 'D%s' % (pq_level)
-                    alternate_qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, group, alternate_pq_level, qcat_src_fn)
+                    alternate_qcat_gz_fn = os.path.join(qcat_root_dir, state_intermediate_dir, reference_genome, group, alternate_pq_level, qcat_src_fn)
                     if not os.path.exists(alternate_qcat_gz_fn):
                         warnings.warn('Could not locate data for\n\tgroup [%s]\n\tqcat gz fn [%s]\n\talternate qcat gz fn [%s]\n' % (group, qcat_gz_fn, alternate_qcat_gz_fn))
                         qcat_gz_fn = None
@@ -1522,11 +1639,11 @@ def copy_exemplar_regions():
             for group in groups:
                 #sys.stderr.write("group [%s]\n" % (group))
                 group_is_differential = False
-                exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, group, pq_level, exemplar_src_fn)
+                exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, reference_genome, group, pq_level, exemplar_src_fn)
                 if not os.path.exists(exemplar_fn):
                     # try to prepend pq_level with 'D' character
                     alternate_pq_level = 'D%s' % (pq_level)
-                    alternate_exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, group, alternate_pq_level, exemplar_src_fn)
+                    alternate_exemplar_fn = os.path.join(exemplar_root_dir, state_intermediate_dir, reference_genome, group, alternate_pq_level, exemplar_src_fn)
                     if not os.path.exists(alternate_exemplar_fn):
                         warnings.warn('Could not locate data for\n\tgroup [%s]\n\texemplar fn [%s]\n\talternate exemplar fn [%s]\n' % (group, exemplar_fn, alternate_exemplar_fn))
                         exemplar_fn = None
@@ -1935,24 +2052,24 @@ def generate_public_hub_tracks():
 
 def main():
     # copy files
-    sys.stderr.write("Copying marks...\n")
+    #sys.stderr.write("Copying marks...\n")
     #copy_chromHMM_segmentations_from_wustl()
     #copy_efile_marks_from_wustl()
     #fix_efile_marks()
     sys.stderr.write("Copying groups...\n")
-    #copy_groups()
+    copy_groups()
     sys.stderr.write("Copying exemplar regions...\n")
-    #copy_exemplar_regions()
-    sys.stderr.write("Copying DHS presence/absence groups...\n")
+    copy_exemplar_regions()
+    #sys.stderr.write("Copying DHS presence/absence groups...\n")
     #copy_dhs_groups()
-    sys.stderr.write("Copying DHS exemplar regions...\n")
+    #sys.stderr.write("Copying DHS exemplar regions...\n")
     #copy_dhs_exemplar_regions()
     # build JSON public hub tracks
     sys.stderr.write("Generating JSON public hub tracks...\n")
     generate_public_hub_tracks()
     # build JSON public hub tracks for DHS datasets
-    sys.stderr.write("Generating JSON public hub tracks for DHS datasets...\n")
-    generate_dhs_public_hub_tracks()
+    #sys.stderr.write("Generating JSON public hub tracks for DHS datasets...\n")
+    #generate_dhs_public_hub_tracks()
 
 if __name__ == "__main__":
     main()

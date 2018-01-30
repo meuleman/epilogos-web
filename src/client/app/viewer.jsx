@@ -59,6 +59,7 @@ class Viewer extends React.Component {
       'start'     : start,
       'stop'      : stop,
     };
+    //console.log('obj', obj);
     var defaultHg19Obj = {
       'genome'    : 'hg19',
       'chr'       : AppConst.defaultEpilogosViewerHg19SingleCoordinateChr,
@@ -113,6 +114,7 @@ class Viewer extends React.Component {
       'start'     : start,
       'stop'      : stop
     };
+    //console.log("obj", obj);
     var defaultHg19Obj = {
       'genome'    : 'hg19',
       'model'     : AppConst.defaultEpilogosViewerHg19SingleStateModel,
@@ -160,6 +162,9 @@ class Viewer extends React.Component {
         return defaultMm10Obj;
     }
     // is start < stop and stop < upper bound?
+    //console.log('start', start);
+    //console.log('stop', stop);
+    //console.log('AppConst.epilogosViewerGenomeBounds[genome][chr][ub]', AppConst.epilogosViewerGenomeBounds[genome][chr]['ub']);
     if ((start >= stop) || (stop >= AppConst.epilogosViewerGenomeBounds[genome][chr]['ub'])) {
       if (genome == 'hg19')
         return defaultHg19Obj;
@@ -171,46 +176,46 @@ class Viewer extends React.Component {
     
     if (genome == 'hg19') {
       // is the specified state model in the genome's state model and also enabled?
-      if (!Object.keys(AppConst.epilogosStateModelMetadataHg19).includes(model) || !AppConst.epilogosStateModelMetadataHg19[model]['enabled']) {
+      if (!Object.keys(AppConst.epilogosStateModelMetadataByGenome['hg19']).includes(model) || !AppConst.epilogosStateModelMetadataByGenome['hg19'][model]['enabled']) {
         return defaultHg19Obj;
       }
       // is the specified KL level in the genome's KL metadata and also enabled?
-      if (!Object.keys(AppConst.epilogosKLMetadataHg19).includes(kl) || !AppConst.epilogosKLMetadataHg19[kl]['enabled']) {
+      if (!Object.keys(AppConst.epilogosKLMetadataByGenome['hg19']).includes(kl) || !AppConst.epilogosKLMetadataByGenome['hg19'][kl]['enabled']) {
         return defaultHg19Obj;
       }
       // is the specified group in the genome's group metadata and also enabled?
-      if (!Object.keys(AppConst.epilogosGroupMetadataHg19).includes(group) || !AppConst.epilogosGroupMetadataHg19[group]['enabled']) {
+      if (!Object.keys(AppConst.epilogosGroupMetadataByGenome['hg19']).includes(group) || !AppConst.epilogosGroupMetadataByGenome['hg19'][group]['enabled']) {
         return defaultHg19Obj;
       }
     }
     
     else if (genome == 'hg38') {
       // is the specified state model in the genome's state model and also enabled?
-      if (!Object.keys(AppConst.epilogosStateModelMetadataHg38).includes(model) || !AppConst.epilogosStateModelMetadataHg38[model]['enabled']) {
+      if (!Object.keys(AppConst.epilogosStateModelMetadataByGenome['hg38']).includes(model) || !AppConst.epilogosStateModelMetadataByGenome['hg38'][model]['enabled']) {
         return defaultHg38Obj;
       }
       // is the specified KL level in the genome's KL metadata and also enabled?
-      if (!Object.keys(AppConst.epilogosKLMetadataHg38).includes(kl) || !AppConst.epilogosKLMetadataHg38[kl]['enabled']) {
+      if (!Object.keys(AppConst.epilogosKLMetadataByGenome['hg38']).includes(kl) || !AppConst.epilogosKLMetadataByGenome['hg38'][kl]['enabled']) {
         return defaultHg38Obj;
       }
       // is the specified group in the genome's group metadata and also enabled?
-      console.log("1", Object.keys(AppConst.epilogosGroupMetadataHg38));
-      console.log("2", AppConst.epilogosGroupMetadataHg38[group]);
-      if (!Object.keys(AppConst.epilogosGroupMetadataHg38).includes(group) || !AppConst.epilogosGroupMetadataHg38[group]['enabled']) {
+      //console.log("1", Object.keys(AppConst.epilogosGroupMetadataHg38));
+      //console.log("2", AppConst.epilogosGroupMetadataHg38[group]);
+      if (!Object.keys(AppConst.epilogosGroupMetadataByGenome['hg38']).includes(group) || !AppConst.epilogosGroupMetadataByGenome['hg38'][group]['enabled']) {
         return defaultHg38Obj;
       }
     }
     else if (genome == 'mm10') {
       // is the specified state model in the genome's state model and also enabled?
-      if (!Object.keys(AppConst.epilogosStateModelMetadataMm10).includes(model) || !AppConst.epilogosStateModelMetadataMm10[model]['enabled']) {
+      if (!Object.keys(AppConst.epilogosStateModelMetadataByGenome['mm10']).includes(model) || !AppConst.epilogosStateModelMetadataByGenome['mm10'][model]['enabled']) {
         return defaultMm10Obj;
       }
       // is the specified KL level in the genome's KL metadata and also enabled?
-      if (!Object.keys(AppConst.epilogosKLMetadataMm10).includes(kl) || !AppConst.epilogosKLMetadataMm10[kl]['enabled']) {
+      if (!Object.keys(AppConst.epilogosKLMetadataByGenome['mm10']).includes(kl) || !AppConst.epilogosKLMetadataByGenome['mm10'][kl]['enabled']) {
         return defaultMm10Obj;
       }
       // is the specified group in the genome's group metadata and also enabled?
-      if (!Object.keys(AppConst.epilogosGroupMetadataMm10).includes(group) || !AppConst.epilogosGroupMetadataMm10[group]['enabled']) {
+      if (!Object.keys(AppConst.epilogosGroupMetadataByGenome['mm10']).includes(group) || !AppConst.epilogosGroupMetadataByGenome['mm10'][group]['enabled']) {
         return defaultMm10Obj;
       }
     }
@@ -220,18 +225,21 @@ class Viewer extends React.Component {
   
   title(group, pq, model, genome) {
     if (genome == "hg19") {
-      var pqTitleText = AppConst.epilogosKLMetadataHg19[pq]['titleText'];
-      var modelTitleText = AppConst.epilogosStateModelMetadataHg19[model]['titleText'];
+      var genomeText = AppConst.epilogosViewerGenomesDetailed[genome];
+      var pqTitleText = AppConst.epilogosKLMetadataByGenome['hg19'][pq]['titleText'];
+      var modelTitleText = AppConst.epilogosStateModelMetadataByGenome['hg19'][model]['titleText'];
     }
     else if (genome == "hg38") {
-      var pqTitleText = AppConst.epilogosKLMetadataHg38[pq]['titleText'];
-      var modelTitleText = AppConst.epilogosStateModelMetadataHg38[model]['titleText'];
+      var genomeText = AppConst.epilogosViewerGenomesDetailed[genome];
+      var pqTitleText = AppConst.epilogosKLMetadataByGenome['hg38'][pq]['titleText'];
+      var modelTitleText = AppConst.epilogosStateModelMetadataByGenome['hg38'][model]['titleText'];
     }
     else if (genome == "mm10") {
-      var pqTitleText = AppConst.epilogosKLMetadataMm10[pq]['titleText'];
-      var modelTitleText = AppConst.epilogosStateModelMetadataMm10[model]['titleText'];
+      var genomeText = AppConst.epilogosViewerGenomesDetailed[genome];
+      var pqTitleText = AppConst.epilogosKLMetadataByGenome['mm10'][pq]['titleText'];
+      var modelTitleText = AppConst.epilogosStateModelMetadataByGenome['mm10'][model]['titleText'];
     }
-    return (<div className="title">{genome} | {pqTitleText} | {modelTitleText}<br/>{group}</div>);
+    return (<div className="title">{genomeText} | {modelTitleText} | {pqTitleText}<br/>{group}</div>);
   }
   
   randomInt(min, max) {
@@ -256,13 +264,15 @@ class Viewer extends React.Component {
   }
   
   onWashuBrowserRegionChanged(region) {
+    //console.log("region", region);
+    let self = this;
     this.setState({
       coordinateRange: region,
       viewerPanelKey: this.state.viewerPanelKeyPrefix + this.randomInt(0, 1000000)
     }, function() { 
       this.updateEpilogosViewerURLFromState();
       setTimeout(function() {
-        var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : this.state.coordinateRange } });
+        var e = new CustomEvent('epilogosRangeUpdated', { 'detail' : { 'range' : self.state.coordinateRange } });
         document.dispatchEvent(e);
       }, AppConst.epilogosRangeRefreshTime);
     })
@@ -281,6 +291,7 @@ class Viewer extends React.Component {
   }
   
   updateEpilogosViewerURLFromState() {
+    //console.log("updateEpilogosViewerURLFromState()");
     var queryComponents = [];
     queryComponents.push('genome=' + encodeURI(this.state.groupGenome));
     queryComponents.push('model=' + encodeURI(this.state.stateModel));
@@ -297,6 +308,7 @@ class Viewer extends React.Component {
   }
   
   componentDidMount() {
+    //console.log("componentDidMount()");
     let query = queryString.parse(location.search);
     if (('mode' in query) && !('genome' in query) && !('model' in query) && !('KL' in query) && !('group' in query) && ('chr' in query) && ('start' in query) && ('stop' in query)) {
       //console.log("A");
@@ -403,24 +415,24 @@ class Viewer extends React.Component {
       var newGroup = decodeURI(query.group);
       if (newGenome == 'hg19') {
         try {
-          var newGroupText = AppConst.epilogosGroupMetadataHg19[newGroup]['text'];
-          var newMode = AppConst.epilogosGroupMetadataHg19[newGroup]['subtype'];
+          var newGroupText = AppConst.epilogosGroupMetadataByGenome['hg19'][newGroup]['text'];
+          var newMode = AppConst.epilogosGroupMetadataByGenome['hg19'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
         }
       }
       else if (newGenome == 'hg38') {
         try {
-          var newGroupText = AppConst.epilogosGroupMetadataHg38[newGroup]['text'];
-          var newMode = AppConst.epilogosGroupMetadataHg38[newGroup]['subtype'];
+          var newGroupText = AppConst.epilogosGroupMetadataByGenome['hg38'][newGroup]['text'];
+          var newMode = AppConst.epilogosGroupMetadataByGenome['hg38'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
         }
       }
       else if (newGenome == 'mm10') {
         try {
-          var newGroupText = AppConst.epilogosGroupMetadataMm10[newGroup]['text'];
-          var newMode = AppConst.epilogosGroupMetadataMm10[newGroup]['subtype'];
+          var newGroupText = AppConst.epilogosGroupMetadataByGenome['mm10'][newGroup]['text'];
+          var newMode = AppConst.epilogosGroupMetadataByGenome['mm10'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
         }
@@ -449,6 +461,7 @@ class Viewer extends React.Component {
                                 newKL, 
                                 newModel, 
                                 newGenome);
+      //console.log(newGenome, newModel, newKL, newGroup, newGroupText, newMode, newChr, newStart, newStop);
       timer.setTimeout('refreshFromSpecifiedMode', function() {
         self.setState({
           hubURL: self.state.dataURLPrefix + "/" + newGenome + "/" + newModel + "/json/" + newGroup + "." + newKL + ".json",
@@ -485,8 +498,8 @@ class Viewer extends React.Component {
       }
       else if (newGenome == 'hg19') {
         try {
-          newGroupText = AppConst.epilogosGroupMetadataHg19[newGroup]['text'];
-          newMode = AppConst.epilogosGroupMetadataHg19[newGroup]['subtype'];
+          newGroupText = AppConst.epilogosGroupMetadataByGenome['hg19'][newGroup]['text'];
+          newMode = AppConst.epilogosGroupMetadataByGenome['hg19'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
           newGroupText = AppConst.defaultEpilogosViewerHg19SingleGroupText;
@@ -495,8 +508,8 @@ class Viewer extends React.Component {
       }
       else if (newGenome == 'hg38') {
         try {
-          newGroupText = AppConst.epilogosGroupMetadataHg38[newGroup]['text'];
-          newMode = AppConst.epilogosGroupMetadataHg38[newGroup]['subtype'];
+          newGroupText = AppConst.epilogosGroupMetadataByGenome['hg38'][newGroup]['text'];
+          newMode = AppConst.epilogosGroupMetadataByGenome['hg38'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
           newGroupText = AppConst.defaultEpilogosViewerHg38SingleGroupText;
@@ -505,8 +518,8 @@ class Viewer extends React.Component {
       }
       else if (newGenome == 'mm10') {
         try {
-          newGroupText = AppConst.epilogosGroupMetadataMm10[newGroup]['text'];
-          newMode = AppConst.epilogosGroupMetadataMm10[newGroup]['subtype'];
+          newGroupText = AppConst.epilogosGroupMetadataByGenome['mm10'][newGroup]['text'];
+          newMode = AppConst.epilogosGroupMetadataByGenome['mm10'][newGroup]['subtype'];
         } catch(e) {
           console.log("Warning: Unknown group!");
           newGroupText = AppConst.defaultEpilogosViewerMm10SingleGroupText;
@@ -555,7 +568,7 @@ class Viewer extends React.Component {
             tsrKey: self.state.tsrKeyPrefix + self.randomInt(0, 1000000),
             viewerPanelKey: self.state.viewerPanelKeyPrefix + self.randomInt(0, 1000000),
           }, function() { this.updateEpilogosViewerURLFromState(); });
-        }, AppConst.epilogosViewerRefreshTime);
+        }, 0);
       }
       else if (newMode == 'paired') {
         let newTitle = this.title(AppConst.defaultEpilogosViewerPairedGroupText, 
@@ -626,7 +639,7 @@ class Viewer extends React.Component {
       axios.post('/assets/services/pid.py', { id : query.id })
         .then(function(response) {
           let archivedState = response.data;
-          console.log("archivedState", archivedState);
+          //console.log("archivedState", archivedState);
           if (!archivedState.stateModel) {
             archivedState.stateModel = this.state.stateModel;
           }
@@ -671,7 +684,7 @@ class Viewer extends React.Component {
       axios.post('/assets/services/pid.py', { id : query.id })
         .then(function(response) {
           let archivedState = response.data;
-          console.log("archivedState", archivedState);
+          //console.log("archivedState", archivedState);
           if (!archivedState.stateModel) {
             archivedState.stateModel = this.state.stateModel;
           }
@@ -716,7 +729,7 @@ class Viewer extends React.Component {
       axios.post('/assets/services/pid.py', { id : query.id })
         .then(function(response) {
           let archivedState = response.data;
-          console.log("archivedState", archivedState);
+          //console.log("archivedState", archivedState);
           if (!archivedState.stateModel) {
             archivedState.stateModel = this.state.stateModel;
           }
@@ -787,7 +800,7 @@ class Viewer extends React.Component {
       var newChr = coords[0];
       var newStart = parseInt(coords[1]);
       var newStop = parseInt(coords[2]);
-      var validatedCoords = validateCoordinatesForGenome(newGenome, newChr, newStart, newStop);
+      var validatedCoords = this.validateCoordinatesForGenome(newGenome, newChr, newStart, newStop);
       newGenome = validatedCoords.genome;
       newChr = validatedCoords.chr;
       newStart = validatedCoords.start;
@@ -798,7 +811,7 @@ class Viewer extends React.Component {
       var newKL = this.state.pqType;
       var newModel = this.state.stateModel;
       var newMode = this.state.groupSubtype;
-      var validatedParams = self.validateParametersForGenome(newGenome, newModel, newKL, newGroup, newGroupText, newMode, newChr, newStart, newStop);
+      var validatedParams = this.validateParametersForGenome(newGenome, newModel, newKL, newGroup, newGroupText, newMode, newChr, newStart, newStop);
       newGenome = validatedParams.genome;
       newModel = validatedParams.model;
       newKL = validatedParams.kl;

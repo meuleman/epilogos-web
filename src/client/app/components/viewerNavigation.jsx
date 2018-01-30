@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Modal, Button } from 'react-bootstrap';
 import FaExternalLink from 'react-icons/lib/fa/external-link';
+import copy from 'copy-to-clipboard';
 
 import BrandPanel from 'client/app/components/panels/brandPanel.jsx';
 import TopScoringRegions from 'client/app/components/topScoringRegions.jsx';
@@ -13,6 +14,7 @@ class ViewerNavigation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      host: window.location.hostname,
       topScoringRegionsKey: this.props.tsrKey,
       topScoringRegionsKeyPrefix: 'topScoringRegions-',
       coordinateRange: this.props.coordinateRange,
@@ -25,6 +27,9 @@ class ViewerNavigation extends React.Component {
       showAboutModal: false,
       showPermalinkModal: false,
       permalink: null,
+      showTabixModal: false,
+      tabixCmd: "",
+      tabixBtnDisabled: true,
       dhsStateModels: [],
       dhsStateModelsHg19: [
         { type:'stateModel', value:'DNase_2states', text:'2-state', titleText:'2-state (presence/absence)' },
@@ -40,9 +45,9 @@ class ViewerNavigation extends React.Component {
       ],
       stateModelsHg38: [
         { type:'stateModel', value:'15', text:'15-state (observed)',                enabled:true },
-        { type:'stateModel', value:'18', text:'18-state (observed, aux.)',          enabled:false },
-        { type:'stateModel', value:'25', text:'25-state (imputed)',                 enabled:false },
-        { type:'stateModel', value:'sm_stacked', text:'Stacked (15-/18-/25-state)', enabled:false },
+        { type:'stateModel', value:'18', text:'18-state (observed, aux.)',          enabled:true },
+        { type:'stateModel', value:'25', text:'25-state (imputed)',                 enabled:true },
+        { type:'stateModel', value:'sm_stacked', text:'Stacked (15-/18-/25-state)', enabled:true },
       ],
       stateModelsMm10: [
         { type:'stateModel', value:'15', text:'15-state (observed)',                enabled:true },
@@ -52,130 +57,148 @@ class ViewerNavigation extends React.Component {
       ],
       pqLevels: [],
       pqLevelsHg19: [
-        { type:'pq', value:'KL', text:'KL',                            enabled:true },
-        { type:'pq', value:'KLs', text:'KL*',                          enabled:true },
-        { type:'pq', value:'KLss', text:'KL**',                        enabled:true },
-        { type:'pq', value:'KL_stacked', text:'Stacked (KL/KL*/KL**)', enabled:true },
+        { type:'pq', value:'KL', text:'Level 1',                            enabled:true },
+        { type:'pq', value:'KLs', text:'Level 2',                           enabled:true },
+        { type:'pq', value:'KLss', text:'Level 3',                          enabled:true },
+        { type:'pq', value:'KL_stacked', text:'Stacked (Level 1/2/3)',      enabled:true },
       ],
       pqLevelsHg38: [
-        { type:'pq', value:'KL', text:'KL',                            enabled:true },
-        { type:'pq', value:'KLs', text:'KL*',                          enabled:false },
-        { type:'pq', value:'KLss', text:'KL**',                        enabled:false },
-        { type:'pq', value:'KL_stacked', text:'Stacked (KL/KL*/KL**)', enabled:false },
+        { type:'pq', value:'KL', text:'Level 1',                            enabled:true },
+        { type:'pq', value:'KLs', text:'Level 2',                           enabled:true },
+        { type:'pq', value:'KLss', text:'Level 3',                          enabled:true },
+        { type:'pq', value:'KL_stacked', text:'Stacked (Level 1/2/3)',      enabled:true },
       ],
       pqLevelsMm10: [
-        { type:'pq', value:'KL', text:'KL',                            enabled:true },
-        { type:'pq', value:'KLs', text:'KL*',                          enabled:true },
-        { type:'pq', value:'KLss', text:'KL**',                        enabled:true },
-        { type:'pq', value:'KL_stacked', text:'Stacked (KL/KL*/KL**)', enabled:true },
+        { type:'pq', value:'KL', text:'Level 1',                            enabled:true },
+        { type:'pq', value:'KLs', text:'Level 2',                           enabled:true },
+        { type:'pq', value:'KLss', text:'Level 3',                          enabled:true },
+        { type:'pq', value:'KL_stacked', text:'Stacked (Level 1/2/3)',      enabled:true },
       ],
       single: [],
       singleHg19: [
-        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample', enabled:true },
-        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference', enabled:true },
-        { type:'group', subtype:'single', value:'all', text:'All', enabled:true },
-        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell', enabled:true },
-        { type:'group', subtype:'single', value:'Brain', text:'Brain', enabled:true },
-        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line', enabled:true },
-        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample', enabled:true },
-        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference', enabled:true },
-        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived', enabled:true },
-        { type:'group', subtype:'single', value:'ESC', text:'ESC', enabled:true },
-        { type:'group', subtype:'single', value:'Female', text:'Female', enabled:true },
-        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell', enabled:true },
-        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere (combined)', enabled:true },
-        { type:'group', subtype:'single', value:'iPSC', text:'iPSC', enabled:true },
-        { type:'group', subtype:'single', value:'Male', text:'Male', enabled:true },
-        { type:'group', subtype:'single', value:'Muscle', text:'Muscle', enabled:true },
-        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosph', enabled:true },
-        { type:'group', subtype:'single', value:'Other', text:'Other', enabled:true },
-        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell', enabled:true },
-        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue', enabled:true },
-        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle', enabled:true },
+        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'all', text:'All', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Brain', text:'Brain', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ESC', text:'ESC', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Female', text:'Female', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'iPSC', text:'iPSC', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Male', text:'Male', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Muscle', text:'Muscle', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosphere', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Non-T-cell_Roadmap', text:'Non-T-cell Roadmap', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Other', text:'Other', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle', enabled:true, enabledInProduction:true },
       ],
       singleHg38: [
-        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample', enabled:false },
-        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference', enabled:false },
-        { type:'group', subtype:'single', value:'all', text:'All', enabled:true },
-        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell', enabled:false },
-        { type:'group', subtype:'single', value:'Brain', text:'Brain', enabled:false },
-        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line', enabled:false },
-        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample', enabled:false },
-        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference', enabled:false },
-        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived', enabled:false },
-        { type:'group', subtype:'single', value:'ESC', text:'ESC', enabled:false },
-        { type:'group', subtype:'single', value:'Female', text:'Female', enabled:false },
-        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell', enabled:false },
-        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere (combined)', enabled:false },
-        { type:'group', subtype:'single', value:'iPSC', text:'iPSC', enabled:false },
-        { type:'group', subtype:'single', value:'Male', text:'Male', enabled:false },
-        { type:'group', subtype:'single', value:'Muscle', text:'Muscle', enabled:false },
-        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosph', enabled:false },
-        { type:'group', subtype:'single', value:'Other', text:'Other', enabled:false },
-        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell', enabled:false },
-        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue', enabled:false },
-        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle', enabled:false },
+        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'all', text:'All', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Brain', text:'Brain', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ESC', text:'ESC', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Female', text:'Female', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'iPSC', text:'iPSC', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Male', text:'Male', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Muscle', text:'Muscle', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosphere', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Non-T-cell_Roadmap', text:'Non-T-cell Roadmap', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Other', text:'Other', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle', enabled:true, enabledInProduction:true },
       ],
       singleMm10: [
-        { type:'group', subtype:'single', value:'adult_blood_sample', text:'Adult Blood Sample', enabled:false },
-        { type:'group', subtype:'single', value:'adult_blood_reference', text:'Adult Blood Reference', enabled:false },
-        { type:'group', subtype:'single', value:'all', text:'All', enabled:true },
-        { type:'group', subtype:'single', value:'Blood_T-cell', text:'Blood T-cell', enabled:false },
-        { type:'group', subtype:'single', value:'Brain', text:'Brain', enabled:false },
-        { type:'group', subtype:'single', value:'CellLine', text:'Cell Line', enabled:false },
-        { type:'group', subtype:'single', value:'cord_blood_sample', text:'Cord Blood Sample', enabled:false },
-        { type:'group', subtype:'single', value:'cord_blood_reference', text:'Cord Blood Reference', enabled:false },
-        { type:'group', subtype:'single', value:'ES-deriv', text:'ES-derived', enabled:false },
-        { type:'group', subtype:'single', value:'ESC', text:'ESC', enabled:false },
-        { type:'group', subtype:'single', value:'Female', text:'Female', enabled:false },
-        { type:'group', subtype:'single', value:'HSC_B-cell', text:'HSC B-cell', enabled:false },
-        { type:'group', subtype:'single', value:'ImmuneAndNeurosphCombinedIntoOneGroup', text:'Immune and neurosphere (combined)', enabled:false },
-        { type:'group', subtype:'single', value:'iPSC', text:'iPSC', enabled:false },
-        { type:'group', subtype:'single', value:'Male', text:'Male', enabled:false },
-        { type:'group', subtype:'single', value:'Muscle', text:'Muscle', enabled:false },
-        { type:'group', subtype:'single', value:'Neurosph', text:'Neurosph', enabled:false },
-        { type:'group', subtype:'single', value:'Other', text:'Other', enabled:false },
-        { type:'group', subtype:'single', value:'PrimaryCell', text:'Primary Cell', enabled:false },
-        { type:'group', subtype:'single', value:'PrimaryTissue', text:'Primary Tissue', enabled:false },
-        { type:'group', subtype:'single', value:'Sm._Muscle', text:'Small Muscle', enabled:false },
+        { type:'group', subtype:'single', value:'all', text:'All', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'digestiveSystem', text:'Digestive System', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e11.5', text:'Embryonic day 11.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e12.5', text:'Embryonic day 12.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e13.5', text:'Embryonic day 13.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e14.5', text:'Embryonic day 14.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e15.5', text:'Embryonic day 15.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'e16.5', text:'Embryonic day 16.5', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'facial-prominence', text:'Facial Prominence', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'forebrain', text:'Forebrain', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'heart', text:'Heart', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'hindbrain', text:'Hindbrain', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'intestine', text:'Intestine', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'kidney', text:'Kidney', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'limb', text:'Limb', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'liver', text:'Liver', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'lung', text:'Lung', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'neural-tube', text:'Neural Tube', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'P0', text:'Day-of-birth', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'single', value:'stomach', text:'Stomach', enabled:true, enabledInProduction:true },
       ],
       pairs: [],
       pairsHg19: [
-        { type:'group', subtype:'paired', value:'adult_blood_sample_vs_adult_blood_reference', text:'Adult Blood Sample vs Adult Blood Reference', enabled:true },
-        { type:'group', subtype:'paired', value:'Brain_vs_Neurosph', text:'Brain vs Neurosph', enabled:true },
-        { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other', enabled:true },
-        { type:'group', subtype:'paired', value:'CellLine_vs_PrimaryCell', text:'Cell Line vs Primary Cell', enabled:true },
-        { type:'group', subtype:'paired', value:'cord_blood_sample_vs_cord_blood_reference', text:'Cord Blood Sample vs Cord Blood Reference', enabled:true },
-        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-derived', enabled:true },
-        { type:'group', subtype:'paired', value:'ESC_vs_iPSC', text:'ESC vs iPSC', enabled:true },
-        { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell', enabled:true },
-        { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female', enabled:true },
-        { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle', enabled:true },
-        { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell', enabled:true },
+        { type:'group', subtype:'paired', value:'adult_blood_sample_vs_adult_blood_reference', text:'Adult Blood Sample vs Adult Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Blood_T-cell_vs_Non-T-cell_Roadmap', text:'Blood T-cell vs Non-T-cell Roadmap', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Brain_vs_Neurosph', text:'Brain vs Neurosph', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'CellLine_vs_PrimaryCell', text:'Cell Line vs Primary Cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'cord_blood_sample_vs_cord_blood_reference', text:'Cord Blood Sample vs Cord Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-derived', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'ESC_vs_iPSC', text:'ESC vs iPSC', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell', enabled:true, enabledInProduction:true },
       ],
-      pairsHg38: [],
-      pairsMm10: [],
+      pairsHg38: [
+        { type:'group', subtype:'paired', value:'adult_blood_sample_vs_adult_blood_reference', text:'Adult Blood Sample vs Adult Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Blood_T-cell_vs_Non-T-cell_Roadmap', text:'Blood T-cell vs Non-T-cell Roadmap', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Brain_vs_Neurosph', text:'Brain vs Neurosph', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Brain_vs_Other', text:'Brain vs Other', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'CellLine_vs_PrimaryCell', text:'Cell Line vs Primary Cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'cord_blood_sample_vs_cord_blood_reference', text:'Cord Blood Sample vs Cord Blood Reference', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'ESC_vs_ES-deriv', text:'ESC vs ES-derived', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'ESC_vs_iPSC', text:'ESC vs iPSC', enabled:true, enabledInProduction:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'HSC_B-cell_vs_Blood_T-cell', text:'HSC B-cell vs Blood T-cell', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Male_vs_Female', text:'Male vs Female', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'Muscle_vs_Sm._Muscle', text:'Muscle vs Small Muscle', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'PrimaryTissue_vs_PrimaryCell', text:'Primary Tissue vs Primary Cell', enabled:true, enabledInProduction:true },
+      ],
+      pairsMm10: [
+        { type:'group', subtype:'paired', value:'e11.5_vs_P0', text:'Embryonic day 11.5 vs Day-of-birth', enabled:true, enabledInProduction:true },
+        { type:'group', subtype:'paired', value:'forebrain_vs_hindbrain', text:'Forebrain vs Hindbrain', enabled:true, enabledInProduction:true },
+      ],
       dhs: [],
       dhsHg19: [
-        { type:'group', subtype:'dhs', value:'827samples', text:'827-Sample Master List', enabled:true },
+        { type:'group', subtype:'dhs', value:'827samples', text:'827-Sample Master List', enabled:true, enabledInProduction:false },
       ],
       dhsHg38: [],
       dhsMm10: [],
       modes: [],
       modesHg19: [
-        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true },
-        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:true },
-        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:true },
+        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:true, enabledInProduction:false },
       ],
       modesHg38: [
-        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true },
-        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:false },
-        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:false },
+        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:false, enabledInProduction:false },
       ],
       modesMm10: [
-        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true },
-        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:false },
-        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:false },
+        { type:'mode', subtype:'single', value:'single', text:'Single',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'paired', value:'paired', text:'Paired',    enabled:true, enabledInProduction:true },
+        { type:'mode', subtype:'dhs', value:'dhs', text:'DHS master list', enabled:false, enabledInProduction:false },
       ],
       genomes: [
         { type:'genome', subtype:'hg19', value:'hg19', text:'hg19' },
@@ -183,6 +206,8 @@ class ViewerNavigation extends React.Component {
         { type:'genome', subtype:'mm10', value:'mm10', text:'mm10' },
       ]
     };
+    this.handleClick = this.handleClick.bind(this);
+    this.constructTabixURL = this.constructTabixURL.bind(this);
     this.handleNavDropdownSelect = this.handleNavDropdownSelect.bind(this);
     this.closeAboutModal = this.closeAboutModal.bind(this);
     this.openAboutModal = this.openAboutModal.bind(this);
@@ -190,6 +215,8 @@ class ViewerNavigation extends React.Component {
     this.epilogosRangeUpdated = this.epilogosRangeUpdated.bind(this);
     this.closePermalinkModal = this.closePermalinkModal.bind(this);
     this.openPermalinkModal = this.openPermalinkModal.bind(this);
+    this.closeTabixModal = this.closeTabixModal.bind(this);
+    this.openTabixModal = this.openTabixModal.bind(this);
     this.randomInt = this.randomInt.bind(this);
     
     if (this.props.groupGenome === 'hg19') {
@@ -219,6 +246,43 @@ class ViewerNavigation extends React.Component {
       this.state.dhs = this.state.dhsMm10;
       this.state.modes = this.state.modesMm10;
     }
+    
+    if ((this.state.stateModel === '15') || (this.state.stateModel === '18') || (this.state.stateModel === '25')) {
+      if ((this.state.pqType === 'KL') || (this.state.pqType === 'KLs') || (this.state.pqType === 'KLss')) {
+        this.state.tabixBtnDisabled = false;
+      }
+    }
+  }
+  
+  handleClick(event) {
+    document.activeElement.blur();
+    event.preventDefault();
+    event.stopPropagation();
+    var targetAttr = event.target.target;
+    var href = event.target.href;
+    var name = event.target.name;
+/*
+    console.log("href", href);
+    console.log("name", name);
+*/
+    if (name == "tabix") {
+      var tabixCmd = 'tabix' + ' ' + this.constructTabixURL() + ' ' + this.state.coordinateRange;
+//       console.log("copying tabix command to clipboard...", tabixCmd);
+      this.setState({
+        tabixCmd : tabixCmd
+      }, function() {
+        copy(tabixCmd);
+        this.openTabixModal();
+      })
+    }
+  }
+  
+  constructTabixURL() {
+    // http://epilogos.altiusinstitute.org/assets/epilogos/v06_16_2017/hg38/15/group/Other.KLss.bed.gz
+    var protocol = 'https://';
+    var pathPrefix = '/assets/epilogos/v06_16_2017'
+    var url = protocol + this.state.host + pathPrefix + '/' + this.state.groupGenome + '/' + this.state.stateModel + '/group/' + this.state.groupType + '.' + this.state.pqType + '.bed.gz';
+    return url;
   }
   
   handleNavDropdownSelect(eventKey) {
@@ -267,6 +331,22 @@ class ViewerNavigation extends React.Component {
         else if (newGenome == 'hg19' && newMode == 'dhs') {
           viewerURL += "&model=" + AppConst.defaultEpilogosViewerHg19DHSStateModel;
           viewerURL += "&group=" + AppConst.defaultEpilogosViewerHg19DHSGroup;
+        }
+        else if (newGenome == 'hg38' && newMode == 'single') {
+          viewerURL += "&model=" + AppConst.defaultEpilogosViewerHg38SingleStateModel;
+          viewerURL += "&group=" + AppConst.defaultEpilogosViewerHg38SingleGroup;
+        }
+        else if (newGenome == 'hg38' && newMode == 'paired') {
+          viewerURL += "&model=" + AppConst.defaultEpilogosViewerHg38PairedStateModel;
+          viewerURL += "&group=" + AppConst.defaultEpilogosViewerHg38PairedGroup;
+        }
+        else if (newGenome == 'mm10' && newMode == 'single') {
+          viewerURL += "&model=" + AppConst.defaultEpilogosViewerMm10SingleStateModel;
+          viewerURL += "&group=" + AppConst.defaultEpilogosViewerMm10SingleGroup;
+        }
+        else if (newGenome == 'mm10' && newMode == 'paired') {
+          viewerURL += "&model=" + AppConst.defaultEpilogosViewerMm10PairedStateModel;
+          viewerURL += "&group=" + AppConst.defaultEpilogosViewerMm10PairedGroup;
         }
         // other genomes only have "single" mode, so we should not need to test
       }
@@ -330,6 +410,16 @@ class ViewerNavigation extends React.Component {
   closePermalinkModal() {
     document.activeElement.blur();
     this.setState({ showPermalinkModal: false });
+  }
+  
+  openTabixModal() {
+    document.activeElement.blur();
+    this.setState({ showTabixModal: true });
+  }
+  
+  closeTabixModal() {
+    document.activeElement.blur();
+    this.setState({ showTabixModal: false });
   }
   
   epilogosPermalinkUpdated(e) {
@@ -400,6 +490,25 @@ class ViewerNavigation extends React.Component {
           <a href={this.state.permalink}>{this.state.permalink}</a>
         </p>
       </div>;
+      
+    let tabixContent = 
+      <div>
+        <h4>tabix access</h4>
+        <div className="paragraph">
+          The <em>tabix</em> utility quickly retrieves elements from indexed datasets overlapping regions of interest. This utility may be used to query <em>epilogos</em> qcat-formatted datasets for the desired coordinates:
+        </div>
+        <div className="paragraph">
+          <div className="tabix-cmd">$ {this.state.tabixCmd}</div>
+        </div>
+        <div className="paragraph">
+          For convenience, this command has been copied to your system clipboard and can be pasted into a terminal session directly.
+        </div>
+        <div className="paragraph">
+          Note: If you need to install <em>tabix</em>, it can be compiled from source available via <a href="https://github.com/samtools/htslib" target="_blank">GitHub</a> or installed via package managers like <em>apt-get</em> (Ubuntu), <em>yum</em> (CentOS/RHL), <a href="https://bioconda.github.io/" target="_blank">Bioconda</a> or <a href="https://brew.sh/" target="_blank">Homebrew</a> (OS X).
+        </div>
+      </div>;
+      
+    let groupTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosGroupMetadataByGenome[this.state.groupGenome][this.state.groupType].text}</div>Samples</div>;
     
     if ((this.state.groupSubtype === 'single') || (this.state.groupSubtype === 'paired')) {
       if (this.props.groupGenome === 'hg19') {
@@ -424,17 +533,21 @@ class ViewerNavigation extends React.Component {
       }
     }
     if ((this.state.groupSubtype === 'single') && (this.state.groupType === 'ImmuneAndNeurosphCombinedIntoOneGroup')) {
+      var stateModelTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosStateModelMetadataByGenome[this.state.groupGenome][this.state.stateModel].titleText}</div>State model</div>;
       var stateModelComponents = stateModels.map(sm =>
         sm.value != '15' ? <MenuItem key={sm.value} eventKey={sm} disabled={true}><div className="disabled-item">{sm.text}</div></MenuItem>  : sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem>
       );
     } 
     else {
+      var stateModelTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosStateModelMetadataByGenome[this.state.groupGenome][this.state.stateModel].titleText}</div>State model</div>;
       var stateModelComponents = stateModels.map(sm =>
         {
           return !sm.enabled ? <MenuItem key={sm.value} eventKey={sm} disabled>{sm.text}</MenuItem> : sm.value == this.state.stateModel ? <MenuItem key={sm.value} eventKey={sm}><div className="selected-item">{sm.text}</div></MenuItem> : <MenuItem key={sm.value} eventKey={sm}>{sm.text}</MenuItem> 
         }
       );
     }
+    
+    let pqLevelTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosKLMetadataByGenome['hg19'][this.state.pqType].titleText}</div>Complexity</div>;
     
     let pqLevelComponents = this.state.pqLevels.map(pqLevel =>
       {
@@ -444,17 +557,39 @@ class ViewerNavigation extends React.Component {
     
     let singleComponents = this.state.single.map(group =>
       {
-        return !group.enabled ? <MenuItem key={group.value} eventKey={group} disabled>{group.text}</MenuItem> : group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+        if (this.state.host == AppConst.epilogosDevelopmentHostname) {
+          return !group.enabled ? <MenuItem key={group.value} eventKey={group} disabled>{group.text}</MenuItem> : group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+        }
+        else if (this.state.host == AppConst.epilogosProductionHostname) {
+          return !group.enabledInProduction ? "" : group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+        }
       }
     );
     
     let pairedComponents = this.state.pairs.map(group =>
-      group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+      {
+        if (this.state.host === AppConst.epilogosDevelopmentHostname) {
+          return (!group.enabled) ? "" : ((group.value == this.state.groupType) ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>);
+        }
+        else if (this.state.host === AppConst.epilogosProductionHostname) {
+          return (!group.enabledInProduction) ? "" : ((group.value == this.state.groupType) ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>);
+        }
+      }
     );
     
     let dhsComponents = this.state.dhs.map(group =>
-      group.value == this.state.groupType ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+//       (!group.enabled) ? "" : (group.value == this.state.groupType) ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>
+{
+        if (this.state.host === AppConst.epilogosDevelopmentHostname) {
+          return (!group.enabled) ? "" : ((group.value == this.state.groupType) ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>);
+        }
+        else if (this.state.host === AppConst.epilogosProductionHostname) {
+          return (!group.enabledInProduction) ? "" : ((group.value == this.state.groupType) ? <MenuItem key={group.value} eventKey={group}><div className="selected-item">{group.text}</div></MenuItem> : <MenuItem key={group.value} eventKey={group}>{group.text}</MenuItem>);
+        }
+      }
     );
+    
+    let modeTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosViewerModeDetailed[this.state.groupSubtype]}</div>Mode</div>;
     
     let modeComponents = this.state.modes.map(mode =>
       { 
@@ -462,9 +597,13 @@ class ViewerNavigation extends React.Component {
       }
     );
     
-    let genomeComponents = this.state.genomes.map(genome =>
-      genome.value == this.state.groupGenome ? <MenuItem key={genome.value} eventKey={genome}><div className="selected-item">{genome.text}</div></MenuItem> : <MenuItem key={genome.value} eventKey={genome}>{genome.text}</MenuItem>
+    let genomeTitle = <div><div className="navbar-menu-subtitle">{AppConst.epilogosViewerGenomesDetailed[this.state.groupGenome]}</div>Genome</div>;
+    
+    let genomeComponents = this.state.genomes.map(genome => 
+      genome.value == this.state.groupGenome ? <MenuItem key={genome.value} eventKey={genome}><div className="selected-item">{AppConst.epilogosViewerGenomesDetailed[genome.text]}</div></MenuItem> : <MenuItem key={genome.value} eventKey={genome}>{AppConst.epilogosViewerGenomesDetailed[genome.text]}</MenuItem>
     );
+    
+    let tsrTitle = <div><div className="navbar-menu-subtitle">&nbsp;</div>Exemplar regions</div>;
     
     let cw = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
     
@@ -478,25 +617,28 @@ class ViewerNavigation extends React.Component {
                           brandSubtitle={this.props.brandSubtitle} 
                           showSubtitle={false} />
             </NavItem>
-            <NavDropdown title="Genome" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+            <NavDropdown title={genomeTitle} id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {genomeComponents}
             </NavDropdown>
-            <NavDropdown title="Mode" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
-              {modeComponents}
-            </NavDropdown>
-            <NavDropdown title="Groups" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+            {
+              (this.state.host == AppConst.epilogosDevelopmentHostname) &&
+                <NavDropdown title={modeTitle} id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+                  {modeComponents}
+                </NavDropdown>
+            }            
+            <NavDropdown title={groupTitle} id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               { this.state.groupSubtype === 'single' && singleComponents }
               { this.state.groupSubtype === 'paired' && pairedComponents }
               { this.state.groupSubtype === 'dhs'    && dhsComponents    }
             </NavDropdown>
-            <NavDropdown title="KL level" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
-              {pqLevelComponents}
-            </NavDropdown>
-            <NavDropdown title="State model" id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+            <NavDropdown title={stateModelTitle} id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
               {stateModelComponents}
             </NavDropdown>
+            <NavDropdown title={pqLevelTitle} id="basic-nav-dropdown" onSelect={this.handleNavDropdownSelect}>
+              {pqLevelComponents}
+            </NavDropdown>
             { (this.props.pqType != "KL_stacked") && (this.props.stateModel != "sm_stacked") &&
-              <NavDropdown title="Exemplar regions" id="basic-nav-dropdown">
+              <NavDropdown title={tsrTitle} id="basic-nav-dropdown">
                 <TopScoringRegions
                   key={this.props.tsrKey}
                   stateModel={this.props.stateModel}
@@ -512,7 +654,10 @@ class ViewerNavigation extends React.Component {
             }
           </Nav>
           <Nav pullRight>
-            <NavItem disabled className="viewer-navigation-title"><div>{this.props.title}</div><div className="nav-subtitle">{this.state.coordinateRange}</div></NavItem>
+            {
+              /* <NavItem disabled className="viewer-navigation-title"><div>{this.props.title}</div><div className="nav-subtitle">{this.state.coordinateRange}</div></NavItem> */
+              <NavItem className="nav-title-v2"><div>{this.state.coordinateRange}&nbsp;&nbsp; <Button bsStyle="success" className="btn-tabix-export" onClick={this.handleClick} name="tabix" disabled={this.state.tabixBtnDisabled}><FaExternalLink /> data</Button> </div></NavItem>
+            }
           </Nav>
         </Navbar>
         
@@ -537,6 +682,18 @@ class ViewerNavigation extends React.Component {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.closePermalinkModal}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+        
+        <Modal show={this.state.showTabixModal} onHide={this.closeTabixModal}>
+          <Modal.Header closeButton>
+            <Modal.Title><div className="brand-title">{this.props.brandTitle}</div><div className="brand-subtitle">{this.props.brandSubtitle}</div></Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {tabixContent}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.closeTabixModal}>Close</Button>
           </Modal.Footer>
         </Modal>
         

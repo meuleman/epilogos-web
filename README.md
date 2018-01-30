@@ -14,7 +14,7 @@ This will keep it running and rebuilding a development bundle until you type Ctr
 
 ## Production
 
-When ready to deploy:
+When you're ready to deploy:
 
 ```
 $ npm run build

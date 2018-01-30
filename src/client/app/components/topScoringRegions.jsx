@@ -97,6 +97,53 @@ class TopScoringRegions extends React.Component {
           13:['Repressed PolyComb','#808080'],
           14:['Weak Repressed PolyComb','#c0c0c0'],
           15:['Quiescent/Low','#ffffff']
+        },
+        'observed_aux':{
+          1:['Active TSS','#ff0000'],
+          2:['Flanking TSS','#ff4500'],
+          3:['Flanking TSS Upstream','#ff4500'],
+          4:['Flanking TSS Downstream','#ff4500'],
+          5:['Strong transcription','#008000'],
+          6:['Weak transcription','#006400'],
+          7:['Genic enhancer 1','#c2e105'],
+          8:['Genic enhancer 2','#c2e105'],
+          9:['Active Enhancer 1','#ffc34d'],
+          10:['Active Enhancer 2','#ffc34d'],
+          11:['Weak Enhancer','#ffff00'],
+          12:['ZNF genes + repeats','#66cdaa'],
+          13:['Heterochromatin','#8a91d0'],
+          14:['Bivalent/Poised TSS','#cd5c5c'],
+          15:['Bivalent Enhancer','#bdb76b'],
+          16:['Repressed PolyComb','#808080'],
+          17:['Weak Repressed PolyComb','#c0c0c0'],
+          18:['Quiescent/Low','#ffffff']
+        },
+        'imputed':{
+          1:['Active TSS','#ff0000'],
+          2:['Promoter Upstream TSS','#ff4500'],
+          3:['Promoter Downstream TSS with DNase','#ff4500'],
+          4:['Promoter Downstream TSS','#ff4500'],
+          5:['Transcription 5\'','#008000'],
+          6:['Transcription','#008000'],
+          7:['Transcription 3\'','#008000'],
+          8:['Weak transcription','#009600'],
+          9:['Transcription Regulatory','#c2e105'],
+          10:['Transcription 5\' Enhancer','#c2e105'],
+          11:['Transcription 3\' Enhancer','#c2e105'],
+          12:['Transcription Weak Enhancer','#c2e105'],
+          13:['Active Enhancer 1','#ffc34d'],
+          14:['Active Enhancer 2','#ffc34d'],
+          15:['Active Enhancer Flank','#ffc34d'],
+          16:['Weak Enhancer 1','#ffff00'],
+          17:['Weak Enhancer 2','#ffff00'],
+          18:['Enhancer Acetylation Only','#ffff00'],
+          19:['DNase only','#ffff66'],
+          20:['ZNF genes + repeats','#66cdaa'],
+          21:['Heterochromatin','#8a91d0'],
+          22:['Poised Promoter','#e6b8b7'],
+          23:['Bivalent Promoter','#7030a0'],
+          24:['Repressed PolyComb','#808080'],
+          25:['Quiescent/Low','#ffffff']
         }
       }],
       chromStatesMm10: [{
@@ -181,6 +228,7 @@ class TopScoringRegions extends React.Component {
     ];
     let tsu = this.props.dataURLPrefix + "/" + this.props.groupGenome + "/" + this.props.stateModel + "/exemplar/" + this.props.groupType + "." + this.props.pqType + ".top100.txt";
     this.state.topScoringURL = tsu;
+    //console.log("tsu", tsu);
     axios.get(tsu)
       .then(res => {
         let reactTableData = this.convertScoresToReactTableDataObj(res.data);
@@ -217,6 +265,7 @@ class TopScoringRegions extends React.Component {
       })
       .catch(function(err) {
         console.log("Error: " + err);
+        console.log("(Tip: Double-check that there is a state model table that correctly associates states that are in the exemplar query result.)")
       });
   }
   

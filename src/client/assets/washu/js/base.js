@@ -2010,7 +2010,9 @@ case 1:
 	c[3]=input[2];
 	break;
 case 2:
+  //console.log("input", input);
 	var t=input.split(/[^\w\.]/);
+	//console.log("t", t);
 	if(t.length==3) {
 		c[0]=c[2]=t[0];
 		c[1]=parseInt(t[1]);
@@ -2038,6 +2040,7 @@ case 3:
 default:
 	fatalError('parseCoordinate: unknown type');
 }
+//console.log("c (parseCoordinate)", c);
 if(isNaN(c[1])) return null;
 if(isNaN(c[3])) return null;
 if(c[1]<0 || c[3]<=0) return null;
@@ -2076,7 +2079,9 @@ if(_len) {
 	var x=parseInt(_len/2);
 	return [param,Math.max(x-10000,0),Math.min(x+10000,_len-1)];
 }
+//console.log("param (start parseCoord_wildgoose)", param);
 var c=this.genome.parseCoordinate(param,2);
+//console.log("c (start parseCoord_wildgoose)", c);
 if(c) {
 	if(c[0]==c[2]) {
 		if(highlight) {
@@ -6558,7 +6563,7 @@ case 15:
                 hvobj.callingtk.qtc.unit_res = menu.lr.unit.value;
                 hvobj.callingtk.qtc.bin_size = menu.lr.binsize.value;
                 //trying to issue another ajax query, this is window currently
-                console.log(hvobj.callingtk);
+                //console.log(hvobj.callingtk);
                 //hvobj.callingtk.ft=FT_hi_c;
                 this.browser.ajax('lrtk_nodspfilter=on&dbName='+this.browser.genome.name+this.browser.displayedRegionParam_narrow()+trackParam([hvobj.callingtk]),function(data){bbj.hengeview_lrtk_cb(data,hvobj);});
 	        break;
@@ -6952,6 +6957,7 @@ genome object must already been built
 handles multiple triggers in iterative manner
 TODO .genome.defaultStuff.initmatplot should be handled somewhere else
 */
+//console.log("param", param);
 if(!param) {
 	// escape iteration
 	this.shieldOff();
@@ -7046,6 +7052,7 @@ if(param.geneset_rawstring) {
 	delete param.geneset_rawstring;
 	return;
 } else if(param.coord_rawstring || param.juxtapose_rawstring || this.regionLst.length==0) {
+  //console.log('this.genome', this.genome);
 	if(this.genome.iscustom) {
 		/* custom genome, avoid ajax
 		decide dsp by js, duplicate task of cgi
@@ -7109,9 +7116,13 @@ if(param.geneset_rawstring) {
 	}
 	// given coord, or juxtaposition
 	var c=this.defaultposition();
+	//console.log('c (pre)',c);
 	var startchr=c[0], stopchr=c[2], startcoord=c[1], stopcoord=c[3];
+	//console.log('param', param);
 	if(param.coord_rawstring) {
+  	//console.log('param.coord_rawstring', param.coord_rawstring);
 		var c=this.parseCoord_wildgoose(param.coord_rawstring,true);
+		//console.log('c (post)',c);
 		if(c.length==3) {
 			startchr=stopchr=c[0];
 			startcoord=c[1];
