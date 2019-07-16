@@ -1,43 +1,63 @@
 {
-  "name": "epilogos-web",
+  "name": "epilogos",
   "version": "1.0.0",
-  "description": "visualization and analysis of chromatin state model data",
-  "main": "index.js",
-  "scripts": {
-    "dev": "webpack -d --watch",
-    "build": "webpack -p"
-  },
+  "description": "Web client for epilogos track data",
+  "private": false,
   "author": "Alex Reynolds",
-  "license": "ISC",
-  "devDependencies": {
-    "autobind": "^1.0.3",
-    "babel-core": "^6.24.1",
-    "babel-loader": "^6.4.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "prop-types": "^15.5.8",
-    "webpack": "^2.7.0"
-  },
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Alex Reynolds",
+      "url": "http://github.com/alexpreynolds"
+    }
+  ],
   "dependencies": {
-    "axios": "^0.16.1",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-stage-2": "^6.24.1",
-    "copy-to-clipboard": "^3.0.8",
-    "d3": "^4.12.0",
-    "jquery": "^3.2.1",
-    "object-hash": "^1.1.8",
-    "prop-types": "^15.6.0",
-    "query-string": "^4.3.4",
-    "react": "^16.2.0",
-    "react-bootstrap": "^0.32.0",
-    "react-dom": "^16.2.0",
-    "react-grid-system": "^3.1.2",
-    "react-icons": "^2.2.7",
-    "react-native-timer": "^1.3.1",
-    "react-table": "^6.7.6"
+    "@babel/runtime": "^7.4.5",
+    "axios": "^0.18.1",
+    "bootstrap": "^4.3.1",
+    "classnames": "^2.2.6",
+    "deep-equal": "^1.0.1",
+    "file-saver": "^2.0.2",
+    "higlass": "1.5.8",
+    "jsonpath": "^1.0.2",
+    "pretty-checkbox": "^3.0.3",
+    "react": "^16.8.6",
+    "react-bootstrap-table-next": "^1.4.4",
+    "react-burger-menu": "^2.6.10",
+    "react-copy-to-clipboard": "^5.0.1",
+    "react-debounce-input": "^3.2.0",
+    "react-dom": "^16.8.6",
+    "react-grid-system": "^4.4.6",
+    "react-icons": "^3.7.0",
+    "react-protected-mailto": "^1.0.3",
+    "react-responsive-carousel": "^3.1.49",
+    "react-reveal": "^1.2.2",
+    "react-scripts": "^2.1.8",
+    "react-svg-spinner": "^1.0.4",
+    "react-toggle": "^4.0.2",
+    "react-tooltip": "^3.10.0",
+    "react-visibility-sensor": "^5.0.2",
+    "reactstrap": "^6.5.0",
+    "source-map-explorer": "^2.0.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Altius/epilogos-web.git"
+  "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "rsync -avzhe --progress ./build/* /var/www/epilogos"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }
