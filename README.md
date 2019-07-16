@@ -1,8 +1,8 @@
 # epilogos-client
 
-This is a React application for presenting epilogos datasets. This includes an `epilogos-annotations` Express.js service for genomic annotation autocompletion and lookup, which is backed by a Redis store.
+This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org).
 
-The following steps document how to set up a vanilla Ubuntu EC2 host with this application, using `nginx` to run production and development client servers and the Express.js-backed annotations service.
+The following steps document how to set up a vanilla Ubuntu EC2 host with this application, using `nginx` to run production and development client servers.
 
 ## Setup
 
@@ -31,9 +31,9 @@ $ npm install
 
 ### nginx
 
-The `nginx` server is used to serve the production site on tcp port 80, to proxy requests to the development server running on tcp port 3000, and to proxy requests to the Express.js annotations server running on tcp port 8000.
+The `nginx` server is used to serve the production site on tcp port 443, to proxy requests to the development server running on tcp port 3000.
 
-If necessary, use the EC2 console to set up security group policies that open up tcp ports 80, 3000, and 8000 for public (inbound) access.
+If necessary, use the EC2 console to set up security group policies that open up tcp ports 80, 443, and 3000 for public (inbound) access.
 
 #### Installation
 
@@ -61,15 +61,33 @@ $ sudo find /var/www -type f -exec chmod 0660 {} \;
 $ sudo find /var/www -type d -exec chmod 2770 {} \;
 ```
 
-Create a text file called `/etc/nginx/sites-available/epilogos-production` and add the following:
+Create a text file called `/etc/nginx/sites-available/epilogos-ssl` and add the following:
 
 ```
 server {
-  listen 80;
-  listen [::]:80;
+  listen 443 ssl;
+  listen [::]:443 ssl;
 
   server_name epilogos.altius.org;
   server_name 18.218.203.184;
+  
+  ssl_certificate /etc/ssl/certs/altius-bundle.crt;
+  ssl_certificate_key /etc/ssl/private/altius.org.key;
+  ssl_protocols TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_dhparam /etc/ssl/certs/dhparam.pem;
+  ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+  ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
+  ssl_session_timeout  10m;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_tickets off; # Requires nginx >= 1.5.9
+  ssl_stapling on; # Requires nginx >= 1.3.7
+  ssl_stapling_verify on; # Requires nginx => 1.3.7
+  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver_timeout 5s;
+  add_header X-Frame-Options DENY;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
 
   root /var/www/epilogos;
   index index.html;
@@ -82,7 +100,7 @@ server {
   }
 
   gzip on;
-  gzip_comp_level    5;
+  gzip_comp_level    6;
   gzip_min_length    256;
   gzip_proxied       any;
   gzip_vary          on;
@@ -124,19 +142,60 @@ $ wget -qO- 'http://169.254.169.254/latest/meta-data/public-ipv4'
 Make the following symlink:
 
 ```
-$ sudo ln -s /etc/nginx/sites-available/epilogos-production /etc/nginx/sites-enabled/epilogos-production
+$ sudo ln -s /etc/nginx/sites-available/epilogos-ssl /etc/nginx/sites-enabled/epilogos-ssl
 ```
 
-##### Development
-
-Create a text file called `/etc/nginx/sites-available/epilogos-development` and add the following:
+Create a text file called `/etc/nginx/sites-available/epilogos` and add the following:
 
 ```
 server {
-  listen 3000;
+  listen 80;
+  listen [::]:80;
+
+  server_name epilogos.altius.org;
+  server_name 18.218.203.184;
+
+  return 301 https://$server_name$request_uri;
+}
+```
+
+Make the following symlink:
+
+```
+$ sudo ln -s /etc/nginx/sites-available/epilogos /etc/nginx/sites-enabled/epilogos
+```
+
+Requests to port 80 will be permanently redirected to port 443.
+
+##### Development
+
+Create a text file called `/etc/nginx/sites-available/epilogos-development-ssl` and add the following:
+
+```
+server {
+  listen 3000 ssl;
+  listen [::]:3000 ssl;
   
   server_name epilogos.altius.org;
   server_name 18.218.203.184;
+  
+  ssl_certificate /etc/ssl/certs/altius-bundle.crt;
+  ssl_certificate_key /etc/ssl/private/altius.org.key;
+  ssl_protocols TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_dhparam /etc/ssl/certs/dhparam.pem;
+  ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+  ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
+  ssl_session_timeout  10m;
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_tickets off; # Requires nginx >= 1.5.9
+  ssl_stapling on; # Requires nginx >= 1.3.7
+  ssl_stapling_verify on; # Requires nginx => 1.3.7
+  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver_timeout 5s;
+  add_header X-Frame-Options DENY;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
   
   access_log /var/log/nginx/epilogos-development.access.log;
   error_log /var/log/nginx/epilogos-development.error.log;
@@ -161,52 +220,7 @@ $ wget -q -O - 'http://169.254.169.254/latest/meta-data/local-ipv4'
 Make the following symlink:
 
 ```
-$ sudo ln -s /etc/nginx/sites-available/epilogos-development /etc/nginx/sites-enabled/epilogos-development
-```
-
-#### Annotations
-
-Go into the root of the `epilogos-annotations` project directory and install required client modules:
-
-```
-$ npm install
-```
-
-##### Development
-
-Create a text file called `/etc/nginx/sites-available/epilogos-annotations` and add the following:
-
-```
-server {
-  listen 8000;
-    
-  server_name epilogos.altius.org;
-  server_name 18.218.203.184;
-  
-  access_log /var/log/nginx/epilogos-annotations.access.log;
-  error_log /var/log/nginx/epilogos-annotations.error.log;
-
-  location / {
-    proxy_pass http://ip-172-31-10-118.us-east-2.compute.internal:8081;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection 'upgrade';
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-  }
-}
-```
-
-If necessary, change the `proxy_pass` value to reflect the private IP address of the EC2 host. This is available from the EC2 console, or by running the following command:
-
-```
-$ wget -qO- 'http://169.254.169.254/latest/meta-data/local-ipv4'
-```
-
-Make the following symlink:
-
-```
-$ sudo ln -s /etc/nginx/sites-available/epilogos-annotations /etc/nginx/sites-enabled/epilogos-annotations
+$ sudo ln -s /etc/nginx/sites-available/epilogos-development-ssl /etc/nginx/sites-enabled/epilogos-development-ssl
 ```
 
 #### Startup
@@ -305,50 +319,6 @@ Create a text file in the React project directory called `epilogos-client.develo
 }
 ```
 
-Create another text file in the `epilogos-annotations` project directory called `epilogos-annotations.development.json`:
-
-```
-{
-  apps : [
-    {
-      name: "epilogos-annotations (development)",
-      script: "nodemon --exec npm run dev",
-      interpreter: "none",
-      watch: false,
-      cwd: "/home/ubuntu/epilogos/epilogos-annotations",
-      env: {
-        "DEBUG": "epilogos-annotations:*",
-        "PORT": 8081,
-        "NODE_ENV": "development",
-        "HOST": "ip-172-31-10-118.us-east-2.compute.internal"
-      }
-    }
-  ]
-}
-```
-
-And another text file in the `epilogos-annotations` project directory called `epilogos-annotations.production.json`:
-
-```
-{
-  apps : [
-    {
-      name: "epilogos-annotations (production)",
-      script: "npm run start",
-      interpreter: "none",
-      watch: false,
-      cwd: "/home/ubuntu/epilogos/epilogos-annotations",
-      env: {
-        "DEBUG": "epilogos-annotations:*",
-        "PORT": 8081,
-        "NODE_ENV": "production",
-        "HOST": "ip-172-31-10-118.us-east-2.compute.internal"
-      }
-    }
-  ]
-}
-```
-
 ###### Startup
 
 In the React project directory, start the development server:
@@ -380,137 +350,3 @@ $ pm2 save
 ```
 
 Run `pm2 list` to ensure that the development server process is up and running, and use `pm2 log <id>` to debug any errors.
-
-### Redis
-
-The Redis database is used to store and cache key-value pairs representing genomic annotations (genes, SNPs, etc.) and annotation prefixes, as well as genomic positions of those annotations. The Express.js service provides standard HTTP methods for uploading and querying the Redis store.
-
-#### Installation
-
-```
-$ sudo apt install tcl -y
-$ sudo apt install tk8.5 -y
-$ sudo apt install build-essential
-$ wget http://download.redis.io/redis-stable.tar.gz
-$ make
-$ make test
-$ sudo make install
-```
-
-#### Kernel setup
-
-Edit the following file:
-
-```
-$ sudo emacs /etc/sysctl.conf
-```
-
-Include the following directive:
-
-```
-vm.overcommit_memory = 1
-```
-
-Edit the following file:
-
-```
-$ sudo emacs /etc/rc.local
-```
-
-Add the following directive:
-
-```
-$ echo never > /sys/kernel/mm/transparent_hugepage/enabled
-```
-
-Reboot the server:
-
-```
-$ sudo shutdown -r now
-```
-
-#### System
-
-Edit the Redis configuration file:
-
-```
-$ emacs ~/redis-stable/redis.conf
-```
-
-Set the following key-value pairs:
-
-```
-maxmemory        1gb
-maxmemory-policy allkeys-lru
-daemonize        yes
-pidfile          /var/run/redis_6379.pid
-logfile          /var/log/redis_6379.log
-dir              /var/redis/6379
-```
-
-Set up Redis to run at boot:
-
-```
-$ sudo mkdir /etc/redis
-$ sudo cp ~/redis-stable/redis.conf /etc/redis/6379.conf
-$ sudo mkdir -p /var/redis/6379
-$ sudo cp ~/redis-stable/utils/redis_init_script /etc/init.d/redis_6379
-```
-
-Edit the Redis initialization script:
-
-```
-$ sudo emacs /etc/init.d/redis_6379
-```
-
-Add required keys in the `BEGIN INIT INFO` block:
-
-```
-# Required-Start:       $syslog
-# Required-Stop:        $syslog
-# Should-Start:         $local_fs
-# Should-Stop:          $local_fs
-```
-
-Update the system-wide defaults:
-
-```
-$ sudo update-rc.d redis_6379 defaults
-```
-
-Test startup of the Redis instance:
-
-```
-$ sudo /etc/init.d/redis_6379 start
-```
-
-Test call-response:
-
-```
-$ redis-cli
-127.0.0.1:6379> ping
-PONG
-```
-
-Reboot:
-
-```
-$ sudo shutdown -r now
-```
-
-Test call-response upon restart:
-
-```
-$ redis-cli
-127.0.0.1:6379> ping
-PONG
-```
-
-#### Python
-
-Install Python3 Redis dependencies:
-
-```
-$ sudo apt install python3-pip -y
-$ sudo pip3 install redis
-```
