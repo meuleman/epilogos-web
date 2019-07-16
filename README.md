@@ -2,7 +2,9 @@
 
 This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org).
 
-The following steps document how to set up a vanilla Ubuntu EC2 host with this application, using `nginx` to run production and development client servers.
+Setting up a HiGlass server is outside the scope of this document. HiGlass server and aggregation tools are available via GitHub: https://github.com/higlass
+
+The following steps document how to set up a vanilla Ubuntu EC2 host with this client application, using `nginx` to run production and development client servers.
 
 ## Setup
 
