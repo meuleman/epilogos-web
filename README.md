@@ -45,6 +45,24 @@ $ sudo apt install nginx -y
 
 #### Client
 
+##### SSL
+
+Get the SSL wildcard certificate and private key information for the Altius domain via the Informatics or IT group. 
+
+The certificate and key should be copied to the destinations `/etc/ssl/certs/altius-bundle.crt` and `/etc/ssl/private/altius.org.key`, respectively. 
+
+Set appropriate permissions on the private key:
+
+```
+# chmod 600 /etc/ssl/private/altius.org.key
+```
+
+Generate a Diffie-Hellman key exchange file that improves session security:
+
+```
+# openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+```
+
 ##### Production
 
 Grant permissions to the `ubuntu` user to join the `www-data` group:
