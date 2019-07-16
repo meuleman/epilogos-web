@@ -1,4 +1,4 @@
-# epilogos-client
+# epilogos-web
 
 This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org).
 
@@ -31,7 +31,7 @@ $ npm install
 
 ### nginx
 
-The `nginx` server is used to serve the production site on tcp port 443, to proxy requests to the development server running on tcp port 3000.
+The `nginx` server is used to serve the production site on tcp port 443, to redirect requests from tcp port 80 to port 443, and to proxy requests to the development server running on tcp port 3000.
 
 If necessary, use the EC2 console to set up security group policies that open up tcp ports 80, 443, and 3000 for public (inbound) access.
 
