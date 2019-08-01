@@ -5,6 +5,10 @@
   "private": false,
   "author": "Alex Reynolds",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Altius/epilogos-web.git"
+  },
   "contributors": [
     {
       "name": "Alex Reynolds",
@@ -38,7 +42,8 @@
     "react-tooltip": "^3.10.0",
     "react-visibility-sensor": "^5.0.2",
     "reactstrap": "^6.5.0",
-    "source-map-explorer": "^2.0.1"
+    "source-map-explorer": "^2.0.1",
+    "validator": "^11.1.0"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",

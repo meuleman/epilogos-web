@@ -47,12 +47,8 @@ class DrawerContent extends Component {
     
     this.state = {
       drawerParametersHeight: 87,
-      currentMouseoverRow: -1,
-      exemplarJumpActive: false,
-      exemplarRegions: [],
-      tableData: [],
-      chromatinStates: [],
-      selectedRow: [],
+      currentRoiMouseoverRow: -1,
+      currentExemplarMouseoverRow: -1,
       activeTab: 'settings',
       enteredSettingsButtonName: null,
       enteredSettingsButtonValue: null,
@@ -76,7 +72,8 @@ class DrawerContent extends Component {
       },
       tabs: {
         settings: true,
-        exemplars: true
+        exemplars: true,
+        roi: true
       },
       viewParams: {...this.props.viewParams},
       newViewParamsAreEqual: true
@@ -417,37 +414,51 @@ class DrawerContent extends Component {
         
     function contentByType(type) {
       switch (type) {
+        
+        case "roi":
+          let roiResult = "";
+          roiResult = <BootstrapTable 
+                        keyField='idx' 
+                        data={self.props.roiTableData}
+                        columns={roiColumns} 
+                        bootstrap4={true} 
+                        bordered={false}
+                        classes="elementTable"
+                        rowStyle={customRoiRowStyle}
+                        rowEvents={customRoiRowEvents}
+                        />
+          return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{roiResult}</div>;
+           
         case "exemplars":
-          let result = "";
-          let tooltips = [];
-          const kTooltipPrefix = 'tooltip-';
-          let kTooltipIdx = 0;
+          let exemplarResult = "";
+          let exemplarTooltips = [];
+          const kExemplarTooltipPrefix = 'tooltip-exemplar-';
+          let kExemplarTooltipIdx = 0;
           //self.state.chromatinStates.forEach((val, idx) => {
           self.props.exemplarChromatinStates.forEach((val, idx) => {
-            let id = "chromatinState-" + val;
+            let exemplarId = "exemplar-chromatinState-" + val;
             //console.log("val", val);
             //console.log("idx", idx);
             //console.log("self.props.viewParams.genome", self.props.viewParams.genome);
             //console.log("self.props.viewParams.model", self.props.viewParams.model);
             //console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]);
             //console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]);
-            let chromatinStateName = ((Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val] && Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val][0]) || "Undefined");
-            const kTooltipKey = kTooltipPrefix + kTooltipIdx;
-            tooltips.push(<ReactTooltip key={kTooltipKey} id={id} aria-haspopup='true' place="right" type="dark" effect="float">{chromatinStateName}</ReactTooltip>);
-            kTooltipIdx++;
+            let exemplarChromatinStateName = ((Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val] && Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val][0]) || "Undefined");
+            const kExemplarTooltipKey = kExemplarTooltipPrefix + kExemplarTooltipIdx;
+            exemplarTooltips.push(<ReactTooltip key={kExemplarTooltipKey} id={exemplarId} aria-haspopup='true' place="right" type="dark" effect="float">{exemplarChromatinStateName}</ReactTooltip>);
+            kExemplarTooltipIdx++;
           });
-          result = <BootstrapTable 
-                      keyField='idx' 
-                      //data={self.state.tableData} 
-                      data={self.props.exemplarTableData}
-                      columns={exemplarColumns} 
-                      bootstrap4={true} 
-                      bordered={false}
-                      classes="elementTable"
-                      rowStyle={customRowStyle}
-                      rowEvents={customRowEvents}
-                      />
-          return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{result}{tooltips}</div>;
+          exemplarResult = <BootstrapTable 
+                             keyField='idx' 
+                             data={self.props.exemplarTableData}
+                             columns={exemplarColumns} 
+                             bootstrap4={true} 
+                             bordered={false}
+                             classes="elementTable"
+                             rowStyle={customExemplarRowStyle}
+                             rowEvents={customExemplarRowEvents}
+                             />
+          return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{exemplarResult}{exemplarTooltips}</div>;
 
         case "settings":
           let parameters = [];
@@ -586,6 +597,188 @@ class DrawerContent extends Component {
       }
     }
     
+    let roiColumns = [
+      {
+        dataField: 'idx',
+        text: '',
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '24px',
+          borderBottom: '1px solid #b5b5b5',
+          textAlign: 'center',
+        },
+        style: {
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          marginLeft: '4px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          textAlign: 'center',
+        },
+        sort: true,
+        onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-idx-asc" id="roi-column-sort-idx-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-idx-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-idx-desc" id="roi-column-sort-idx-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-idx-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-idx-undefined" id="roi-column-sort-idx-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices</ReactTooltip><div data-tip data-for={"roi-column-sort-idx-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      },
+      {
+        dataField: 'element',
+        text: '',
+        formatter: elementRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '175px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontFamily: 'Source Code Pro',
+          fontWeight: 'normal',
+          fontSize: '0.675em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '3px',
+          paddingRight: '2px',
+        },
+        sort: true,
+        sortFunc: (a, b, order, dataField) => {
+          console.log(a.paddedPosition, b.paddedPosition, order, dataField);
+          if (order === 'asc') {
+            return b.paddedPosition.localeCompare(a.paddedPosition);
+          }
+          else {
+            return a.paddedPosition.localeCompare(b.paddedPosition); // desc
+          }          
+        },
+        onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-element-asc" id="roi-column-sort-element-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort intervals in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-element-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-element-desc" id="roi-column-sort-element-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort intervals in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-element-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-element-undefined" id="roi-column-sort-element-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by interval</ReactTooltip><div data-tip data-for={"column-sort-element-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      }
+    ];
+    
+    // add 'name' column to ROI, if present
+    if (this.props.roiMaxColumns > 3) {
+      roiColumns.push({
+        dataField: 'name',
+        text: '',
+        formatter: nameRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '70px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '3px',
+        },
+        sort: true,
+        onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-name-asc" id="roi-column-sort-name-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort names in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-name-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-name-desc" id="roi-column-sort-name-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort names in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-name-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-name-undefined" id="roi-column-sort-name-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by name</ReactTooltip><div data-tip data-for={"column-sort-name-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      })
+    }
+    
+    // add 'score' column to ROI, if present
+    if (this.props.roiMaxColumns > 4) {
+      roiColumns.push({
+        dataField: 'score',
+        text: '',
+        formatter: scoreRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '35px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontFamily: 'Source Code Pro',
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '2px',
+        },
+        sort: true,
+        onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-score-asc" id="roi-column-sort-score-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort scores in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-score-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-score-desc" id="roi-column-sort-score-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort scores in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-score-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-score-undefined" id="roi-column-sort-score-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by score</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      })
+    }
+    
+    // add 'strand' column to ROI, if present
+    if (this.props.roiMaxColumns > 5) {
+      roiColumns.push({
+        dataField: 'strand',
+        text: '',
+        formatter: strandRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '24px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontFamily: 'Source Code Pro',
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '0px',
+        },
+        sort: true,
+        onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-strand-asc" id="roi-column-sort-strand-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort strands in opposite order</ReactTooltip><div data-tip data-for={"roi-column-sort-strand-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-strand-desc" id="roi-column-sort-strand-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort strands in opposite order</ReactTooltip><div data-tip data-for={"roi-column-sort-strand-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-strand-undefined" id="roi-column-sort-strand-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by strand</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      })
+    }
+    
     const exemplarColumns = [
       {
         dataField: 'idx',
@@ -605,16 +798,16 @@ class DrawerContent extends Component {
           textAlign: 'center',
         },
         sort: true,
-        onSort: (field, order) => { this.props.onColumnSort(field, order); },
+        onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
-              return <div><ReactTooltip key="column-sort-idx-asc" id="column-sort-idx-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in descending order</ReactTooltip><div data-tip data-for={"column-sort-idx-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+              return <div><ReactTooltip key="exemplar-column-sort-idx-asc" id="exemplar-column-sort-idx-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in descending order</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
             case "desc":
-              return <div><ReactTooltip key="column-sort-idx-desc" id="column-sort-idx-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in ascending order</ReactTooltip><div data-tip data-for={"column-sort-idx-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+              return <div><ReactTooltip key="exemplar-column-sort-idx-desc" id="exemplar-column-sort-idx-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in ascending order</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
             case "undefined":
             default:
-              return <div><ReactTooltip key="column-sort-idx-undefined" id="column-sort-idx-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices</ReactTooltip><div data-tip data-for={"column-sort-idx-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+              return <div><ReactTooltip key="exemplar-column-sort-idx-undefined" id="exemplar-column-sort-idx-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
           }
         }
       },
@@ -643,7 +836,7 @@ class DrawerContent extends Component {
             return a.paddedNumerical.localeCompare(b.paddedNumerical); // desc
           }          
         },
-        onSort: (field, order) => { this.props.onColumnSort(field, order); },
+        onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -659,7 +852,7 @@ class DrawerContent extends Component {
       {
         dataField: 'element',
         text: '',
-        formatter: elementFormatter,
+        formatter: elementExemplarFormatter,
         headerStyle: {
           fontSize: '0.8em',
           width: '230px',
@@ -676,6 +869,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         sortFunc: (a, b, order, dataField) => {
+          console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
             return b.paddedPosition.localeCompare(a.paddedPosition);
           }
@@ -683,7 +877,7 @@ class DrawerContent extends Component {
             return a.paddedPosition.localeCompare(b.paddedPosition); // desc
           }          
         },
-        onSort: (field, order) => { this.props.onColumnSort(field, order); },
+        onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -698,7 +892,23 @@ class DrawerContent extends Component {
       }, 
     ];
     
-    function elementFormatter(cell, row) {
+    function elementRoiFormatter(cell, row) {
+      return <div><span>{ row.position }</span></div>
+    }
+    
+    function nameRoiFormatter(cell, row) {
+      return <div><span>{ row.name }</span></div>
+    }
+    
+    function scoreRoiFormatter(cell, row) {
+      return <div><span>{ row.score }</span></div>
+    }
+    
+    function strandRoiFormatter(cell, row) {
+      return <div><span>{ row.strand }</span></div>
+    }
+    
+    function elementExemplarFormatter(cell, row) {
       return <div><span>{ row.position }</span></div>
     }
     
@@ -710,32 +920,61 @@ class DrawerContent extends Component {
       );
     }
     
-    const customRowStyle = (row, rowIndex) => {
+    const customRoiRowStyle = (row, rowIndex) => {
       const style = {};
-      if (row.idx === this.props.selectedExemplarRowIdx) {
+      if (row.idx === this.props.selectedRoiRowIdx) {
         style.backgroundColor = '#2631ad';
         style.color = '#fff';
       }
-      else if (row.idx === this.state.currentMouseoverRow) {
+      else if (row.idx === this.state.currentRoiMouseoverRow) {
         style.backgroundColor = '#173365';
         style.color = '#fff';
       }
       return style;
     };
     
-    const customRowEvents = {
+    const customExemplarRowStyle = (row, rowIndex) => {
+      const style = {};
+      if (row.idx === this.props.selectedExemplarRowIdx) {
+        style.backgroundColor = '#2631ad';
+        style.color = '#fff';
+      }
+      else if (row.idx === this.state.currentExemplarMouseoverRow) {
+        style.backgroundColor = '#173365';
+        style.color = '#fff';
+      }
+      return style;
+    };
+    
+    const customRoiRowEvents = {
       onClick: (e, row, rowIndex) => {
-        //console.log("row, rowIndex", row, rowIndex);
-        this.props.jumpToExemplar(row.position, row.idx);
+        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx);
       },
       onMouseEnter: (e, row, rowIndex) => {
         this.setState({
-          currentMouseoverRow: row.idx
+          currentRoiMouseoverRow: row.idx
         });
       },
       onMouseLeave: (e, row, rowIndex) => {
         this.setState({
-          currentMouseoverRow: -1
+          currentRoiMouseoverRow: -1
+        });
+      }
+    };
+    
+    const customExemplarRowEvents = {
+      onClick: (e, row, rowIndex) => {
+        //console.log("row, Constants.applicationRegionTypes.exemplar, rowIndex", row, Constants.applicationRegionTypes.exemplar, rowIndex);
+        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
+      },
+      onMouseEnter: (e, row, rowIndex) => {
+        this.setState({
+          currentExemplarMouseoverRow: row.idx
+        });
+      },
+      onMouseLeave: (e, row, rowIndex) => {
+        this.setState({
+          currentExemplarMouseoverRow: -1
         });
       }
     };
@@ -762,6 +1001,16 @@ class DrawerContent extends Component {
                 exemplars
               </NavLink>
             </NavItem>
+            {(self.props && self.props.roiEnabled) ?
+              <NavItem disabled={!self.state.tabs.roi}>
+                <NavLink
+                  className={classnames({ active: self.state.activeTab === 'roi' })}
+                  onClick={() => { self.toggle('roi'); }}
+                  disabled={!self.state.tabs.roi}
+                >
+                  roi
+                </NavLink>
+              </NavItem> : ""}
           </Nav>
           <TabContent activeTab={self.state.activeTab} className="drawer-tab-content">
             <TabPane tabId="settings">
@@ -770,6 +1019,10 @@ class DrawerContent extends Component {
             <TabPane tabId="exemplars">
               { contentByType("exemplars") }
             </TabPane>
+            {(self.props && self.props.roiEnabled) ? 
+              <TabPane tabId="roi">
+                { contentByType("roi") }
+              </TabPane> : ""}
           </TabContent>
         </div>
       )

@@ -773,7 +773,7 @@ class Portal extends Component {
     if (!this.isValidChromosome(this.state.hgViewParams.genome, chrLeft)) {
       return null;
     }
-    let padding = parseInt(Constants.defaultHgViewExemplarPadding);
+    let padding = parseInt(Constants.defaultHgViewRegionPadding);
     let range = [chrLeft, chrRight, start - padding, stop + padding];
     return range;
   }

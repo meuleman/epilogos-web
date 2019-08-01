@@ -11,6 +11,8 @@ export const annotationPort = "8443"; // SSL over 8443
 
 export const applicationTabixRootURL = "https://explore.altius.org/tabix/epilogos";
 
+export const urlProxyURL = "https://epilogos.altius.org:9001";
+
 export const defaultHgViewClickPageX = -1;
 export const defaultHgViewClickTimePrevious = -1;
 export const defaultHgViewClickTimeCurrent = -1;
@@ -18,15 +20,20 @@ export const applicationPortalClickDeltaTimer = 1000;
 export const applicationPortalClickDeltaThreshold = 500;
 export const applicationAutocompleteInputMinimumLength = 2;
 export const defaultHgViewGenePaddingFraction = 0.2;
-export const defaultHgViewExemplarPadding = 15000;
-export const defaultHgViewExemplarPositionRefreshTimer = 1000;
+export const defaultHgViewRegionPadding = 15000;
+export const defaultHgViewRegionPositionRefreshTimer = 1000;
 export const defaultAggregationType = "bkfq_2binWide_allSample";
 
 export const mobileThresholds = {
   portalContentQueryHeight: "330px",
   maxHeight: "480px",
   maxWidth: "420px"
-}
+};
+
+export const applicationRegionTypes = {
+  "exemplar" : "exemplar",
+  "roi" : "roi"
+};
 
 export const applicationBinShift = 100;
 
@@ -817,7 +824,8 @@ export const allowedQueryParameters = {
   "stop"        : "stop position",
   "mode"        : "viewer mode",
   "serIdx"      : "selected exemplar row index",
-  "roiUrl"      : "regions-of-interest URL"
+  "roiURL"      : "regions-of-interest URL",
+  "srrIdx"      : "selected ROI row index",
 }
 export const allowedQueryParameterKeys = Object.keys(allowedQueryParameters);
 
@@ -900,3 +908,5 @@ export const defaultApplicationPositions = {
     'stop' : 52158317,
   },
 }
+
+export const defaultApplicationRoiLineLimit = 100;

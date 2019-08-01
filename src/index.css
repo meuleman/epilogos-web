@@ -93,7 +93,7 @@ em {
   z-index: 10000;
   pointer-events: none;
   opacity: 0;
-  display: none;
+/*   display: none; */
 }
 
 .epilogos-viewer-container-vertical-drop-label {

@@ -2,11 +2,29 @@
 
 This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org).
 
-Setting up a HiGlass server is outside the scope of this document. HiGlass server and aggregation tools are available via GitHub: https://github.com/higlass
+## Dependencies
 
-The following steps document how to set up a vanilla Ubuntu EC2 host with this client application, using `nginx` to run production and development client servers.
+This application runs on a `t2.medium` AWS host. Its functionality relies on a few other web services, which are described (briefly) here: 
+
+### HiGlass
+
+You'll need a HiGlass server to point this application at. That server will need to have tracks preloaded with a simple (but pre-defined) naming scheme, in order to retrieve their underlying identifiers. At the time this document is written, we have such a server running at https://explore.altius.org.
+
+Setting up the HiGlass server and generating/ingesting tracks are fairly involved processes and are outside the scope of this document. We may document this elsewhere, at a later time. Interested parties may take a look at HiGlass server and aggregation tools available via the parent site on GitHub: https://github.com/higlass
+
+### Annotations service
+
+This service allows the user to quickly jump to a gene (or, in the future, other types of annotations) by entering its prefix into the "autocomplete" input field and selecting from one of the presented candidate annotations. 
+
+Source code for this service is not yet published, but it currently runs on the following host: https://annotations.altius.org:8443. When code is available, this document will be updated.
+
+### URL proxy service
+
+This web service allows the Epilogos web client to request BED files and render them as browsable "regions-of-interest", or "ROI", within the application. This service currently runs on the same host as the visualization application. Interested parties may review source code at: https://github.com/Altius/url-proxy
 
 ## Setup
+
+The following steps document how to set up a vanilla Ubuntu EC2 host with this client application, using `nginx` to run production and development client servers.
 
 ### Nodejs
 
