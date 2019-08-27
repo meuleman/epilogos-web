@@ -127,6 +127,7 @@ class Viewer extends Component {
       selectedRoiStart: -1,
       selectedRoiStop: -1,
       selectedRoiBeingUpdated: false,
+      searchInputLocationBeingChanged: false,
     };
     
     this.hgView = React.createRef();
@@ -184,6 +185,7 @@ class Viewer extends Component {
         stopLeft : newTempHgViewParams.stop,
         stopRight : newTempHgViewParams.stop
       };
+      //console.log("calling [updateViewerURL] from [constructor]");
       this.updateViewerURL(newTempHgViewParams.mode,
                            newTempHgViewParams.genome,
                            newTempHgViewParams.model,
@@ -370,6 +372,9 @@ class Viewer extends Component {
   }
   
   handleZoomPastExtent = () => {
+    //console.log("this.handleZoomPastExtent()");
+    if (this.state.searchInputLocationBeingChanged) return;
+    
     if (!this.viewerZoomPastExtentTimer) {
       clearTimeout(this.viewerZoomPastExtentTimer);
       this.viewerZoomPastExtentTimer = setTimeout(() => {
@@ -396,21 +401,38 @@ class Viewer extends Component {
               );
             }, 0);
           });
-        //console.log("handleZoomPastExtent called");
+          
+        //console.log("this.viewerZoomPastExtentTimer set");
 
-        setTimeout(() => { this.viewerZoomPastExtentTimer = null; }, 2000);
+        setTimeout(() => { 
+          this.viewerZoomPastExtentTimer = null; 
+          //console.log("this.viewerZoomPastExtentTimer *unset*"); 
+          //console.log("calling [updateViewerURL] from [handleZoomPastExtent]");
+          this.updateViewerURL(this.state.tempHgViewParams.mode,
+                               this.state.tempHgViewParams.genome,
+                               this.state.tempHgViewParams.model,
+                               this.state.tempHgViewParams.complexity,
+                               this.state.tempHgViewParams.group,
+                               "chr1",
+                               "chrY",
+                               boundsLeft,
+                               boundsRight);
+        }, 2000);
       }, 2000);
     }
   }
   
   updateViewerLocation = (event) => {
+    //console.log("this.updateViewerLocation()");
     if (!this.viewerLocationChangeEventTimer) {
       clearTimeout(this.viewerLocationChangeEventTimer);
+      //console.log("this.viewerLocationChangeEventTimer *unset*");
       this.viewerLocationChangeEventTimer = setTimeout(() => {
         this.updateViewerURLWithLocation(event);
         setTimeout(() => { 
           this.viewerLocationChangeEventTimer = null;
         }, 0);
+        //console.log("this.viewerLocationChangeEventTimer set");
       }, 100);
     }
   }
@@ -429,6 +451,7 @@ class Viewer extends Component {
   }
   
   updateViewerURL = (mode, genome, model, complexity, group, chrLeft, chrRight, start, stop) => {
+    //console.log("updateViewerURL()", mode, genome, model, complexity, group, chrLeft, chrRight, start, stop);
     let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&mode=" + mode;
     viewerUrl += "&genome=" + genome;
@@ -452,6 +475,9 @@ class Viewer extends Component {
   }
   
   updateViewerURLWithLocation = (event) => {
+    //console.log("updateViewerURLWithLocation");
+    //console.log("this.state.searchInputLocationBeingChanged", this.state.searchInputLocationBeingChanged);
+    
     // handle development vs production site differences
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
     if (this.isProductionSite) {
@@ -489,6 +515,7 @@ class Viewer extends Component {
           selectedExemplarRowIdx: selectedExemplarRowIdx,
           selectedRoiRowIdx: selectedRoiRowIdx,
         }, () => {
+          //console.log("calling [updateViewerURL] from [updateViewerURLWithLocation]");
           self.updateViewerURL(self.state.hgViewParams.mode,
                                self.state.hgViewParams.genome,
                                self.state.hgViewParams.model,
@@ -699,6 +726,7 @@ class Viewer extends Component {
             stopRight : stopRight
           }
         }, () => {
+          //console.log("calling [updateViewerURL] from [hgViewUpdatePosition]");
           this.updateViewerURL(this.state.hgViewParams.mode,
                                this.state.hgViewParams.genome,
                                this.state.hgViewParams.model,
@@ -792,7 +820,16 @@ class Viewer extends Component {
     //console.log("onChangeSearchInputLocation", location);
     let range = this.getRangeFromString(location);
     if (range) {
-      this.openViewerAtChrRange(range);
+      this.setState({
+        searchInputLocationBeingChanged: true
+      }, () => {
+        this.openViewerAtChrRange(range);
+        setTimeout(() => {
+          this.setState({
+            searchInputLocationBeingChanged: false
+          });
+        }, 1000);
+      })
     }
   }
   
@@ -1307,6 +1344,7 @@ class Viewer extends Component {
                     }, () => {
                       //console.log("new viewconf:", JSON.stringify(this.state.hgViewconf,null,2));
                       // update browser history (address bar URL)
+                      //console.log("calling [updateViewerURL] from [triggerUpdate]", this.state.hgViewParams.mode);
                       this.updateViewerURL(this.state.hgViewParams.mode,
                                            this.state.hgViewParams.genome,
                                            this.state.hgViewParams.model,
@@ -1488,6 +1526,7 @@ class Viewer extends Component {
                       drawerContentKey: this.state.drawerContentKey + 1,
                     }, () => {
                       // update browser history (address bar URL)
+                      //console.log("calling [updateViewerURL] from [triggerUpdate]", this.state.hgViewParams.mode);
                       this.updateViewerURL(this.state.hgViewParams.mode,
                                            this.state.hgViewParams.genome,
                                            this.state.hgViewParams.model,
@@ -1569,6 +1608,7 @@ class Viewer extends Component {
             selectedExemplarStart: parseInt(start),
             selectedExemplarStop: parseInt(stop)
           }, () => {
+            //console.log("calling [updateViewerURL] from [openViewerAtChrPosition]");
             this.updateViewerURL(this.state.hgViewParams.mode,
                                  this.state.hgViewParams.genome,
                                  this.state.hgViewParams.model,
@@ -1595,6 +1635,7 @@ class Viewer extends Component {
             selectedRoiStart: parseInt(start),
             selectedRoiStop: parseInt(stop)
           }, () => {
+            //console.log("calling [updateViewerURL] from [openViewerAtChrPosition]");
             this.updateViewerURL(this.state.hgViewParams.mode,
                                  this.state.hgViewParams.genome,
                                  this.state.hgViewParams.model,
@@ -1625,6 +1666,7 @@ class Viewer extends Component {
     let start = parseInt(range[1]);
     let stop = parseInt(range[2]);
     this.hgViewUpdatePosition(this.state.hgViewParams.genome, chrLeft, start, stop, chrRight, start, stop, 0);
+    //console.log("calling [updateViewerURL] from [openViewerAtChrRange]");
     this.updateViewerURL(this.state.hgViewParams.mode,
                          this.state.hgViewParams.genome,
                          this.state.hgViewParams.model,
