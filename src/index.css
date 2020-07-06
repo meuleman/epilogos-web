@@ -1,21 +1,30 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
 
 #root {
-  height: 100%;
-  width: 100%;
+  height: calc(100vh);
+  width: calc(100vw);
   overflow: hidden;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: ".SFNSDisplay-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important;
+  font-family: 
+    ui-sans-serif, 
+    system-ui, 
+    -system-ui, 
+    -apple-system,
+    BlinkMacSystemFont,
+    Roboto, Helvetica, Arial, 
+    sans-serif, 
+    "Apple Color Emoji";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: auto;
-  box-sizing: content-box;
   cursor: default;
   user-select: none;
+  overscroll-behavior: contain;
+  touch-action: none !important;
 }
 
 code {
@@ -72,6 +81,10 @@ em {
   background-color: blue !important;
 }
 
+.epilogos-portal-container {}
+
+.epilogos-portal-container-mobiledevice {}
+
 .epilogos-viewer-container-overlay, .epilogos-portal-container-overlay {
   position: absolute;
   left: 0;
@@ -84,23 +97,31 @@ em {
   opacity: 0;
 }
 
-.epilogos-viewer-container-vertical-drop {
+.epilogos-viewer-container-vertical-drop, .epilogos-viewer-container-interval-drop {
   position: absolute;
   left: 0;
   top: 0;
   width: calc(100vw);
   height: calc(100vh);
-  z-index: 10000;
+  z-index: 1;
   pointer-events: none;
   opacity: 0;
 /*   display: none; */
 }
 
 .epilogos-viewer-container-vertical-drop-label {
-  position: inherit;
-  left: calc(50vw);
+/*   left: calc(50vw); */
   transform: rotate(270deg);
-  transform-origin: left bottom 0;
+  transform-origin: left bottom 0;  
+}
+
+.epilogos-viewer-container-interval-drop-label {
+  text-align: center;
+  letter-spacing: 0.005em;
+}
+
+.epilogos-viewer-container-vertical-drop-label, .epilogos-viewer-container-interval-drop-label {
+  position: inherit; 
   letter-spacing: 0.05em;
   font-size: 1em;
   font-weight: 500;
@@ -112,23 +133,23 @@ em {
   z-index: 10000;
 }
 
-.epilogos-viewer-container-vertical-drop-label:hover {
+.epilogos-viewer-container-vertical-drop-label:hover, .epilogos-viewer-container-interval-drop-label:hover {
   opacity: 1;
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
-.epilogos-viewer-container-vertical-drop-top {
+.epilogos-viewer-container-vertical-drop-top, .epilogos-viewer-container-interval-drop-left-top, .epilogos-viewer-container-interval-drop-right-top {
   position: inherit;
-  left: calc(50vw);
+/*   left: calc(50vw); */
   width: 49%;
-  border-left: rgba(255,255,255,0.75) 1px dashed;
+  border-left: rgba(183, 183, 183, 0.75) 1px dashed;
 }
 
-.epilogos-viewer-container-vertical-drop-bottom {
+.epilogos-viewer-container-vertical-drop-bottom, .epilogos-viewer-container-interval-drop-left-bottom, .epilogos-viewer-container-interval-drop-right-bottom {
   position: inherit;
-  left: calc(50vw);
+  /* left: calc(50vw); */
   width: 49%;
-  border-left: rgba(0,0,0,0.5) 1px dashed;
+  border-left: rgba(183, 183, 183, 0.75) 1px dashed;
 }
 
 .navbar-top-custom {
@@ -163,6 +184,11 @@ em {
   display: inline-flex;
 }
 
+.navigation-summary-mobiledevice {
+  color: white;
+  display: inline-flex;
+}
+
 .navigation-summary-parameters {
   color: white;
   text-align: left;
@@ -185,6 +211,11 @@ em {
 .navigation-summary-position {
   position: relative;
   top: 2px;
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+}
+
+.navigation-summary-position-mobiledevice {
+  text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
 }
 
 .navigation-summary-position-mobile-landscape {
@@ -195,11 +226,44 @@ em {
 
 .navigation-summary-position-clipboard {
   position: relative;
-  top: -2px;
+  top: -1px;
   font-size: 1em;
   margin-left: 2px;
   margin-right: 17px;
   color: rgb(230,230,230);
+}
+
+
+.epilogos-recommender-element {
+  padding-left: 20px;
+  z-index: 1000;
+}
+
+.epilogos-recommender-element-disabled {
+  padding-left: 20px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.navigation-recommender {
+  position: relative;
+  top: -1px;
+  font-size: 1em;
+  margin-left: 2px;
+  margin-right: 0px;
+  font-weight: 600;
+  color: rgb(230,230,230);
+}
+
+.navigation-recommender:hover {
+  cursor: pointer;
+  color: #cccccc;
+}
+
+.navigation-recommender-disabled {
+  font-weight: 600;
+  color: #6f6f6f !important;
+  margin-right: 0px;
 }
 
 .navigation-summary-position-clipboard:hover {
@@ -207,9 +271,42 @@ em {
   color: #cccccc;
 }
 
+.navigation-summary-position-clipboard-inverse, .navigation-recommender-inverse {
+  top: -2px;
+  color: rgb(25,25,25);
+  position: relative;
+  z-index: 100000;
+}
+
+.navigation-summary-position-clipboard-inverse-no-shift, .navigation-summary-position-clipboard-inverse-label-no-shift {
+  color: rgb(25,25,25);
+  z-index: 100000;
+}
+
+.navigation-summary-position-clipboard-inverse-label-no-shift {
+  cursor: default;
+}
+
+.navigation-summary-position-clipboard-inverse:hover, .navigation-summary-position-clipboard-inverse-no-shift:hover {
+  cursor: pointer;
+  color: #726767;
+}
+
+.navigation-summary-position-region-label {
+  font-size: smaller;
+}
+
+.navigation-summary-position-region-state-color-box {
+  position: relative;
+  top: 1px;
+  min-height: 10px;
+  min-width: 10px;
+  outline: 1px dotted grey;
+}
+
 .navigation-summary-download {
   position: relative;
-  top: -6px;
+  top: -3px;
   font-size: 1.25em;
   padding-bottom: 10px;
   padding-top: 2px;
@@ -218,6 +315,11 @@ em {
   padding-right: 8px;
   cursor: pointer;
   border-right: 1px black solid;
+}
+
+.navigation-summary-download-inner {
+  position: relative;
+  top: -1px;
 }
 
 .navigation-summary-download-inner:hover {
@@ -304,6 +406,8 @@ em {
 
 .epilogos-viewer-hamburger-button {
   padding-right: 8px;
+  position: relative;
+  top: -1px;
 }
 
 .brand-content-logo-other {
@@ -402,6 +506,10 @@ li {
 .higlass-content {
   cursor: grab;
   width: calc(100vw);
+}
+
+.higlass-content-mobiledevice {
+  z-index: 499 !important;
 }
 
 .epilogos-content-query {
@@ -733,7 +841,7 @@ li {
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
   margin: 0 auto;
   height: 26px !important;
-  width: 217px !important;
+  width: 227px !important;
   font-size: 0.65em;
   background-image: url(./components/Autocomplete/search.dddddd.png);
   background-repeat: no-repeat;
@@ -742,6 +850,15 @@ li {
   background-color: #525252;
   color: white;
   padding-left: 28px;
+}
+
+.epilogos-viewer-search-input-viewermobile {
+  height: 22px !important;
+  background-position: 8px 6px;
+}
+
+.epilogos-viewer-search-input-parent {
+  z-index: 11001 !important;
 }
 
 .epilogos-viewer-search-input-mobile-portrait {
@@ -788,6 +905,33 @@ input.epilogos-viewer-search-input::placeholder {
   opacity: 0.25; 
 }
 
+.epilogos-viewer-container-track-label-small {
+  color: white;
+  text-shadow: -1px 0 rgba(0,0,0,0.5), 0 1px rgba(0,0,0,0.5), 1px 0 rgba(0,0,0,0.5), 0 -1px rgba(0,0,0,0.5);
+  position: absolute;
+  font-size: 1rem;
+  font-weight: 400;
+  padding-top: 0px;
+  padding-bottom: 10px;
+  padding-left: 8px;
+  padding-right: 8px;
+  text-align: center;
+  z-index: 501;
+  opacity: 0.75;
+  line-height: 1.1em;
+}
+
+.epilogos-viewer-container-track-label-small {
+  font-size: 0.9em;
+  letter-spacing: 0.005em;
+}
+
+.epilogos-viewer-container-track-label-small-inverse {
+  color: black;
+  text-shadow: -1px 0 rgba(255,255,255,0.5), 0 1px rgba(255,255,255,0.5), 1px 0 rgba(255,255,255,0.5), 0 -1px rgba(255,255,255,0.5);
+  font-weight: 500;
+}
+
 .epilogos-viewer-container-track-label-inverse {
   color: white;
   background: none;
@@ -801,6 +945,11 @@ input.epilogos-viewer-search-input::placeholder {
 }
 
 .epilogos-viewer-container-track-label-inverse:hover {
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.epilogos-viewer-container-track-label-inverse-always-on {
+  opacity: 1.0; 
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
@@ -911,6 +1060,11 @@ input.epilogos-viewer-search-input::placeholder {
   padding: 15px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08) !important;
   margin-top: 54px;
+  z-index: 11000 !important;
+}
+
+.epilogos-viewer-drawer-mobiledevice {
+  margin-top: 38px;
 }
 
 /* Burger menu */
@@ -1001,6 +1155,7 @@ input.epilogos-viewer-search-input::placeholder {
   top: 2px;
   min-height: 15px;
   min-width: 15px;
+  outline: 1px dotted grey;
 }
 
 /* Autocomplete */
@@ -1027,7 +1182,7 @@ input.epilogos-viewer-search-input::placeholder {
 }
 
 .viewer-suggestions {
-  width: 217px;
+  width: 227px;
   max-height: 400px;
 }
 
@@ -1132,7 +1287,7 @@ input.epilogos-viewer-search-input::placeholder {
 }
 
 .form-check {
-  padding-left: 0.75rem !important;
+  padding-left: 0.5rem !important;
   line-height: 1;
 }
 
@@ -1140,8 +1295,8 @@ input.epilogos-viewer-search-input::placeholder {
   position: relative;
   top: -1px;
   font-weight: 600;
-  font-size: smaller;
-  letter-spacing: 0.3px;
+  font-size: 0.75em;
+  letter-spacing: 0.01px;
 }
 
 .elementTable > tbody > tr > td {
@@ -1269,7 +1424,7 @@ input.epilogos-viewer-search-input::placeholder {
   display: inline-block;
   position: relative;
   top: -6px;
-  font-size: 15px;
+  font-size: 1em;
   letter-spacing: 0.4px;
   color: black;
 }
@@ -1471,4 +1626,8 @@ input.epilogos-viewer-search-input::placeholder {
 
 .viewer-overlay-notice-body-controls, .portal-overlay-notice-body-controls {
   padding-top: 12px;
+}
+
+.bm-menu-wrap {
+  transition: all 0.2s ease 0s !important;
 }

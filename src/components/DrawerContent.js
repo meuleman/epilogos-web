@@ -19,7 +19,7 @@ import * as Constants from '../Constants.js';
 import { FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa'
 
 // Pretty-checkbox (pure CSS radio buttons)
-import 'pretty-checkbox/dist/pretty-checkbox.css';
+import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 
 // React-toggle (toggle switch)
 import 'react-toggle/style.css';
@@ -49,7 +49,7 @@ class DrawerContent extends Component {
       drawerParametersHeight: 87,
       currentRoiMouseoverRow: -1,
       currentExemplarMouseoverRow: -1,
-      activeTab: 'settings',
+      activeTab: this.props.activeTab,
       enteredSettingsButtonName: null,
       enteredSettingsButtonValue: null,
       hideshow: {
@@ -59,6 +59,7 @@ class DrawerContent extends Component {
         mode: true,
         samples: true,
         preferredSamples: true,
+        sampleSet: true,
         advancedOptions: this.props.advancedOptionsVisible
       },
       hideshowWidgetIsVisible: {
@@ -68,6 +69,7 @@ class DrawerContent extends Component {
         mode: false,
         samples: false,
         preferredSamples: false,
+        sampleSet: false,
         advancedOptions: true
       },
       tabs: {
@@ -97,13 +99,15 @@ class DrawerContent extends Component {
     if (this.state.activeTab !== tab) {
       this.setState({
         activeTab: tab
+      }, () => {
+        this.props.updateActiveTab(tab);
       });
     }
   }
   
   stateToColorBox = (state) => {
     let backgroundColor = ((Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state] && Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state][1]) || "white");
-    return <span className="state-color-box" style={{"backgroundColor":backgroundColor, "display":"inline-block"}}></span>
+    return <span className="state-color-box" style={{"backgroundColor":backgroundColor, "display":"inline-block", "borderWidth":"thin", "borderColor":"grey"}}></span>
   }
   
   toggleSettings = (category) => {
@@ -117,6 +121,7 @@ class DrawerContent extends Component {
   }
   
   onMouseEnterSettingsButton = (event) => {
+    //console.log("onMouseEnterSettingsButton", event.target.name, event.target.value);
     if (!event.target.disabled) {
       this.setState({
         enteredSettingsButtonName: event.target.name,
@@ -126,6 +131,7 @@ class DrawerContent extends Component {
   }
   
   onMouseLeaveSettingsButton = (event) => {
+    //console.log("onMouseLeaveSettingsButton", event.target.name, event.target.value);
     if (!event.target.disabled) {
       this.setState({
         enteredSettingsButtonName: null,
@@ -137,11 +143,42 @@ class DrawerContent extends Component {
   onClickSettingsButton = (event) => {
     let newViewParams = {...this.state.viewParams};
     newViewParams[event.target.name] = event.target.value;
+    let targetName = (event.target && event.target.name) ? event.target.name : null
     
     //
     // we have do some annoying custom things specific to the selected genome or mode
     //
-    if (event.target.name === "mode") {
+    if (targetName === "sampleSet") {
+      //console.warn("switching sampleSet!", targetName);
+      switch (event.target.value) {
+        case "vA":
+        case "vB":
+          newViewParams.mode = "single";
+          newViewParams.group = "all";
+          newViewParams.genome = "hg19";
+          newViewParams.model = "15";
+          newViewParams.complexity = "KL";  
+          break;
+        case "vC":
+          newViewParams.mode = "single";
+          newViewParams.group = "all";
+          newViewParams.genome = "hg19";
+          newViewParams.model = "18";
+          newViewParams.complexity = "KL";  
+          break;
+        case "vD":
+          newViewParams.mode = "single";
+          newViewParams.group = "all";
+          newViewParams.genome = "mm10";
+          newViewParams.model = "15";
+          newViewParams.complexity = "KL";  
+          break;
+        default:
+          throw Error("Unknown sampleSet parameter specified in DrawerContent:onClickSettingsButton()");
+      }
+    }
+    
+    if (targetName === "mode") {
       // get toggle value from event.target.checked
       event.target.value = (!event.target.checked) ? "single" : "paired";
       newViewParams.mode = event.target.value;
@@ -152,8 +189,9 @@ class DrawerContent extends Component {
         newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.genome];
       }
     }
-    if (event.target.name === "genome") {
-      const oldGroups = Object.keys(Constants.groupsByGenome[event.target.value]);
+    
+    if (targetName === "genome") {
+      const oldGroups = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][event.target.value]);
       if (event.target.value === "mm10") {
         newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys.mm10 : Constants.defaultPairedGroupKeys.mm10;
         newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys.mm10;
@@ -176,7 +214,7 @@ class DrawerContent extends Component {
     //
     // if the user clicks on a preferred biosample grouping, we handle that here
     //
-    if (event.target.name === "preferred-groups") {
+    if (targetName === "preferred-groups") {
       newViewParams.group = event.target.value;
     }
     
@@ -184,6 +222,7 @@ class DrawerContent extends Component {
     // back to generic business...
     //
     let newViewParamsAreEqual = this.compareViewParams(newViewParams, this.props.viewParams);
+    //if (!newViewParamsAreEqual) { console.log("new", newViewParams); }
     let newTabs = {...this.state.tabs};
     newTabs.exemplars = newViewParamsAreEqual;
     this.setState({
@@ -201,6 +240,7 @@ class DrawerContent extends Component {
   }
   
   modeSectionBody = () => {
+    let activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
@@ -223,21 +263,23 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
+    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vD")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
-    result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
+    result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} disabled={modeToggleDisabled} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
     const kSectionBodyKey = 'mode-sb';
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
   
   genomeSectionBody = () => {
     let activeGenome = this.state.viewParams.genome;
+    let activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     const kButtonGroupPrefix = 'genome-bg-';
     let kButtonGroupIdx = 0;
     let kButtons = [];
     let kButtonIdx = 0;
-    Object.keys(Constants.genomesForSettingsDrawer).forEach(k => {
-      let kButtonLabels = Constants.genomesForSettingsDrawer[k];
+    Object.keys(Constants.genomesForSettingsDrawer[activeSampleSet]).forEach(k => {
+      let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][k];
       const kButtonPrefix = 'genome-bg-btn-';
       const kButtonParentPrefix = 'genome-bg-parent-btn-';
       const kButtonLabelPrefix = 'genome-bg-btn-label-';
@@ -262,18 +304,19 @@ class DrawerContent extends Component {
   modelSectionBody = () => {
     let activeGenome = this.state.viewParams.genome;
     let activeModel = this.state.viewParams.model;
+    let activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'model-bg-btn-';
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
-    Object.keys(Constants.modelsForSettingsDrawer[activeGenome]).forEach(k => {
-      if (Constants.modelsForSettingsDrawer[activeGenome][k].visible) {
+    Object.keys(Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]).forEach(k => {
+      if (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].visible) {
         const isActive = (activeModel === k);
-        const isDisabled = !Constants.modelsForSettingsDrawer[activeGenome][k].enabled;
-        const kLabel = Constants.modelsForSettingsDrawer[activeGenome][k].titleText;
-        const kValue = Constants.modelsForSettingsDrawer[activeGenome][k].value;
+        const isDisabled = !Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
+        const kLabel = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].titleText;
+        const kValue = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].value;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -290,21 +333,52 @@ class DrawerContent extends Component {
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
   
+  sampleSetSectionBody = () => {
+    let activeSampleSet = this.state.viewParams.sampleSet;
+    let result = [];
+    let kButtons = [];
+    const kButtonPrefix = 'sampleSet-bg-btn-';
+    const kButtonParentPrefix = 'sampleSet-bg-parent-btn-';
+    const kButtonLabelPrefix = 'sampleSet-bg-btn-label-';
+    let kButtonIdx = 0;
+    Constants.sampleSetsForSettingsDrawerOrderedKeys.forEach(k => {
+      if (Constants.sampleSetsForSettingsDrawer[k].visible) {
+        const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
+        const kValue = Constants.sampleSetsForSettingsDrawer[k].value;
+        const isActive = (activeSampleSet === k);
+        const isDisabled = !Constants.sampleSetsForSettingsDrawer[k].enabled;
+        let kButtonKey = kButtonPrefix + kButtonIdx;
+        let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
+        let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
+        let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}} dangerouslySetInnerHTML={{ __html: kLabel }} />;
+        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="sampleSet" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning sample-set-radio-label-text"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+        kButtonIdx++;
+      }
+    });
+    const kButtonGroupPrefix = 'sampleSet-bg-';
+    let kButtonGroupIdx = 0;
+    const kButtonGroupKey = kButtonGroupPrefix + kButtonGroupIdx;
+    result.push(<span key={kButtonGroupKey}>{kButtons}</span>);
+    const kSectionBodyKey = 'sampleSet-sb';
+    return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
+  }
+  
   complexitySectionBody = () => {
     let activeGenome = this.state.viewParams.genome;
     let activeComplexity = this.state.viewParams.complexity;
+    let activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'complexity-bg-btn-';
     const kButtonParentPrefix = 'complexity-bg-parent-btn-';
     const kButtonLabelPrefix = 'complexity-bg-btn-label-';
     let kButtonIdx = 0;
-    Object.keys(Constants.complexitiesForSettingsDrawer[activeGenome]).forEach(k => {
-      if (Constants.complexitiesForSettingsDrawer[activeGenome][k].visible) {
-        const kLabel = Constants.complexitiesForSettingsDrawer[activeGenome][k].titleText;
-        const kValue = Constants.complexitiesForSettingsDrawer[activeGenome][k].value;
+    Object.keys(Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome]).forEach(k => {
+      if (Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].visible) {
+        const kLabel = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].titleText;
+        const kValue = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].value;
         const isActive = (activeComplexity === k);
-        const isDisabled = !Constants.complexitiesForSettingsDrawer[activeGenome][k].enabled;
+        const isDisabled = !Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -354,7 +428,7 @@ class DrawerContent extends Component {
   
   preferredSampleItems = () => {
     let activeMode = this.state.viewParams.mode;
-    let md = Constants.groupsByGenome[this.state.viewParams.genome];
+    let md = Constants.groupsByGenome[this.state.viewParams.sampleSet][this.state.viewParams.genome];
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let preferredSamples = jp.query(samples, '$..[?(@.preferred==true)]');
     let enabledPreferredSamples = jp.query(preferredSamples, '$..[?(@.enabled==true)]');
@@ -397,7 +471,7 @@ class DrawerContent extends Component {
   
   sampleItems = () => {
     let activeMode = this.state.viewParams.mode;
-    let md = Constants.groupsByGenome[this.state.viewParams.genome];
+    let md = Constants.groupsByGenome[this.state.viewParams.sampleSet][this.state.viewParams.genome];
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let enabledSamples = jp.query(samples, '$..[?(@.enabled==true)]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
@@ -418,6 +492,7 @@ class DrawerContent extends Component {
         case "roi":
           let roiResult = "";
           roiResult = <BootstrapTable 
+                        id="drawer-content-roi-table"
                         keyField='idx' 
                         data={self.props.roiTableData}
                         columns={roiColumns} 
@@ -465,10 +540,11 @@ class DrawerContent extends Component {
           let content = [];
           
           // header
+          let sampleSet = self.props.viewParams.sampleSet;
           let genome = self.props.viewParams.genome;
           let genomeText = Constants.genomes[genome];
           let group = self.props.viewParams.group;
-          let groupText = Constants.groupsByGenome[genome][group].text;
+          let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
           let model = self.props.viewParams.model;
           let modelText = Constants.models[model];
           let complexity = self.props.viewParams.complexity;
@@ -492,6 +568,22 @@ class DrawerContent extends Component {
               </div>
             </div>);
           content.push(modeSection);
+          
+// sample set (vA/vB)
+          let sampleSetSectionBody = self.sampleSetSectionBody();
+          let sampleSetSection = (
+            <div key="viewer-sampleSet-section" className="drawer-settings-section drawer-settings-section-middle">
+              <div key="viewer-sampleSet-section-header" className="drawer-settings-section-header">
+                <div key="viewer-sampleSet-section-header-text" className="drawer-settings-section-header-text">Dataset</div>
+                <div key="viewer-sampleSet-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("sampleSet")}} style={{visibility:(self.state.hideshowWidgetIsVisible.mode)?"visible":"hidden"}}>{!self.state.hideshow.sampleSet ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
+              </div>
+              <div key="viewer-complexity-section-body" className="drawer-settings-section-body">
+                <Collapse isOpen={self.state.hideshow.sampleSet}>
+                  {sampleSetSectionBody}
+                </Collapse>
+              </div>
+            </div>);
+          content.push(sampleSetSection);
           
           // genome
           let genomeSectionBody = self.genomeSectionBody();
@@ -599,6 +691,7 @@ class DrawerContent extends Component {
     
     let roiColumns = [
       {
+        attrs: idxRoiAttrs,
         dataField: 'idx',
         text: '',
         headerStyle: {
@@ -648,8 +741,8 @@ class DrawerContent extends Component {
           paddingRight: '2px',
         },
         sort: true,
-        sortFunc: (a, b, order, dataField) => {
-          console.log(a.paddedPosition, b.paddedPosition, order, dataField);
+        sortFunc: (a, b, order, dataField, rowA, rowB) => {
+          //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
             return b.paddedPosition.localeCompare(a.paddedPosition);
           }
@@ -680,7 +773,7 @@ class DrawerContent extends Component {
         formatter: nameRoiFormatter,
         headerStyle: {
           fontSize: '0.7em',
-          width: '70px',
+          width: `${(((this.props.roiTableDataLongestAllowedNameLength < this.props.roiTableDataLongestNameLength) ? this.props.roiTableDataLongestAllowedNameLength : this.props.roiTableDataLongestNameLength) * 8)}px`,
           borderBottom: '1px solid #b5b5b5',
         },
         style: {
@@ -715,7 +808,7 @@ class DrawerContent extends Component {
         formatter: scoreRoiFormatter,
         headerStyle: {
           fontSize: '0.7em',
-          width: '35px',
+          width: '45px',
           borderBottom: '1px solid #b5b5b5',
         },
         style: {
@@ -739,6 +832,12 @@ class DrawerContent extends Component {
             default:
               return <div><ReactTooltip key="roi-column-sort-score-undefined" id="roi-column-sort-score-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by score</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
           }
+        },
+        sortFunc: (a, b, order, dataField, rowA, rowB) => {
+          if (order === 'asc') {
+            return b - a;
+          }
+          return a - b; // desc
         }
       })
     }
@@ -781,6 +880,7 @@ class DrawerContent extends Component {
     
     const exemplarColumns = [
       {
+        attrs: idxExemplarAttrs,
         dataField: 'idx',
         text: '',
         headerStyle: {
@@ -892,16 +992,43 @@ class DrawerContent extends Component {
       }, 
     ];
     
+    function idxExemplarAttrs(cell, row, rowIndex, colIndex) {
+      return { id : `exemplar_idx_${rowIndex}` };
+    }
+    
+    function idxRoiAttrs(cell, row, rowIndex, colIndex) {
+      return { id : `roi_idx_${rowIndex}` };
+    }
+    
     function elementRoiFormatter(cell, row) {
       return <div><span>{ row.position }</span></div>
     }
     
+/*
     function nameRoiFormatter(cell, row) {
-      return <div><span>{ row.name }</span></div>
+      const maxLength = 6;
+      const modifiedName = (row.name.length > maxLength) ? row.name.substr(0, maxLength) + "…" : row.name;
+      return <div><span title={ row.name }>{ modifiedName }</span></div>
+      return <div><span title={ row.name }>{ row.name }</span></div>
+    }
+*/
+    function nameRoiFormatter(cell, row) {
+      const name = row.name;
+      return (name.length >= self.props.roiTableDataLongestAllowedNameLength) ? (
+        <div>
+          <span title={name}>{name.substring(0, self.props.roiTableDataLongestAllowedNameLength)}&#8230;</span>
+        </div>
+      ) : (
+        <div>
+          <span>{name}</span>
+        </div>
+      );
     }
     
     function scoreRoiFormatter(cell, row) {
-      return <div><span>{ row.score }</span></div>
+      //return <div><span style={{whiteSpace:"nowrap"}}>{ row.score }</span></div>
+      const formattedScore = (parseFloat(row.score) !== 0.0) ? Number.parseFloat(row.score).toPrecision(4) : 0;
+      return <div><span>{ formattedScore }</span></div>
     }
     
     function strandRoiFormatter(cell, row) {
@@ -948,7 +1075,7 @@ class DrawerContent extends Component {
     
     const customRoiRowEvents = {
       onClick: (e, row, rowIndex) => {
-        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx);
+        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx, row.element.strand);
       },
       onMouseEnter: (e, row, rowIndex) => {
         this.setState({

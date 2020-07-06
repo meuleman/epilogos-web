@@ -6,6 +6,10 @@ import * as Constants from "./Constants.js";
 // Application components
 import Portal from "./components/Portal.js";
 import Viewer from "./components/Viewer.js";
+import ViewerMobile from "./components/ViewerMobile.js";
+
+// Mobile device detection
+import { isMobile } from 'react-device-detect';
 
 // -------------------------------------------------------------------------------------------------------------------
 
@@ -76,7 +80,8 @@ class App extends Component {
     return (
       <div ref="epilogos" id="epilogos-container">
         { this.state.application === "portal" && <Portal /> }
-        { this.state.application === "viewer" && <Viewer /> }
+        { (this.state.application === "viewer" && !isMobile) && <Viewer /> }
+        { (this.state.application === "viewer" && isMobile) && <ViewerMobile /> }
       </div>
     );
   }

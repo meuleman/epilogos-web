@@ -42,6 +42,9 @@ import Autocomplete from "./Autocomplete/Autocomplete";
 import { FaChevronCircleDown } from "react-icons/fa";
 import { GoMarkGithub } from "react-icons/go";
 
+// Mobile device detection
+import { isMobile } from 'react-device-detect';
+
 // Test if components are visible
 import VisibilitySensor from "react-visibility-sensor";
 
@@ -98,7 +101,7 @@ class Portal extends Component {
     this.epilogosPortalOverlayNotice = React.createRef();
     
     // read exemplars into memory
-    let exemplarURL = this.exemplarDownloadURL(Constants.portalHgViewParameters.genome, Constants.portalHgViewParameters.model, Constants.portalHgViewParameters.complexity, Constants.portalHgViewParameters.group);
+    let exemplarURL = this.exemplarDownloadURL(Constants.portalHgViewParameters.genome, Constants.portalHgViewParameters.model, Constants.portalHgViewParameters.complexity, Constants.portalHgViewParameters.group, Constants.portalHgViewParameters.sampleSet);
     //console.log("exemplarURL", exemplarURL);
     if (exemplarURL) {
       axios.get(exemplarURL)
@@ -201,6 +204,7 @@ class Portal extends Component {
   }
   
   componentDidMount() {
+    document.getElementById("root").style.overflow = "scroll";
     setTimeout(() => { 
       this.updateViewportDimensions();
     }, 1000);
@@ -357,8 +361,8 @@ class Portal extends Component {
   
   hgViewUpdatePosition = (genome, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding) => {
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];
-    if (this.currentURL.port === "" || parseInt(this.currentURL.port) !== 3000) {
-      chromSizesURL = chromSizesURL.replace(":3000", "");
+    if (this.currentURL.port === "" || parseInt(this.currentURL.port) !== Constants.applicationDevelopmentPort) {
+      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
     }
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -395,8 +399,8 @@ class Portal extends Component {
     return url + this.state.hgViewParams.hgViewconfEndpointURLSuffix + id; 
   }
   
-  exemplarDownloadURL = (assembly, model, complexity, group) => {
-    let downloadURL = this.stripQueryStringAndHashFromPath(document.location.href) + "/assets/epilogos/" + assembly + "/" + model + "/" + group + "/" + complexity + "/exemplar/top100.txt";
+  exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
+    let downloadURL = this.stripQueryStringAndHashFromPath(document.location.href) + "/assets/epilogos/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + complexity + "/exemplar/top100.txt";
     return downloadURL;
   }
   
@@ -448,7 +452,7 @@ class Portal extends Component {
   }
     
   singleGroupMenuItems = () => {
-    let md = Constants.groupsByGenome[this.state.singleGroupGenomeDropdownSelection];
+    let md = Constants.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
     let singles = jp.query(md, '$..[?(@.subtype=="single")]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let groupItems = toObj(jp.query(singles, "$..value"), jp.query(singles, "$..text"));
@@ -465,7 +469,7 @@ class Portal extends Component {
   }
   
   singleGroupMenuItemSelectionToText = (s) => {
-    let md = Constants.groupsByGenome[this.state.singleGroupGenomeDropdownSelection];
+    let md = Constants.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
     let singles = jp.query(md, '$..[?(@.subtype=="single")]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let groupItems = toObj(jp.query(singles, "$..value"), jp.query(singles, "$..text"));
@@ -640,8 +644,8 @@ class Portal extends Component {
     let absLocation = this.hgView.api.getLocation(uid);
     let absLocationXDomain = absLocation.xDomain;
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
-    if (this.currentURL.port === "" || parseInt(this.currentURL.port !== 3000)) {
-      chromSizesURL = chromSizesURL.replace(":3000", "");
+    if (this.currentURL.port === "" || parseInt(this.currentURL.port !== Constants.applicationDevelopmentPort)) {
+      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
     }
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -668,8 +672,8 @@ class Portal extends Component {
       let windowWidthFraction = this.state.hgViewClickPageX / window.innerWidth;
       let absLocationXDomainByWindowWidthFraction = absLocationXDomain[0] + (absLocationXDomain[1] - absLocationXDomain[0]) * windowWidthFraction;
       let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
-      if (this.currentURL.port === "" || parseInt(this.currentURL.port !== 3000)) {
-        chromSizesURL = chromSizesURL.replace(":3000", "");
+      if (this.currentURL.port === "" || parseInt(this.currentURL.port !== Constants.applicationDevelopmentPort)) {
+        chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
       }
       ChromosomeInfo(chromSizesURL)
         .then((chromInfo) => {
@@ -690,6 +694,7 @@ class Portal extends Component {
     let start = parseInt(range[2]);
     let stop = parseInt(range[3]);
     let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + Constants.portalHgViewParameters.mode;
     viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;
     viewerUrl += "&model=" + Constants.portalHgViewParameters.model;
@@ -708,6 +713,7 @@ class Portal extends Component {
     let start = parseInt(pos[1]) - padding;
     let stop = parseInt(pos[1]) + padding;
     let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + Constants.portalHgViewParameters.mode;
     viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;
     viewerUrl += "&model=" + Constants.portalHgViewParameters.model;
@@ -857,7 +863,7 @@ class Portal extends Component {
     
     return (
       
-      <div ref="epilogos-portal" id="epilogos-portal-container" className="epilogos-portal-container">
+      <div ref="epilogos-portal" id="epilogos-portal-container" className={(isMobile) ? "epilogos-portal-container-mobiledevice" : "epilogos-portal-container"}>
       
         <div id="epilogos-portal-container-overlay" className="epilogos-portal-container-overlay" ref={(component) => this.epilogosPortalContainerOverlay = component} onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!"); this.setState({ overlayVisible: false });*/ })}}>
         
@@ -1075,7 +1081,7 @@ class Portal extends Component {
                 <div className="epilogos-offscreen-content-placeholder-img-left">
                   <div className="epilogos-offscreen-content-placeholder-table-container">
                     <div className="epilogos-offscreen-content-placeholder-table-container-item">
-                      <a href="https://epilogos-meme.altiusinstitute.org/" onClick={this.onClick} data-id="https://epilogos-meme.altiusinstitute.org/"><img className="epilogos-offscreen-content-img" src="assets/img/portal/meme_thumbnail.png" alt="epilogos-meme" /></a>
+                      <a href="https://epilogos-search.altius.org/" onClick={this.onClick} data-id="https://epilogos-search.altius.org/"><img className="epilogos-offscreen-content-img" src="assets/img/portal/meme_thumbnail_v5.png" alt="epilogos-search" /></a>
                     </div>
                   </div>
                 </div>
@@ -1084,7 +1090,7 @@ class Portal extends Component {
                 <div className="epilogos-offscreen-content-placeholder-text-right" style={{display:"grid", placeItems:"center", height:"100%"}}>
                   <div className="epilogos-offscreen-content-placeholder-table-container">
                     <div className="epilogos-offscreen-content-placeholder-table-container-item">
-                      The <a href="https://epilogos-meme.altiusinstitute.org/" onClick={this.onClick} data-id="https://epilogos-meme.altiusinstitute.org/">epilogos MEME</a> tool discovers chromatin state logos — <em>epilogos</em> — in your genomic intervals.
+                      The <a href="https://epilogos-search.altius.org/" onClick={this.onClick} data-id="https://epilogos-search.altius.org/">epilogos Search</a> tool discovers chromatin state logos — <em>epilogos</em> — in your genomic intervals.
                     </div>
                   </div>
                 </div>

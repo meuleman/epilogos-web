@@ -22,6 +22,10 @@ Source code for this service is not yet published, but it currently runs on the 
 
 This web service allows the Epilogos web client to request BED files and render them as browsable "regions-of-interest", or "ROI", within the application. This service currently runs on the same host as the visualization application. Interested parties may review source code at: https://github.com/Altius/url-proxy
 
+### Recommender proxy service
+
+This web service allows the Epilogos web client to request genomic position recommendations from Nalu Tripician's recommender algorithm. This service currently runs on the same host as the web client. Source is available at: https://github.com/Altius/recommender-proxy
+
 ## Setup
 
 The following steps document how to set up a vanilla Ubuntu EC2 host with this client application, using `nginx` to run production and development client servers.

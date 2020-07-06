@@ -1,6 +1,6 @@
 export const applicationHost = "epilogos.altius.org";
 export const applicationProductionPort = 80;
-export const applicationDevelopmentPort = 3000;
+export const applicationDevelopmentPort = 3001;
 
 //export const annotationHost = "18.191.132.31";
 //export const annotationPort = "8000";
@@ -9,9 +9,10 @@ export const annotationScheme = "https";
 export const annotationHost = "annotations.altius.org";
 export const annotationPort = "8443"; // SSL over 8443
 
-export const applicationTabixRootURL = "https://explore.altius.org/tabix/epilogos";
+export const applicationTabixRootURL = "http://explore.altius.org/tabix";
 
 export const urlProxyURL = "https://epilogos.altius.org:9001";
+export const recommenderProxyURL = "https://epilogos.altius.org:9002";
 
 export const defaultHgViewClickPageX = -1;
 export const defaultHgViewClickTimePrevious = -1;
@@ -21,7 +22,7 @@ export const applicationPortalClickDeltaThreshold = 500;
 export const applicationAutocompleteInputMinimumLength = 2;
 export const defaultHgViewGenePaddingFraction = 0.2;
 export const defaultHgViewRegionPadding = 15000;
-export const defaultHgViewRegionPositionRefreshTimer = 1000;
+export const defaultHgViewRegionPositionRefreshTimer = 1500;
 export const defaultAggregationType = "bkfq_2binWide_allSample";
 
 export const mobileThresholds = {
@@ -43,9 +44,30 @@ export const defaultSingleGroupSearchInputPlaceholder = "Specify an interval or 
 
 export const defaultSamplesDropdownIsOpen = false;
 
+export const sampleSets = {
+  "vA" : "2019 July 22 (127-sample human)",
+  "vD" : "2019 July 22 (65-sample mouse)",
+  "vB" : "2019 October 2 (833-sample human)",
+  "vC" : "2019 October 6 (833-sample human)",
+};
+
+export const sampleSetsForSettingsDrawer = {
+  "vA" : {"visible": true, "value": "vA", "enabled": true, "titleText": "Roadmap consortium (127-sample human)" },
+  "vB" : {"visible": false, "value": "vB", "enabled": false, "titleText": "Imputed (833-sample human; Oct 2 2019)" },
+  "vC" : {"visible": true, "value": "vC", "enabled": true, "titleText": "Adsera <em>et al.</em> (833-sample human)" },
+  "vD" : {"visible": true, "value": "vD", "enabled": true, "titleText": "Gorkin <em>et al.</em> (65-sample mouse)" },
+};
+
+export const sampleSetsForSettingsDrawerOrderedKeys = [
+  "vA",
+  "vC",
+  "vB",
+  "vD"
+];
+
 export const annotations = {
   "hg19" : "GENCODE v19",
-  "hg38" : "GENCODE v30",
+  "hg38" : "GENCODE v28",
   "mm10" : "GENCODE vM21",
 };
 
@@ -56,8 +78,18 @@ export const genomes = {
 };
 
 export const genomesForSettingsDrawer = {
-  "Human" : ["hg19", "hg38"],
-  "Mouse" : ["mm10"]
+  'vA' : {
+    "Human" : ["hg19", "hg38"]
+  },
+  'vB' : {
+    "Human" : ["hg19"],
+  },
+  'vC' : {
+    "Human" : ["hg19", "hg38"],
+  },
+  'vD' : {
+    "Mouse" : ["mm10"]
+  }
 };
 
 export const genomeNotices = {
@@ -81,24 +113,42 @@ export const models = {
 };
 
 export const modelsForSettingsDrawer = {
-  'hg19' : {
-    '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-    '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
-    '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
-    'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+  'vA' : {
+    'hg19' : {
+      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
+      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+    },
+    'hg38' : {
+      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
+      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+    }
   },
-  'hg38' : {
-    '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-    '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
-    '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
-    'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+  'vD' : {
+    'mm10' : {
+      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:false, visible:false },
+      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:false, visible:false },
+      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+    }
   },
-  'mm10' : {
-    '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-    '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:false, visible:false },
-    '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:false, visible:false },
-    'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
-  }
+  'vB' : {
+    'hg19' : {
+      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+    }
+  },
+  'vC' : {
+    'hg19' : {
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+    },
+    'hg38' : {
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+    },
+  },
 }
 
 export const modelNotices = {
@@ -134,24 +184,44 @@ export const complexitiesForDataExport = {
 };
 
 export const complexitiesForSettingsDrawer = {
-  'hg19' : {
-    'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
-    'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
-    'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
-    'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
+  'vA' : {
+    'hg19' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
+      'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
+      'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
+    },
+    'hg38' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
+      'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
+      'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
+    },
   },
-  'hg38' : {
-    'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
-    'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
-    'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
-    'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
+  'vD' : {
+    'mm10' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
+      'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
+      'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
+    }
   },
-  'mm10' : {
-    'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
-    'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true },
-    'KLss' : { value:'KLss', text:'KL**', titleText:'S<sub>3</sub>', enabled:true, visible:true },
-    'stacked' : { value:'stacked', text:'KL/KL*/KL**', titleText:'S<sub>1,2,3</sub>', enabled:false, visible:false },
-  }
+  'vB' : {
+    'hg19' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true }
+    }
+  },
+  'vC' : {
+    'hg19' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true }
+    },
+    'hg38' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+      'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true }
+    },
+  },
 };
 
 export const complexityNotices = {
@@ -193,102 +263,123 @@ export const samplesNotices = {
 export const defaultDrawerType = "settings";
 
 export const groupsByGenome = {
-  "hg19" : {
-    "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
-    "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
-    "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
-    "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
-    "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
-    "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
-    "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
-    "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
-    "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
-    "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
-    "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
-    "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
-    "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
-    "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
-    "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
-    "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
-    "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
-    "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
-    "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
-    "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
-    "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
-    "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
-    "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs Reference", enabled:false, preferred: false },
-    "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
-    "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs Neurospheres", enabled:true, preferred: false },
-    "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs Other", enabled:true, preferred: false },
-    "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs Primary Cell", enabled:true, preferred: false },
-    "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs Reference", enabled:false, preferred: false },
-    "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs ESC derived", enabled:true, preferred: false },
-    "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs iPSC", enabled:true, preferred: false },
-    "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs Blood T-cell", enabled:true, preferred: false },
-    "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs Female donors", enabled:true, preferred: true },
-    "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs Smooth Muscle", enabled:true, preferred: false },
-    "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs Primary cells", enabled:true, preferred: true },
+  "vA" : {
+    "hg19" : {
+      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
+      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
+      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
+      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
+      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
+      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
+      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
+      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
+      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
+      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
+      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
+      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false },
+      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
+      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
+      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
+      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
+      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
+      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false },
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true },
+      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false },
+      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false },
+      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false },
+      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false },
+      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false },
+      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false },
+      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true },
+      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false },
+      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true },
+    },
+    "hg38" : {
+      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
+      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
+      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
+      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
+      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
+      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
+      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
+      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
+      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
+      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
+      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
+      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false },
+      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
+      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
+      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
+      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
+      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
+      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false },
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true },
+      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false },
+      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false },
+      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false },
+      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false },
+      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false },
+      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false },
+      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true },
+      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false },
+      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true },
+    },
   },
-  "hg38" : {
-    "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
-    "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
-    "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
-    "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
-    "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
-    "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
-    "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
-    "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
-    "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
-    "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
-    "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
-    "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
-    "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
-    "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
-    "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
-    "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
-    "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
-    "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
-    "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
-    "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
-    "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
-    "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
-    "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs Reference", enabled:false, preferred: false },
-    "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
-    "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs Neurospheres", enabled:true, preferred: false },
-    "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs Other", enabled:true, preferred: false },
-    "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs Primary Cell", enabled:true, preferred: false },
-    "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs Reference", enabled:false, preferred: false },
-    "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs ESC derived", enabled:true, preferred: false },
-    "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs iPSC", enabled:true, preferred: false },
-    "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs Blood T-cell", enabled:true, preferred: false },
-    "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs Female donors", enabled:true, preferred: true },
-    "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs Smooth Muscle", enabled:true, preferred: false },
-    "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs Primary cells", enabled:true, preferred: true },
+  "vD" : {
+    "mm10" : {
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 65 epigenomes", enabled:true, preferred: true },
+      "digestiveSystem" : { type:"group", subtype:"single", value:"digestiveSystem", sortValue:"002", text:"Digestive System", enabled:true, preferred: true },
+      "e11.5" : { type:"group", subtype:"single", value:"e11.5", sortValue:"003", text:"Embryonic day 11.5", enabled:true, preferred: true },
+      "e11.5_vs_P0" : { type:"group", subtype:"paired", value:"e11.5_vs_P0", text:"Embryonic day 11.5 vs. Day-of-birth", enabled:true, preferred: true },
+      "e12.5" : { type:"group", subtype:"single", value:"e12.5", text:"Embryonic day 12.5", enabled:true, preferred: false },
+      "e13.5" : { type:"group", subtype:"single", value:"e13.5", text:"Embryonic day 13.5", enabled:true, preferred: false },
+      "e14.5" : { type:"group", subtype:"single", value:"e14.5", text:"Embryonic day 14.5", enabled:true, preferred: false },
+      "e15.5" : { type:"group", subtype:"single", value:"e15.5", text:"Embryonic day 15.5", enabled:true, preferred: false },
+      "e16.5" : { type:"group", subtype:"single", value:"e16.5", text:"Embryonic day 16.5", enabled:false, preferred: false },
+      "facial-prominence" : { type:"group", subtype:"single", value:"facial-prominence", text:"Facial prominence", enabled:true, preferred: false },
+      "forebrain" : { type:"group", subtype:"single", value:"forebrain", text:"Forebrain", enabled:true, preferred: false },
+      "forebrain_vs_hindbrain" : { type:"group", subtype:"paired", value:"forebrain_vs_hindbrain", text:"Forebrain vs. Hindbrain", enabled:true, preferred: true },
+      "heart" : { type:"group", subtype:"single", value:"heart", text:"Heart", enabled:true, preferred: false },
+      "hindbrain" : { type:"group", subtype:"single", value:"hindbrain", text:"Hindbrain", enabled:true, preferred: false },
+      "intestine" : { type:"group", subtype:"single", value:"intestine", text:"Intestine", enabled:true, preferred: false },
+      "kidney" : { type:"group", subtype:"single", value:"kidney", text:"Kidney", enabled:true, preferred: false },
+      "limb" : { type:"group", subtype:"single", value:"limb", text:"Limb", enabled:true, preferred: false },
+      "liver" : { type:"group", subtype:"single", value:"liver", text:"Liver", enabled:true, preferred: false },
+      "lung" : { type:"group", subtype:"single", value:"lung", text:"Lung", enabled:true, preferred: false },
+      "neural-tube" : { type:"group", subtype:"single", value:"neural-tube", text:"Neural Tube", enabled:true, preferred: false },
+      "P0" : { type:"group", subtype:"single", value:"P0", sortValue:"004", text:"Day-of-birth", enabled:true, preferred: true },
+      "stomach" : { type:"group", subtype:"single", value:"stomach", text:"Stomach", enabled:true, preferred: false },
+    }
   },
-  "mm10" : {
-    "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 65 epigenomes", enabled:true, preferred: true },
-    "digestiveSystem" : { type:"group", subtype:"single", value:"digestiveSystem", sortValue:"002", text:"Digestive System", enabled:true, preferred: true },
-    "e11.5" : { type:"group", subtype:"single", value:"e11.5", sortValue:"003", text:"Embryonic day 11.5", enabled:true, preferred: true },
-    "e11.5_vs_P0" : { type:"group", subtype:"paired", value:"e11.5_vs_P0", text:"Embryonic day 11.5 vs Day-of-birth", enabled:true, preferred: true },
-    "e12.5" : { type:"group", subtype:"single", value:"e12.5", text:"Embryonic day 12.5", enabled:true, preferred: false },
-    "e13.5" : { type:"group", subtype:"single", value:"e13.5", text:"Embryonic day 13.5", enabled:true, preferred: false },
-    "e14.5" : { type:"group", subtype:"single", value:"e14.5", text:"Embryonic day 14.5", enabled:true, preferred: false },
-    "e15.5" : { type:"group", subtype:"single", value:"e15.5", text:"Embryonic day 15.5", enabled:true, preferred: false },
-    "e16.5" : { type:"group", subtype:"single", value:"e16.5", text:"Embryonic day 16.5", enabled:false, preferred: false },
-    "facial-prominence" : { type:"group", subtype:"single", value:"facial-prominence", text:"Facial prominence", enabled:true, preferred: false },
-    "forebrain" : { type:"group", subtype:"single", value:"forebrain", text:"Forebrain", enabled:true, preferred: false },
-    "forebrain_vs_hindbrain" : { type:"group", subtype:"paired", value:"forebrain_vs_hindbrain", text:"Forebrain vs Hindbrain", enabled:true, preferred: true },
-    "heart" : { type:"group", subtype:"single", value:"heart", text:"Heart", enabled:true, preferred: false },
-    "hindbrain" : { type:"group", subtype:"single", value:"hindbrain", text:"Hindbrain", enabled:true, preferred: false },
-    "intestine" : { type:"group", subtype:"single", value:"intestine", text:"Intestine", enabled:true, preferred: false },
-    "kidney" : { type:"group", subtype:"single", value:"kidney", text:"Kidney", enabled:true, preferred: false },
-    "limb" : { type:"group", subtype:"single", value:"limb", text:"Limb", enabled:true, preferred: false },
-    "liver" : { type:"group", subtype:"single", value:"liver", text:"Liver", enabled:true, preferred: false },
-    "lung" : { type:"group", subtype:"single", value:"lung", text:"Lung", enabled:true, preferred: false },
-    "neural-tube" : { type:"group", subtype:"single", value:"neural-tube", text:"Neural Tube", enabled:true, preferred: false },
-    "P0" : { type:"group", subtype:"single", value:"P0", sortValue:"004", text:"Day-of-birth", enabled:true, preferred: true },
-    "stomach" : { type:"group", subtype:"single", value:"stomach", text:"Stomach", enabled:true, preferred: false },
-  }
+  "vB" : {
+    "hg19" : {
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+    }
+  },
+  "vC" : {
+    "hg19" : {
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+    },
+    "hg38" : {
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+    }
+  },
 };
 
 export const defaultSingleGroupKeys = {
@@ -298,8 +389,8 @@ export const defaultSingleGroupKeys = {
 };
 
 export const defaultPairedGroupKeys = {
-  "hg19" : "Male_vs_Female",
-  "hg38" : "Male_vs_Female",
+  "hg19" : "ESC_vs_NonES-like",
+  "hg38" : "ESC_vs_NonES-like",
   "mm10" : "e11.5_vs_P0"
 };
 
@@ -355,7 +446,6 @@ export const assemblyBounds = {
     'chr20':{'ub':63025520},
     'chr22':{'ub':51304566},
     'chr21':{'ub':48129895},
-    'chrM':{'ub':16571},
     'chrX':{'ub':155270560},
     'chrY':{'ub':59373566},
   },
@@ -382,7 +472,6 @@ export const assemblyBounds = {
     'chr7':{'ub':159345973},
     'chr8':{'ub':145138636},
     'chr9':{'ub':138394717},
-    'chrM':{'ub':16569},
     'chrX':{'ub':156040895},
     'chrY':{'ub':57227415},
   },
@@ -406,7 +495,6 @@ export const assemblyBounds = {
     'chr7':{'ub':145441459},
     'chr8':{'ub':129401213},
     'chr9':{'ub':124595110},
-    'chrM':{'ub':16299},
     'chrX':{'ub':171031299},
     'chrY':{'ub':91744698},
   },
@@ -416,12 +504,166 @@ export const assemblyBounds = {
 // State color palettes
 // 
 
+export const stateColorPalettesAsRgb = {
+  'hg19' : {
+    15 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(50,205,50,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,100,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,255,0,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(205,92,92,1)",
+      "rgba(233,150,122,1)",
+      "rgba(189,183,107,1)",
+      "rgba(128,128,128,1)",
+      "rgba(192,192,192,1)",
+      "rgba(255,255,255,1)"
+    ],
+    18 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,100,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,255,0,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(205,92,92,1)",
+      "rgba(189,183,107,1)",
+      "rgba(128,128,128,1)",
+      "rgba(192,192,192,1)",
+      "rgba(255,255,255,1)"
+    ],
+    25 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,150,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,102,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(230,184,183,1)",
+      "rgba(112,48,160,1)",
+      "rgba(128,128,128,1)",
+      "rgba(255,255,255,1)"
+    ]
+  },
+  'hg38' : {
+    15 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(50,205,50,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,100,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,255,0,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(205,92,92,1)",
+      "rgba(233,150,122,1)",
+      "rgba(189,183,107,1)",
+      "rgba(128,128,128,1)",
+      "rgba(192,192,192,1)",
+      "rgba(255,255,255,1)"
+    ],
+    18 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,100,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,255,0,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(205,92,92,1)",
+      "rgba(189,183,107,1)",
+      "rgba(128,128,128,1)",
+      "rgba(192,192,192,1)",
+      "rgba(255,255,255,1)"
+    ],
+    25 : [
+      "rgba(255,0,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(255,69,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,128,0,1)",
+      "rgba(0,150,0,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(194,225,5,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,195,77,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,0,1)",
+      "rgba(255,255,102,1)",
+      "rgba(102,205,170,1)",
+      "rgba(138,145,208,1)",
+      "rgba(230,184,183,1)",
+      "rgba(112,48,160,1)",
+      "rgba(128,128,128,1)",
+      "rgba(255,255,255,1)"
+    ]
+  },
+  'mm10' : {
+    15 : [
+      "rgba(14,111,55,1)",
+      "rgba(199,228,192,1)",
+      "rgba(205,205,205,1)",
+      "rgba(65,172,94,1)",
+      "rgba(243,235,26,1)",
+      "rgba(243,235,26,1)",
+      "rgba(250,248,200,1)",
+      "rgba(128,128,128,1)",
+      "rgba(128,128,128,1)",
+      "rgba(4,84,163,1)",
+      "rgba(222,236,247,1)",
+      "rgba(66,144,207,1)",
+      "rgba(244,140,143,1)",
+      "rgba(253,226,229,1)",
+      "rgba(255,255,255,1)"
+    ]
+  }
+};
+
 export const stateColorPalettes = {
   'hg19' : {
     15 : {
       1:['Active TSS','#ff0000'],
       2:['Flanking Active TSS','#ff4500'],
-      3:['Transcr at gene 5\' and 3\'','#32cd32'],
+      3:['Transcription at gene 5\' and 3\'','#32cd32'],
       4:['Strong transcription','#008000'],
       5:['Weak transcription','#006400'],
       6:['Genic enhancers','#c2e105'],
@@ -487,7 +729,7 @@ export const stateColorPalettes = {
     15 : {
       1:['Active TSS','#ff0000'],
       2:['Flanking Active TSS','#ff4500'],
-      3:['Transcr at gene 5\' and 3\'','#32cd32'],
+      3:['Transcription at gene 5\' and 3\'','#32cd32'],
       4:['Strong transcription','#008000'],
       5:['Weak transcription','#006400'],
       6:['Genic enhancers','#c2e105'],
@@ -578,6 +820,7 @@ export const stateColorPalettes = {
 export const portalGenes = ["SNRPB", "SNRPD1", "SNRPD2", "SNRPD3", "SNRPE", "SNRPF", "SNRPG", "RNU1-1", "SNRPA", "SNRNP70", "SNRPC", "LUC7L", "ZRSR2", "SNRNP35", "SNRNP25", "SNRNP48", "RNPC3", "RNU2-1", "SNRPA1", "SNRPB2", "SF3B1", "SF3B2", "SF3B3", "SF3B4", "SF3B5", "PHF5A", "SF3B14", "SF3A1", "SF3A2", "SF3A3", "DDX42", "DDX46", "HTATSF1", "DHX15", "U2AF1", "U2AF2", "PUF60", "SMNDC1", "RBM17", "U2SURP", "CHERP", "RNU5A-1", "SNRNP200", "PRPF8", "EFTUD2", "PRPF6", "DDX23", "CD2BP2", "SNRNP40", "TXNL4A", "LSM2", "LSM3", "LSM4", "LSM5", "LSM6", "LSM7", "NAA38", "LSM1", "RNU4-1", "PRPF4", "PRPF3", "PPIH", "PRPF31", "NHP2L1", "SART3", "SART1", "USP39", "SF1", "PRPF40A", "THRAP3", "RBM25", "CCAR1", "SUGP1", "RBM5", "RBM10", "PRPF19", "CDC5L", "PLRG1", "CWC15", "BCAS2", "CTNNBL1", "WBP11", "PQBP1", "HSPA8", "PPIE", "CRNKL1", "SNW1", "ISY1", "XAB2", "RBM22", "PPIL1", "BUD31", "AQR", "SMU1", "MFAP1", "IK", "WBP4", "TFIP11", "ZMAT2", "PRPF38A", "PRPF4B", "CWC27", "DHX16", "CWC22", "ZNF830", "CCDC12", "PPIL2", "GPKOW", "RNF113A", "PRCC", "CWC25", "GPATCH1", "CCDC94", "CDC40", "PRPF18", "SLU7", "DHX8", "DHX38", "SYF2", "DDX41", "CXorf56", "DGCR14", "C9orf78", "PPIL3", "PPWD1", "DHX35", "CACTIN", "NOSIP", "WDR83", "FAM50A", "PPIG", "C1orf55", "CDK10", "LENG1", "FAM32A", "FRA10AC1", "BUD13", "RBMX2", "SNIP1", "EIF4A3", "MAGOH", "RBM8A", "RNPS1", "ALYREF", "NXT1", "NXF1", "SAP18", "CASC3", "ACIN1", "UPF1", "PNN", "DHX9", "PRPF38B", "TCERG1", "SKIV2L2", "DEK", "KIN", "RUVBL1", "SNRNP27", "UBL5", "ERH", "NRIP2", "PRPF39", "FUBP3", "FRG1", "MOV10", "C16orf80", "KIAA1967", "NCOR1", "CCDC75", "TRIM24", "DDX50", "NKAP", "FAM50B", "MATR3", "BCAS1", "JUP", "WDR70", "CCDC130", "TOE1", "ZCCHC10", "TTC14", "RBM4B", "SRRT", "EWSR1", "RBM15", "IGF2BP3", "DDX3X", "GCFC1", "XRN2", "RBM7", "PABPC1", "PABPN1", "NCBP2", "NCBP1", "DDX17", "RBM39", "NUMA1", "YBX1", "DDX19A", "DDX5", "KHDRBS1", "PABPC4", "DHX34", "HNRNPUL1", "FUS", "HNRNPA0", "PCBP2", "PCBP1", "HNRNPA1", "HNRNPA2B1", "HNRNPA3", "HNRNPAB", "HNRNPC", "HNRNPD", "HNRNPF", "RBMX", "HNRNPH1", "HNRNPH3", "HNRNPK", "HNRNPL", "HNRNPM", "HNRNPR", "HNRNPU", "RALY", "SYNCRIP", "HNRPLL", "RALYL", "HNRNPH2", "HNRNPUL2", "HNRPDL", "RBMXL2", "HNRNPCL1", "SRSF1", "SRSF2", "SRSF4", "SRSF5", "SRSF6", "SRSF7", "SRSF11", "SRSF9", "SREK1", "TRA2B", "SRSF3", "SFSWAP", "SRSF12", "TRA2A", "SRSF10", "SRRM1", "SRRM2", "NONO", "SRPK1", "SFPQ", "DBR1", "RBFOX2", "RAVER1", "KHSRP", "FUBP1", "MBNL1", "PTBP1", "PTBP2", "ELAVL1", "MBNL2", "CELF1", "CELF2", "RAVER2", "MBNL3", "QKI", "DDX39A", "DDX1", "DDX21", "RBM26", "RBM47", "ZCCHC8", "ZNF207", "RBM42", "ZFR", "ZC3H18", "RNF34", "RBM3", "ZC3H13", "RBM45", "DDX6", "RBMXL1", "ZMAT5", "RNF213", "RBM4", "DDX39B", "DDX3Y", "ZMYM3", "RNF20", "RBM14", "ZC3H11A", "DDX18", "RNF40", "ZNF346", "DDX27", "DHX36", "RBM15B", "ZC3HAV1", "ZCRB1", "ZNF326", "GPATCH3", "DHX30", "ZNF131", "CHAMP1", "RBM27", "GPATCH8", "DHX40", "DDX19B", "DHX57", "ZC3H4", "AGGF1", "EXOSC7", "EXOSC2", "EXOSC8", "EXOSC9", "EXOSC4", "EXOSC10", "DIS3", "EXOSC3", "THOC1", "THOC6", "THOC3", "THOC2", "THOC5", "THOC7", "CSTF3", "CSTF1", "CPSF6", "NUDT21", "CPSF1", "CPSF2", "CPSF3", "CPSF4", "CPSF7", "GEMIN2", "DDX20", "GEMIN5", "RPS16", "UBA52", "RPS9", "RPS18", "EIF4A1", "EIF3L", "EEF1A2", "EIF4A2", "EIF2C1", "EIF3E", "EIF3H", "EIF3B", "EIF3A", "EIF2B5", "SRP19", "KARS", "EEF1E1", "QARS", "FARSA", "IARS", "VARS", "EIF2B4", "SRP68", "TRMT1L", "EEF1D", "EEF1G", "RARS", "EEF1A1", "EIF2S3", "MARS", "EIF4G1", "EEF2", "EPRS", "EIF3C", "DYNC1H1", "ALDOA", "ALDOC", "PFKM", "TUBA4A", "TUBB6", "TJP1", "ARPC4", "DYNC1LI1", "DYNC1I2", "DSP", "ACTN4", "ACTL6A", "MYH9", "ACTG1", "TUBB", "TUBA1B", "DCD", "CSNK2A1", "ACTB", "TUBB4B", "RAE1", "KPNB1", "NUP88", "KPNA2", "NUP107", "RANBP9", "NUP160", "NUP133", "NUP214", "NUP93", "NUP210", "NUP54", "NUP205", "NUP35", "KPNA1", "NUP153", "RANBP2", "RANGAP1", "COPA", "COPB1", "COPB2", "COPG1", "GTF2I", "TOP2A", "H2AFX", "MCM3", "MCM2", "MCM6", "MED23", "MCM7", "GTF3C4", "HP1BP3", "ORC3", "NCAPH2", "NCAPG2", "PBRM1", "BRPF3", "MED1", "GTF3C1", "RAD50", "GTF3C2", "XRCC5", "MCM4", "NCAPG", "BRD8", "GTF3C3", "CBX3", "GTF3C5", "NCAPD3", "TRRAP", "BAZ1A", "CHAF1B", "WDHD1", "CREBBP", "CHD4", "MED12", "HDAC2", "H1F0", "HIST1H1E", "HIST1H2AD", "EIF2AK4", "SMARCA2", "SMARCB1", "SMARCC2", "SMARCD1", "SMARCD2", "SMARCE1", "SMARCA4", "SMARCA5", "SMARCC1", "PSMB1", "PSMA3", "PSMC1", "PSMA6", "PSMD7", "PSMD3", "PSMD11", "PSMB2", "PSME3", "PSMC3", "PSMD1", "PSMD2", "PSMD12", "PSMC4", "PSMD14", "PSMA7", "ANAPC1", "ANAPC2", "ANAPC7", "ANAPC4", "ANAPC5", "EXOC2", "EXOC5", "EXOC4", "EXOC6B", "INTS1", "INTS3", "INTS6", "INTS7", "INTS5", "INTS4", "DNAJC6", "HSPA2", "HSPA4", "HSPA5", "DNAJC17", "DNAJC8", "DNAJC13", "DNAJB1", "HSPB1", "HSPD1", "CCT6A", "HSP90B1", "CCT4", "CCT7", "CCT8", "CCT3", "CCT2", "CCT5", "HSPH1", "DNAJA1", "HSP90AA1", "HSP90AB1", "HSPA6", "HSPA1B", "HSPA1A"];
 
 export const portalHgViewParameters = {
+  "sampleSet": "vA",
   "genome": "hg19",
   "model": "15",
   "complexity": "KL",
@@ -593,18 +836,19 @@ export const portalHgViewParameters = {
   "hgViewAnimationTime": 100,
   "hgViewGeneSelectionTime": 7000,
   "hgViewTrackEpilogosHeight": 200,
-  "hgViewTrackChromosomeHeight": 20,
+  "hgViewTrackChromosomeHeight": 25,
   "hgViewTrackGeneAnnotationsHeight": 120,
   "hgGenomeURLs": {
-    "hg19": "https://epilogos.altius.org:3000/assets/chromsizes/hg19.chrom.sizes",
-    "hg38": "https://epilogos.altius.org:3000/assets/chromsizes/hg38.chrom.sizes",
-    "mm10": "https://epilogos.altius.org:3000/assets/chromsizes/mm10.chrom.sizes"
+    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes",
+    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes",
+    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes"
   }
 };
 
 // mode: "MsMvgs3PTtOmZK-kI-P5hw"
 
 export const viewerHgViewParameters = {
+  "sampleSet": "vA",
   "genome": "hg19",
   "model": "15",
   "complexity": "KL",
@@ -623,12 +867,13 @@ export const viewerHgViewParameters = {
   "hgViewGeneSelectionTime": 7000,
   "hgViewTrackEpilogosHeight": 200,
   "hgViewTrackChromatinMarksHeight": 200,
-  "hgViewTrackChromosomeHeight": 20,
+  "hgViewTrackChromosomeHeight": 25,
   "hgViewTrackGeneAnnotationsHeight": 120,
+  "hgViewTrackGeneAnnotationsMobileDeviceHeight": 100,
   "hgGenomeURLs": {
-    "hg19": "https://epilogos.altius.org:3000/assets/chromsizes/hg19.chrom.sizes",
-    "hg38": "https://epilogos.altius.org:3000/assets/chromsizes/hg38.chrom.sizes",
-    "mm10": "https://epilogos.altius.org:3000/assets/chromsizes/mm10.chrom.sizes"
+    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes",
+    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes",
+    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes"
   }
 };
 
@@ -646,7 +891,7 @@ export const viewerHgViewconfGenomeAnnotationUUIDs = {
   },
   "hg38" : {
     "chromsizes" : "DZWWLLb8T1mYBWbKn_HdnA",
-    "genes" : "JhJdxHRQRN-52p_h_ErHsA"
+    "genes" : "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052730, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
   },
   "mm10" : {
     "chromsizes" : "X4NP8_UdQm-qAg8_P46ocg",
@@ -654,7 +899,7 @@ export const viewerHgViewconfGenomeAnnotationUUIDs = {
   }
 };
 
-export const viewerHgViewconfColormaps = {
+export const viewerHgViewconfColormapsCorrect = {
   'hg19' : {
     '15' : [
       '#ff0000',
@@ -808,24 +1053,250 @@ export const viewerHgViewconfColormaps = {
   }
 }
 
+export const viewerHgViewconfColormapsPatchedForDuplicates = {
+  'hg19' : {
+    '15' : [
+      '#ff0000',
+      '#ff4500',
+      '#32cd32',
+      '#008000',
+      '#006400',
+      '#c2e105',
+      '#ffff00',
+      '#66cdaa',
+      '#8a91d0',
+      '#cd5c5c',
+      '#e9967a',
+      '#bdb76b',
+      '#808080',
+      '#c0c0c0',
+      '#ffffff'
+    ],
+    '18' : [
+      '#ff0000',
+      '#ff4500',
+      '#ff4501',
+      '#ff4502',
+      '#008000',
+      '#006400',
+      '#c2e105',
+      '#c2e106',
+      '#ffc34d',
+      '#ffc34e',
+      '#ffff00',
+      '#66cdaa',
+      '#8a91d0',
+      '#cd5c5c',
+      '#bdb76b',
+      '#808080',
+      '#c0c0c0',
+      '#ffffff',
+    ],
+    '25' : [
+      '#ff0000',
+      '#ff4500',
+      '#ff4501',
+      '#ff4502',
+      '#008000',
+      '#008001',
+      '#008002',
+      '#009600',
+      '#c2e105',
+      '#c2e106',
+      '#c2e107',
+      '#c2e108',
+      '#ffc34d',
+      '#ffc34e',
+      '#ffc34f',
+      '#ffff00',
+      '#ffff01',
+      '#ffff02',
+      '#ffff66',
+      '#66cdaa',
+      '#8a91d0',
+      '#e6b8b7',
+      '#7030a0',
+      '#808080',
+      '#ffffff',
+    ]
+  },
+  'hg38' : {
+    '15' : [
+      '#ff0000',
+      '#ff4500',
+      '#32cd32',
+      '#008000',
+      '#006400',
+      '#c2e105',
+      '#ffff00',
+      '#66cdaa',
+      '#8a91d0',
+      '#cd5c5c',
+      '#e9967a',
+      '#bdb76b',
+      '#808080',
+      '#c0c0c0',
+      '#ffffff'
+    ],
+    '18' : [
+      '#ff0000',
+      '#ff4500',
+      '#ff4501',
+      '#ff4502',
+      '#008000',
+      '#006400',
+      '#c2e105',
+      '#c2e106',
+      '#ffc34d',
+      '#ffc34e',
+      '#ffff00',
+      '#66cdaa',
+      '#8a91d0',
+      '#cd5c5c',
+      '#bdb76b',
+      '#808080',
+      '#c0c0c0',
+      '#ffffff',
+    ],
+    '25' : [
+      '#ff0000',
+      '#ff4500',
+      '#ff4501',
+      '#ff4502',
+      '#008000',
+      '#008001',
+      '#008002',
+      '#009600',
+      '#c2e105',
+      '#c2e106',
+      '#c2e107',
+      '#c2e108',
+      '#ffc34d',
+      '#ffc34e',
+      '#ffc34f',
+      '#ffff00',
+      '#ffff01',
+      '#ffff02',
+      '#ffff66',
+      '#66cdaa',
+      '#8a91d0',
+      '#e6b8b7',
+      '#7030a0',
+      '#808080',
+      '#ffffff',
+    ]
+  },
+  'mm10' : {
+    '15' : [
+      '#0e6f37',
+      '#c7e4c0',
+      '#cdcdcd',
+      '#41ac5e',
+      '#f3eb1a',
+      '#f3eb1b',
+      '#faf8c8',
+      '#808080',
+      '#808081',
+      '#0454a3',
+      '#deecf7',
+      '#4290cf',
+      '#f48c8f',
+      '#fde2e5',
+      '#ffffff',
+    ]
+  }
+}
+
+//
+// Ordered list of samples and their descriptions, arranged by: assembly, model, and group
+//
+// $ cp ~/proj/wouter/110418/data/reorder/hg19/15/all.row_infos.txt ~/public_html/public/hg19.15.all.row_infos.txt
+// $ awk -v FS="|" -v OFS="" '{ gsub(/ $/, "", $1); gsub(/^[ ]+/, "", $2); print "\""$1"\"" }' ~/Desktop/hg19.15.all.row_infos.txt | tr '\n' ','
+// $ awk -v FS="|" -v OFS="" '{ gsub(/ $/, "", $1); gsub(/^[ ]+/, "", $2); print " \""$1 "\" : \"",$2"\"" }' ~/Desktop/hg19.15.all.row_infos.txt | tr '\n' ','
+//
+
+export const sampleSetRowMetadataByGroup = {
+  "vA" : {
+    "hg19" : {
+      "15" : {
+        "all" : {
+          "samples" : ["E017","E002","E008","E001","E015","E014","E016","E003","E024","E020","E019","E018","E021","E022","E007","E009","E010","E013","E012","E011","E004","E005","E006","E062","E034","E045","E033","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E031","E035","E051","E050","E036","E032","E046","E030","E026","E049","E025","E023","E052","E055","E056","E059","E061","E057","E058","E028","E027","E054","E053","E112","E093","E071","E074","E068","E069","E072","E067","E073","E070","E082","E081","E063","E100","E108","E107","E089","E090","E083","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E110","E077","E079","E094","E099","E086","E088","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E002" : "ES-WA7", "E008" : "H9", "E001" : "ES-I3", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E024" : "ES-UCSF4", "E020" : "iPS-20b", "E019" : "iPS-18", "E018" : "iPS-15b", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E009" : "H9 Derived Neuronal Progenitor Cultured", "E010" : "H9 Derived Neuron Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E033" : "Primary T cells from cord blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E031" : "Primary B cells from cord blood", "E035" : "Primary hematopoietic stem cells", "E051" : "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036" : "Primary hematopoietic stem cells short term culture", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E030" : "Primary neutrophils from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025" : "Adipose Derived Mesenchymal Stem Cell Cultured", "E023" : "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052" : "Muscle Satellite Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E057" : "Foreskin Keratinocyte Primary Cells skin02", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E028" : "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027" : "Breast Myoepithelial Primary Cells", "E054" : "Ganglion Eminence derived primary cultured neurospheres", "E053" : "Cortex derived primary cultured neurospheres", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E070" : "Brain Germinal Matrix", "E082" : "Fetal Brain Female", "E081" : "Fetal Brain Male", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E107" : "Skeletal Muscle Male", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E083" : "Fetal Heart", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E110" : "Stomach Mucosa", "E077" : "Duodenum Mucosa", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E086" : "Fetal Kidney", "E088" : "Fetal Lung", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      },
+      "18" : {
+        "all" : {
+          "samples" : ["E017","E008","E015","E014","E016","E003","E020","E019","E021","E022","E007","E013","E012","E011","E004","E005","E006","E062","E034","E045","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E050","E032","E046","E026","E049","E055","E056","E059","E061","E058","E112","E093","E071","E074","E068","E069","E072","E067","E073","E063","E100","E108","E089","E090","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E079","E094","E099","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E008" : "H9", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E020" : "iPS-20b", "E019" : "iPS-18", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      },
+      "25" : {
+        "all" : {
+          "samples" : ["E017","E002","E008","E001","E015","E014","E016","E003","E024","E020","E019","E018","E021","E022","E007","E009","E010","E013","E012","E011","E004","E005","E006","E062","E034","E045","E033","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E031","E035","E051","E050","E036","E032","E046","E030","E026","E049","E025","E023","E052","E055","E056","E059","E061","E057","E058","E028","E027","E054","E053","E112","E093","E071","E074","E068","E069","E072","E067","E073","E070","E082","E081","E063","E100","E108","E107","E089","E090","E083","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E110","E077","E079","E094","E099","E086","E088","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E002" : "ES-WA7", "E008" : "H9", "E001" : "ES-I3", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E024" : "ES-UCSF4", "E020" : "iPS-20b", "E019" : "iPS-18", "E018" : "iPS-15b", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E009" : "H9 Derived Neuronal Progenitor Cultured", "E010" : "H9 Derived Neuron Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E033" : "Primary T cells from cord blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E031" : "Primary B cells from cord blood", "E035" : "Primary hematopoietic stem cells", "E051" : "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036" : "Primary hematopoietic stem cells short term culture", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E030" : "Primary neutrophils from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025" : "Adipose Derived Mesenchymal Stem Cell Cultured", "E023" : "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052" : "Muscle Satellite Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E057" : "Foreskin Keratinocyte Primary Cells skin02", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E028" : "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027" : "Breast Myoepithelial Primary Cells", "E054" : "Ganglion Eminence derived primary cultured neurospheres", "E053" : "Cortex derived primary cultured neurospheres", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E070" : "Brain Germinal Matrix", "E082" : "Fetal Brain Female", "E081" : "Fetal Brain Male", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E107" : "Skeletal Muscle Male", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E083" : "Fetal Heart", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E110" : "Stomach Mucosa", "E077" : "Duodenum Mucosa", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E086" : "Fetal Kidney", "E088" : "Fetal Lung", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      }
+    },
+    "hg38" : {
+      "15" : {
+        "all" : {
+          "samples" : ["E017","E002","E008","E001","E015","E014","E016","E003","E024","E020","E019","E018","E021","E022","E007","E009","E010","E013","E012","E011","E004","E005","E006","E062","E034","E045","E033","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E031","E035","E051","E050","E036","E032","E046","E030","E026","E049","E025","E023","E052","E055","E056","E059","E061","E057","E058","E028","E027","E054","E053","E112","E093","E071","E074","E068","E069","E072","E067","E073","E070","E082","E081","E063","E100","E108","E107","E089","E090","E083","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E110","E077","E079","E094","E099","E086","E088","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E002" : "ES-WA7", "E008" : "H9", "E001" : "ES-I3", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E024" : "ES-UCSF4", "E020" : "iPS-20b", "E019" : "iPS-18", "E018" : "iPS-15b", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E009" : "H9 Derived Neuronal Progenitor Cultured", "E010" : "H9 Derived Neuron Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E033" : "Primary T cells from cord blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E031" : "Primary B cells from cord blood", "E035" : "Primary hematopoietic stem cells", "E051" : "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036" : "Primary hematopoietic stem cells short term culture", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E030" : "Primary neutrophils from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025" : "Adipose Derived Mesenchymal Stem Cell Cultured", "E023" : "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052" : "Muscle Satellite Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E057" : "Foreskin Keratinocyte Primary Cells skin02", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E028" : "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027" : "Breast Myoepithelial Primary Cells", "E054" : "Ganglion Eminence derived primary cultured neurospheres", "E053" : "Cortex derived primary cultured neurospheres", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E070" : "Brain Germinal Matrix", "E082" : "Fetal Brain Female", "E081" : "Fetal Brain Male", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E107" : "Skeletal Muscle Male", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E083" : "Fetal Heart", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E110" : "Stomach Mucosa", "E077" : "Duodenum Mucosa", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E086" : "Fetal Kidney", "E088" : "Fetal Lung", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      },
+      "18" : {
+        "all" : {
+          "samples" : ["E017","E008","E015","E014","E016","E003","E020","E019","E021","E022","E007","E013","E012","E011","E004","E005","E006","E062","E034","E045","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E050","E032","E046","E026","E049","E055","E056","E059","E061","E058","E112","E093","E071","E074","E068","E069","E072","E067","E073","E063","E100","E108","E089","E090","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E079","E094","E099","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E008" : "H9", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E020" : "iPS-20b", "E019" : "iPS-18", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      },
+      "25" : {
+        "all" : {
+          "samples" : ["E017","E002","E008","E001","E015","E014","E016","E003","E024","E020","E019","E018","E021","E022","E007","E009","E010","E013","E012","E011","E004","E005","E006","E062","E034","E045","E033","E044","E043","E039","E041","E042","E040","E037","E048","E038","E047","E029","E031","E035","E051","E050","E036","E032","E046","E030","E026","E049","E025","E023","E052","E055","E056","E059","E061","E057","E058","E028","E027","E054","E053","E112","E093","E071","E074","E068","E069","E072","E067","E073","E070","E082","E081","E063","E100","E108","E107","E089","E090","E083","E104","E095","E105","E065","E078","E076","E103","E111","E092","E085","E084","E109","E106","E075","E101","E102","E110","E077","E079","E094","E099","E086","E088","E097","E087","E080","E091","E066","E098","E096","E113","E114","E115","E116","E117","E118","E119","E120","E121","E122","E123","E124","E125","E126","E127","E128","E129"],
+          "description" : {"E017" : "IMR90 fetal lung fibroblasts", "E002" : "ES-WA7", "E008" : "H9", "E001" : "ES-I3", "E015" : "HUES6", "E014" : "HUES48", "E016" : "HUES64", "E003" : "H1", "E024" : "ES-UCSF4", "E020" : "iPS-20b", "E019" : "iPS-18", "E018" : "iPS-15b", "E021" : "iPS DF 6.9", "E022" : "iPS DF 19.11", "E007" : "H1 Derived Neuronal Progenitor Cultured", "E009" : "H9 Derived Neuronal Progenitor Cultured", "E010" : "H9 Derived Neuron Cultured", "E013" : "hESC Derived CD56+ Mesoderm Cultured", "E012" : "hESC Derived CD56+ Ectoderm Cultured", "E011" : "hESC Derived CD184+ Endoderm Cultured", "E004" : "H1 BMP4 Derived Mesendoderm Cultured", "E005" : "H1 BMP4 Derived Trophoblast Cultured", "E006" : "H1 Derived Mesenchymal Stem Cells", "E062" : "Primary mononuclear cells from peripheral blood", "E034" : "Primary T cells from peripheral blood", "E045" : "Primary T cells effector/memory enriched from peripheral blood", "E033" : "Primary T cells from cord blood", "E044" : "Primary T regulatory cells from peripheral blood", "E043" : "Primary T helper cells from peripheral blood", "E039" : "Primary T helper naive cells from peripheral blood", "E041" : "Primary T helper cells PMA-I stimulated", "E042" : "Primary T helper 17 cells PMA-I stimulated", "E040" : "Primary T helper memory cells from peripheral blood 1", "E037" : "Primary T helper memory cells from peripheral blood 2", "E048" : "Primary T CD8+ memory cells from peripheral blood", "E038" : "Primary T helper naive cells from peripheral blood", "E047" : "Primary T CD8+ naive cells from peripheral blood", "E029" : "Primary monocytes from peripheral blood", "E031" : "Primary B cells from cord blood", "E035" : "Primary hematopoietic stem cells", "E051" : "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050" : "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036" : "Primary hematopoietic stem cells short term culture", "E032" : "Primary B cells from peripheral blood", "E046" : "Primary Natural Killer cells from peripheral blood", "E030" : "Primary neutrophils from peripheral blood", "E026" : "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049" : "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025" : "Adipose Derived Mesenchymal Stem Cell Cultured", "E023" : "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052" : "Muscle Satellite Cultured", "E055" : "Foreskin Fibroblast Primary Cells skin01", "E056" : "Foreskin Fibroblast Primary Cells skin02", "E059" : "Foreskin Melanocyte Primary Cells skin01", "E061" : "Foreskin Melanocyte Primary Cells skin03", "E057" : "Foreskin Keratinocyte Primary Cells skin02", "E058" : "Foreskin Keratinocyte Primary Cells skin03", "E028" : "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027" : "Breast Myoepithelial Primary Cells", "E054" : "Ganglion Eminence derived primary cultured neurospheres", "E053" : "Cortex derived primary cultured neurospheres", "E112" : "Thymus", "E093" : "Fetal Thymus", "E071" : "Brain Hippocampus Middle", "E074" : "Brain Substantia Nigra", "E068" : "Brain Anterior Caudate", "E069" : "Brain Cingulate Gyrus", "E072" : "Brain Inferior Temporal Lobe", "E067" : "Brain Angular Gyrus", "E073" : "Brain_Dorsolateral_Prefrontal_Cortex", "E070" : "Brain Germinal Matrix", "E082" : "Fetal Brain Female", "E081" : "Fetal Brain Male", "E063" : "Adipose Nuclei", "E100" : "Psoas Muscle", "E108" : "Skeletal Muscle Female", "E107" : "Skeletal Muscle Male", "E089" : "Fetal Muscle Trunk", "E090" : "Fetal Muscle Leg", "E083" : "Fetal Heart", "E104" : "Right Atrium", "E095" : "Left Ventricle", "E105" : "Right Ventricle", "E065" : "Aorta", "E078" : "Duodenum Smooth Muscle", "E076" : "Colon Smooth Muscle", "E103" : "Rectal Smooth Muscle", "E111" : "Stomach Smooth Muscle", "E092" : "Fetal Stomach", "E085" : "Fetal Intestine Small", "E084" : "Fetal Intestine Large", "E109" : "Small Intestine", "E106" : "Sigmoid Colon", "E075" : "Colonic Mucosa", "E101" : "Rectal Mucosa Donor 29", "E102" : "Rectal Mucosa Donor 31", "E110" : "Stomach Mucosa", "E077" : "Duodenum Mucosa", "E079" : "Esophagus", "E094" : "Gastric", "E099" : "Placenta Amnion", "E086" : "Fetal Kidney", "E088" : "Fetal Lung", "E097" : "Ovary", "E087" : "Pancreatic Islets", "E080" : "Fetal Adrenal Gland", "E091" : "Placenta", "E066" : "Liver", "E098" : "Pancreas", "E096" : "Lung", "E113" : "Spleen", "E114" : "A549 EtOH 0.02pct Lung Carcinoma", "E115" : "Dnd41 TCell Leukemia", "E116" : "GM12878 Lymphoblastoid", "E117" : "HeLa-S3 Cervical Carcinoma", "E118" : "HepG2 Hepatocellular Carcinoma", "E119" : "HMEC Mammary Epithelial Primary Cells", "E120" : "HSMM Skeletal Muscle Myoblasts", "E121" : "HSMM cell derived Skeletal Muscle Myotubes", "E122" : "HUVEC Umbilical Vein Endothelial Primary Cells", "E123" : "K562 Leukemia", "E124" : "Monocytes-CD14+ RO01746 Primary Cells", "E125" : "NH-A Astrocytes Primary Cells", "E126" : "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127" : "NHEK-Epidermal Keratinocyte Primary Cells", "E128" : "NHLF Lung Fibroblast Primary Cells", "E129" : "Osteoblast Primary Cells"}
+        }
+      }
+    }
+  },
+  "vD" : {
+    "mm10" : {
+      "15" : {
+        "all" : {
+          "samples" : ["e11.5_forebrain","e12.5_forebrain","e13.5_forebrain","e14.5_forebrain","e15.5_forebrain","e16.5_forebrain","P0_forebrain","e11.5_midbrain","e12.5_midbrain","e13.5_midbrain","e14.5_midbrain","e15.5_midbrain","e16.5_midbrain","P0_midbrain","e11.5_hindbrain","e12.5_hindbrain","e13.5_hindbrain","e14.5_hindbrain","e15.5_hindbrain","e16.5_hindbrain","P0_hindbrain","e11.5_neural-tube","e12.5_neural-tube","e13.5_neural-tube","e14.5_neural-tube","e15.5_neural-tube","e11.5_heart","e12.5_heart","e13.5_heart","e14.5_heart","e15.5_heart","e16.5_heart","P0_heart","e14.5_lung","e15.5_lung","e16.5_lung","P0_lung","e14.5_kidney","e15.5_kidney","e16.5_kidney","P0_kidney","e11.5_liver","e12.5_liver","e13.5_liver","e14.5_liver","e15.5_liver","e16.5_liver","P0_liver","e14.5_intestine","e15.5_intestine","e16.5_intestine","P0_intestine","e14.5_stomach","e15.5_stomach","e16.5_stomach","P0_stomach","e11.5_limb","e12.5_limb","e13.5_limb","e14.5_limb","e15.5_limb","e11.5_facial-prominence","e12.5_facial-prominence","e13.5_facial-prominence","e14.5_facial-prominence","e15.5_facial-prominence"],
+          "description" : {"e11.5_forebrain" : "Embryonic day 11.5 forebrain", "e12.5_forebrain" : "Embryonic day 12.5 forebrain", "e13.5_forebrain" : "Embryonic day 13.5 forebrain", "e14.5_forebrain" : "Embryonic day 14.5 forebrain", "e15.5_forebrain" : "Embryonic day 15.5 forebrain", "e16.5_forebrain" : "Embryonic day 16.5 forebrain", "P0_forebrain" : "Day-of-birth forebrain", "e11.5_midbrain" : "Embryonic day 11.5 midbrain", "e12.5_midbrain" : "Embryonic day 12.5 midbrain", "e13.5_midbrain" : "Embryonic day 13.5 midbrain", "e14.5_midbrain" : "Embryonic day 14.5 midbrain", "e15.5_midbrain" : "Embryonic day 15.5 midbrain", "e16.5_midbrain" : "Embryonic day 16.5 midbrain", "P0_midbrain" : "Day-of-birth midbrain", "e11.5_hindbrain" : "Embryonic day 11.5 hindbrain", "e12.5_hindbrain" : "Embryonic day 12.5 hindbrain", "e13.5_hindbrain" : "Embryonic day 13.5 hindbrain", "e14.5_hindbrain" : "Embryonic day 14.5 hindbrain", "e15.5_hindbrain" : "Embryonic day 15.5 hindbrain", "e16.5_hindbrain" : "Embryonic day 16.5 hindbrain", "P0_hindbrain" : "Day-of-birth hindbrain", "e11.5_neural-tube" : "Embryonic day 11.5 neural tube", "e12.5_neural-tube" : "Embryonic day 12.5 neural tube", "e13.5_neural-tube" : "Embryonic day 13.5 neural tube", "e14.5_neural-tube" : "Embryonic day 14.5 neural tube", "e15.5_neural-tube" : "Embryonic day 15.5 neural tube", "e11.5_heart" : "Embryonic day 11.5 heart", "e12.5_heart" : "Embryonic day 12.5 heart", "e13.5_heart" : "Embryonic day 13.5 heart", "e14.5_heart" : "Embryonic day 14.5 heart", "e15.5_heart" : "Embryonic day 15.5 heart", "e16.5_heart" : "Embryonic day 16.5 heart", "P0_heart" : "Day-of-birth heart", "e14.5_lung" : "Embryonic day 14.5 lung", "e15.5_lung" : "Embryonic day 15.5 lung", "e16.5_lung" : "Embryonic day 16.5 lung", "P0_lung" : "Day-of-birth lung", "e14.5_kidney" : "Embryonic day 14.5 kidney", "e15.5_kidney" : "Embryonic day 15.5 kidney", "e16.5_kidney" : "Embryonic day 16.5 kidney", "P0_kidney" : "Day-of-birth kidney", "e11.5_liver" : "Embryonic day 11.5 liver", "e12.5_liver" : "Embryonic day 12.5 liver", "e13.5_liver" : "Embryonic day 13.5 liver", "e14.5_liver" : "Embryonic day 14.5 liver", "e15.5_liver" : "Embryonic day 15.5 liver", "e16.5_liver" : "Embryonic day 16.5 liver", "P0_liver" : "Day-of-birth liver", "e14.5_intestine" : "Embryonic day 14.5 intestine", "e15.5_intestine" : "Embryonic day 15.5 intestine", "e16.5_intestine" : "Embryonic day 16.5 intestine", "P0_intestine" : "Day-of-birth intestine", "e14.5_stomach" : "Embryonic day 14.5 stomach", "e15.5_stomach" : "Embryonic day 15.5 stomach", "e16.5_stomach" : "Embryonic day 16.5 stomach", "P0_stomach" : "Day-of-birth stomach", "e11.5_limb" : "Embryonic day 11.5 limb", "e12.5_limb" : "Embryonic day 12.5 limb", "e13.5_limb" : "Embryonic day 13.5 limb", "e14.5_limb" : "Embryonic day 14.5 limb", "e15.5_limb" : "Embryonic day 15.5 limb", "e11.5_facial-prominence" : "Embryonic day 11.5 facial prominence", "e12.5_facial-prominence" : "Embryonic day 12.5 facial prominence", "e13.5_facial-prominence" : "Embryonic day 13.5 facial prominence", "e14.5_facial-prominence" : "Embryonic day 14.5 facial prominence", "e15.5_facial-prominence" : "Embryonic day 15.5 facial prominence"}
+        }
+      }
+    } 
+  }   
+};
+
 //
 // Query parameters
 //
 
 export const allowedQueryParameters = {
-  "application" : "application",
-  "genome"      : "genome assembly",
-  "model"       : "state model",
-  "complexity"  : "statistical complexity level",
-  "group"       : "sample grouping",
-  "chrLeft"     : "chromosome (left)",
-  "chrRight"    : "chromosome (right)",
-  "start"       : "start position",
-  "stop"        : "stop position",
-  "mode"        : "viewer mode",
-  "serIdx"      : "selected exemplar row index",
-  "roiURL"      : "regions-of-interest URL",
-  "srrIdx"      : "selected ROI row index",
+  "application"              : "application",
+  "genome"                   : "genome assembly",
+  "model"                    : "state model",
+  "complexity"               : "statistical complexity level",
+  "group"                    : "sample grouping",
+  "chrLeft"                  : "chromosome (left)",
+  "chrRight"                 : "chromosome (right)",
+  "start"                    : "start position",
+  "stop"                     : "stop position",
+  "mode"                     : "viewer mode",
+  "serIdx"                   : "selected exemplar row index",
+  "roiSet"                   : "regions-of-interest set name",
+  "roiURL"                   : "regions-of-interest URL",
+  "srrIdx"                   : "selected ROI row index",
+  "sampleSet"                : "sample set",
+  "roiMode"                  : "regions-of-interest display mode",
+  "roiPaddingFractional"     : "regions-of-interest padding (fraction)",
+  "roiPaddingAbsolute"       : "regions-of-interest padding (absolute)",
+  "activeTab"                : "active drawer tab upon open",
+  "highlightRows"            : "apply highlight on indexed rows",
+  "highlightBehavior"        : "behavior to apply on specified rows (or, alternatively, all other rows)",
+  "highlightBehaviorAlpha"   : "alpha transparency value",
 }
 export const allowedQueryParameterKeys = Object.keys(allowedQueryParameters);
 
@@ -840,6 +1311,9 @@ export const defaultApplication = "blank";
 export const applicationBlank = "blank";
 export const applicationPortal = "portal";
 export const applicationViewer = "viewer";
+
+// drawer width
+export const defaultMinimumDrawerWidth = 378;
 
 // ?mode=xyz
 export const applicationModes = modes;
@@ -877,9 +1351,12 @@ export const applicationComplexityKL = "KL";
 export const applicationComplexityKLs = "KLs";
 export const applicationComplexityKLss = "KLss";
 
+// ?sampleSet=xyz
+export const defaultApplicationSampleSet = "vA";
+
 // ?group=xyz
 export const applicationGroups = groupsByGenome;
-export const applicationGroupKeys = Object.keys(applicationGroups[defaultApplicationGenome]);
+export const applicationGroupKeys = Object.keys(applicationGroups[defaultApplicationSampleSet][defaultApplicationGenome]);
 export const defaultApplicationGroup = "all";
 
 // ?chr=xyz
@@ -890,6 +1367,12 @@ export const defaultApplicationStart = 54635800;
 
 // ?stop=xyz
 export const defaultApplicationStop = 54674200;
+
+// ?highlightBehavior=xyz
+export const defaultApplicationHighlightBehavior = "applyAlphaToNonHighlightedRows";
+
+// ?highlightBehaviorAlpha=xyz
+export const defaultApplicationHighlightBehaviorAlpha = 0.1;
 
 export const defaultApplicationPositions = {
   'hg19' : {
@@ -910,3 +1393,24 @@ export const defaultApplicationPositions = {
 }
 
 export const defaultApplicationRoiLineLimit = 100;
+
+export const defaultApplicationSerIdx = -1;
+export const defaultApplicationSrrIdx = -1;
+
+export const applicationRoiModes = {
+  'default' : 'default',
+  'midpoint' : 'midpoint'
+};
+export const defaultApplicationRoiMode = "default";
+export const defaultApplicationRoiPaddingAbsolute = 1000;
+export const defaultApplicationRoiSetPaddingAbsolute = 10000;
+export const defaultApplicationRoiPaddingFraction = 0.2;
+
+export const defaultHgViewRegionUpstreamPadding = 5000;
+export const defaultHgViewRegionDownstreamPadding = 5000;
+export const defaultDrawerTabOnOpen = "settings";
+
+export const defaultRoiTableDataLongestNameLength = 4;
+export const defaultRoiTableDataLongestAllowedNameLength = 20;
+
+export const roiSets = {};

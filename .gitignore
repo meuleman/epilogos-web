@@ -1,32 +1,29 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
-
-*~
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules/
+/node_modules
+/epilogos-annotations/node_modules
+/.pnp
+.pnp.js
 
 # testing
-coverage
+/coverage
 
 # production
-build
+/epilogos-annotations/assets
+/epilogos-annotations/build
+/build
 
 # misc
 .DS_Store
-.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# epilogos-specific assets
-src/client/ids
-src/client/assets/data/archives/
-src/client/assets/data/chromHMM/
-src/client/assets/washu/test/
-src/client/assets/epilogos/v06_16_2017/
-src/client/assets/data/archives.pre06_16_2017.backup/
-src/client/assets/data/json.pre06_16_2017.backup/
-src/client/assets/data/top_scoring_regions.pre06_16_2017.backup/
-src/client/assets/washu/js/base.duplicate.js
-src/client/assets/washu/js/embed.duplicate.js
-src/client/assets/washu/js/personality.duplicate.js
+*~
+report.*

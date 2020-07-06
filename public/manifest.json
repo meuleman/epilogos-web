@@ -3,12 +3,12 @@
   "name": "Epilogos",
   "icons": [
     {
-      "src": "/assets/img/altius.svg",
+      "src": "assets/img/altius.svg",
       "type": "image/svg+xml",
       "sizes": "256x256"
     }
   ],
   "start_url": "/",
   "background_color": "#ffffff",
-  "display": "fullscreen",
+  "display": "standalone",
 }

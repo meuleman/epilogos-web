@@ -34,12 +34,15 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {    
-    if (!e.target) return;
-    if ((this.state.userInput.startsWith("chr")) && (this.state.userInput.indexOf(":") !== -1)) {
+    if (!e.target || (e.target.value.length === 0)) return;
+    //console.log("onChange", e.target.value);
+    //if ((this.state.userInput.startsWith("chr")) && ((this.state.userInput.indexOf(":") !== -1) || (this.state.userInput.indexOf('\t') !== -1))) {
+    if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf('\s') !== -1))) {  
       this.setState({
         showSuggestions: false,
         userInput: e.target.value
       }, () => {
+        //console.log("calling this.props.onChangeInput", this.state.userInput);
         this.props.onChangeInput(this.state.userInput);
       })
       return;
@@ -94,7 +97,7 @@ class Autocomplete extends Component {
       selectedSuggestionLocation: selectedSuggestionLocation
     }, 
     () => { 
-      this.props.onChangeLocation(this.state.selectedSuggestionLocation);
+      this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
       this.clearUserInput();
     });
   };
@@ -104,10 +107,12 @@ class Autocomplete extends Component {
     
     //console.log("e.keyCode", e.keyCode);
 
-    // User pressed the enter key
+    // Enter
     if (e.keyCode === 13) {
       document.activeElement.blur();
-      if ((this.state.userInput.startsWith("chr")) && (this.state.userInput.indexOf(":") !== -1)) {
+      let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
+      let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
+      if (colonDashTest || whitespaceTest) {
         let newUserInput = "";
         let newLocation = this.state.userInput;
         this.setState({
@@ -116,7 +121,9 @@ class Autocomplete extends Component {
           userInput: newUserInput,
           selectedSuggestionLocation: newLocation
         }, () => { 
-          this.props.onChangeLocation(this.state.selectedSuggestionLocation);
+          console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
+          console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
+          this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
           this.clearUserInput();
         });
         return;
@@ -140,13 +147,13 @@ class Autocomplete extends Component {
           userInput: newUserInput,
           selectedSuggestionLocation: newLocation
         }, () => { 
-          this.props.onChangeLocation(this.state.selectedSuggestionLocation);
+          this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
           this.clearUserInput();
         });
       }, 1000);
     }
     
-    // User pressed the up arrow
+    // Up arrow
     else if (e.keyCode === 38) {
       if (this.state.activeSuggestion === 0) {
         return;
@@ -157,7 +164,7 @@ class Autocomplete extends Component {
       });
     }
     
-    // User pressed the down arrow
+    // Down arrow
     else if (e.keyCode === 40) {
       if ((this.state.activeSuggestion + 1) === this.state.filteredSuggestions.length) {
         return;
@@ -212,7 +219,7 @@ class Autocomplete extends Component {
     if (showSuggestions && userInput) {
       if (filteredSuggestions.length) {
         suggestionsListComponent = (
-          <ul className={this.props.suggestionsClassName}>
+          <ul className={this.props.suggestionsClassName} style={(this.props.maxSuggestionHeight)?{maxHeight:`${this.props.maxSuggestionHeight}px`}:{}}>
             {filteredSuggestions.map((suggestion, index) => {
               let className;
 

@@ -1,13 +1,13 @@
 {
   apps : [
     {
-      name: "epilogos-client (development)",
+      name: "epilogos-client (development, tcp/3001)",
       script: "npm run start",
       interpreter: "none",
       watch: false,
-      cwd: "/home/ubuntu/epilogos",
+      cwd: "/home/ubuntu/epilogos_dev_3001",
       env: {
-        "PORT": 8080,
+        "PORT": 8081,
         "NODE_ENV": "development",
         "HOST": "0.0.0.0"
       }
