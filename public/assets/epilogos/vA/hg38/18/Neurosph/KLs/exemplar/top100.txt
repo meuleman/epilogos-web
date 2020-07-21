@@ -1,7 +1,0 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head>
-<title>404 Not Found</title>
-</head><body>
-<h1>Not Found</h1>
-<p>The requested URL /assets/epilogos/v06_16_2017/hg38/18/exemplar/Neurosph.KLs.all.txt was not found on this server.</p>
-</body></html>

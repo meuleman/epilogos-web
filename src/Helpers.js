@@ -97,7 +97,7 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
   
   if (showClipboard) {
     if (parseInt(self.state.width)>1300) {
-      return <div style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}><span title={"Viewer genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard></div>
+      return <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}><span title={"Viewer genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard></div>
     }
     else {
       return <div />

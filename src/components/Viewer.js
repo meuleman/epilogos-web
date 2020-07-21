@@ -154,7 +154,8 @@ class Viewer extends Component {
       highlightBehavior: "",
       highlightBehaviorAlpha: 0.0,
       recommenderIsEnabled: false,
-      recommenderInProgress: false
+      recommenderInProgress: false,
+      navbarMidpoint: 0,
     };
     
     this.hgView = React.createRef();
@@ -170,6 +171,7 @@ class Viewer extends Component {
     this.viewerUpdateNoticeUpdateButton = React.createRef();
     this.epilogosAutocomplete = React.createRef();
     this.epilogosViewerTrackLabelParent = React.createRef();
+    this.epilogosViewerRecommenderParent = React.createRef();
     //
     this.epilogosViewerContainerVerticalDrop = React.createRef();
     //this.epilogosViewerContainerVerticalDropLabel = React.createRef();
@@ -193,6 +195,7 @@ class Viewer extends Component {
     // get current URL attributes (protocol, port, etc.)
     this.currentURL = document.createElement('a');
     this.currentURL.setAttribute('href', window.location.href);
+    console.log("this.currentURL.port", this.currentURL.port);
     
     // is this site production or development?
     this.isProductionSite = (this.currentURL.port === "" || (parseInt(this.currentURL.port) !== 3000 && parseInt(this.currentURL.port) !== 3001));
@@ -211,6 +214,7 @@ class Viewer extends Component {
     newTempHgViewParams.mode = queryObj.mode || Constants.defaultApplicationMode;
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
     this.state.selectedExemplarRowIdx = queryObj.serIdx || Constants.defaultApplicationSerIdx;
+    this.state.selectedNonRoiRowIdxOnLoad = this.state.selectedExemplarRowIdx;
     this.state.selectedRoiRowIdx = queryObj.srrIdx || Constants.defaultApplicationSrrIdx;
     this.state.selectedRoiRowIdxOnLoad = queryObj.srrIdx || Constants.defaultApplicationSrrIdx;
     this.state.roiMode = queryObj.roiMode || Constants.defaultApplicationRoiMode;
@@ -325,6 +329,8 @@ class Viewer extends Component {
             drawerActiveTabOnOpen: self.state.activeTab,
             drawerContentKey: self.state.drawerContentKey + 1,
           }, () => {
+            //console.log("self.state.exemplarTableData", self.state.exemplarTableData);
+            //console.log("self.state.selectedNonRoiRowIdxOnLoad", self.state.selectedNonRoiRowIdxOnLoad);
             const nonROIRowIndex = self.state.selectedNonRoiRowIdxOnLoad;
             const nonROIRegion = self.state.exemplarTableData[(nonROIRowIndex - 1)];
             const nonROIRegionType = Constants.applicationRegionTypes.exemplar;
@@ -666,20 +672,20 @@ class Viewer extends Component {
   
   updateViewerLocation = (event) => {
     //console.log("this.updateViewerLocation()");
-    this.updateViewerURLWithLocation(event);
-/*
+    //this.updateViewerURLWithLocation(event);
     if (!this.viewerLocationChangeEventTimer) {
       clearTimeout(this.viewerLocationChangeEventTimer);
       //console.log("this.viewerLocationChangeEventTimer *unset*");
       this.viewerLocationChangeEventTimer = setTimeout(() => {
         this.updateViewerURLWithLocation(event);
         setTimeout(() => { 
+          this.fadeOutIntervalDrop();
+          this.fadeOutVerticalDrop();
           this.viewerLocationChangeEventTimer = null;
         }, 0);
         //console.log("this.viewerLocationChangeEventTimer set");
-      }, 1000);
+      }, 100);
     }
-*/
   }
   
   updateViewerHistory = (viewerUrl) => {
@@ -796,12 +802,14 @@ class Viewer extends Component {
           console.log("stop", stop, this.state.selectedExemplarStop, this.state.selectedRoiStop);
 */
           const queryObj = Helpers.getJsonFromUrl();
-          if (!this.state.selectedExemplarBeingUpdated && !queryObj.roiURL && !queryObj.roiSet) {
+          if (!this.state.selectedExemplarBeingUpdated && !queryObj.roiURL && !queryObj.roiSet && !queryObj.srrIdx) {
+            //console.log("Exemplar");
             selectedExemplarRowIdx = Constants.defaultApplicationSerIdx;
             this.fadeOutVerticalDrop();
             this.fadeOutIntervalDrop();
           }
-          if (!this.state.selectedRoiBeingUpdated && (queryObj.roiURL || queryObj.roiSet)) {
+          if (!this.state.selectedRoiBeingUpdated && (queryObj.roiURL || queryObj.roiSet) && !queryObj.serIdx) {
+            //console.log("ROI");
             selectedRoiRowIdx = Constants.defaultApplicationSrrIdx;
             this.fadeOutVerticalDrop();
             this.fadeOutIntervalDrop();
@@ -1012,19 +1020,43 @@ class Viewer extends Component {
       //navbarLefthalfWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerHeight: epilogosViewerDrawerHeight,
+      //navbarMidpoint: navbarMidpoint,
       downloadVisible: false,
       isMobile: isMobile,
       isPortrait: isPortrait,
     }, () => { 
       //console.log("W x H", this.state.width, this.state.height);
-      //console.log("Drawer height", this.state.drawerHeight);
-      //console.log("navbarLefthalfWidth (drawer width)", this.state.navbarLefthalfWidth);
+      //console.log("Drawer height", this.state.drawerHeight);      
       setTimeout(() => {
         this.setState({
           width: `${parseInt(document.documentElement.clientWidth)}px`
         }, () => {
+          // define midpoint between left and right halves of navbar
+          let navbarMidpoint = 0;
+          if (document.getElementById("epilogos-viewer-container-navbar") && document.getElementById("epilogos-viewer-navigation-summary-position-content")) {
+            let navbarWidth = parseInt(this.state.width);
+            console.log(`navbarWidth ${navbarWidth}`);
+            let navbarLeftButton = parseInt(document.getElementById("epilogos-viewer-hamburger-button").offsetWidth);
+            let navbarLeftBrand = parseInt(document.getElementById("epilogos-viewer-brand").offsetWidth);
+            let navbarLeftAutocomplete = parseInt(document.getElementById("epilogos-viewer-search-input-parent").offsetWidth);
+            let navbarLeftParameterSummary = parseInt(document.getElementById("epilogos-viewer-parameter-summary").offsetWidth);
+            let navbarLeft = navbarLeftButton + navbarLeftBrand + navbarLeftAutocomplete + navbarLeftParameterSummary + 10;
+            console.log(`navbarLeft ${navbarLeft}`);
+            let navbarRightSummaryPosition = parseInt(document.getElementById("epilogos-viewer-navigation-summary-position-content").offsetWidth);
+            //console.log(`navbarRightSummaryPosition ${navbarRightSummaryPosition}`);
+            let navbarRightSummaryAssembly = parseInt(document.getElementById("epilogos-viewer-navigation-summary-assembly").offsetWidth);
+            //console.log(`navbarRightSummaryAssembly ${navbarRightSummaryAssembly}`);
+            let navbarRightSummaryExportData = parseInt(document.getElementById("epilogos-viewer-navigation-summary-export-data").offsetWidth);
+            //console.log(`navbarRightSummaryExportData ${navbarRightSummaryExportData}`);
+            let navbarRight = navbarRightSummaryPosition + navbarRightSummaryAssembly + navbarRightSummaryExportData + 10;
+            console.log(`navbarRight ${navbarRight}`);
+            navbarMidpoint = navbarLeft + parseInt(parseFloat((navbarWidth - navbarLeft - navbarRight)) / 2.0) - 20;
+          }
           this.setState({
-            currentPositionKey: Math.random()
+            currentPositionKey: Math.random(),
+            navbarMidpoint: navbarMidpoint,
+          }, () => {
+            console.log("navbarMidpoint (between L and R halves)", this.state.navbarMidpoint);
           });
         });        
       }, 500);
@@ -1277,7 +1309,7 @@ class Viewer extends Component {
     });
     if ((this.epilogosViewerContainerVerticalDrop.style) && (this.epilogosViewerContainerVerticalDrop.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
     if ((this.epilogosViewerContainerIntervalDrop.style) && (this.epilogosViewerContainerIntervalDrop.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
-    //this.openViewerAtChrPosition(pos, Constants.defaultHgViewRegionPadding, regionType, rowIndex);
+    //console.log(pos, regionType, rowIndex);
     this.openViewerAtChrPosition(pos,
                                  Constants.defaultHgViewRegionUpstreamPadding,
                                  Constants.defaultHgViewRegionDownstreamPadding,
@@ -2166,6 +2198,7 @@ class Viewer extends Component {
                                  chrRight,
                                  start,
                                  stop);
+            //console.log("this.state.selectedExemplarRowIdx", this.state.selectedExemplarRowIdx);
             if (this.state.selectedExemplarRowIdx !== -1) {
               this.fadeOutIntervalDrop();
               this.fadeOutVerticalDrop();
@@ -2196,6 +2229,7 @@ class Viewer extends Component {
                                  chrRight,
                                  start,
                                  stop);
+            //console.log("this.state.selectedRoiRowIdx", this.state.selectedRoiRowIdx);
             if (this.state.selectedRoiRowIdx !== -1) {
               switch (this.state.roiMode) {
                 case "default": 
@@ -2758,8 +2792,8 @@ class Viewer extends Component {
   onMouseClickDownload = () => {
     //console.log("onMouseClickDownload()");
     // get dimensions of download button (incl. padding and margin)
-    let downloadButtonBoundingRect = document.getElementById('navigation-summary-download').getBoundingClientRect();
-    let downloadPopupBoundingRect = document.getElementById('navigation-summary-download-popup').getBoundingClientRect();
+    let downloadButtonBoundingRect = document.getElementById('epilogos-viewer-navigation-summary-export-data').getBoundingClientRect();
+    let downloadPopupBoundingRect = document.getElementById('epilogos-viewer-navigation-summary-export-data-popup').getBoundingClientRect();
     //console.log("downloadButtonBoundingRect", downloadButtonBoundingRect);
     //console.log("downloadPopupBoundingRect", downloadPopupBoundingRect);
     this.setState({
@@ -2815,11 +2849,9 @@ class Viewer extends Component {
     if (this.isProductionSite) {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
     }
-/*
     else {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
     }
-*/
     const rescale = (min, max, x) => (x - min) / (max - min);
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -3038,11 +3070,12 @@ class Viewer extends Component {
   }
   
   recommenderElement = () => {
+    if ((this.isProductionSite) || (this.state.navbarMidpoint === 0)) return <div />
     function recommenderElementByState(inProgress, enabled) {
-      return (inProgress && enabled) ? <span title={"Finding recommendations..."}><Spinner color="rgb(230, 230, 230)" /></span> : <FaGlasses className={(enabled) ? "navigation-recommender" : "navigation-recommender-disabled"} />
+      return (inProgress && enabled) ? <span><Spinner title={"Finding recommendations..."} color="rgb(230, 230, 230)" /></span> : <FaGlasses className={(enabled) ? "navigation-recommender" : "navigation-recommender-disabled"} />
     }
     return (
-      <div className={(this.state.recommenderIsEnabled) ? "epilogos-recommender-element" : "epilogos-recommender-element-disabled"}>
+      <div className={(this.state.recommenderIsEnabled) ? "epilogos-recommender-element" : "epilogos-recommender-element-disabled"} style={{top:"17px", left:`${this.state.navbarMidpoint}px`, position:"absolute", zIndex:"10000", pointerEvents:"all"}}>
         <span title={"Recommend similar regions"} onClick={(e) => { this.recommenderOnClick() }}> 
           {recommenderElementByState(this.state.recommenderInProgress, this.state.recommenderIsEnabled)}
         </span>
@@ -3425,6 +3458,10 @@ class Viewer extends Component {
         <div ref={(component) => this.epilogosViewerTrackLabelParent = component} id="epilogos-viewer-container-track-label-parent" className="epilogos-viewer-container-track-label-parent">
           {this.trackLabels()}
         </div>
+        
+        <div ref={(component) => this.epilogosViewerRecommenderParent = component} id="epilogos-viewer-container-recommender-parent" className="epilogos-viewer-container-recommender-parent">
+          {this.recommenderElement()}
+        </div>
       
         <div id="epilogos-viewer-drawer-parent">
           <Drawer 
@@ -3488,7 +3525,7 @@ class Viewer extends Component {
               </div>
             </NavItem>
             
-            <NavbarBrand className="brand-container navbar-brand-custom"> 
+            <NavbarBrand id="epilogos-viewer-brand" className="brand-container navbar-brand-custom"> 
               <div className="brand" title={"Return to portal"}>
                 <div className="brand-content brand-content-viewer">
                   <div className="brand-content-header-viewer brand-content-text-viewer" onClick={this.onClick} data-id={Helpers.stripQueryStringAndHashFromPath(document.location.href)} data-target="_self">
@@ -3498,7 +3535,7 @@ class Viewer extends Component {
               </div>
             </NavbarBrand>
             
-            <NavItem className="epilogos-viewer-search-input-parent">
+            <NavItem id="epilogos-viewer-search-input-parent" className="epilogos-viewer-search-input-parent">
               <Autocomplete
                 ref={(component) => this.epilogosAutocomplete = component}
                 className={"epilogos-viewer-search-input " + ((this.state.isMobile)?((this.state.isPortrait)?"epilogos-viewer-search-input-mobile-portrait":"epilogos-viewer-search-input-mobile-landscape"):"")}
@@ -3515,27 +3552,27 @@ class Viewer extends Component {
               />
             </NavItem>
             
-            <NavItem className="navbar-middle" title={this.parameterSummaryAsTitle()} style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
+            {/*<NavItem className="navbar-middle" style={(this.isProductionSite)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
               {this.recommenderElement()}
-            </NavItem>
+            </NavItem>*/}
             
-            <NavItem className="navbar-middle" title={this.parameterSummaryAsTitle()} style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
+            <NavItem id="epilogos-viewer-parameter-summary" className="navbar-middle" title={this.parameterSummaryAsTitle()} style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
               {this.parameterSummaryAsElement()}
             </NavItem>
             
-            <Nav className="ml-auto navbar-righthalf" navbar style={((this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1100)?((parseInt(this.state.width)>750)?{"display":"block"}:{"display":"none"}):{"display":"block"}))}>
+            <Nav id="epilogos-viewer-righthalf" className="ml-auto navbar-righthalf" navbar style={((this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1100)?((parseInt(this.state.width)>750)?{"display":"block"}:{"display":"none"}):{"display":"block"}))}>
               <div className="navigation-summary" ref={(component) => this.epilogosViewerNavbarRighthalf = component} id="navbar-righthalf" key={this.state.currentPositionKey} style={this.state.currentPosition ? {} : { display: 'none' }}>
-                <div className="navigation-summary-position">{Helpers.positionSummaryElement(true, true, this)}</div> 
-                <div title={"Viewer genomic assembly"} className="navigation-summary-assembly" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}>{this.state.hgViewParams.genome}</div>
-                <div title="Export viewer data" className={'navigation-summary-download ' + (this.state.downloadVisible?'navigation-summary-download-hover':'')} id="navigation-summary-download" onClick={this.onMouseClickDownload}><div className="navigation-summary-download-inner" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}><FaArrowAltCircleDown /></div></div>
+                <div id="epilogos-viewer-navigation-summary-position" className="navigation-summary-position">{Helpers.positionSummaryElement(true, true, this)}</div> 
+                <div id="epilogos-viewer-navigation-summary-assembly" title={"Viewer genomic assembly"} className="navigation-summary-assembly" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}>{this.state.hgViewParams.genome}</div>
+                <div id="epilogos-viewer-navigation-summary-export-data" title="Export viewer data" className={'navigation-summary-download ' + (this.state.downloadVisible?'navigation-summary-download-hover':'')} onClick={this.onMouseClickDownload}><div className="navigation-summary-download-inner" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}><FaArrowAltCircleDown /></div></div>
               </div>
             </Nav>
             
           </Navbar>
           
-          <div style={((this.state.isMobile&&this.state.isPortrait)?{"visibility":"hidden","width":"0px","height":"0px"}:((this.state.isMobile&&!this.state.isPortrait)?{"visibility":"visible", "position":"absolute", "zIndex":"10000", "top":"15px", "right":"15px", "maxWidth":"320px", "whiteSpace":"no-wrap"}:{"visibility":"hidden","width":"0px","height":"0px"}))}>
+          {/*<div style={((this.state.isMobile&&this.state.isPortrait)?{"visibility":"hidden","width":"0px","height":"0px"}:((this.state.isMobile&&!this.state.isPortrait)?{"visibility":"visible", "position":"absolute", "zIndex":"10000", "top":"15px", "right":"15px", "maxWidth":"320px", "whiteSpace":"no-wrap"}:{"visibility":"hidden","width":"0px","height":"0px"}))}>
             {Helpers.positionSummaryElement(false, true, this)}
-          </div>
+          </div>*/}
             
           <div className="higlass-content" style={{"height": this.state.hgViewHeight}}>
             <HiGlassComponent
@@ -3559,7 +3596,7 @@ class Viewer extends Component {
               />
           </div>
           
-          <div className={'navigation-summary-download-popup'} id="navigation-summary-download-popup" onMouseEnter={this.onMouseEnterDownload} onMouseLeave={this.onMouseLeaveDownload} style={{visibility:((this.state.downloadVisible)?"visible":"hidden"), position:"absolute", top:this.state.downloadButtonBoundingRect.bottom, left:(this.state.downloadButtonBoundingRect.right - this.state.downloadPopupBoundingRect.width)}}>
+          <div className={'navigation-summary-download-popup'} id="epilogos-viewer-navigation-summary-export-data-popup" onMouseEnter={this.onMouseEnterDownload} onMouseLeave={this.onMouseLeaveDownload} style={{visibility:((this.state.downloadVisible)?"visible":"hidden"), position:"absolute", top:this.state.downloadButtonBoundingRect.bottom, left:(this.state.downloadButtonBoundingRect.right - this.state.downloadPopupBoundingRect.width)}}>
             <div>
               <div className="download-route-label">export</div>
               <div>

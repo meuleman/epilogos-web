@@ -424,79 +424,79 @@ export const defaultPairedComplexityKeys = {
 
 export const assemblyBounds = {
   'hg19':{
-    'chr1':{'ub':249250621},
-    'chr2':{'ub':243199373},
-    'chr3':{'ub':198022430},
-    'chr4':{'ub':191154276},
-    'chr5':{'ub':180915260},
-    'chr6':{'ub':171115067},
-    'chr7':{'ub':159138663},
-    'chr8':{'ub':146364022},
-    'chr9':{'ub':141213431},
-    'chr10':{'ub':135534747},
-    'chr11':{'ub':135006516},
-    'chr12':{'ub':133851895},
-    'chr13':{'ub':115169878},
-    'chr14':{'ub':107349540},
-    'chr15':{'ub':102531392},
-    'chr16':{'ub':90354753},
-    'chr17':{'ub':81195210},
-    'chr18':{'ub':78077248},
-    'chr19':{'ub':59128983},
-    'chr20':{'ub':63025520},
-    'chr22':{'ub':51304566},
-    'chr21':{'ub':48129895},
-    'chrX':{'ub':155270560},
-    'chrY':{'ub':59373566},
+    'chr1':{'ub':249250800},
+    'chr2':{'ub':243199400},
+    'chr3':{'ub':198022600},
+    'chr4':{'ub':191154400},
+    'chr5':{'ub':180915400},
+    'chr6':{'ub':171115200},
+    'chr7':{'ub':159138800},
+    'chr8':{'ub':146364200},
+    'chr9':{'ub':141213600},
+    'chr10':{'ub':135534800},
+    'chr11':{'ub':135006600},
+    'chr12':{'ub':133852000},
+    'chr13':{'ub':115170000},
+    'chr14':{'ub':107349600},
+    'chr15':{'ub':102531400},
+    'chr16':{'ub':90354800},
+    'chr17':{'ub':81195400},
+    'chr18':{'ub':78077400},
+    'chr19':{'ub':59129000},
+    'chr20':{'ub':63025600},
+    'chr21':{'ub':48130000},
+    'chr22':{'ub':51304600},
+    'chrX':{'ub':155270600},
+    'chrY':{'ub':59373600},
   },
   'hg38':{
-    'chr1':{'ub':248956422},
-    'chr10':{'ub':133797422},
-    'chr11':{'ub':135086622},
-    'chr12':{'ub':133275309},
-    'chr13':{'ub':114364328},
-    'chr14':{'ub':107043718},
-    'chr15':{'ub':101991189}, 
-    'chr16':{'ub':90338345},
-    'chr17':{'ub':83257441},
-    'chr18':{'ub':80373285},
-    'chr19':{'ub':58617616},
-    'chr2':{'ub':242193529},
-    'chr20':{'ub':64444167},
-    'chr21':{'ub':46709983},
-    'chr22':{'ub':50818468},
-    'chr3':{'ub':198295559},
-    'chr4':{'ub':190214555},
-    'chr5':{'ub':181538259},
-    'chr6':{'ub':170805979},
-    'chr7':{'ub':159345973},
-    'chr8':{'ub':145138636},
-    'chr9':{'ub':138394717},
-    'chrX':{'ub':156040895},
-    'chrY':{'ub':57227415},
+    'chr1':{'ub':248956600},
+    'chr2':{'ub':242193600},
+    'chr3':{'ub':198295600},
+    'chr4':{'ub':190214600},
+    'chr5':{'ub':181538400},
+    'chr6':{'ub':170806000},
+    'chr7':{'ub':159346000},
+    'chr8':{'ub':145138800},
+    'chr9':{'ub':138394800},
+    'chr10':{'ub':133797600},
+    'chr11':{'ub':135086800},
+    'chr12':{'ub':133275400},
+    'chr13':{'ub':114364400},
+    'chr14':{'ub':107043800},
+    'chr15':{'ub':101991200},
+    'chr16':{'ub':90338400},
+    'chr17':{'ub':83257600},
+    'chr18':{'ub':80373400},
+    'chr19':{'ub':58617800},
+    'chr20':{'ub':64444200},
+    'chr21':{'ub':46710000},
+    'chr22':{'ub':50818600},
+    'chrX':{'ub':156041000},
+    'chrY':{'ub':57227600},
   },
   'mm10':{
-    'chr1':{'ub':195471971},
-    'chr10':{'ub':130694993},
-    'chr11':{'ub':122082543},
-    'chr12':{'ub':120129022},
-    'chr13':{'ub':120421639},
-    'chr14':{'ub':124902244},
-    'chr15':{'ub':104043685},
-    'chr16':{'ub':98207768},
-    'chr17':{'ub':94987271},
-    'chr18':{'ub':90702639},
-    'chr19':{'ub':61431566},
-    'chr2':{'ub':182113224},
-    'chr3':{'ub':160039680},
-    'chr4':{'ub':156508116},
-    'chr5':{'ub':151834684},
-    'chr6':{'ub':149736546},
-    'chr7':{'ub':145441459},
-    'chr8':{'ub':129401213},
-    'chr9':{'ub':124595110},
-    'chrX':{'ub':171031299},
-    'chrY':{'ub':91744698},
+    'chr1':{'ub':195472000},
+    'chr2':{'ub':182113400},
+    'chr3':{'ub':160039800},
+    'chr4':{'ub':156508200},
+    'chr5':{'ub':151834800},
+    'chr6':{'ub':149736600},
+    'chr7':{'ub':145441600},
+    'chr8':{'ub':129401400},
+    'chr9':{'ub':124595200},
+    'chr10':{'ub':130695000},
+    'chr11':{'ub':122082600},
+    'chr12':{'ub':120129200},
+    'chr13':{'ub':120421800},
+    'chr14':{'ub':124902400},
+    'chr15':{'ub':104043800},
+    'chr16':{'ub':98207800},
+    'chr17':{'ub':94987400},
+    'chr18':{'ub':90702800},
+    'chr19':{'ub':61431600},
+    'chrX':{'ub':171031400},
+    'chrY':{'ub':91744800},
   },
 };
 
@@ -839,9 +839,9 @@ export const portalHgViewParameters = {
   "hgViewTrackChromosomeHeight": 25,
   "hgViewTrackGeneAnnotationsHeight": 120,
   "hgGenomeURLs": {
-    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes",
-    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes",
-    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes"
+    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes.fixedBin",
+    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes.fixedBin",
+    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes.fixedBin"
   }
 };
 
@@ -871,9 +871,9 @@ export const viewerHgViewParameters = {
   "hgViewTrackGeneAnnotationsHeight": 120,
   "hgViewTrackGeneAnnotationsMobileDeviceHeight": 100,
   "hgGenomeURLs": {
-    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes",
-    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes",
-    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes"
+    "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes.fixedBin",
+    "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes.fixedBin",
+    "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes.fixedBin"
   }
 };
 
@@ -886,16 +886,18 @@ export const viewerHgViewconfTemplates = {
 
 export const viewerHgViewconfGenomeAnnotationUUIDs = {
   "hg19" : {
-    "chromsizes" : "bFIL39ioxSP6z4pDAsPb8sQ",
-    "genes" : "bJwGJttYpSueLXhUPEAv4Bw"
+    "chromsizes" : "S_2v_ZbeQIicTqHgGqjrTg", // hg19.chromsizes.fixedBin.txt (071620, 200bp-aligned)
+    "genes" : "ftfObGDLT8eLH0_mCK7Hcg"       // gencode.v19.annotation.gtf.v2.hgnc.longest.noChrM.bed14.fixedBin.db (071620, 200bp-aligned)
   },
   "hg38" : {
-    "chromsizes" : "DZWWLLb8T1mYBWbKn_HdnA",
-    "genes" : "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052730, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
+    "chromsizes" : "e7yehSFuSvWu0_9uEK1Apw", // hg38.chromsizes.fixedBin.txt (072020, 200bp-aligned)
+    "genes" : "OAc6qvgJRP2cEr78Eoj79w"       // gencode.v28.basic.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned) 
+                                             // "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052720, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
   },
   "mm10" : {
-    "chromsizes" : "X4NP8_UdQm-qAg8_P46ocg",
-    "genes" : "YZ5Wy9w2QTO5OpJmMZdsXg"
+    "chromsizes" : "ZHw2pq2tRLqsKxhOSdagWw", // mm10.chromsizes.fixedBin.txt (072020, 200bp-aligned)
+    "genes" : "dAhJNUy8QDmYp8CPtND0VQ"       // mm10.gencode.vM21.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned)
+                                             // "YZ5Wy9w2QTO5OpJmMZdsXg"
   }
 };
 

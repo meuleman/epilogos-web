@@ -13,6 +13,7 @@
 /epilogos-annotations/assets
 /epilogos-annotations/build
 /build
+/public/assets/marks
 
 # misc
 .DS_Store
