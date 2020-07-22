@@ -110,25 +110,25 @@ class Autocomplete extends Component {
     // Enter
     if (e.keyCode === 13) {
       document.activeElement.blur();
-      let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
-      let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
-      if (colonDashTest || whitespaceTest) {
-        let newUserInput = "";
-        let newLocation = this.state.userInput;
-        this.setState({
-          activeSuggestion: 0,
-          showSuggestions: false,
-          userInput: newUserInput,
-          selectedSuggestionLocation: newLocation
-        }, () => { 
-          console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
-          console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
-          this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
-          this.clearUserInput();
-        });
-        return;
-      }
       setTimeout(() => {
+        let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
+        let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
+        if (colonDashTest || whitespaceTest) {
+          let newUserInput = "";
+          let newLocation = this.state.userInput;
+          this.setState({
+            activeSuggestion: 0,
+            showSuggestions: false,
+            userInput: newUserInput,
+            selectedSuggestionLocation: newLocation
+          }, () => { 
+            console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
+            console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
+            this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
+            this.clearUserInput();
+          });
+          return;
+        }
         //console.log("filteredSuggestions[activeSuggestion]", JSON.stringify(this.state.filteredSuggestions[this.state.activeSuggestion]));
         let newUserInput = "";
         let newLocation = "";
@@ -150,7 +150,7 @@ class Autocomplete extends Component {
           this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
           this.clearUserInput();
         });
-      }, 1000);
+      }, this.state.debounceTimeout);
     }
     
     // Up arrow
@@ -186,18 +186,6 @@ class Autocomplete extends Component {
         block: 'end', 
         inline: 'nearest'
       });
-    }
-  }
-  
-  throttled = (delay, fn) => {
-    let lastCall = 0;
-    return function (...args) {
-      const now = (new Date()).getTime();
-      if (now - lastCall < delay) {
-        return;
-      }
-      lastCall = now;
-      return fn(...args);
     }
   }
 
