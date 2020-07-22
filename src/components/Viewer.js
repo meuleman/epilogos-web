@@ -41,7 +41,12 @@ import * as Helpers from "../Helpers.js";
 import { slide as Drawer } from 'react-burger-menu';
 
 // Icons
-import { FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard, FaGlasses } from 'react-icons/fa';
+import { FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard } from 'react-icons/fa';
+
+// RecommenderButton
+import RecommenderButton from "./RecommenderButton";
+import { RecommenderButtonDefaultLabel, RecommenderButtonInProgressLabel } from "./RecommenderButton";
+import { FaGlasses } from 'react-icons/fa';
 import Spinner from "react-svg-spinner";
 
 // HTML5 file saver
@@ -121,6 +126,7 @@ class Viewer extends Component {
       isMobile: false,
       isPortrait: false,
       verticalDropLabel: "chrN:X-Y",
+      roiTabTitle: "roi",
       roiEnabled: false,
       roiJumpActive: false,
       roiRegions: [],
@@ -155,6 +161,7 @@ class Viewer extends Component {
       highlightBehaviorAlpha: 0.0,
       recommenderIsEnabled: false,
       recommenderInProgress: false,
+      recommenderButtonLabel: RecommenderButtonDefaultLabel,
       navbarMidpoint: 0,
     };
     
@@ -171,7 +178,6 @@ class Viewer extends Component {
     this.viewerUpdateNoticeUpdateButton = React.createRef();
     this.epilogosAutocomplete = React.createRef();
     this.epilogosViewerTrackLabelParent = React.createRef();
-    this.epilogosViewerRecommenderParent = React.createRef();
     //
     this.epilogosViewerContainerVerticalDrop = React.createRef();
     //this.epilogosViewerContainerVerticalDropLabel = React.createRef();
@@ -378,61 +384,6 @@ class Viewer extends Component {
       }
       updateWithDefaults(this);
     }
-    
-/*
-    //
-    // If the roiURL parameter is defined, we fire a callback once the URL is loaded 
-    // to get the first row, to set position before the HiGlass container is rendered
-    //
-    if (queryObj.roiURL) {
-      setTimeout(() => {
-        //console.log("queryObj.roiURL", queryObj.roiURL);
-        function roiUpdated(self) {
-          //console.log("ROI table data updated!");
-          const firstROI = self.state.roiTableData[0];
-          const intervalPaddingFraction = (queryObj.roiPaddingFractional) ? parseFloat(queryObj.roiPaddingFractional) : Constants.defaultApplicationRoiPaddingFraction;
-          const intervalPaddingAbsolute = (queryObj.roiPaddingAbsolute) ? parseInt(queryObj.roiPaddingAbsolute) : Constants.defaultApplicationRoiPaddingAbsolute;
-          const roiStart = parseInt(firstROI.chromStart);
-          const roiStop = parseInt(firstROI.chromEnd)
-          let roiPadding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (roiStop - roiStart)) : intervalPaddingAbsolute;
-          newTempHgViewParams.chrLeft = firstROI.chrom;
-          newTempHgViewParams.chrRight = firstROI.chrom;
-          newTempHgViewParams.start = roiStart - roiPadding;
-          newTempHgViewParams.stop = roiStop + roiPadding;
-          let scale = Helpers.calculateScale(newTempHgViewParams.chrLeft, newTempHgViewParams.chrRight, newTempHgViewParams.start, newTempHgViewParams.stop, self);
-          self.state.previousViewScale = scale.diff;
-          self.state.currentViewScale = scale.diff;
-          self.state.currentViewScaleAsString = scale.scaleAsStr;
-          self.state.chromsAreIdentical = scale.chromsAreIdentical;
-          self.state.hgViewParams = newTempHgViewParams;
-          self.state.tempHgViewParams = newTempHgViewParams;
-          self.state.currentPosition.chrLeft = firstROI.chrom;
-          self.state.currentPosition.chrRight = firstROI.chrom;
-          self.state.currentPosition.startLeft = roiStart - roiPadding;
-          self.state.currentPosition.stopLeft = roiStop + roiPadding;
-          self.state.currentPosition.startRight = roiStart - roiPadding;
-          self.state.currentPosition.stopRight = roiStop + roiPadding;
-          self.triggerUpdate("update");
-        }
-        this.updateRois(queryObj.roiURL, roiUpdated);
-      }, 0);
-    }
-    else {
-      const scale = Helpers.calculateScale(newTempHgViewParams.chrLeft, newTempHgViewParams.chrRight, newTempHgViewParams.start, newTempHgViewParams.stop, this);
-      this.state.previousViewScale = scale.diff;
-      this.state.currentViewScale = scale.diff;
-      this.state.currentViewScaleAsString = scale.scaleAsStr;
-      this.state.chromsAreIdentical = scale.chromsAreIdentical;
-      this.state.hgViewParams = newTempHgViewParams;
-      this.state.tempHgViewParams = newTempHgViewParams;
-      if ((typeof queryObj.serIdx !== "undefined") && (queryObj.spcIdx !== Constants.defaultApplicationSerIdx)) {
-        this.state.selectedExemplarRowIdxOnLoad = parseInt(queryObj.serIdx);
-        this.state.selectedExemplarRowIdx = parseInt(queryObj.serIdx);
-        this.state.activeTab = "exemplars";
-      }
-      this.triggerUpdate("update");
-    }
-*/
   }
   
   componentWillMount() {
@@ -794,13 +745,6 @@ class Viewer extends Component {
         let selectedRoiRowIdx = this.state.selectedRoiRowIdx;
         //console.log("updateViewerURLWithLocation", selectedExemplarRowIdx, selectedRoiRowIdx);
         if ((chrLeft !== this.state.selectedExemplarChrLeft) || (chrRight !== this.state.selectedExemplarChrRight) || (start !== this.state.selectedExemplarStart) || (stop !== this.state.selectedExemplarStop) || (chrLeft !== this.state.selectedRoiChrLeft) || (chrRight !== this.state.selectedRoiChrRight) || (start !== this.state.selectedRoiStart) || (stop !== this.state.selectedRoiStop)) {
-          //console.log("reset");
-/*
-          console.log("chrLeft", chrLeft, this.state.selectedExemplarChrLeft, this.state.selectedRoiChrLeft);
-          console.log("chrRight", chrRight, this.state.selectedExemplarChrRight, this.state.selectedRoiChrRight);
-          console.log("start", start, this.state.selectedExemplarStart, this.state.selectedRoiStart);
-          console.log("stop", stop, this.state.selectedExemplarStop, this.state.selectedRoiStop);
-*/
           const queryObj = Helpers.getJsonFromUrl();
           if (!this.state.selectedExemplarBeingUpdated && !queryObj.roiURL && !queryObj.roiSet && !queryObj.srrIdx) {
             //console.log("Exemplar");
@@ -813,26 +757,6 @@ class Viewer extends Component {
             selectedRoiRowIdx = Constants.defaultApplicationSrrIdx;
             this.fadeOutVerticalDrop();
             this.fadeOutIntervalDrop();
-/*
-            let unpaddedStart = start;
-            let unpaddedStop = stop;
-            let paddedStart = start;
-            let paddedStop = stop;
-            if (this.state.roiMode === "default") {
-              let roiPadding = parseInt(Constants.defaultHgViewGenePaddingFraction * (stop - start));
-              paddedStart -= roiPadding;
-              paddedStop += roiPadding;
-            }
-            else if (this.state.roiMode === "midpoint") {
-              let roiMidpoint = parseInt(start + ((stop - start) / 2));
-              unpaddedStart = roiMidpoint - parseInt(this.state.roiMidpointPadding);
-              unpaddedStop = roiMidpoint + parseInt(this.state.roiMidpointPadding);
-              paddedStart = unpaddedStart;
-              paddedStop = unpaddedStop;
-            }
-            this.updateVerticalDrop();
-            this.updateIntervalDrop(chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
-*/
           }
         }
         self.setState({
@@ -1017,10 +941,8 @@ class Viewer extends Component {
       hgViewconf: deepCopyHgViewconf,
       epilogosContentHeight: epilogosContentHeight,
       epilogosContentPsHeight: epilogosContentPsHeight,
-      //navbarLefthalfWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerHeight: epilogosViewerDrawerHeight,
-      //navbarMidpoint: navbarMidpoint,
       downloadVisible: false,
       isMobile: isMobile,
       isPortrait: isPortrait,
@@ -1032,34 +954,38 @@ class Viewer extends Component {
           width: `${parseInt(document.documentElement.clientWidth)}px`
         }, () => {
           // define midpoint between left and right halves of navbar
-          let navbarMidpoint = 0;
-          if (document.getElementById("epilogos-viewer-container-navbar") && document.getElementById("epilogos-viewer-navigation-summary-position-content")) {
-            let navbarWidth = parseInt(this.state.width);
-            console.log(`navbarWidth ${navbarWidth}`);
-            let navbarLeftButton = parseInt(document.getElementById("epilogos-viewer-hamburger-button").offsetWidth);
-            let navbarLeftBrand = parseInt(document.getElementById("epilogos-viewer-brand").offsetWidth);
-            let navbarLeftAutocomplete = parseInt(document.getElementById("epilogos-viewer-search-input-parent").offsetWidth);
-            let navbarLeftParameterSummary = parseInt(document.getElementById("epilogos-viewer-parameter-summary").offsetWidth);
-            let navbarLeft = navbarLeftButton + navbarLeftBrand + navbarLeftAutocomplete + navbarLeftParameterSummary + 10;
-            console.log(`navbarLeft ${navbarLeft}`);
-            let navbarRightSummaryPosition = parseInt(document.getElementById("epilogos-viewer-navigation-summary-position-content").offsetWidth);
-            //console.log(`navbarRightSummaryPosition ${navbarRightSummaryPosition}`);
-            let navbarRightSummaryAssembly = parseInt(document.getElementById("epilogos-viewer-navigation-summary-assembly").offsetWidth);
-            //console.log(`navbarRightSummaryAssembly ${navbarRightSummaryAssembly}`);
-            let navbarRightSummaryExportData = parseInt(document.getElementById("epilogos-viewer-navigation-summary-export-data").offsetWidth);
-            //console.log(`navbarRightSummaryExportData ${navbarRightSummaryExportData}`);
-            let navbarRight = navbarRightSummaryPosition + navbarRightSummaryAssembly + navbarRightSummaryExportData + 10;
-            console.log(`navbarRight ${navbarRight}`);
-            navbarMidpoint = navbarLeft + parseInt(parseFloat((navbarWidth - navbarLeft - navbarRight)) / 2.0) - 20;
-          }
-          this.setState({
-            currentPositionKey: Math.random(),
-            navbarMidpoint: navbarMidpoint,
-          }, () => {
-            console.log("navbarMidpoint (between L and R halves)", this.state.navbarMidpoint);
-          });
+          this.updateNavbarMidpoint();
         });        
       }, 500);
+    });
+  }
+  
+  updateNavbarMidpoint = () => {
+    let navbarMidpoint = 0;
+    if (document.getElementById("epilogos-viewer-container-navbar") && document.getElementById("epilogos-viewer-navigation-summary-position-content")) {
+      let navbarWidth = parseInt(this.state.width);
+      //console.log(`navbarWidth ${navbarWidth}`);
+      let navbarLeftButton = parseInt(document.getElementById("epilogos-viewer-hamburger-button").offsetWidth);
+      let navbarLeftBrand = parseInt(document.getElementById("epilogos-viewer-brand").offsetWidth);
+      let navbarLeftAutocomplete = parseInt(document.getElementById("epilogos-viewer-search-input-parent").offsetWidth);
+      let navbarLeftParameterSummary = parseInt(document.getElementById("epilogos-viewer-parameter-summary").offsetWidth);
+      let navbarLeft = navbarLeftButton + navbarLeftBrand + navbarLeftAutocomplete + navbarLeftParameterSummary + 10;
+      //console.log(`navbarLeft ${navbarLeft}`);
+      let navbarRightSummaryPosition = parseInt(document.getElementById("epilogos-viewer-navigation-summary-position-content").offsetWidth);
+      //console.log(`navbarRightSummaryPosition ${navbarRightSummaryPosition}`);
+      let navbarRightSummaryAssembly = parseInt(document.getElementById("epilogos-viewer-navigation-summary-assembly").offsetWidth);
+      //console.log(`navbarRightSummaryAssembly ${navbarRightSummaryAssembly}`);
+      let navbarRightSummaryExportData = parseInt(document.getElementById("epilogos-viewer-navigation-summary-export-data").offsetWidth);
+      //console.log(`navbarRightSummaryExportData ${navbarRightSummaryExportData}`);
+      let navbarRight = navbarRightSummaryPosition + navbarRightSummaryAssembly + navbarRightSummaryExportData + 10;
+      //console.log(`navbarRight ${navbarRight}`);
+      navbarMidpoint = navbarLeft + parseInt(parseFloat((navbarWidth - navbarLeft - navbarRight)) / 2.0) - 40;
+    }
+    this.setState({
+      currentPositionKey: Math.random(),
+      navbarMidpoint: navbarMidpoint,
+    }, () => {
+      //console.log("navbarMidpoint (between L and R halves)", this.state.navbarMidpoint);
     });
   }
   
@@ -1427,8 +1353,13 @@ class Viewer extends Component {
     }, () => {
       if (isDirty) {
         this.setState({
-          recommenderIsEnabled: this.recommenderCanBeEnabled()
+          recommenderInProgress: false,
+          recommenderIsEnabled: this.recommenderCanBeEnabled(),
+          recommenderButtonLabel: RecommenderButtonDefaultLabel
         });
+        setTimeout(() => {
+          this.updateNavbarMidpoint(); 
+        }, 1500);
         this.triggerUpdate("update");
       }
     });
@@ -2435,6 +2366,7 @@ class Viewer extends Component {
     //
     //console.log("roiTableRows", roiTableRows);
     if (self) {
+      self.state.roiTabTitle = "roi";
       self.state.roiEnabled = true;
       self.state.roiRegions = dataRegions;
       self.state.roiTableData = roiTableRows;
@@ -2451,22 +2383,15 @@ class Viewer extends Component {
       const strand = firstRoi.strand;
       self.state.drawerActiveTabOnOpen = activeTab;
       self.state.selectedRoiRowIdx = rowIndex;
-      //this.jumpToRegion(region, regionType, rowIndex, strand);
-      //this.updateViewportDimensions();
-      //self.state.drawerIsOpen = true;
       setTimeout(() => {
         if (cb) {
           cb(self);
-/*
-          setTimeout(() => { 
-            self.jumpToRegion(region, regionType, rowIndex, strand);
-          }, 1000);
-*/
         }
       }, 1000);
     }
     else {
       this.setState({
+        roiTabTitle: "roi",
         roiEnabled: true,
         roiRegions: dataRegions,
         roiTableData: roiTableRows,
@@ -2481,13 +2406,6 @@ class Viewer extends Component {
         if (cb) {
           cb(this);
         }
-        //console.log("this.state.roiTableData", this.state.roiTableData);
-        //console.log("this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
-  /*
-        if (document.getElementById("drawer-content-roi-table")) {
-          console.log("drawer-content-roi-table", parseInt(document.getElementById("drawer-content-roi-table")));
-        }
-  */
         const queryObj = Helpers.getJsonFromUrl();
         //console.log("queryObj", JSON.stringify(queryObj));
         const activeTab = (queryObj.activeTab) ? queryObj.activeTab : "roi";
@@ -2508,15 +2426,8 @@ class Viewer extends Component {
               //console.log("state", JSON.stringify(this.state));
               setTimeout(() => {
                 this.jumpToRegion(region, regionType, rowIndex, strand);
-              }, 0);
+              }, 500);
               this.updateViewportDimensions();
-/*
-              setTimeout(() => {
-                this.setState({
-                  drawerIsOpen: true
-                });
-              }, 1000); 
-*/           
             });
           }
           catch (e) {
@@ -2528,213 +2439,6 @@ class Viewer extends Component {
       });
     }
   } 
-
-/*
-  roiRegionsUpdate = (data, cb) => {
-    // regions represent raw lines from the incoming data
-    // table data represent processed lines from regions, organized into fields
-    const dataRegions = data.split(/\r\n|\r|\n/);
-    // we set up a template object to hold a row of BED6 data (with placeholders)
-    const roiTableRow = {
-      'idx' : 0,
-      'chrom' : '.',
-      'chromStart' : 0,
-      'chromEnd' : 0,
-      'name' : '.',
-      'score' : 0.0,
-      'strand' : '.',
-      'element' : {
-        'position' : '.',
-        'paddedPosition' : '.'
-      }
-    };
-    let roiTableRows = [];
-    let roiTableRowsCopy = [];
-    let roiTableRowsIdxBySort = [];
-    //
-    // input should contain chromosomes that match the selected genome
-    //
-    const validChroms = Object.keys(Constants.assemblyBounds[this.state.hgViewParams.genome]);
-    //
-    // it is possible that the lines will not contain BED data, or will not have all fields
-    // we validate input to try to ensure that the ROI drawer content will not contain garbage regions
-    //
-    function isNormalInteger(str) {
-      return /^\+?(0|[1-9]\d*)$/.test(str);
-    }    
-    let newRoiMaxColumns = this.state.roiMaxColumns;
-    let newRoiTableDataLongestNameLength = this.state.roiTableDataLongestNameLength;
-    let lineCount = 0;
-    //
-    // parse data
-    //
-    for (const line of dataRegions) {
-      if (line.length === 0) { continue; }
-      lineCount += 1;
-      // we only add up to maximum number of elements
-      if (lineCount > Constants.defaultApplicationRoiLineLimit) break;
-      const elems = line.split(/\t/);
-      let columns = elems.length;
-      //      
-      // not enough columns to make up a minimal BED file
-      //
-      if (columns < 3) {
-        const err = {
-          "response" : {
-            "status" : 400,
-            "statusText" : "Malformed input"
-          }
-        };
-        const msg = this.errorMessage(err, `Input regions are missing columns (line ${lineCount})`, this.state.roiRawURL);
-        this.setState({
-          overlayMessage: msg
-        }, () => {
-          this.fadeInOverlay();
-        });
-        return;
-      }
-      //
-      // if the line does not have start or stop coordinates, then we send an error and return early
-      //
-      if (!isNormalInteger(elems[1]) || !isNormalInteger(elems[2])) {
-        const err = {
-          "response" : {
-            "status" : 400,
-            "statusText" : "Malformed input"
-          }
-        };
-        const msg = this.errorMessage(err, `Input regions have non-coordinate data (line ${lineCount})`, this.state.roiRawURL);
-        this.setState({
-          overlayMessage: msg
-        }, () => {
-          this.fadeInOverlay();
-        });
-        return;
-      }
-      //
-      // if the first element in elems is not a valid chromosome name from selected genome, report error and return early
-      //
-      if (!validChroms.includes(elems[0])) {
-        const err = {
-          "response" : {
-            "status" : 400,
-            "statusText" : "Malformed input"
-          }
-        };
-        const msg = this.errorMessage(err, `Input regions have bad chromosome names (line ${lineCount}, chromosome ${elems[0]} not allowed in assembly)`, this.state.roiRawURL);
-        this.setState({
-          overlayMessage: msg
-        }, () => {
-          this.fadeInOverlay();
-        });
-        return;
-      }
-      //
-      // update maximum number of columns
-      //
-      if (columns > newRoiMaxColumns) {
-        newRoiMaxColumns = columns;
-      }
-      //
-      // clone a row object from template
-      //
-      const row = Object.assign({}, roiTableRow);
-      //
-      // populate row with content from elems
-      //
-      row.idx = lineCount;
-      row.chrom = elems[0];
-      row.chromStart = parseInt(elems[1]);
-      row.chromEnd = parseInt(elems[2]);
-      row.position = row.chrom + ':' + row.chromStart + '-' + row.chromEnd;
-      //
-      let paddedPosition = Helpers.zeroPad(row.chrom.replace(/chr/, ''), 3) + ':' + Helpers.zeroPad(row.chromStart, 12) + '-' + Helpers.zeroPad(row.chromEnd, 12);
-      if (isNaN(row.chrom.replace(/chr/, ''))) {
-        paddedPosition = row.chrom.replace(/chr/, '') + ':' + Helpers.zeroPad(row.chromStart, 12) + '-' + Helpers.zeroPad(row.chromEnd, 12);
-      }
-      //
-      row.paddedPosition = paddedPosition;
-      row.element = {
-        "position" : row.position.slice(),
-        "paddedPosition" : row.paddedPosition.slice()
-      };
-      row.name = (columns > 3) ? elems[3] : '.';
-      row.score = (columns > 4) ? elems[4] : 0.0;
-      row.strand = (columns > 5) ? elems[5] : '.';
-      //
-      // add row object to table data array
-      //
-      roiTableRows.push(row);     
-      roiTableRowsCopy.push(row);
-      roiTableRowsIdxBySort.push(row.idx);
-      //
-      //
-      //
-      if (row.name.length > newRoiTableDataLongestNameLength) newRoiTableDataLongestNameLength = row.name.length; 
-    }
-    //
-    // update state
-    //
-    //console.log("roiTableRows", roiTableRows);
-    this.setState({
-      roiEnabled: true,
-      roiRegions: dataRegions,
-      roiTableData: roiTableRows,
-      roiTableDataCopy: roiTableRowsCopy,
-      roiTableDataIdxBySort: roiTableRowsIdxBySort,
-      roiMaxColumns: newRoiMaxColumns,
-      roiTableDataLongestNameLength: newRoiTableDataLongestNameLength,
-    }, () => {
-      //
-      // let the callback know that ROI data is available
-      //
-      if (cb) {
-        cb(this);
-      }
-      //console.log("this.state.roiTableData", this.state.roiTableData);
-      //console.log("this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
-      const queryObj = Helpers.getJsonFromUrl();
-      const activeTab = (queryObj.activeTab) ? queryObj.activeTab : "roi";
-      setTimeout(() => {
-        const firstRoi = roiTableRows[(this.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) ? this.state.selectedRoiRowIdxOnLoad - 1 : 0];
-        try {
-          const region = firstRoi.position;
-          const regionType = Constants.applicationRegionTypes.roi;
-          const rowIndex = (this.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) ?this.state.selectedRoiRowIdxOnLoad : 1;
-          //console.log("rowIndex", rowIndex);
-          const strand = firstRoi.strand;
-          this.setState({
-            //drawerIsOpen: true,
-            drawerActiveTabOnOpen: activeTab,
-            drawerContentKey: this.state.drawerContentKey + 1,
-            selectedRoiRowIdx: rowIndex
-          }, () => {
-            //console.log("state", JSON.stringify(this.state));
-/*
-            setTimeout(() => {
-              this.jumpToRegion(region, regionType, rowIndex, strand);
-            }, 0); 
-*/
-/*         setTimeout(() => {
-              this.jumpToRegion(region, regionType, rowIndex, strand);
-            }, 0);
-            this.updateViewportDimensions();
-            setTimeout(() => {
-              this.setState({
-                drawerIsOpen: true
-              });
-            }, 1000);
-          });
-        }
-        catch (e) {
-          if (e instanceof TypeError) {
-            console.warn(`roiTableRows ${JSON.stringify(roiTableRows)}`);
-          }
-        }
-      }, 1500);
-    });
-  }  
-*/
 
   updateRois = (roiEncodedURL, cb) => {
     // decode to test validity, re-encode to submit to proxy
@@ -2860,29 +2564,11 @@ class Viewer extends Component {
         let chrPaddedStartPos = chromInfo.chrToAbs([chrLeft, paddedStart]);
         let chrPaddedStopPos = chromInfo.chrToAbs([chrRight, paddedStop]);
         
-/*
-        console.log("chrUnpaddedStartPos, chrUnpaddedStopPos", chrUnpaddedStartPos, chrUnpaddedStopPos);
-        console.log("chrPaddedStartPos, chrPaddedStopPos", chrPaddedStartPos, chrPaddedStopPos);
-        console.log("rescale edges", 0, rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos), rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos), 1);
-        console.log("rescale dims", 0, parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos) * parseInt(windowInnerWidth)), parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos) * parseInt(windowInnerWidth)), parseInt(windowInnerWidth));
-*/
-        
         this.epilogosViewerContainerIntervalDropLeftTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos) * parseInt(windowInnerWidth)) + "px";
         this.epilogosViewerContainerIntervalDropLeftBottom.style.left = this.epilogosViewerContainerIntervalDropLeftTop.style.left;
         this.epilogosViewerContainerIntervalDropRightTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos) * parseInt(windowInnerWidth)) + "px";
         this.epilogosViewerContainerIntervalDropRightBottom.style.left = this.epilogosViewerContainerIntervalDropRightTop.style.left;
         
-/*
-        console.log(`this.epilogosViewerContainerIntervalDropLeftTop.style ${this.epilogosViewerContainerIntervalDropLeftTop.style.cssText}`);
-        console.log(`this.epilogosViewerContainerIntervalDropLeftBottom.style ${this.epilogosViewerContainerIntervalDropLeftBottom.style.cssText}`);
-        console.log(`this.epilogosViewerContainerIntervalDropRightTop.style ${this.epilogosViewerContainerIntervalDropRightTop.style.cssText}`);
-        console.log(`this.epilogosViewerContainerIntervalDropRightBottom.style ${this.epilogosViewerContainerIntervalDropRightBottom.style.cssText}`);
-*/
-        
-/*
-        this.epilogosViewerContainerIntervalDropLabel.style.width = parseInt(this.epilogosViewerContainerIntervalDropRightTop.style.left) - parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
-        this.epilogosViewerContainerIntervalDropLabel.style.left = parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
-*/
         this.epilogosViewerContainerIntervalDropRegionIntervalIndicator.style.width = parseInt(this.epilogosViewerContainerIntervalDropRightTop.style.left) - parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
         this.epilogosViewerContainerIntervalDropRegionIntervalIndicator.style.left = parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
         
@@ -2900,35 +2586,6 @@ class Viewer extends Component {
       })
     }, 1000);
   }
-  
-/*
-  updateIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    let region = `${chrLeft}:${unpaddedStart}-${unpaddedStop}`;
-    let regionLabel = region;
-    const pos = this.getRangeFromString(region, false, false);
-    switch (this.state.roiMode) {
-      case Constants.applicationRoiModes.default:        
-        regionLabel = `${String.fromCharCode(8676)} ${region} ${String.fromCharCode(8677)}`;
-        break;
-      case Constants.applicationRoiModes.midpoint:
-        const start = parseInt(pos[1]);
-        const stop = parseInt(pos[2]);
-        const midpoint = parseInt(start + ((stop - start) / 2));
-        const midpointLabel = `${pos[0]}:${midpoint}-${(midpoint + 1)}`;
-        regionLabel = midpointLabel;
-        break;
-      default:
-        throw new Error('Unknown ROI mode', this.state.roiMode);  
-        //break;
-    }
-    this.setState({
-      verticalDropLabel: regionLabel
-    });
-    setTimeout((cb) => {
-      if (cb) { cb(); }
-    }, 500);
-  }
-*/
   
   fadeOutIntervalDrop = (cb) => {
     this.epilogosViewerContainerIntervalDrop.style.opacity = 0;
@@ -3066,27 +2723,15 @@ class Viewer extends Component {
   
   recommenderCanBeEnabled = () => {
     let params = this.state.tempHgViewParams;
-    return ((params.genome === "hg19") && (params.model === "15") && (!this.isProductionSite) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight));
-  }
-  
-  recommenderElement = () => {
-    if ((this.isProductionSite) || (this.state.navbarMidpoint === 0)) return <div />
-    function recommenderElementByState(inProgress, enabled) {
-      return (inProgress && enabled) ? <span><Spinner title={"Finding recommendations..."} color="rgb(230, 230, 230)" /></span> : <FaGlasses className={(enabled) ? "navigation-recommender" : "navigation-recommender-disabled"} />
-    }
-    return (
-      <div className={(this.state.recommenderIsEnabled) ? "epilogos-recommender-element" : "epilogos-recommender-element-disabled"} style={{top:"17px", left:`${this.state.navbarMidpoint}px`, position:"absolute", zIndex:"10000", pointerEvents:"all"}}>
-        <span title={"Recommend similar regions"} onClick={(e) => { this.recommenderOnClick() }}> 
-          {recommenderElementByState(this.state.recommenderInProgress, this.state.recommenderIsEnabled)}
-        </span>
-      </div>
-    );
+    return ((params.genome === "hg19") && (params.model === "15") && (!this.isProductionSite) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && (params.mode === "single"));
   }
   
   recommenderOnClick = () => {
+    
     if (this.state.recommenderInProgress || !this.state.recommenderIsEnabled) return;
     this.setState({
-      recommenderInProgress: true
+      recommenderInProgress: true,
+      recommenderButtonLabel: RecommenderButtonInProgressLabel,
     }, () => {
       
       function recommenderQueryPromise(qChr, qStart, self) {
@@ -3167,6 +2812,7 @@ class Viewer extends Component {
           chromsAreIdentical: scale.chromsAreIdentical,
           currentPosition: newCurrentPosition,
           recommenderIsEnabled: self.recommenderCanBeEnabled(),
+          roiTabTitle: "results",
         }, () => {
           self.triggerUpdate("update");
           setTimeout(() => {
@@ -3175,6 +2821,7 @@ class Viewer extends Component {
               drawerIsOpen: true,
               recommenderInProgress: false,
               recommenderIsEnabled: self.recommenderCanBeEnabled(),
+              recommenderButtonLabel: RecommenderButtonDefaultLabel
             }, () => {
               setTimeout(() => {
                 self.jumpToRegion(firstROI.position, Constants.applicationRegionTypes.roi, rowIndex, firstROI.strand);
@@ -3189,7 +2836,7 @@ class Viewer extends Component {
       let viewStop = this.state.currentPosition.stopRight;
       let viewMidpoint = parseInt(viewStart + ((viewStop - viewStart) / 2));
       let queryChr = viewChr;
-      let queryStart = viewMidpoint - 25*200;
+      let queryStart = viewMidpoint - 25 * 200;
       
       let newRecommenderQuery = recommenderQueryPromise(queryChr, queryStart, this);
       
@@ -3223,6 +2870,12 @@ class Viewer extends Component {
     let complexity = this.state.hgViewParams.complexity;
     let complexityText = Constants.complexities[complexity];
     let divider = <div style={{paddingLeft:'5px',paddingRight:'5px'}}>|</div>;
+    let recommenderButton = <RecommenderButton
+                              onClick={this.recommenderOnClick}
+                              inProgress={this.state.recommenderInProgress}
+                              enabled={this.state.recommenderIsEnabled}
+                              label={this.state.recommenderButtonLabel}
+                              />;
     if (parseInt(this.state.width)<1000) {
       if (parseInt(this.state.width)<850) {
         if (parseInt(this.state.width)>=800) {
@@ -3237,7 +2890,7 @@ class Viewer extends Component {
       }
     }
     else {
-      return <div ref={(component) => this.epilogosViewerParameterSummary = component} id="navigation-summary-parameters" style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1000)?{"display":"inline-flex","letterSpacing":"0.005em"}:{"display":"inline-flex"})} className="navigation-summary-parameters">{genomeText}{divider}{modelText}{divider}{groupText}{divider}<span dangerouslySetInnerHTML={{ __html: complexityText }} /></div>;
+      return <div ref={(component) => this.epilogosViewerParameterSummary = component} id="navigation-summary-parameters" style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1000)?{"display":"inline-flex","letterSpacing":"0.005em"}:{"display":"inline-flex"})} className="navigation-summary-parameters"><span style={{display:"inherit"}} title={this.parameterSummaryAsTitle()}>{genomeText}{divider}{modelText}{divider}{groupText}{divider}<span dangerouslySetInnerHTML={{ __html: complexityText }} /></span>{recommenderButton}</div>;
     }
   }
   
@@ -3335,29 +2988,14 @@ class Viewer extends Component {
   }
   
   render() {
-    
-/*
-    const epilogosViewerHeaderNavbarHeight = "55px";
-    
-    const hgNonEpilogosContentHeight = (parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) + parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - 1) + "px";
-    
-    const hgNonEpilogosContentTop = (document.documentElement.clientHeight - parseInt(hgNonEpilogosContentHeight)) + "px";
-    
-    const hgEpilogosMidpoint = parseInt((document.documentElement.clientHeight)/2.0 + parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
-*/
 
     const epilogosViewerHeaderNavbarHeight = "55px";
     
     const hgEpilogosContentHeight = ((this.state.epilogosContentHeight) ? parseInt(this.state.epilogosContentHeight) + parseInt(epilogosViewerHeaderNavbarHeight) : 0) + "px";
-    //console.log("hgEpilogosContentHeight", hgEpilogosContentHeight);
-    
-    //const hgNonEpilogosContentHeight = (parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) + parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - 1) + "px";
     
     const windowInnerHeight = document.documentElement.clientHeight + "px";
     
     const hgNonEpilogosContentHeight = parseInt(windowInnerHeight) - parseInt(hgEpilogosContentHeight) + "px";
-    
-    //const hgNonEpilogosContentHeight = document.documentElement.clientHeight - parseInt(epilogosViewerHeaderNavbarHeight);
     
     const hgNonEpilogosContentTop = (document.documentElement.clientHeight - parseInt(hgNonEpilogosContentHeight) - 1) + "px";
     
@@ -3400,9 +3038,7 @@ class Viewer extends Component {
               strokeWidth="1"
               strokeDasharray="1,1" />
           </div>
-          {/*<div id="epilogos-viewer-container-interval-drop-label" className={hgIntervalDropLabelClassNames} ref={(component) => this.epilogosViewerContainerIntervalDropLabel = component} style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 7)+'px'}}>
-            {this.state.verticalDropLabel}
-          </div>*/}
+
           <div id="epilogos-viewer-container-interval-drop-left-top" className="epilogos-viewer-container-interval-drop-left-top" ref={(component) => this.epilogosViewerContainerIntervalDropLeftTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
           <div id="epilogos-viewer-container-interval-drop-left-bottom" className="epilogos-viewer-container-interval-drop-left-bottom" ref={(component) => this.epilogosViewerContainerIntervalDropLeftBottom = component} style={{height:`${hgNonEpilogosContentHeight}`,top:`${hgNonEpilogosContentTop}`}} />
           <div id="epilogos-viewer-container-interval-drop-right-top" className="epilogos-viewer-container-interval-drop-right-top" ref={(component) => this.epilogosViewerContainerIntervalDropRightTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
@@ -3410,6 +3046,7 @@ class Viewer extends Component {
         </div>
         
         <div id="epilogos-viewer-container-vertical-drop" className="epilogos-viewer-container-vertical-drop" ref={(component) => this.epilogosViewerContainerVerticalDrop = component}>
+          
           <div id="epilogos-viewer-container-vertical-drop-region-indicator" ref={(component) => this.epilogosViewerContainerVerticalDropRegionMidpointIndicator = component} style={{top:`10px`, left:"calc(50vw - 2px)", position:"absolute", zIndex:"10000", pointerEvents:"all"}}>
             <RegionMidpointIndicator 
               data={this.state.regionIndicatorData}
@@ -3424,11 +3061,12 @@ class Viewer extends Component {
               strokeWidth="1"
               strokeDasharray="1,1" />
           </div>
-          {/*<div id="epilogos-viewer-container-vertical-drop-label" className={hgVerticalDropLabelClassNames} ref={(component) => this.epilogosViewerContainerVerticalDropLabel = component} style={{top:`calc(100vh - ${hgEpilogosMidpoint} + ${hgVerticalDropLabelShift})`, left:"calc(50vw)"}}>
-            {this.state.verticalDropLabel}
-          </div>*/}
+
+
           <div id="epilogos-viewer-container-vertical-drop-top" className="epilogos-viewer-container-vertical-drop-top" ref={(component) => this.epilogosViewerContainerVerticalDropTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px", left:"calc(50vw)", borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          
           <div id="epilogos-viewer-container-vertical-drop-bottom" className="epilogos-viewer-container-vertical-drop-bottom" ref={(component) => this.epilogosViewerContainerVerticalDropBottom = component} style={{height:`${hgNonEpilogosContentHeight}`, top:`${hgNonEpilogosContentTop}`, left:"calc(50vw)"}} />
+          
         </div>
       
         <div id="epilogos-viewer-container-error-overlay" className="epilogos-viewer-container-overlay" ref={(component) => this.epilogosViewerContainerErrorOverlay = component} onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!");*/ this.setState({ overlayVisible: false }); })}}>
@@ -3457,10 +3095,6 @@ class Viewer extends Component {
         
         <div ref={(component) => this.epilogosViewerTrackLabelParent = component} id="epilogos-viewer-container-track-label-parent" className="epilogos-viewer-container-track-label-parent">
           {this.trackLabels()}
-        </div>
-        
-        <div ref={(component) => this.epilogosViewerRecommenderParent = component} id="epilogos-viewer-container-recommender-parent" className="epilogos-viewer-container-recommender-parent">
-          {this.recommenderElement()}
         </div>
       
         <div id="epilogos-viewer-drawer-parent">
@@ -3491,6 +3125,7 @@ class Viewer extends Component {
                 exemplarChromatinStates={this.state.exemplarChromatinStates}
                 selectedExemplarRowIdx={this.state.selectedExemplarRowIdx}
                 onExemplarColumnSort={this.updateSortOrderOfExemplarTableDataIndices}
+                roiTabTitle={this.state.roiTabTitle}
                 roiEnabled={this.state.roiEnabled}
                 roiTableData={this.state.roiTableData}
                 roiTableDataLongestNameLength={this.state.roiTableDataLongestNameLength}
@@ -3552,27 +3187,19 @@ class Viewer extends Component {
               />
             </NavItem>
             
-            {/*<NavItem className="navbar-middle" style={(this.isProductionSite)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
-              {this.recommenderElement()}
-            </NavItem>*/}
-            
-            <NavItem id="epilogos-viewer-parameter-summary" className="navbar-middle" title={this.parameterSummaryAsTitle()} style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
+            <NavItem id="epilogos-viewer-parameter-summary" className="navbar-middle" style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:{"display":"block"}}>
               {this.parameterSummaryAsElement()}
             </NavItem>
             
-            <Nav id="epilogos-viewer-righthalf" className="ml-auto navbar-righthalf" navbar style={((this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1100)?((parseInt(this.state.width)>750)?{"display":"block"}:{"display":"none"}):{"display":"block"}))}>
+            <Nav id="epilogos-viewer-righthalf" className="ml-auto navbar-righthalf" navbar style={null}>
               <div className="navigation-summary" ref={(component) => this.epilogosViewerNavbarRighthalf = component} id="navbar-righthalf" key={this.state.currentPositionKey} style={this.state.currentPosition ? {} : { display: 'none' }}>
                 <div id="epilogos-viewer-navigation-summary-position" className="navigation-summary-position">{Helpers.positionSummaryElement(true, true, this)}</div> 
-                <div id="epilogos-viewer-navigation-summary-assembly" title={"Viewer genomic assembly"} className="navigation-summary-assembly" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}>{this.state.hgViewParams.genome}</div>
-                <div id="epilogos-viewer-navigation-summary-export-data" title="Export viewer data" className={'navigation-summary-download ' + (this.state.downloadVisible?'navigation-summary-download-hover':'')} onClick={this.onMouseClickDownload}><div className="navigation-summary-download-inner" style={(parseInt(this.state.width)<1100)?{"letterSpacing":"0.005em"}:{}}><FaArrowAltCircleDown /></div></div>
+                <div id="epilogos-viewer-navigation-summary-assembly" title={"Viewer genomic assembly"} className="navigation-summary-assembly" style={(parseInt(this.state.width)<1400)?{}:{"letterSpacing":"0.005em"}}>{this.state.hgViewParams.genome}</div>
+                <div id="epilogos-viewer-navigation-summary-export-data" title="Export viewer data" className={'navigation-summary-download ' + (this.state.downloadVisible?'navigation-summary-download-hover':'')} onClick={this.onMouseClickDownload}><div className="navigation-summary-download-inner" style={(parseInt(this.state.width)<1400)?{}:{"letterSpacing":"0.005em"}}><FaArrowAltCircleDown /></div></div>
               </div>
             </Nav>
             
           </Navbar>
-          
-          {/*<div style={((this.state.isMobile&&this.state.isPortrait)?{"visibility":"hidden","width":"0px","height":"0px"}:((this.state.isMobile&&!this.state.isPortrait)?{"visibility":"visible", "position":"absolute", "zIndex":"10000", "top":"15px", "right":"15px", "maxWidth":"320px", "whiteSpace":"no-wrap"}:{"visibility":"hidden","width":"0px","height":"0px"}))}>
-            {Helpers.positionSummaryElement(false, true, this)}
-          </div>*/}
             
           <div className="higlass-content" style={{"height": this.state.hgViewHeight}}>
             <HiGlassComponent

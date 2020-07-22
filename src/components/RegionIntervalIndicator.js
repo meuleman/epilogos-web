@@ -79,8 +79,8 @@ class RegionMidpointIndicator extends Component {
           xmlnsXlink="http://www.w3.org/1999/xlink">
           <style type="text/css">
             { `.anchor { fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
-            { `.line { stroke:rgb(${this.props.strokeRGB}); stroke-opacity:${this.props.strokeOpacity}; stroke-width=${this.props.strokeWidth}; fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
-            { `.rect { width:100%; height:14px; background:rgba(${this.props.fillRGB},${this.props.fillOpacity}); color:rgba(${this.props.textColorRGBA}); font:bold 12px sans-serif; border-radius=${this.props.radius}; } ` }
+            { `.line { stroke:rgb(${this.props.strokeRGB}); stroke-opacity:${this.props.strokeOpacity}; stroke-width:${this.props.strokeWidth}; fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
+            { `.rect { width:100%; height:14px; background:rgba(${this.props.fillRGB},${this.props.fillOpacity}); color:rgba(${this.props.textColorRGBA}); font:bold 12px sans-serif; border-radius:${this.props.radius}; } ` }
           </style>
           <line x1={0} y1={parseInt(this.props.height) - 20} x2={this.props.outerWidth} y2={parseInt(this.props.height) - 20} className="dashed-line" />
           <line x1={this.props.outerWidth/2} y1={parseInt(this.props.height) - 20} x2={`${parseInt(parseInt(this.props.height) / 2) + this.props.outerWidth/2}`} y2={`${parseInt(parseInt(this.props.height) / 2) + 10}`} className="line" />

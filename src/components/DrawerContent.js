@@ -1135,7 +1135,7 @@ class DrawerContent extends Component {
                   onClick={() => { self.toggle('roi'); }}
                   disabled={!self.state.tabs.roi}
                 >
-                  roi
+                  {self.props.roiTabTitle}
                 </NavLink>
               </NavItem> : ""}
           </Nav>
