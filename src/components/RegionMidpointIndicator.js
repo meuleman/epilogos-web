@@ -36,7 +36,7 @@ class RegionMidpointIndicator extends Component {
       color: `rgba(${this.props.textColorRGBA})`,
       fontWeight: 500,
       fontSize: "16px",
-      fontFamily: `".SFNSDisplay-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif !important`,
+      fontFamily: `ui-sans-serif, system-ui, -system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji"`,
       letterSpacing: "0.1px",
       zIndex: 100001,
       paddingTop: "4px",
@@ -45,7 +45,8 @@ class RegionMidpointIndicator extends Component {
       paddingRight: "8px",
       display: "inline-block",
       cursor: "pointer",
-      width: "max-content"
+      width: "max-content",
+      pointerEvents: "all",
     };
     
     return (

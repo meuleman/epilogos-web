@@ -171,7 +171,7 @@ em {
 }
 
 .navbar-righthalf {
-  display: none;
+  /*display: none;*/
   position: relative;
   top: 7px;
 }
@@ -283,9 +283,9 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 }
 
 .navigation-summary-position-clipboard-inverse, .navigation-recommender-inverse {
+  position: relative;
   top: -2px;
   color: rgb(25,25,25);
-  position: relative;
   z-index: 100000;
 }
 
@@ -899,7 +899,7 @@ input.epilogos-viewer-search-input::placeholder {
 }
 
 .epilogos-viewer-container-track-label-parent {
-  z-index: 1000;
+  z-index: 1;
 }
 
 .epilogos-viewer-container-track-label {

@@ -77,12 +77,15 @@ class RecommenderButton extends Component {
     //if (!this.props.left) return <div />;
     
     let buttonBaseStyle = {
-      fontSize: '0.8rem',
-      borderRadius: '4px',
-      paddingLeft: '6px',
-      paddingRight: '6px',
-      paddingTop: '1px',
-      paddingBottom: '1px',
+      position: "relative",
+      top: "-1px",
+      fontSize: "0.8rem",
+      border: "3px solid black",
+      borderRadius: "6px",
+      paddingLeft: "6px",
+      paddingRight: "6px",
+      paddingTop: "1px",
+      paddingBottom: "1px",
     };
     
     let buttonStyle = {...buttonBaseStyle};

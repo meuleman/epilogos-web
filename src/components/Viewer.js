@@ -2521,6 +2521,7 @@ class Viewer extends Component {
     //console.log("fadeInVerticalDrop", this.state.isMobile);
     if (this.state.isMobile) return;
     this.epilogosViewerContainerVerticalDrop.style.opacity = 1;
+    this.epilogosViewerContainerVerticalDrop.style.display = "contents";
     //this.epilogosViewerContainerVerticalDrop.style.left = leftOffsetPx;
     //this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout((cb) => {
@@ -2539,6 +2540,7 @@ class Viewer extends Component {
   
   fadeOutVerticalDrop = (cb) => {
     this.epilogosViewerContainerVerticalDrop.style.opacity = 0;
+    this.epilogosViewerContainerVerticalDrop.style.display = "none";
     //this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout((cb) => {
       if (cb) { cb(); }
@@ -2870,12 +2872,15 @@ class Viewer extends Component {
     let complexity = this.state.hgViewParams.complexity;
     let complexityText = Constants.complexities[complexity];
     let divider = <div style={{paddingLeft:'5px',paddingRight:'5px'}}>|</div>;
-    let recommenderButton = <RecommenderButton
-                              onClick={this.recommenderOnClick}
-                              inProgress={this.state.recommenderInProgress}
-                              enabled={this.state.recommenderIsEnabled}
-                              label={this.state.recommenderButtonLabel}
-                              />;
+    let recommenderButton = (this.isProductionSite) ? 
+      <span /> 
+      :
+      <RecommenderButton
+        onClick={this.recommenderOnClick}
+        inProgress={this.state.recommenderInProgress}
+        enabled={this.state.recommenderIsEnabled}
+        label={this.state.recommenderButtonLabel}
+        />;
     if (parseInt(this.state.width)<1000) {
       if (parseInt(this.state.width)<850) {
         if (parseInt(this.state.width)>=800) {
