@@ -3234,8 +3234,8 @@ class Viewer extends Component {
               <div>
                 <span className="download-route-link" name="tabix" onClick={() => this.onClickDownloadItemSelect("tabix")}>DATA</span>
                 {"\u00a0"}|{"\u00a0"}
-                {/*<span className="download-route-link" name="png" onClick={() => this.onClickDownloadItemSelect("png")}>PNG</span>
-                {"\u00a0"}|{"\u00a0"}*/}
+                <span className="download-route-link" name="png" onClick={() => this.onClickDownloadItemSelect("png")}>PNG</span>
+                {"\u00a0"}|{"\u00a0"}
                 <span className="download-route-link" name="svg" onClick={() => this.onClickDownloadItemSelect("svg")}>SVG</span>
               </div>
             </div>

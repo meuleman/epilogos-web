@@ -19,7 +19,7 @@ class Autocomplete extends Component {
       // Selected annotation location
       selectedSuggestionLocation: "",
       // Debounce timeout interval (ms)
-      debounceTimeout: 300,
+      debounceTimeout: 200,
       // Minimum length before lookup
       minimumLength: 2
     };
