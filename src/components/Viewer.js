@@ -2677,35 +2677,94 @@ class Viewer extends Component {
         })
         break;
       case "png":
-        let pngPromise = this.hgView.api.exportAsPngBlobPromise();
-        pngPromise
-          .then((blob) => {
-            //console.log(blob);
-            let reader = new FileReader(); 
-            reader.addEventListener("loadend", function() {
-              let array = new Uint8Array(reader.result);
-              //console.log(new TextDecoder("iso-8859-2").decode(array));
-              let pngBlob = new Blob([array], {type: "image/png"});
-              saveAs(pngBlob, ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "png"].join("."));
-            }); 
-            reader.readAsArrayBuffer(blob);
-          })
-          .catch(function(err) {
-            throw Error(err);
-          })
-          .finally(function() {
-            //console.log("PNG export attempt is complete");
-          });
-        break;
       case "svg":
-        let svgStr = this.hgView.api.exportAsSvg();
-        
-        // cf. https://github.com/higlass/higlass/issues/651
-        let fixedSvgStr = svgStr.replace('xmlns="http://www.w3.org/1999/xhtml"', '');
-        //let fixedSvgStr = svgStr;
-        
-        let svgFile = new File([fixedSvgStr], ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "svg"].join("."), {type: "image/svg+xml;charset=utf-8"});
-        saveAs(svgFile);
+        // 
+        // some unresolved issue with the multivec heatmap requires the view 
+        // configuration to be reloaded in browser memory, before exporting PNG or SVG
+        // which causes an annoying "blink" 
+        //
+        let newHgViewconf = this.state.hgViewconf;
+        const queryObj = Helpers.getJsonFromUrl();
+        let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
+        let chrRight = queryObj.chrRight || this.state.currentPosition.chrRight;
+        let start = parseInt(queryObj.start || this.state.currentPosition.startLeft);
+        let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
+        let currentGenome = queryObj.genome || this.state.hgViewParams.genome;
+        let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[currentGenome];
+        if (this.isProductionSite) {
+          chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
+        }
+        else {
+          chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
+        }
+        ChromosomeInfo(chromSizesURL)
+          .then((chromInfo) => {
+            //console.log("chromInfo", chromInfo);
+            if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
+              chrLeft = Constants.defaultApplicationPositions[currentGenome].chr;
+              chrRight = Constants.defaultApplicationPositions[currentGenome].chr;
+              start = Constants.defaultApplicationPositions[currentGenome].start;
+              stop = Constants.defaultApplicationPositions[currentGenome].stop;
+            }
+            if (start > chromInfo.chromLengths[chrLeft]) {
+              start = chromInfo.chromLengths[chrLeft] - 10000;
+            }
+            if (stop > chromInfo.chromLengths[chrRight]) {
+              stop = chromInfo.chromLengths[chrRight] - 1000;
+            }
+            let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
+            let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
+            newHgViewconf.views[0].initialXDomain = [absLeft, absRight];
+            newHgViewconf.views[0].initialYDomain = [absLeft, absRight];
+            this.setState({
+              hgViewconf: newHgViewconf,
+            }, () => {
+              this.setState({
+                hgViewKey: this.state.hgViewKey + 1
+              }, () => {
+                setTimeout(() => {
+                  if (name === "svg") {
+                    let svgStr = this.hgView.api.exportAsSvg();
+                    // cf. https://github.com/higlass/higlass/issues/651
+                    let fixedSvgStr = svgStr.replace('xmlns="http://www.w3.org/1999/xhtml"', '');
+                    //let fixedSvgStr = svgStr;
+                    let svgFile = new File([fixedSvgStr], ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "svg"].join("."), {type: "image/svg+xml;charset=utf-8"});
+                    saveAs(svgFile);  
+                  }
+                  else if (name === "png") {
+                    let pngPromise = this.hgView.api.exportAsPngBlobPromise();
+                    pngPromise
+                      .then((blob) => {
+                        //console.log(blob);
+                        let reader = new FileReader(); 
+                        reader.addEventListener("loadend", function() {
+                          let array = new Uint8Array(reader.result);
+                          //console.log(new TextDecoder("iso-8859-2").decode(array));
+                          let pngBlob = new Blob([array], {type: "image/png"});
+                          saveAs(pngBlob, ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "png"].join("."));
+                        }); 
+                        reader.readAsArrayBuffer(blob);
+                      })
+                      .catch(function(err) {
+                        throw Error(err);
+                      })
+                      .finally(function() {
+                        //console.log("PNG export attempt is complete");
+                      });
+                  }                  
+                }, 2500);
+              });
+            });
+          })
+          .catch((err) => {
+            let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
+            this.setState({
+              overlayMessage: msg,
+              hgViewconf: {}
+            }, () => {
+              this.fadeInOverlay();
+            });
+          });        
         break;
       default:
         break;
