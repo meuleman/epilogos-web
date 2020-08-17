@@ -12,6 +12,10 @@ You'll need a HiGlass server to point this application at. That server will need
 
 Setting up the HiGlass server and generating/ingesting tracks are fairly involved processes and are outside the scope of this document. We may document this elsewhere, at a later time. Interested parties may take a look at HiGlass server and aggregation tools available via the parent site on GitHub: https://github.com/higlass
 
+### Recommender service
+
+This web service queries a "recommmender" pattern searching tool running on the Epilogos host on port tcp/9002. This service relies on locally-stored database files, as well as tabix files sourced remotely on https://explore.altius.org. Source code for this service is located at: https://github.com/Altius/recommender-proxy
+
 ### Annotations service
 
 This service allows the user to quickly jump to a gene (or, in the future, other types of annotations) by entering its prefix into the "autocomplete" input field and selecting from one of the presented candidate annotations. 
