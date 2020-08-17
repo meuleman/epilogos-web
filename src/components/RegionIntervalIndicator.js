@@ -6,7 +6,7 @@ import * as Constants from '../Constants.js';
 import { FaClipboard } from 'react-icons/fa';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-class RegionMidpointIndicator extends Component {
+class RegionIntervalIndicator extends Component {
 
   constructor(props) {
     super(props);
@@ -27,7 +27,7 @@ class RegionMidpointIndicator extends Component {
     const circleCX = radius;
     const circleCY = height - radius;
     
-    const contentTop = lineHeight - 8;
+    const contentTop = lineHeight - this.props.contentTopOffset;
     const contentLeft = lineWidth - 8 + (this.props.outerWidth / 2);
     const contentStyle = {
       position: "absolute",
@@ -57,19 +57,26 @@ class RegionMidpointIndicator extends Component {
       return <span className="navigation-summary-position-region-state-color-box" style={{"backgroundColor":backgroundColor, "display":"inline-block", "borderWidth":"thin", "borderColor":"grey"}}></span>
     }
     
-    const contentLabel = (this.props.data.regionState && this.props.data.regionState.label) ? 
-      <div>
-        <div>
+    let contents = [];
+    if (this.props.data.regionState && this.props.data.regionState.label) {
+      contents.push(
+        <div key="region-interval-indicator-with-label">
+          <div key="region-interval-indicator-with-label-content">
+            <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
+          </div>
+          <div key="region-interval-indicator-with-label-interval">
+            <span className="navigation-summary-position-clipboard-inverse-label-no-shift navigation-summary-position-region-label">{stateToColorBox(this)}{"\u00a0"}{"\u00a0"}{this.props.data.regionState.label}</span>
+          </div>
+        </div>
+      );
+    }
+    else {
+      contents.push(
+        <div key="region-interval-indicator-no-label-interval">
           <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
         </div>
-        <div>
-          <span className="navigation-summary-position-clipboard-inverse-label-no-shift navigation-summary-position-region-label">{stateToColorBox(this)}{"\u00a0"}{"\u00a0"}{this.props.data.regionState.label}</span>
-        </div>
-      </div>
-      :
-      <div>
-        <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
-      </div>;
+      );
+    }
     
     return (
       <div>
@@ -79,17 +86,16 @@ class RegionMidpointIndicator extends Component {
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink">
           <style type="text/css">
-            { `.anchor { fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
+            { `.dashed-line { stroke:rgb(${this.props.strokeRGB}); stroke-opacity:${this.props.strokeOpacity}; stroke-width:${this.props.strokeWidth}; stroke-dasharray:${this.props.strokeDasharray}; } ` }
             { `.line { stroke:rgb(${this.props.strokeRGB}); stroke-opacity:${this.props.strokeOpacity}; stroke-width:${this.props.strokeWidth}; fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
-            { `.rect { width:100%; height:14px; background:rgba(${this.props.fillRGB},${this.props.fillOpacity}); color:rgba(${this.props.textColorRGBA}); font:bold 12px sans-serif; border-radius:${this.props.radius}; } ` }
           </style>
           <line x1={0} y1={parseInt(this.props.height) - 20} x2={this.props.outerWidth} y2={parseInt(this.props.height) - 20} className="dashed-line" />
-          <line x1={this.props.outerWidth/2} y1={parseInt(this.props.height) - 20} x2={`${parseInt(parseInt(this.props.height) / 2) + this.props.outerWidth/2}`} y2={`${parseInt(parseInt(this.props.height) / 2) + 10}`} className="line" />
+          <line x1={this.props.outerWidth/2} y1={parseInt(this.props.height) - 20} x2={`${parseInt(parseInt(this.props.height) / 2) + this.props.outerWidth/2}`} y2={`${parseInt(parseInt(this.props.height) / 2) + 10 - parseInt(this.props.contentTopOffset) + 8}`} className="line" />
           <polygon points={ `0,${(parseInt(this.props.height) - 20)} 5,${parseInt(this.props.height) - 23} 5,${parseInt(this.props.height) - 17}` } className="line" />
           <polygon points={ `${this.props.outerWidth},${(parseInt(this.props.height) - 20)} ${this.props.outerWidth - 5},${parseInt(this.props.height) - 23} ${this.props.outerWidth - 5},${parseInt(this.props.height) - 17}` } className="line" />
         </svg>
         <div style={contentStyle}>
-          {contentLabel}
+          {contents}
         </div>
       </div>
     )
@@ -97,4 +103,4 @@ class RegionMidpointIndicator extends Component {
   
 }
 
-export default RegionMidpointIndicator;
+export default RegionIntervalIndicator;

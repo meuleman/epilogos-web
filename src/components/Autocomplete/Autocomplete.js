@@ -19,7 +19,7 @@ class Autocomplete extends Component {
       // Selected annotation location
       selectedSuggestionLocation: "",
       // Debounce timeout interval (ms)
-      debounceTimeout: 200,
+      debounceTimeout: 100,
       // Minimum length before lookup
       minimumLength: 2
     };
@@ -42,7 +42,7 @@ class Autocomplete extends Component {
         showSuggestions: false,
         userInput: e.target.value
       }, () => {
-        //console.log("calling this.props.onChangeInput", this.state.userInput);
+        console.log("calling this.props.onChangeInput", this.state.userInput);
         this.props.onChangeInput(this.state.userInput);
       })
       return;
@@ -122,8 +122,8 @@ class Autocomplete extends Component {
             userInput: newUserInput,
             selectedSuggestionLocation: newLocation
           }, () => { 
-            console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
-            console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
+            //console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
+            //console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
             this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
             this.clearUserInput();
           });

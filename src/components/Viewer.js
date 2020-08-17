@@ -41,12 +41,15 @@ import * as Helpers from "../Helpers.js";
 import { slide as Drawer } from 'react-burger-menu';
 
 // Icons
-import { FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard } from 'react-icons/fa';
+import { FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard, FaExternalLinkAlt } from 'react-icons/fa';
 
 // RecommenderButton
-import RecommenderButton from "./RecommenderButton";
-import { RecommenderButtonDefaultLabel, RecommenderButtonInProgressLabel } from "./RecommenderButton";
-import { FaGlasses } from 'react-icons/fa';
+import RecommenderSearchButton from "./RecommenderSearchButton";
+import { RecommenderSearchButtonDefaultLabel, RecommenderSearchButtonInProgressLabel } from "./RecommenderSearchButton";
+import RecommenderSearchLink from "./RecommenderSearchLink";
+import { RecommenderSearchLinkDefaultLabel, RecommenderSearchLinkInProgressLabel } from "./RecommenderSearchLink";
+import RecommenderExpandLink from "./RecommenderExpandLink";
+import { RecommenderExpandLinkDefaultLabel } from "./RecommenderExpandLink";
 import Spinner from "react-svg-spinner";
 
 // HTML5 file saver
@@ -58,6 +61,9 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 // Validate strings (URLs etc.)
 import validator from 'validator';
+
+// Generate UUIDs
+export const uuid4 = require("uuid4");
 
 // Query JSON objects (to build dropdowns and other inputs)
 // cf. https://www.npmjs.com/package/jsonpath-lite
@@ -74,12 +80,15 @@ class Viewer extends Component {
       linkedInHref: "https://www.linkedin.com/company/altius-institute-for-biomedical-sciences",
       altiusHref: "https://www.altius.org",
       higlassHref: "http://higlass.io",
-      hgViewKey: 0,
+      queryHgViewKey: 0,
+      queryHgViewHeight: 0,
+      queryHgViewconf: {},
+      mainHgViewKey: 0,
       hgViewLoopEnabled: true,
-      hgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight,
+      mainHgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight,
       epilogosContentHeight: 0,
       epilogosContentPsHeight: 0,
-      hgViewconf: {},
+      mainHgViewconf: {},
       hgViewParams: Constants.viewerHgViewParameters,
       hgViewRefreshTimerActive: true,
       hgViewClickPageX: Constants.defaultHgViewClickPageX,
@@ -153,19 +162,27 @@ class Viewer extends Component {
       previousViewScale: -1,
       currentViewScaleAsString: "",
       chromsAreIdentical: false,
-      regionIndicatorData: {},
-      regionIndicatorOuterWidth: 0,
+      mainRegionIndicatorData: {},
+      mainRegionIndicatorOuterWidth: 0,
+      mainRegionIndicatorContentTopOffset: 8,
+      queryRegionIndicatorData: {},
+      queryRegionIndicatorOuterWidth: 0,
+      queryRegionIndicatorContentTopOffset: 8,
       highlightEncodedRows: "",
       highlightRawRows: [],
       highlightBehavior: "",
       highlightBehaviorAlpha: 0.0,
-      recommenderIsEnabled: false,
-      recommenderInProgress: false,
-      recommenderButtonLabel: RecommenderButtonDefaultLabel,
+      recommenderSearchIsEnabled: false,
+      recommenderSearchInProgress: false,
+      recommenderSearchButtonLabel: RecommenderSearchButtonDefaultLabel,
+      recommenderSearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+      recommenderExpandIsEnabled: false,
+      recommenderExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
       navbarMidpoint: 0,
     };
     
-    this.hgView = React.createRef();
+    this.mainHgView = React.createRef();
+    this.queryHgView = React.createRef();
     this.epilogosViewerContainerParent = React.createRef();
     this.epilogosViewerContainerOverlay = React.createRef();
     this.epilogosViewerContainerErrorOverlay = React.createRef();
@@ -179,19 +196,28 @@ class Viewer extends Component {
     this.epilogosAutocomplete = React.createRef();
     this.epilogosViewerTrackLabelParent = React.createRef();
     //
-    this.epilogosViewerContainerVerticalDrop = React.createRef();
+    this.epilogosViewerContainerVerticalDropMain = React.createRef();
     //this.epilogosViewerContainerVerticalDropLabel = React.createRef();
-    this.epilogosViewerContainerVerticalDropRegionMidpointIndicator = React.createRef();
-    this.epilogosViewerContainerVerticalDropTop = React.createRef();
-    this.epilogosViewerContainerVerticalDropBottom = React.createRef();
+    this.epilogosViewerContainerVerticalDropMainRegionMidpointIndicator = React.createRef();
+    this.epilogosViewerContainerVerticalDropMainTop = React.createRef();
+    this.epilogosViewerContainerVerticalDropMainBottom = React.createRef();
     //
-    this.epilogosViewerContainerIntervalDrop = React.createRef();
+    this.epilogosViewerContainerIntervalDropMain = React.createRef();
     //this.epilogosViewerContainerIntervalDropLabel = React.createRef();
-    this.epilogosViewerContainerIntervalDropRegionIntervalIndicator = React.createRef();
-    this.epilogosViewerContainerIntervalDropLeftTop = React.createRef();
-    this.epilogosViewerContainerIntervalDropRightTop = React.createRef();
-    this.epilogosViewerContainerIntervalDropLeftBottom = React.createRef();
-    this.epilogosViewerContainerIntervalDropRightBottom = React.createRef();
+    this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator = React.createRef();
+    this.epilogosViewerContainerIntervalDropMainLeftTop = React.createRef();
+    this.epilogosViewerContainerIntervalDropMainRightTop = React.createRef();
+    this.epilogosViewerContainerIntervalDropMainLeftBottom = React.createRef();
+    this.epilogosViewerContainerIntervalDropMainRightBottom = React.createRef();
+    
+    this.epilogosViewerContainerIntervalDropQuery = React.createRef();
+    this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator = React.createRef();
+    this.epilogosViewerContainerIntervalDropQueryLeftTop = React.createRef();
+    this.epilogosViewerContainerIntervalDropQueryRightTop = React.createRef();
+    this.epilogosViewerContainerIntervalDropQueryLeftBottom = React.createRef();
+    this.epilogosViewerContainerIntervalDropQueryRightBottom = React.createRef();
+    
+    this.epilogosViewerRecommenderButton = React.createRef();
     
     // timeout for location change
     //this.viewerLocationChangeEventTimer = null;
@@ -204,8 +230,12 @@ class Viewer extends Component {
     console.log("this.currentURL.port", this.currentURL.port);
     
     // is this site production or development?
-    this.isProductionSite = (this.currentURL.port === "" || (parseInt(this.currentURL.port) !== 3000 && parseInt(this.currentURL.port) !== 3001));
-    //console.log("this.isProductionSite", this.isProductionSite);
+    let sitePort = parseInt(this.currentURL.port);
+    if (isNaN(sitePort)) sitePort = 443;
+    this.isProductionSite = ((sitePort === "") || (sitePort === 443)); // || (sitePort !== 3000 && sitePort !== 3001));
+    this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
+    console.log("this.isProductionSite", this.isProductionSite);
+    console.log("this.isProductionProxySite", this.isProductionProxySite);
     
     const queryObj = Helpers.getJsonFromUrl();
     let newTempHgViewParams = {...this.state.tempHgViewParams};
@@ -218,6 +248,7 @@ class Viewer extends Component {
     newTempHgViewParams.start = parseInt(queryObj.start || Constants.defaultApplicationStart);
     newTempHgViewParams.stop = parseInt(queryObj.stop || Constants.defaultApplicationStop);
     newTempHgViewParams.mode = queryObj.mode || Constants.defaultApplicationMode;
+    newTempHgViewParams.mode = (newTempHgViewParams.mode === "query") ? "single" : newTempHgViewParams.mode;
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
     this.state.selectedExemplarRowIdx = queryObj.serIdx || Constants.defaultApplicationSerIdx;
     this.state.selectedNonRoiRowIdxOnLoad = this.state.selectedExemplarRowIdx;
@@ -304,7 +335,8 @@ class Viewer extends Component {
       self.state.currentPosition.stopLeft = roiStop + roiPadding;
       self.state.currentPosition.startRight = roiStart - roiPadding;
       self.state.currentPosition.stopRight = roiStop + roiPadding;
-      self.state.recommenderIsEnabled = self.recommenderCanBeEnabled();
+      self.state.recommenderSearchIsEnabled = self.recommenderSearchCanBeEnabled();
+      self.state.recommenderExpandIsEnabled = self.recommenderExpandCanBeEnabled();
       self.triggerUpdate("update");
       setTimeout(() => {
         self.setState({
@@ -325,7 +357,8 @@ class Viewer extends Component {
       self.state.chromsAreIdentical = scale.chromsAreIdentical;
       self.state.hgViewParams = newTempHgViewParams;
       self.state.tempHgViewParams = newTempHgViewParams;
-      self.state.recommenderIsEnabled = self.recommenderCanBeEnabled();
+      self.state.recommenderSearchIsEnabled = self.recommenderSearchCanBeEnabled();
+      self.state.recommenderExpandIsEnabled = self.recommenderExpandCanBeEnabled();
       self.triggerUpdate("update");
       if (typeof self.state.activeTab !== "undefined" && self.state.activeTab !== "settings") {
         //console.log("self.state.activeTab", self.state.activeTab);
@@ -460,7 +493,7 @@ class Viewer extends Component {
         break;
       case RETURN_KEY:
         if (this.state.drawerIsOpen) {
-          this.triggerUpdate("update");
+          //this.triggerUpdate("update");
         }
         break;
       case LEFT_ARROW_KEY:
@@ -546,18 +579,22 @@ class Viewer extends Component {
     })
   }
   
-/*
-  getJsonFromUrl = () => {
-    let query = window.location.search.substr(1);
-    let result = {};
-    query.split("&").forEach(function(part) {
-        var item = part.split("=");
-        if (item[0].length > 0)
-          result[item[0]] = decodeURIComponent(item[1]);
-    });
-    return result;
+  getChromSizesURL = (genome) => {
+    let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];
+    if (this.isProductionSite) {
+      chromSizesURL = chromSizesURL.replace(Constants.applicationDevelopmentPort, Constants.applicationProductionPort);
+    }
+    else if (this.isProductionProxySite) {
+      chromSizesURL = chromSizesURL.replace(Constants.applicationDevelopmentPort, Constants.applicationProductionProxyPort);
+      chromSizesURL = chromSizesURL.replace(/^https/, "http");
+    }
+    else {
+      let port = parseInt(this.currentURL.port);
+      if (isNaN(port)) { port = Constants.applicationProductionPort; }
+      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
+    }
+    return chromSizesURL;
   }
-*/
   
   getPathFromUrl = (url) => {
     return url.split("?")[0];
@@ -573,21 +610,23 @@ class Viewer extends Component {
         let genome = this.state.hgViewParams.genome;
         let boundsLeft = 20;
         let boundsRight = Constants.assemblyBounds[genome].chrY.ub - boundsLeft;
-        let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];  
         
         //console.log("handleZoomPastExtent calling...");
-          
+/*
+        let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];  
         if (this.isProductionSite) {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
         }
         else {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
         }
+*/
+        let chromSizesURL = this.getChromSizesURL(genome);
         ChromosomeInfo(chromSizesURL)
           .then((chromInfo) => {
             setTimeout(() => {
-              this.hgView.zoomTo(
-                this.state.hgViewconf.views[0].uid,
+              this.mainHgView.zoomTo(
+                this.state.mainHgViewconf.views[0].uid,
                 chromInfo.chrToAbs(["chr1", boundsLeft]),
                 chromInfo.chrToAbs(["chrY", boundsRight]),
                 chromInfo.chrToAbs(["chr1", boundsLeft]),
@@ -715,7 +754,7 @@ class Viewer extends Component {
         viewerUrl += `&highlightBehaviorAlpha=${this.state.highlightBehaviorAlpha}`;
       }
     }
-    //console.log("viewerUrl", viewerUrl);
+    console.log("viewerUrl", viewerUrl);
     this.updateViewerHistory(viewerUrl);
   }
   
@@ -724,6 +763,7 @@ class Viewer extends Component {
     //console.log("this.state.searchInputLocationBeingChanged", this.state.searchInputLocationBeingChanged);
     
     // handle development vs production site differences
+/*
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
     if (this.isProductionSite) {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -731,6 +771,9 @@ class Viewer extends Component {
     else {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
     }
+*/
+    let genome = this.state.hgViewParams.genome;
+    let chromSizesURL = this.getChromSizesURL(genome);
     // convert event.xDomain to update URL
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -785,7 +828,7 @@ class Viewer extends Component {
                                stop);
 
           let boundsLeft = 20;
-          let boundsRight = Constants.assemblyBounds[this.state.hgViewParams.genome].chrY.ub - boundsLeft;
+          let boundsRight = Constants.assemblyBounds[self.state.hgViewParams.genome].chrY.ub - boundsLeft;
           if (((chrLeft === "chr1") && (start < boundsLeft)) && ((chrRight === "chrY") && (stop > boundsRight))) {
             //console.log("handleZoomPastExtent() called");
             this.handleZoomPastExtent();
@@ -833,20 +876,28 @@ class Viewer extends Component {
     //console.log("windowInnerHeight", windowInnerHeight);
     //console.log("windowInnerWidth", windowInnerWidth);
     
+/*
     let isMobile = false;
     if ((parseInt(windowInnerHeight) < parseInt(Constants.mobileThresholds.maxHeight)) || (parseInt(windowInnerWidth) < parseInt(Constants.mobileThresholds.maxWidth))) {
       isMobile = true;
     }
+*/
+    let isMobile = false;
+    let isPortrait = false;
     //console.log("isMobile?", isMobile);
-    let isPortrait = (parseInt(windowInnerHeight) > parseInt(windowInnerWidth));
+    //let isPortrait = (parseInt(windowInnerHeight) > parseInt(windowInnerWidth));
     //console.log("isPortrait?", isPortrait);
     
     //console.log("isMobile", isMobile);
     //console.log("isPortrait", isPortrait);
     
+/*
     if (!isMobile) {
       this.fadeInParameterSummary();
     }
+*/
+
+    this.fadeInParameterSummary();
     
     let epilogosViewerHeaderNavbarHeight = parseInt(document.getElementById("epilogos-viewer-container-navbar").clientHeight) + "px";
     let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 70) + "px";
@@ -857,67 +908,96 @@ class Viewer extends Component {
     let epilogosViewerHeaderNavbarRighthalfWidth = parseInt(navbarRighthalfDivWidth + navbarRighthalfDivMarginLeft + 15) + "px";
     let epilogosViewerHeaderNavbarLefthalfWidth = parseInt(parseInt(windowInnerWidth) - parseInt(epilogosViewerHeaderNavbarRighthalfWidth) - parseInt(document.getElementById("navigation-summary-parameters").offsetWidth)) + "px";
     
+/*
     if (isMobile && isPortrait) {
       epilogosViewerHeaderNavbarLefthalfWidth = parseInt(windowInnerWidth) - 20 + "px";
     }
     else if (isMobile && (isPortrait === false)) {
       epilogosViewerHeaderNavbarLefthalfWidth = parseInt(parseInt(windowInnerWidth)/2) - 20 + "px";
     }
+*/
     
-    //let epilogosContentHeight = parseInt(parseFloat(windowInnerHeight) - parseFloat(this.state.hgViewHeight) - parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
+    //let epilogosContentHeight = parseInt(parseFloat(windowInnerHeight) - parseFloat(this.state.mainHgViewHeight) - parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
     let epilogosContentHeight = parseInt(parseFloat(windowInnerHeight)) + "px";
     let epilogosContentPsHeight = epilogosContentHeight;
     
     // customize track heights -- requires preknowledge of track order, which will differ between viewer and portal
-    let deepCopyHgViewconf = JSON.parse(JSON.stringify(this.state.hgViewconf));
-    if (!deepCopyHgViewconf.views) return;
+    let deepCopyMainHgViewconf = JSON.parse(JSON.stringify(this.state.mainHgViewconf));
+    if (!deepCopyMainHgViewconf.views) return;
+    
+    // query track details (if visible)
+    //console.log(`queryHgViewconf (via updateViewportDimensions) ${JSON.stringify(this.state.queryHgViewconf)}`);
+    let deepCopyQueryHgViewconf = JSON.parse(JSON.stringify(this.state.queryHgViewconf));
+    //console.log(`deepCopyQueryHgViewconf (via updateViewportDimensions) ${JSON.stringify(deepCopyQueryHgViewconf)}`);
+    //console.log(`deepCopyQueryHgViewconf.views (via updateViewportDimensions) ${JSON.stringify(deepCopyQueryHgViewconf.views)}`);
+    let childQueryViewHeightTotal = 0;
 
     let mode = this.state.hgViewParams.mode;
     
-    
-    let newHgViewTrackChromosomeHeight = (isMobile && (isPortrait === false)) ? 0 : parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight);
-    let newHgViewTrackGeneAnnotationsHeight = (isMobile && (isPortrait === false)) ? 0 : parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight);
+    let newHgViewTrackChromosomeHeight = parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight);
+    let newHgViewTrackGeneAnnotationsHeight = parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight);
     //console.log("newHgViewTrackChromosomeHeight", newHgViewTrackChromosomeHeight);
     //console.log("newHgViewTrackGeneAnnotationsHeight", newHgViewTrackGeneAnnotationsHeight);
 
+    //console.log(`updateViewportDimensions, ${mode}`);
     if (mode === "paired") {
       let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
       let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
       let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
-      deepCopyHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
-      deepCopyHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
-      deepCopyHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
-      deepCopyHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[3].height = newHgViewTrackChromosomeHeight;
-      deepCopyHgViewconf.views[0].tracks.top[4].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackChromosomeHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[4].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
     }
     else if (mode === "single") {
-      deepCopyHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[0].height = Math.max(this.state.hgViewParams.hgViewTrackEpilogosHeight, (parseInt(windowInnerHeight) / 2) - 3 * parseInt((newHgViewTrackChromosomeHeight + newHgViewTrackGeneAnnotationsHeight) / 4));
+      deepCopyMainHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[0].height = Math.max(this.state.hgViewParams.hgViewTrackEpilogosHeight, (parseInt(windowInnerHeight) / 2) - 3 * parseInt((newHgViewTrackChromosomeHeight + newHgViewTrackGeneAnnotationsHeight) / 4));
       //console.log("deepCopyHgViewconf.views[0].tracks.top[0].height", deepCopyHgViewconf.views[0].tracks.top[0].height);
       //console.log("parseInt(windowInnerHeight)/2", parseInt(windowInnerHeight)/2);
-      if (deepCopyHgViewconf.views[0].tracks.top[0].height > parseInt(windowInnerHeight)/2) {
-        deepCopyHgViewconf.views[0].tracks.top[0].height = parseInt(windowInnerHeight)/2 - 50;
-        //console.log("deepCopyHgViewconf.views[0].tracks.top[0].height", deepCopyHgViewconf.views[0].tracks.top[0].height);
+      if (deepCopyMainHgViewconf.views[0].tracks.top[0].height > parseInt(windowInnerHeight)/2) {
+        deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(windowInnerHeight)/2 - 50;
+        console.log("deepCopyMainHgViewconf.views[0].tracks.top[0].height", deepCopyMainHgViewconf.views[0].tracks.top[0].height);
       }
-      deepCopyHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
-      deepCopyHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
-      deepCopyHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
-      deepCopyHgViewconf.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyMainHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+      deepCopyMainHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
+      deepCopyMainHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
+      deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
+    }
+    else if (mode === "query") {
+      if (deepCopyQueryHgViewconf.views) {
+        // query
+        deepCopyQueryHgViewconf.views[0].tracks.top[0].height = parseInt(parseInt(windowInnerHeight) / 3.5) - Constants.defaultApplicationQueryViewPaddingTop;
+        const childQueryViews = deepCopyQueryHgViewconf.views[0].tracks.top;
+        childQueryViews.forEach((cv) => { childQueryViewHeightTotal += cv.height });
+        childQueryViewHeightTotal += 10;
+        // main        
+        deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(parseInt(windowInnerHeight) / 3.5) - Constants.defaultApplicationQueryViewPaddingTop;
+        deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyMainHgViewconf.views[0].tracks.top[0].height - deepCopyQueryHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) - (3 * Constants.defaultApplicationQueryViewPaddingTop);
+        deepCopyMainHgViewconf.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
+        deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
+      }
+    }
+    else {
+      throw new Error('Unknown mode specified in Viewer.updateViewportDimensions', mode);
     }
     
     // get child view heights
-    const childViews = deepCopyHgViewconf.views[0].tracks.top;
-    let childViewHeightTotal = 0;
-    childViews.forEach((cv) => { childViewHeightTotal += cv.height });
-    childViewHeightTotal += 10;
-    let childViewHeightTotalPx = childViewHeightTotal + "px";
+    const childMainViews = deepCopyMainHgViewconf.views[0].tracks.top;
+    let childMainViewHeightTotal = 0;
+    childMainViews.forEach((cv) => { childMainViewHeightTotal += cv.height });
+    childMainViewHeightTotal += 10;
+    let childMainViewHeightTotalPx = childMainViewHeightTotal + "px";
+    let childQueryViewHeightTotalPx = childQueryViewHeightTotal + "px";
+    
+    //console.log(`childQueryViewHeightTotalPx ${childQueryViewHeightTotalPx}`);
     
     // if epilogosViewerHeaderNavbarLefthalfWidth is smaller than needed, adjust to minimum
     epilogosViewerHeaderNavbarLefthalfWidth = (epilogosViewerHeaderNavbarLefthalfWidth < Constants.defaultMinimumDrawerWidth) ? Constants.defaultMinimumDrawerWidth : epilogosViewerHeaderNavbarLefthalfWidth;
@@ -937,15 +1017,17 @@ class Viewer extends Component {
     this.setState({
       height: windowInnerHeight,
       width: windowInnerWidth,
-      hgViewHeight: childViewHeightTotalPx,
-      hgViewconf: deepCopyHgViewconf,
+      mainHgViewHeight: childMainViewHeightTotalPx,
+      mainHgViewconf: deepCopyMainHgViewconf,
+/*
+      queryHgViewHeight: childQueryViewHeightTotalPx,
+      queryHgViewconf: deepCopyQueryHgViewconf,
+*/
       epilogosContentHeight: epilogosContentHeight,
       epilogosContentPsHeight: epilogosContentPsHeight,
       drawerWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerHeight: epilogosViewerDrawerHeight,
       downloadVisible: false,
-      isMobile: isMobile,
-      isPortrait: isPortrait,
     }, () => { 
       //console.log("W x H", this.state.width, this.state.height);
       //console.log("Drawer height", this.state.drawerHeight);      
@@ -954,7 +1036,16 @@ class Viewer extends Component {
           width: `${parseInt(document.documentElement.clientWidth)}px`
         }, () => {
           // define midpoint between left and right halves of navbar
-          this.updateNavbarMidpoint();
+          //this.updateNavbarMidpoint();
+          if (mode === "query") {
+/*
+            let chrLeft = this.state.mainRegionIndicatorData.chromosome;
+            let chrRight = chrLeft;
+            let start = this.state.mainRegionIndicatorData.start;
+            let stop = this.state.mainRegionIndicatorData.stop;
+            this.fadeInIntervalDrop(chrLeft, chrRight, start + Constants.defaultApplicationRoiPaddingAbsolute, stop - Constants.defaultApplicationRoiPaddingAbsolute, start, stop);
+*/
+          }
         });        
       }, 500);
     });
@@ -989,7 +1080,7 @@ class Viewer extends Component {
     });
   }
   
-  hgViewUpdatePosition = (params, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight) => {
+  hgViewUpdatePosition = (params, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, queryViewNeedsUpdate) => {
     startLeft = parseInt(startLeft);
     stopLeft = parseInt(stopLeft);
     startRight = parseInt(startRight);
@@ -997,24 +1088,22 @@ class Viewer extends Component {
     if ((typeof startLeft === "undefined") || (typeof stopLeft === "undefined") || (typeof startRight === "undefined") || (typeof stopRight === "undefined")) {
       return;
     }
-    let chromSizesURL = params.hgGenomeURLs[params.genome];
-    if (this.isProductionSite) {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
-    }
-    else {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
-    }
+    let chromSizesURL = this.getChromSizesURL(params.genome);
+    let viewRef = (!queryViewNeedsUpdate) ? this.mainHgView : this.queryHgView;
+    let viewconfRef = (!queryViewNeedsUpdate) ? this.state.mainHgViewconf : this.state.queryHgViewconf;
+    let animationTime = (!queryViewNeedsUpdate) ? params.hgViewAnimationTime : 0;
+    let refreshTime = (!queryViewNeedsUpdate) ? Constants.defaultHgViewRegionPositionRefreshTimer : 2*Constants.defaultHgViewRegionPositionRefreshTimer;
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
         if (params.paddingMidpoint === 0) {
-          this.hgView.zoomTo(
-            this.state.hgViewconf.views[0].uid,
+          viewRef.zoomTo(
+            viewconfRef.views[0].uid,
             chromInfo.chrToAbs([chrLeft, startLeft]),
             chromInfo.chrToAbs([chrLeft, stopLeft]),
             chromInfo.chrToAbs([chrRight, startRight]),
             chromInfo.chrToAbs([chrRight, stopRight]),
-            params.hgViewAnimationTime
-          );
+            animationTime
+          );         
         }
         else {
           let midpointLeft = parseInt(startLeft) + parseInt((parseInt(stopLeft) - parseInt(startLeft))/2);
@@ -1025,15 +1114,15 @@ class Viewer extends Component {
           stopLeft = parseInt(midpointLeft + params.paddingMidpoint);
           startRight = parseInt(midpointRight - params.paddingMidpoint);
           stopRight = parseInt(midpointRight + params.paddingMidpoint);
-
-          this.hgView.zoomTo(
-            this.state.hgViewconf.views[0].uid,
+          
+          viewRef.zoomTo(
+            viewconfRef.views[0].uid,
             chromInfo.chrToAbs([chrLeft, startLeft]),
             chromInfo.chrToAbs([chrLeft, stopLeft]),
             chromInfo.chrToAbs([chrRight, startRight]),
             chromInfo.chrToAbs([chrRight, stopRight]),
-            params.hgViewAnimationTime
-          );
+            animationTime
+          );          
         }
       })
       .catch((err) => console.error("Error - hgViewUpdatePosition failed - ", err));
@@ -1062,7 +1151,7 @@ class Viewer extends Component {
                                this.state.currentPosition.startLeft,
                                this.state.currentPosition.stopRight);
         })
-      }, Constants.defaultHgViewRegionPositionRefreshTimer);
+      }, refreshTime);
   }
   
   
@@ -1148,40 +1237,66 @@ class Viewer extends Component {
   }
   
   onChangeSearchInput = (value) => {
-    //console.log("onChangeSearchInput", value);
+/*
+    console.log("onChangeSearchInput", value);
+    return;
     this.setState({
       searchInputValue: value
     });
+*/
   }
   
   onChangeSearchInputLocation = (location, applyPadding) => {
     //console.log("onChangeSearchInputLocation", location);
     let range = Helpers.getRangeFromString(location, applyPadding, null, this.state.hgViewParams.genome);
     //console.log(`range ${range}`);
-    if (range) {
-      this.setState({
-        searchInputLocationBeingChanged: true
-      }, () => {
-        const applyPadding = true;
-        this.openViewerAtChrRange(range, applyPadding, this.state.hgViewParams);
-        setTimeout(() => {
-          this.setState({
-            searchInputLocationBeingChanged: false
-          });
-        }, 1000);
-      })
+    let isRedirectionFromQueryModeRequired = (this.state.hgViewParams.mode === "query");
+    if (isRedirectionFromQueryModeRequired) {
+      let applyPadding = true;
+      this.recommenderExpandOnClick({chromosome:range[0], start:range[1], stop:range[2]}, applyPadding);
+    }
+    else {
+      if (range) {
+        this.setState({
+          searchInputLocationBeingChanged: true
+        }, () => {
+          const applyPadding = true;
+          this.openViewerAtChrRange(range, applyPadding, this.state.hgViewParams);
+          setTimeout(() => {
+            this.setState({
+              searchInputLocationBeingChanged: false
+            });
+          }, 1000);
+        })
+      }
     }
   }
   
   onFocusSearchInput = () => {
+/*
     if (this.state.drawerIsOpen) {
       this.closeDrawer(()=>{document.getElementById("autocomplete-input").focus()});
     }
+*/
+    document.getElementById("autocomplete-input").focus();
   }
   
-  jumpToRegion = (region, regionType, rowIndex, strand) => {
+  jumpToRegion = (region, regionType, rowIndex, strand, queryViewNeedsUpdate) => {
+    let applyPadding = false;
+    let applyApplicationBinShiftFlag = (regionType === Constants.applicationRegionTypes.roi) ? false : true;
+    let pos = Helpers.getRangeFromString(region, applyPadding, applyApplicationBinShiftFlag, this.state.hgViewParams.genome);
+    let chromosome = pos[0];
+    let start = parseInt(pos[1]);
+    let stop = parseInt(pos[2]);
+/*
+    let isRedirectionFromQueryModeRequired = (this.state.hgViewParams.mode === "query");
+    if (isRedirectionFromQueryModeRequired) {
+      applyPadding = true;
+      this.recommenderExpandOnClick({chromosome:chromosome, start:start, stop:stop}, applyPadding);
+      return;
+    }
+*/
     //console.log("rowIndex", rowIndex);
-    const pos = Helpers.getRangeFromString(region, false, ((regionType === Constants.applicationRegionTypes.roi) ? false : true), this.state.hgViewParams.genome);
     //console.log("region", region);
     //console.log("pos", pos);
     let regionLabel = null;
@@ -1190,11 +1305,11 @@ class Viewer extends Component {
     let regionState = (regionType === Constants.applicationRegionTypes.roi) ? null : this.state.exemplarTableData[(rowIndex - 1)].state.numerical;
     let regionStateLabel = (regionType === Constants.applicationRegionTypes.roi) ? null : Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][regionState][0];
     let regionStateColor = (regionType === Constants.applicationRegionTypes.roi) ? null : Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][regionState][1];
-    let regionIndicatorData = {
-      chromosome: pos[0],
-      start: parseInt(pos[1]),
-      stop: parseInt(pos[2]),
-      midpoint: parseInt(parseInt(pos[1]) + ((parseInt(pos[2]) - parseInt(pos[1])) / 2)),
+    let mainRegionIndicatorData = {
+      chromosome: chromosome,
+      start: start,
+      stop: stop,
+      midpoint: parseInt(start + ((stop - start) / 2)),
       regionLabel: region,
       regionState: { 
         numerical: regionState, 
@@ -1203,6 +1318,11 @@ class Viewer extends Component {
       },
       msg: null
     };
+    if (this.state.hgViewParams.mode === "query") {
+      mainRegionIndicatorData.header = {
+        "label": "Target"
+      };
+    }
     switch (regionType) {
       case Constants.applicationRegionTypes.roi:
         switch (this.state.roiMode) {
@@ -1210,12 +1330,10 @@ class Viewer extends Component {
             regionLabel = `${String.fromCharCode(8676)} ${region} ${String.fromCharCode(8677)}`;
             break;
           case Constants.applicationRoiModes.midpoint:
-            const start = parseInt(pos[1]);
-            const stop = parseInt(pos[2]);
             const midpoint = parseInt(start + ((stop - start) / 2));
-            const midpointLabel = `${pos[0]}:${midpoint}-${(midpoint + 1)}`;
+            const midpointLabel = `${chromosome}:${midpoint}-${(midpoint + 1)}`;
             regionLabel = midpointLabel;
-            regionIndicatorData.regionLabel = regionLabel;
+            mainRegionIndicatorData.regionLabel = regionLabel;
             break;
           default:
             throw new Error('Unknown ROI mode', this.state.roiMode);  
@@ -1231,17 +1349,18 @@ class Viewer extends Component {
     }
     this.setState({
       //verticalDropLabel: regionLabel,
-      regionIndicatorData: regionIndicatorData,
+      mainRegionIndicatorData: mainRegionIndicatorData,
     });
-    if ((this.epilogosViewerContainerVerticalDrop.style) && (this.epilogosViewerContainerVerticalDrop.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
-    if ((this.epilogosViewerContainerIntervalDrop.style) && (this.epilogosViewerContainerIntervalDrop.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
+    if ((this.epilogosViewerContainerVerticalDropMain.style) && (this.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
+    if ((this.epilogosViewerContainerIntervalDropMain.style) && (this.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
     //console.log(pos, regionType, rowIndex);
     this.openViewerAtChrPosition(pos,
                                  Constants.defaultHgViewRegionUpstreamPadding,
                                  Constants.defaultHgViewRegionDownstreamPadding,
                                  regionType,
                                  rowIndex,
-                                 strand);
+                                 strand,
+                                 queryViewNeedsUpdate);
   }
   
   updateSortOrderOfRoiTableDataIndices = (field, order) => {
@@ -1353,9 +1472,10 @@ class Viewer extends Component {
     }, () => {
       if (isDirty) {
         this.setState({
-          recommenderInProgress: false,
-          recommenderIsEnabled: this.recommenderCanBeEnabled(),
-          recommenderButtonLabel: RecommenderButtonDefaultLabel
+          recommenderSearchInProgress: false,
+          recommenderSeachIsEnabled: this.recommenderSearchCanBeEnabled(),
+          recommenderSearchButtonLabel: RecommenderSearchButtonDefaultLabel,
+          recommenderSearchLinkLabel: RecommenderSearchLinkDefaultLabel,
         });
         setTimeout(() => {
           this.updateNavbarMidpoint(); 
@@ -1416,7 +1536,12 @@ class Viewer extends Component {
   }
   
   errorMessage = (err, errorMsg, errorURL) => {
-    return <div className="viewer-overlay-notice"><div className="viewer-overlay-notice-header">{(err.response && err.response.status) || "500"} Error</div><div className="viewer-overlay-notice-body"><div>{errorMsg}</div><div>{(err.response && err.response.statusText)}: {errorURL}</div><div className="viewer-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
+    if (errorURL) {
+      return <div className="viewer-overlay-notice"><div className="viewer-overlay-notice-header">{(err.response && err.response.status) || "500"} Error</div><div className="viewer-overlay-notice-body"><div>{errorMsg}</div><div>{(err.response && err.response.statusText)}: {errorURL}</div><div className="viewer-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
+    }
+    else {
+      return <div className="viewer-overlay-notice"><div className="viewer-overlay-notice-header">{(err.response && err.response.status) || "500"} Error</div><div className="viewer-overlay-notice-body"><div>{errorMsg}</div><div className="viewer-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
+    }
   }
   
   triggerUpdate = (updateMode) => {
@@ -1449,7 +1574,7 @@ class Viewer extends Component {
       
       const queryObj = Helpers.getJsonFromUrl();
       
-      //console.log("new settings", newGenome, newModel, newGroup, newComplexity, newMode);
+      console.log("new settings", newGenome, newModel, newGroup, newComplexity, newMode);
       setTimeout(() => Helpers.updateExemplars(newGenome, newModel, newComplexity, newGroup, newSampleSet, this), 0);
       
       //
@@ -1500,7 +1625,7 @@ class Viewer extends Component {
           let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
           self.setState({
             overlayMessage: msg,
-            hgViewconf: {}
+            mainHgViewconf: {}
           }, () => {
             self.fadeInOverlay();
           });
@@ -1613,6 +1738,7 @@ class Viewer extends Component {
               let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
               //console.log("position: ", chrLeft, chrRight, start, stop);
               
+/*
               let chromSizesURL = newHgViewParams.hgGenomeURLs[newGenome];
               if (this.isProductionSite) {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -1620,6 +1746,8 @@ class Viewer extends Component {
               else {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
               }
+*/
+              let chromSizesURL = this.getChromSizesURL(newGenome);
               //console.log("chromSizesURL", chromSizesURL);
               ChromosomeInfo(chromSizesURL)
                 .then((chromInfo) => {
@@ -1731,8 +1859,8 @@ class Viewer extends Component {
                   //
                   this.setState({
                     hgViewParams: newHgViewParams,
-                    hgViewHeight: childViewHeightTotalPx,
-                    hgViewconf: res.data,
+                    mainHgViewHeight: childViewHeightTotalPx,
+                    mainHgViewconf: res.data,
                     currentPositionKey: Math.random(),
                     currentPosition : {
                       chrLeft : chrLeft,
@@ -1745,13 +1873,13 @@ class Viewer extends Component {
                     selectedExemplarRowIdx: newSerIdx,
                     selectedRoiRowIdx: newSrrIdx,
                   }, () => {
-                    if ((this.epilogosViewerContainerVerticalDrop.style) && (this.epilogosViewerContainerVerticalDrop.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
-                    if ((this.epilogosViewerContainerIntervalDrop.style) && (this.epilogosViewerContainerIntervalDrop.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
+                    if ((this.epilogosViewerContainerVerticalDropMain.style) && (this.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
+                    if ((this.epilogosViewerContainerIntervalDropMain.style) && (this.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
                     this.setState({
-                      hgViewKey: this.state.hgViewKey + 1,
+                      mainHgViewKey: this.state.mainHgViewKey + 1,
                       drawerContentKey: this.state.drawerContentKey + 1,
                     }, () => {
-                      //console.log("new viewconf:", JSON.stringify(this.state.hgViewconf,null,2));
+                      //console.log("new main viewconf:", JSON.stringify(this.state.mainHgViewconf,null,2));
                       // update browser history (address bar URL)
                       //console.log("calling [updateViewerURL] from [triggerUpdate]", this.state.hgViewParams.mode);
                       this.updateViewerURL(this.state.hgViewParams.mode,
@@ -1765,7 +1893,7 @@ class Viewer extends Component {
                                            this.state.currentPosition.startLeft,
                                            this.state.currentPosition.stopRight);
                       // add location event handler
-                      this.hgView.api.on("location", (event) => { 
+                      this.mainHgView.api.on("location", (event) => { 
                         this.updateViewerLocation(event);
                       });
                     })
@@ -1776,7 +1904,7 @@ class Viewer extends Component {
                   let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
                   this.setState({
                     overlayMessage: msg,
-                    hgViewconf: {}
+                    mainHgViewconf: {}
                   }, () => {
                     this.fadeInOverlay();
                   });
@@ -1787,7 +1915,7 @@ class Viewer extends Component {
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
               this.setState({
                 overlayMessage: msg,
-                hgViewconf: {}
+                mainHgViewconf: {}
               }, () => {
                 this.fadeInOverlay();
               });
@@ -1800,41 +1928,8 @@ class Viewer extends Component {
         //
         // the "single" template uses an epilogos track and the marks track, the paths for which are constructed from the temporary hgview parameters object
         //
-        let newEpilogosTrackFilename = null;
-        let newMarksTrackFilename = null;
-        
-        switch (newSampleSet) {
-          case "vA":
-            // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-            // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-            newEpilogosTrackFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-            newMarksTrackFilename = `${newGenome}.${newModel}.${newGroup}.marks.multires.mv5`;
-            break;
-          case "vB":
-            // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-            // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
-            newEpilogosTrackFilename = `833sample.${newGroup}.${newGenome}.${newModel}.${newComplexity}.gz.bed.reorder.multires.mv5`;
-            newMarksTrackFilename = `833sample.${newGroup}.${newGenome}.${newModel}.marks.multires.mv5`;
-            break;
-          case "vC":
-            // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-            // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
-            newEpilogosTrackFilename = `833sample.vC.${newGroup}.${newGenome}.${newModel}.${newComplexity}.gz.bed.reorder.multires.mv5`;
-            newMarksTrackFilename = `833sample.vC.${newGroup}.${newGenome}.${newModel}.marks.multires.mv5`;
-            break;
-          case "vD":
-            // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-            // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-            newEpilogosTrackFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-            newMarksTrackFilename = `${newGenome}.${newModel}.${newGroup}.marks.multires.mv5`;
-            break;
-          default:
-            throw new Error('Not a valid sample set identifier', newSampleSet);
-            //break;
-        }
-        
-        //console.log("newEpilogosTrackFilename", newEpilogosTrackFilename);
-        //console.log("newMarksTrackFilename", newMarksTrackFilename);
+        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
+        let newMarksTrackFilename = Helpers.marksTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup);
         
         //
         // query for UUIDs
@@ -1874,12 +1969,15 @@ class Viewer extends Component {
               newHgViewParams.sampleSet = newSampleSet;
               //console.log("newHgViewParams", newHgViewParams);
               
+              //console.log(`within-update currentPosition ${JSON.stringify(this.state.currentPosition)}`);
+              
               let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
               let chrRight = queryObj.chrRight || this.state.currentPosition.chrRight;
               let start = parseInt(queryObj.start || this.state.currentPosition.startLeft);
               let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
               //console.log("position: ", chrLeft, chrRight, start, stop);
               
+/*
               let chromSizesURL = newHgViewParams.hgGenomeURLs[newGenome];
               if (this.isProductionSite) {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -1887,6 +1985,8 @@ class Viewer extends Component {
               else {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
               }
+*/
+              let chromSizesURL = this.getChromSizesURL(newGenome);
               //console.log("chromSizesURL", chromSizesURL);
               ChromosomeInfo(chromSizesURL)
                 .then((chromInfo) => {
@@ -1967,12 +2067,12 @@ class Viewer extends Component {
                   childViewHeightTotal += 10;
                   let childViewHeightTotalPx = childViewHeightTotal + "px";
                   //
-                  //console.log("res.data", JSON.stringify(res.data));
+                  console.log("res.data", JSON.stringify(res.data));
                   // update Viewer application state and exemplars (in drawer)
                   this.setState({
                     hgViewParams: newHgViewParams,
-                    hgViewHeight: childViewHeightTotalPx,
-                    hgViewconf: res.data,
+                    mainHgViewHeight: childViewHeightTotalPx,
+                    mainHgViewconf: res.data,
                     currentPositionKey: Math.random(),
                     currentPosition : {
                       chrLeft : chrLeft,
@@ -1985,10 +2085,10 @@ class Viewer extends Component {
                     selectedExemplarRowIdx: newSerIdx,
                     selectedRoiRowIdx: newSrrIdx,
                   }, () => {
-                    if ((this.epilogosViewerContainerVerticalDrop.style) && (this.epilogosViewerContainerVerticalDrop.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
-                    if ((this.epilogosViewerContainerIntervalDrop.style) && (this.epilogosViewerContainerIntervalDrop.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
+                    if ((this.epilogosViewerContainerVerticalDropMain.style) && (this.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
+                    if ((this.epilogosViewerContainerIntervalDropMain.style) && (this.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
                     this.setState({
-                      hgViewKey: this.state.hgViewKey + 1,
+                      mainHgViewKey: this.state.mainHgViewKey + 1,
                       drawerContentKey: this.state.drawerContentKey + 1,
                     }, () => {
                       // update browser history (address bar URL)
@@ -2004,7 +2104,7 @@ class Viewer extends Component {
                                            this.state.currentPosition.startLeft,
                                            this.state.currentPosition.stopRight);
                       // add location event handler
-                      this.hgView.api.on("location", (event) => { 
+                      this.mainHgView.api.on("location", (event) => { 
                         this.updateViewerLocation(event);
                       });
                     })
@@ -2016,7 +2116,7 @@ class Viewer extends Component {
                   let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
                   this.setState({
                     overlayMessage: msg,
-                    hgViewconf: {}
+                    mainHgViewconf: {}
                   }, () => {
                     this.fadeInOverlay();
                   });
@@ -2027,7 +2127,7 @@ class Viewer extends Component {
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
               this.setState({
                 overlayMessage: msg,
-                hgViewconf: {}
+                mainHgViewconf: {}
               }, () => {
                 this.fadeInOverlay();
               });
@@ -2035,10 +2135,244 @@ class Viewer extends Component {
         });
         
       }
+      else if (newMode === "query") {
+        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
+        let newMarksTrackFilename = Helpers.marksTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup);
+        let newEpilogosTrackUUID = null;
+        let newMarksTrackUUID = null;
+        let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename);
+        newEpilogosTrackUUIDQueryPromise.then((res) => {
+          newEpilogosTrackUUID = res;
+          return uuidQueryPromise(newMarksTrackFilename);
+        }).then((res) => {
+          newMarksTrackUUID = res;
+        }).then(() => {
+          // populate viewconf
+          axios.get(newHgViewconfURL)
+            .then((res) => {
+              if (!res.data) {
+                throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
+              }
+              //console.log("res.data", res.data);
+              
+              let deepCopyMainHgViewconf = JSON.parse(JSON.stringify(res.data));
+              let deepCopyQueryHgViewconf = JSON.parse(JSON.stringify(res.data));
+              
+              // ensure that the main template is not editable
+              deepCopyMainHgViewconf.editable = false;
+              
+              // ensure that the query template is not editable and does not respond to mouse events 
+              deepCopyQueryHgViewconf.editable = false;
+              deepCopyQueryHgViewconf.zoomFixed = true;
+              
+              newHgViewParams.genome = newGenome;
+              newHgViewParams.model = newModel;
+              newHgViewParams.group = newGroup;
+              newHgViewParams.complexity = newComplexity;
+              newHgViewParams.mode = newMode;
+              newHgViewParams.sampleSet = newSampleSet;
+              //console.log("newHgViewParams", newHgViewParams);
+              
+              let chrLeft = this.state.currentPosition.chrLeft || queryObj.chrLeft;
+              let chrRight = this.state.currentPosition.chrRight || queryObj.chrRight;
+              let start = parseInt(this.state.currentPosition.startLeft || queryObj.start);
+              let stop = parseInt(this.state.currentPosition.stopRight || queryObj.stop);
+              //console.log("position: ", chrLeft, chrRight, start, stop);
+              
+              let chromSizesURL = this.getChromSizesURL(newGenome);
+              console.log("chromSizesURL", chromSizesURL);
+              ChromosomeInfo(chromSizesURL)
+                .then((chromInfo) => {
+                  //console.log("chromInfo", chromInfo);
+                  //
+                  // update viewconf views[0] initialXDomain and initialYDomain 
+                  //
+                  // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
+                  //
+                  if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
+                    chrLeft = Constants.defaultApplicationPositions[newGenome].chr;
+                    chrRight = Constants.defaultApplicationPositions[newGenome].chr;
+                    start = Constants.defaultApplicationPositions[newGenome].start;
+                    stop = Constants.defaultApplicationPositions[newGenome].stop;
+                  }
+                  if (start > chromInfo.chromLengths[chrLeft]) {
+                    start = chromInfo.chromLengths[chrLeft] - 10000;
+                  }
+                  if (stop > chromInfo.chromLengths[chrRight]) {
+                    stop = chromInfo.chromLengths[chrRight] - 1000;
+                  }
+                  let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
+                  let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
+                  console.log("chrLeft, start, absLeft", chrLeft, start, absLeft);
+                  console.log("chrRight, stop, absRight", chrRight, stop, absRight);
+                  let windowInnerHeight = document.documentElement.clientHeight + "px";
+                  //
+                  // query template
+                  //
+                  deepCopyQueryHgViewconf.views[0].initialXDomain = [absLeft, absRight];
+                  deepCopyQueryHgViewconf.views[0].initialYDomain = [absLeft, absRight];
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].height = parseInt(parseInt(windowInnerHeight) / 3.5) - Constants.defaultApplicationQueryViewPaddingTop;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].name = newEpilogosTrackFilename;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].type = "horizontal-stacked-bar";
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].uid = uuid4();
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].tilesetUid = newEpilogosTrackUUID;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.name = newEpilogosTrackFilename;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.colorScale = newColormap;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.labelPosition = "topLeft";
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.labelTextOpacity = 0.0;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.labelBackgroundOpacity = 0.0;
+                  deepCopyQueryHgViewconf.views[0].tracks.top[0].options.labelColor = "white";
+                  // clear out all other tracks (we only want the epilogo)
+                  deepCopyQueryHgViewconf.views[0].tracks.top = [deepCopyQueryHgViewconf.views[0].tracks.top[0]];
+                  //console.log("query template", JSON.stringify(deepCopyQueryHgViewconf));
+                  //
+                  // [1]
+                  //
+                  deepCopyMainHgViewconf.views[0].initialXDomain = [absLeft, absRight];
+                  deepCopyMainHgViewconf.views[0].initialYDomain = [absLeft, absRight];
+                  // update track heights -- requires preknowledge of track order from template
+                  //let windowInnerHeight = document.documentElement.clientHeight + "px";
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(parseInt(windowInnerHeight) / 3.5) - Constants.defaultApplicationQueryViewPaddingTop;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyMainHgViewconf.views[0].tracks.top[0].height - deepCopyQueryHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) - 3*Constants.defaultApplicationQueryViewPaddingTop;
+                  deepCopyMainHgViewconf.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
+                  deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
+                  // update track names
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].name = newEpilogosTrackFilename;
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.name = newEpilogosTrackFilename;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].name = newMarksTrackFilename;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.name = newMarksTrackFilename;
+                  // update track type and styling
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].type = "horizontal-multivec";
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.colorbarPosition = null;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.valueScaling = null;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.heatmapValueScaling = "categorical";
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.colorRange = Constants.stateColorPalettesAsRgb[newGenome][newModel];
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.colorScale = [];
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.valueScaleMin = 1;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.valueScaleMax = parseInt(newModel, 10);
+                  if ((this.state.highlightRawRows.length > 0) && (Constants.sampleSetRowMetadataByGroup[newSampleSet][newGenome][newModel][newGroup])) {
+                    deepCopyMainHgViewconf.views[0].tracks.top[1].options.highlightRows = this.state.highlightRawRows;
+                    deepCopyMainHgViewconf.views[0].tracks.top[1].options.highlightBehavior = this.state.highlightBehavior;
+                    deepCopyMainHgViewconf.views[0].tracks.top[1].options.highlightBehaviorAlpha = this.state.highlightBehaviorAlpha;
+                  }
+                  // update track UUIDs
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].tilesetUid = newEpilogosTrackUUID;
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].tilesetUid = newMarksTrackUUID;
+                  deepCopyMainHgViewconf.views[0].tracks.top[2].tilesetUid = newChromsizesUUID;
+                  deepCopyMainHgViewconf.views[0].tracks.top[3].tilesetUid = newGenesUUID;
+                  // update track colormaps
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.colorScale = newColormap;
+                  //res.data.views[0].tracks.top[1].options.colorScale = newColormap;
+                  // update track background colors
+                  deepCopyMainHgViewconf.views[0].tracks.top[1].options.backgroundColor = "transparent";
+                  deepCopyMainHgViewconf.views[0].tracks.top[2].options.backgroundColor = "white";
+                  deepCopyMainHgViewconf.views[0].tracks.top[3].options.backgroundColor = "white";
+                  // update track display options to fix label bug
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.labelPosition = "topLeft";
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.labelTextOpacity = 0.0;
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.labelBackgroundOpacity = 0.0;
+                  deepCopyMainHgViewconf.views[0].tracks.top[0].options.labelColor = "white";
+                  //
+                  //console.log("main template", JSON.stringify(deepCopyMainHgViewconf));
+                  // get child view heights
+                  const childQueryViewTracks = deepCopyQueryHgViewconf.views[0].tracks.top;
+                  const childMainViewTracks = deepCopyMainHgViewconf.views[0].tracks.top;
+                  let childQueryViewHeightTotal = 0;
+                  childQueryViewTracks.forEach((cv) => { childQueryViewHeightTotal += cv.height });
+                  childQueryViewHeightTotal += 2*Constants.defaultApplicationQueryViewPaddingTop;
+                  let childMainViewHeightTotal = 0;
+                  childMainViewTracks.forEach((cv) => { childMainViewHeightTotal += cv.height });
+                  childMainViewHeightTotal -= 0;
+                  let childQueryViewHeightTotalPx = childQueryViewHeightTotal + "px";
+                  let childMainViewHeightTotalPx = childMainViewHeightTotal + "px";
+                  console.log(`childQueryViewHeightTotalPx ${childQueryViewHeightTotalPx}`);
+                  console.log(`childMainViewHeightTotalPx ${childMainViewHeightTotalPx}`);
+                  //
+                  // update Viewer application state and exemplars (in drawer)
+                  this.setState({
+                    hgViewParams: newHgViewParams,
+                    mainHgViewHeight: childMainViewHeightTotalPx,
+                    mainHgViewconf: deepCopyMainHgViewconf,
+                    queryHgViewHeight: childQueryViewHeightTotalPx,
+                    queryHgViewconf: deepCopyQueryHgViewconf,
+                    currentPositionKey: Math.random(),
+                    currentPosition : {
+                      chrLeft : chrLeft,
+                      chrRight : chrRight,
+                      startLeft : parseInt(start),
+                      stopLeft : parseInt(stop),
+                      startRight : parseInt(start),
+                      stopRight : parseInt(stop)
+                    },
+                    selectedExemplarRowIdx: newSerIdx,
+                    selectedRoiRowIdx: newSrrIdx,
+                  }, () => {
+                    if ((this.epilogosViewerContainerVerticalDropMain.style) && (this.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
+                    if ((this.epilogosViewerContainerIntervalDropMain.style) && (this.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
+                    this.setState({
+                      mainHgViewKey: this.state.mainHgViewKey + 1,
+                      //queryHgViewKey: this.state.queryHgViewKey + 1,
+                      drawerContentKey: this.state.drawerContentKey + 1,
+                    }, () => {
+                      console.log(`queryHgViewconf (via triggerUpdate) ${JSON.stringify(this.state.queryHgViewconf)}`);
+                      //console.log("calling [updateViewerURL] from [triggerUpdate]");
+                      this.updateViewerURL(this.state.hgViewParams.mode,
+                                           this.state.hgViewParams.genome,
+                                           this.state.hgViewParams.model,
+                                           this.state.hgViewParams.complexity,
+                                           this.state.hgViewParams.group,
+                                           this.state.hgViewParams.sampleSet,
+                                           this.state.currentPosition.chrLeft,
+                                           this.state.currentPosition.chrRight,
+                                           this.state.currentPosition.startLeft,
+                                           this.state.currentPosition.stopRight);                      
+                      setTimeout(() => {
+                        this.setState({
+                          queryHgViewKey: this.state.queryHgViewKey + 1,
+                          //mainHgViewKey: this.state.mainHgViewKey + 1,
+                        });
+                      }, 3000);
+                      // add location event handler
+                      this.mainHgView.api.on("location", (event) => { 
+                        this.updateViewerLocation(event);
+                      });
+                      this.queryHgView.api.on("location", (event) => { 
+                        this.updateViewerLocation(event);
+                      });
+                    })
+                  })
+                })
+                .catch((err) => {
+                  //console.log(err.response);
+                  //console.log("chromSizesURL", chromSizesURL);
+                  let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
+                  this.setState({
+                    overlayMessage: msg,
+                    mainHgViewconf: {}
+                  }, () => {
+                    this.fadeInOverlay();
+                  });
+                });
+            })
+            .catch((err) => {
+              //console.log(err.response);
+              let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
+              this.setState({
+                overlayMessage: msg,
+                mainHgViewconf: {}
+              }, () => {
+                this.fadeInOverlay();
+              });
+            });
+        })
+      }
+      else {
+        throw new Error(`Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
+      }
     }
   }
   
-  openViewerAtChrPosition = (pos, upstreamPadding, downstreamPadding, regionType, rowIndex, strand) => {
+  openViewerAtChrPosition = (pos, upstreamPadding, downstreamPadding, regionType, rowIndex, strand, queryViewNeedsUpdate) => {
   //openViewerAtChrPosition = (pos, padding, regionType, rowIndex) => {
     //console.log("openViewerAtChrPosition", pos, padding, regionType, rowIndex);
     let chrLeft = pos[0];
@@ -2094,8 +2428,15 @@ class Viewer extends Component {
         break;
     }
     
-    //this.hgViewUpdatePosition(this.state.hgViewParams.genome, chrLeft, start, stop, chrRight, start, stop, false);
-    this.hgViewUpdatePosition(this.state.hgViewParams, chrLeft, start, stop, chrRight, start, stop);
+    if (queryViewNeedsUpdate) {
+      setTimeout(() => {
+        this.hgViewUpdatePosition(this.state.hgViewParams, chrLeft, start, stop, chrRight, start, stop, queryViewNeedsUpdate);
+        this.hgViewUpdatePosition(this.state.hgViewParams, chrLeft, start, stop, chrRight, start, stop);
+      }, 0);
+    } 
+    else {
+      this.hgViewUpdatePosition(this.state.hgViewParams, chrLeft, start, stop, chrRight, start, stop);
+    }
     
     if (!rowIndex || (rowIndex < 0)) return;
     setTimeout(() => {
@@ -2197,6 +2538,7 @@ class Viewer extends Component {
       stop = ((stop + padding) < ub) ? (stop + padding) : ub;
     }
     this.hgViewUpdatePosition(params, chrLeft, start, stop, chrRight, start, stop);
+    //console.log("calling [updateViewerURL] from [openViewerAtChrRange]");
     this.updateViewerURL(params.mode,
                          params.genome,
                          params.model,
@@ -2215,6 +2557,21 @@ class Viewer extends Component {
 
   roiRegionsUpdate = (data, cb, self) => {
     //console.log("roiRegionsUpdate", data);
+    if (!data) {
+      const msg = this.errorMessage({'response': {'status': 404, 'statusText': (this.state.roiRawURL) ? this.state.roiRawURL : null}}, `ROI data is empty or missing`, (this.state.roiRawURL) ? this.state.roiRawURL : null);
+      this.setState({
+        overlayMessage: msg,
+        recommenderSearchInProgress: false,
+        recommenderSearchIsEnabled: this.recommenderSearchCanBeEnabled(),
+        recommenderSearchButtonLabel: RecommenderSearchButtonDefaultLabel,
+        recommenderSearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+        recommenderExpandIsEnabled: this.recommenderExpandCanBeEnabled(),
+        recommenderExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+      }, () => {
+        this.fadeInOverlay();
+      });      
+      return;
+    }
     // regions represent raw lines from the incoming data
     // table data represent processed lines from regions, organized into fields
     const dataRegions = data.split(/\r\n|\r|\n/);
@@ -2520,9 +2877,9 @@ class Viewer extends Component {
   fadeInVerticalDrop = (leftOffsetPx, cb) => {
     //console.log("fadeInVerticalDrop", this.state.isMobile);
     if (this.state.isMobile) return;
-    this.epilogosViewerContainerVerticalDrop.style.opacity = 1;
-    this.epilogosViewerContainerVerticalDrop.style.display = "contents";
-    //this.epilogosViewerContainerVerticalDrop.style.left = leftOffsetPx;
+    this.epilogosViewerContainerVerticalDropMain.style.opacity = 1;
+    this.epilogosViewerContainerVerticalDropMain.style.display = "contents";
+    //this.epilogosViewerContainerVerticalDropMain.style.left = leftOffsetPx;
     //this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout((cb) => {
       if (cb) { cb(); }
@@ -2539,8 +2896,8 @@ class Viewer extends Component {
   }
   
   fadeOutVerticalDrop = (cb) => {
-    this.epilogosViewerContainerVerticalDrop.style.opacity = 0;
-    this.epilogosViewerContainerVerticalDrop.style.display = "none";
+    this.epilogosViewerContainerVerticalDropMain.style.opacity = 0;
+    this.epilogosViewerContainerVerticalDropMain.style.display = "none";
     //this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout((cb) => {
       if (cb) { cb(); }
@@ -2548,16 +2905,10 @@ class Viewer extends Component {
   }
   
   fadeInIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    if (this.state.isMobile) return;
     //console.log("fadeInIntervalDrop", chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
     const windowInnerWidth = document.documentElement.clientWidth + "px";
-    let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
-    if (this.isProductionSite) {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
-    }
-    else {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
-    }
+    const windowInnerHeight = document.documentElement.clientHeight + "px";
+    let chromSizesURL = this.getChromSizesURL(this.state.hgViewParams.genome);
     const rescale = (min, max, x) => (x - min) / (max - min);
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -2566,18 +2917,51 @@ class Viewer extends Component {
         let chrPaddedStartPos = chromInfo.chrToAbs([chrLeft, paddedStart]);
         let chrPaddedStopPos = chromInfo.chrToAbs([chrRight, paddedStop]);
         
-        this.epilogosViewerContainerIntervalDropLeftTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos) * parseInt(windowInnerWidth)) + "px";
-        this.epilogosViewerContainerIntervalDropLeftBottom.style.left = this.epilogosViewerContainerIntervalDropLeftTop.style.left;
-        this.epilogosViewerContainerIntervalDropRightTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos) * parseInt(windowInnerWidth)) + "px";
-        this.epilogosViewerContainerIntervalDropRightBottom.style.left = this.epilogosViewerContainerIntervalDropRightTop.style.left;
+        // use this.state.queryHgViewHeight to offset top of interval?
         
-        this.epilogosViewerContainerIntervalDropRegionIntervalIndicator.style.width = parseInt(this.epilogosViewerContainerIntervalDropRightTop.style.left) - parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
-        this.epilogosViewerContainerIntervalDropRegionIntervalIndicator.style.left = parseInt(this.epilogosViewerContainerIntervalDropLeftTop.style.left) + "px";
+        this.epilogosViewerContainerIntervalDropMainLeftTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos) * parseInt(windowInnerWidth)) + "px";
+        this.epilogosViewerContainerIntervalDropMainLeftBottom.style.left = this.epilogosViewerContainerIntervalDropMainLeftTop.style.left;
+        this.epilogosViewerContainerIntervalDropMainRightTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos) * parseInt(windowInnerWidth)) + "px";
+        this.epilogosViewerContainerIntervalDropMainRightBottom.style.left = this.epilogosViewerContainerIntervalDropMainRightTop.style.left;
         
-        this.epilogosViewerContainerIntervalDrop.style.opacity = 1;
+        this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator.style.width = parseInt(this.epilogosViewerContainerIntervalDropMainRightTop.style.left) - parseInt(this.epilogosViewerContainerIntervalDropMainLeftTop.style.left) + "px";
+        this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator.style.left = parseInt(this.epilogosViewerContainerIntervalDropMainLeftTop.style.left) + "px";
+        
+        //
+        // if query mode is enabled
+        //
+        if (parseInt(this.state.queryHgViewHeight) > 0) {
+          this.epilogosViewerContainerIntervalDropMainLeftTop.style.top = parseInt(this.state.queryHgViewHeight) + 80 + Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          this.epilogosViewerContainerIntervalDropMainRightTop.style.top = parseInt(this.state.queryHgViewHeight) + 80 + Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator.style.top = parseInt(this.state.queryHgViewHeight) + Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          
+          this.epilogosViewerContainerIntervalDropQueryLeftTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStartPos) * parseInt(windowInnerWidth)) + "px";
+          this.epilogosViewerContainerIntervalDropQueryRightTop.style.left = parseInt(rescale(chrPaddedStartPos, chrPaddedStopPos, chrUnpaddedStopPos) * parseInt(windowInnerWidth)) + "px";
+          
+          this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator.style.width = parseInt(this.epilogosViewerContainerIntervalDropQueryRightTop.style.left) - parseInt(this.epilogosViewerContainerIntervalDropQueryLeftTop.style.left) + "px";
+          this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator.style.left = parseInt(this.epilogosViewerContainerIntervalDropQueryLeftTop.style.left) + "px";
+        
+          this.epilogosViewerContainerIntervalDropQueryLeftTop.style.top = 80 + Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          this.epilogosViewerContainerIntervalDropQueryRightTop.style.top = 80 + Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator.style.top = Constants.defaultApplicationQueryViewPaddingTop + 'px';
+          
+          this.epilogosViewerContainerIntervalDropQueryLeftTop.style.height = parseInt(this.state.queryHgViewHeight) - 80 - parseInt(Constants.defaultApplicationQueryViewPaddingTop) + 'px';
+          this.epilogosViewerContainerIntervalDropQueryRightTop.style.height = parseInt(this.state.queryHgViewHeight) - 80 - parseInt(Constants.defaultApplicationQueryViewPaddingTop) + 'px';
+          
+          this.epilogosViewerContainerIntervalDropMainLeftTop.style.height = parseInt(windowInnerHeight) - parseInt(this.epilogosViewerContainerIntervalDropMainLeftTop.style.top) + 'px';
+          this.epilogosViewerContainerIntervalDropMainRightTop.style.height = parseInt(windowInnerHeight) - parseInt(this.epilogosViewerContainerIntervalDropMainRightTop.style.top) + 'px';
+          
+          console.log(`this.epilogosViewerContainerIntervalDropMainRightTop.style.top ${JSON.stringify(this.epilogosViewerContainerIntervalDropMainRightTop.style.top)}`);
+          console.log(`this.epilogosViewerContainerIntervalDropMainRightTop.style.height ${JSON.stringify(this.epilogosViewerContainerIntervalDropMainRightTop.style.height)}`);
+          
+          this.epilogosViewerContainerIntervalDropQuery.style.opacity = 1;
+        }
+        
+        this.epilogosViewerContainerIntervalDropMain.style.opacity = 1;
         
         this.setState({
-          regionIndicatorOuterWidth: parseInt(this.epilogosViewerContainerIntervalDropRegionIntervalIndicator.style.width)
+          mainRegionIndicatorOuterWidth: parseInt(this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator.style.width),
+          queryRegionIndicatorOuterWidth: parseInt(this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator.style.width),
         });
       });
     
@@ -2590,7 +2974,8 @@ class Viewer extends Component {
   }
   
   fadeOutIntervalDrop = (cb) => {
-    this.epilogosViewerContainerIntervalDrop.style.opacity = 0;
+    this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
+    //this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
     setTimeout((cb) => {
       if (cb) { cb(); }
     }, 500);
@@ -2683,13 +3068,14 @@ class Viewer extends Component {
         // configuration to be reloaded in browser memory, before exporting PNG or SVG
         // which causes an annoying "blink" 
         //
-        let newHgViewconf = this.state.hgViewconf;
+        let newHgViewconf = this.state.mainHgViewconf;
         const queryObj = Helpers.getJsonFromUrl();
         let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
         let chrRight = queryObj.chrRight || this.state.currentPosition.chrRight;
         let start = parseInt(queryObj.start || this.state.currentPosition.startLeft);
         let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
         let currentGenome = queryObj.genome || this.state.hgViewParams.genome;
+/*
         let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[currentGenome];
         if (this.isProductionSite) {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -2697,6 +3083,8 @@ class Viewer extends Component {
         else {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
         }
+*/
+        let chromSizesURL = this.getChromSizesURL(currentGenome);
         ChromosomeInfo(chromSizesURL)
           .then((chromInfo) => {
             //console.log("chromInfo", chromInfo);
@@ -2717,14 +3105,14 @@ class Viewer extends Component {
             newHgViewconf.views[0].initialXDomain = [absLeft, absRight];
             newHgViewconf.views[0].initialYDomain = [absLeft, absRight];
             this.setState({
-              hgViewconf: newHgViewconf,
+              mainHgViewconf: newHgViewconf,
             }, () => {
               this.setState({
-                hgViewKey: this.state.hgViewKey + 1
+                mainHgViewKey: this.state.mainHgViewKey + 1
               }, () => {
                 setTimeout(() => {
                   if (name === "svg") {
-                    let svgStr = this.hgView.api.exportAsSvg();
+                    let svgStr = this.mainHgView.api.exportAsSvg();
                     // cf. https://github.com/higlass/higlass/issues/651
                     let fixedSvgStr = svgStr.replace('xmlns="http://www.w3.org/1999/xhtml"', '');
                     //let fixedSvgStr = svgStr;
@@ -2732,7 +3120,7 @@ class Viewer extends Component {
                     saveAs(svgFile);  
                   }
                   else if (name === "png") {
-                    let pngPromise = this.hgView.api.exportAsPngBlobPromise();
+                    let pngPromise = this.mainHgView.api.exportAsPngBlobPromise();
                     pngPromise
                       .then((blob) => {
                         //console.log(blob);
@@ -2760,7 +3148,7 @@ class Viewer extends Component {
             let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
             this.setState({
               overlayMessage: msg,
-              hgViewconf: {}
+              mainHgViewconf: {}
             }, () => {
               this.fadeInOverlay();
             });
@@ -2778,39 +3166,152 @@ class Viewer extends Component {
     this.setState({
       tabixDataDownloadCommandCopied: true
     }, () => {
-      document.activeElement.blur();
+      //document.activeElement.blur();
     });
   }
   
-  recommenderCanBeEnabled = () => {
+  recommenderSearchCanBeEnabled = () => {
     let params = this.state.tempHgViewParams;
-    return ((params.genome === "hg19") && (params.model === "15") && (!this.isProductionSite) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && (params.mode === "single"));
+    return ((params.genome === "hg19") && (params.model === "15") && ((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")));
   }
   
-  recommenderOnClick = () => {
-    
-    if (this.state.recommenderInProgress || !this.state.recommenderIsEnabled) return;
+  recommenderExpandCanBeEnabled = () => {
+    return this.recommenderSearchCanBeEnabled() && !this.state.recommenderStateInProgress;
+  }
+  
+  recommenderExpandOnClick = (region, applyAdditionalPadding) => {
+    console.log(`region ${JSON.stringify(region)}`);
+    const queryObj = Helpers.getJsonFromUrl();
+    const intervalPaddingFraction = (queryObj.roiPaddingFractional) ? parseFloat(queryObj.roiPaddingFractional) : Constants.defaultApplicationRoiPaddingFraction;
+    const intervalPaddingAbsolute = (queryObj.roiSet) ? Constants.defaultApplicationRoiSetPaddingAbsolute : ((queryObj.roiPaddingAbsolute) ? parseInt(queryObj.roiPaddingAbsolute) : Constants.defaultApplicationRoiPaddingAbsolute);
+    let chrom = region.chromosome;
+    let start = region.start;
+    let stop = region.stop;
+    if (applyAdditionalPadding) {
+      const additionalPadding = parseInt(Constants.defaultHgViewGenePaddingFraction * (stop - start));
+      const ub = Constants.assemblyBounds[this.state.hgViewParams.genome][chrom]['ub'];
+      start = ((start - additionalPadding) > 0) ? (start - additionalPadding) : 0;
+      stop = ((stop + additionalPadding) < ub) ? (stop + additionalPadding) : ub;
+    }
+    let padding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (stop - start)) : intervalPaddingAbsolute;
+    let newHgViewParams = JSON.parse(JSON.stringify(this.state.hgViewParams));
+    newHgViewParams.mode = "single";
+    newHgViewParams.chrLeft = chrom;
+    newHgViewParams.chrRight = chrom;
+    newHgViewParams.start = start;
+    newHgViewParams.stop = stop;
+    let scale = Helpers.calculateScale(newHgViewParams.chrLeft, newHgViewParams.chrRight, newHgViewParams.start, newHgViewParams.stop, this);
+    let newCurrentPosition = this.state.currentPosition;
+    newCurrentPosition.chrLeft = chrom;
+    newCurrentPosition.chrRight = chrom;
+    newCurrentPosition.startLeft = start - padding;
+    newCurrentPosition.stopLeft = stop + padding;
+    newCurrentPosition.startRight = start - padding;
+    newCurrentPosition.stopRight = stop + padding;
+    //console.log(`newCurrentPosition ${JSON.stringify(newCurrentPosition)}`);
+
+    this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
+    this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
+
+    //console.log("calling [updateViewerURL] from [recommenderExpandOnClick]");
+    this.updateViewerURL(newHgViewParams.mode,
+                         newHgViewParams.genome,
+                         newHgViewParams.model,
+                         newHgViewParams.complexity,
+                         newHgViewParams.group,
+                         newHgViewParams.sampleSet,
+                         newCurrentPosition.chrLeft,
+                         newCurrentPosition.chrRight,
+                         newCurrentPosition.startLeft,
+                         newCurrentPosition.stopRight);
+
     this.setState({
-      recommenderInProgress: true,
-      recommenderButtonLabel: RecommenderButtonInProgressLabel,
+      hgViewParams: newHgViewParams,
+      tempHgViewParams: newHgViewParams,
+      previousViewScale: scale.diff,
+      currentViewScale: scale.diff,
+      currentViewScaleAsString: scale.scaleAsStr,
+      chromsAreIdentical: scale.chromsAreIdentical,
+      currentPosition: newCurrentPosition,
+      recommenderSearchIsEnabled: this.recommenderSearchCanBeEnabled(),
+      recommenderExpandIsEnabled: this.recommenderExpandCanBeEnabled(),
+      queryRegionIndicatorData: {},
+      queryHgViewHeight: 0,
+      queryHgViewconf: {},
+      roiTabTitle: "roi",
+      roiEnabled: false,
+      roiJumpActive: false,
+      roiRegions: [],
+      roiTableData: [],
+      roiTableDataCopy: [],
+      roiTableDataIdxBySort: [],
+      roiTableDataLongestNameLength: Constants.defaultRoiTableDataLongestNameLength,
+      roiTableDataLongestAllowedNameLength: Constants.defaultRoiTableDataLongestAllowedNameLength,
+      roiEncodedURL: "",
+      roiRawURL: "",
+      selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+      selectedRoiRowIdxOnLoad: Constants.defaultApplicationSrrIdx,
+      selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
+      drawerIsOpen: false,
+      drawerSelection: Constants.defaultDrawerType,
+      drawerActiveTabOnOpen: Constants.defaultDrawerTabOnOpen,
+    }, () => {
+      this.updateViewportDimensions();
+      this.setState({
+        queryHgViewKey: this.state.queryHgViewKey + 1,
+        mainHgViewKey: this.state.mainHgViewKey + 1,
+        drawerContentKey: this.state.drawerContentKey + 1,
+      }, () => {
+        console.log(`hgViewUpdatePosition to currentPosition ${JSON.stringify(this.state.currentPosition)}`);
+        this.hgViewUpdatePosition(this.state.hgViewParams, 
+                                  this.state.currentPosition.chrLeft,
+                                  this.state.currentPosition.startLeft,
+                                  this.state.currentPosition.stopLeft,
+                                  this.state.currentPosition.chrRight,
+                                  this.state.currentPosition.startRight,
+                                  this.state.currentPosition.stopRight);
+      });
+    });
+  }
+  
+  recommenderSearchOnClick = () => {
+    
+    if (this.state.recommenderSearchInProgress || !this.state.recommenderSearchIsEnabled) return;
+    
+    this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
+    this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
+    
+    this.setState({
+      recommenderSearchInProgress: true,
+      recommenderSearchButtonLabel: RecommenderSearchButtonInProgressLabel,
+      recommenderSearchLinkLabel: RecommenderSearchLinkInProgressLabel,
+      recommenderExpandIsEnabled: false,
+      recommenderExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
     }, () => {
       
-      function recommenderQueryPromise(qChr, qStart, self) {
+      function recommenderQueryPromise(qChr, qStart, qEnd, self) {
         let params = self.state.tempHgViewParams;
-        let chromosome = qChr;
-        let start = qStart;
-        let bins = 50;
-        let binSize = 200;
-        let tabixScheme = "http";
-        let tabixHost = "explore.altius.org";
-        let tabixPath = "tabix";
-        let dataSet = params.sampleSet;
+        let datasetEncoded = encodeURIComponent(Constants.sampleSetsForRecommenderOptionDataset[params.sampleSet]);
+        let datasetAltname = params.sampleSet;
         let assembly = params.genome;
         let stateModel = params.model;
-        let groupShortname = params.group;
-        let saliency = params.complexity;
-        let recommenderURL = `${Constants.recommenderProxyURL}/?chromosome=${chromosome}&start=${start}&bins=${bins}&binSize=${binSize}&tabixScheme=${tabixScheme}&tabixHost=${tabixHost}&tabixPath=${tabixPath}&dataSet=${dataSet}&assembly=${assembly}&stateModel=${stateModel}&groupShortname=${groupShortname}&saliency=${saliency}`;
+        let groupEncoded = encodeURIComponent(Constants.groupsForRecommenderOptionGroup[params.sampleSet][params.genome][params.group]);
+        let groupAltname = params.group;
+        let saliencyLevel = Constants.complexitiesForRecommenderOptionSaliencyLevel[params.complexity];
+        let saliencyLevelAltname = params.complexity;
+        let chromosome = qChr;
+        let start = qStart;
+        let end = qEnd;
+        let weightPattern = Constants.defaultApplicationRecommenderWeightPattern;
+        let weightShape = Constants.defaultApplicationRecommenderWeightShape;
+        let tabixSource = Constants.defaultApplicationRecommenderTabixSource;
+        let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
+        let databaseUrlEncoded = encodeURIComponent(Constants.applicationRecommenderDatabaseRootURL);
+        let outputDestination = Constants.defaultApplicationRecommenderOutputDestination;
+        
+        let recommenderURL = `${Constants.recommenderProxyURL}/?datasetEncoded=${datasetEncoded}&datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&groupAltname=${groupAltname}&saliencyLevel=${saliencyLevel}&saliencyLevelAltname=${saliencyLevelAltname}&chromosome=${chromosome}&start=${start}&end=${end}&weightPattern=${weightPattern}&weightShape=${weightShape}&tabixSource=${tabixSource}&tabixUrlEncoded=${tabixUrlEncoded}&databaseUrlEncoded=${databaseUrlEncoded}&outputDestination=${outputDestination}`;
         console.log(`recommenderURL ${recommenderURL}`);
+        
         return axios.get(recommenderURL).then((res) => {
           if (res.data) {
             return res.data;
@@ -2851,6 +3352,7 @@ class Viewer extends Component {
         const roiStop = parseInt(firstROI.chromEnd);
         let roiPadding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (roiStop - roiStart)) : intervalPaddingAbsolute;
         let newTempHgViewParams = self.state.tempHgViewParams;
+        newTempHgViewParams.mode = "query";
         newTempHgViewParams.chrLeft = firstROI.chrom;
         newTempHgViewParams.chrRight = firstROI.chrom;
         newTempHgViewParams.start = roiStart - roiPadding;
@@ -2864,6 +3366,19 @@ class Viewer extends Component {
         newCurrentPosition.startRight = roiStart - roiPadding;
         newCurrentPosition.stopRight = roiStop + roiPadding;
         
+        let queryRegionIndicatorData = {
+          chromosome: firstROI.chrom,
+          start: roiStart,
+          stop: roiStop,
+          midpoint: parseInt(roiStart + ((roiStop - roiStart) / 2)),
+          regionLabel: `${firstROI.chrom}:${roiStart}-${roiStop}`,
+          regionState: {},
+          header: {
+            "label": "Query"
+          },
+          msg: null
+        };
+        
         self.setState({
           hgViewParams: newTempHgViewParams,
           tempHgViewParams: newTempHgViewParams,
@@ -2872,20 +3387,28 @@ class Viewer extends Component {
           currentViewScaleAsString: scale.scaleAsStr,
           chromsAreIdentical: scale.chromsAreIdentical,
           currentPosition: newCurrentPosition,
-          recommenderIsEnabled: self.recommenderCanBeEnabled(),
-          roiTabTitle: "results",
+          recommenderSearchIsEnabled: self.recommenderSearchCanBeEnabled(),
+          recommenderExpandIsEnabled: self.recommenderExpandCanBeEnabled(),
+          roiTabTitle: "hits",
         }, () => {
           self.triggerUpdate("update");
           setTimeout(() => {
             self.setState({
               drawerContentKey: self.state.drawerContentKey + 1,
               drawerIsOpen: true,
-              recommenderInProgress: false,
-              recommenderIsEnabled: self.recommenderCanBeEnabled(),
-              recommenderButtonLabel: RecommenderButtonDefaultLabel
+              recommenderSearchInProgress: false,
+              recommenderSearchIsEnabled: self.recommenderSearchCanBeEnabled(),
+              recommenderSearchButtonLabel: RecommenderSearchButtonDefaultLabel,
+              recommenderSearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+              recommenderExpandIsEnabled: self.recommenderExpandCanBeEnabled(),
+              recommenderExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+              queryRegionIndicatorData: queryRegionIndicatorData,
+              mainRegionIndicatorContentTopOffset: Constants.defaultApplicationRegionIndicatorContentTopOffset,
+              queryRegionIndicatorContentTopOffset: Constants.defaultApplicationRegionIndicatorContentTopOffset,
             }, () => {
               setTimeout(() => {
-                self.jumpToRegion(firstROI.position, Constants.applicationRegionTypes.roi, rowIndex, firstROI.strand);
+                let queryViewNeedsUpdate = true;
+                self.jumpToRegion(firstROI.position, Constants.applicationRegionTypes.roi, rowIndex, firstROI.strand, queryViewNeedsUpdate);
               }, 0);
             });
           }, 2000); 
@@ -2895,11 +3418,11 @@ class Viewer extends Component {
       let viewChr = this.state.currentPosition.chrLeft;
       let viewStart = this.state.currentPosition.startLeft;
       let viewStop = this.state.currentPosition.stopRight;
-      let viewMidpoint = parseInt(viewStart + ((viewStop - viewStart) / 2));
       let queryChr = viewChr;
-      let queryStart = viewMidpoint - 25 * 200;
+      let queryStart = viewStart;
+      let queryEnd = viewStop;
       
-      let newRecommenderQuery = recommenderQueryPromise(queryChr, queryStart, this);
+      let newRecommenderQuery = recommenderQueryPromise(queryChr, queryStart, queryEnd, this);
       
       newRecommenderQuery.then((res) => {
         this.roiRegionsUpdate(res, updateWithRoisInMemory, this);
@@ -2931,14 +3454,15 @@ class Viewer extends Component {
     let complexity = this.state.hgViewParams.complexity;
     let complexityText = Constants.complexities[complexity];
     let divider = <div style={{paddingLeft:'5px',paddingRight:'5px'}}>|</div>;
-    let recommenderButton = (this.isProductionSite) ? 
+    let recommenderSearchButton = ((this.isProductionSite) || (this.isProductionProxySite) || (this.state.hgViewParams.mode === "query")) ? 
       <span /> 
       :
-      <RecommenderButton
-        onClick={this.recommenderOnClick}
-        inProgress={this.state.recommenderInProgress}
-        enabled={this.state.recommenderIsEnabled}
-        label={this.state.recommenderButtonLabel}
+      <RecommenderSearchButton
+        ref={(component) => this.epilogosViewerRecommenderButton = component}
+        onClick={this.recommenderSearchOnClick}
+        inProgress={this.state.recommenderSearchInProgress}
+        enabled={this.state.recommenderSearchIsEnabled}
+        label={this.state.recommenderSearchButtonLabel}
         />;
     if (parseInt(this.state.width)<1000) {
       if (parseInt(this.state.width)<850) {
@@ -2954,7 +3478,7 @@ class Viewer extends Component {
       }
     }
     else {
-      return <div ref={(component) => this.epilogosViewerParameterSummary = component} id="navigation-summary-parameters" style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1000)?{"display":"inline-flex","letterSpacing":"0.005em"}:{"display":"inline-flex"})} className="navigation-summary-parameters"><span style={{display:"inherit"}} title={this.parameterSummaryAsTitle()}>{genomeText}{divider}{modelText}{divider}{groupText}{divider}<span dangerouslySetInnerHTML={{ __html: complexityText }} /></span>{recommenderButton}</div>;
+      return <div ref={(component) => this.epilogosViewerParameterSummary = component} id="navigation-summary-parameters" style={(this.state.isMobile)?{"display":"none","width":"0px","height":"0px"}:((parseInt(this.state.width)<1000)?{"display":"inline-flex","letterSpacing":"0.005em"}:{"display":"inline-flex"})} className="navigation-summary-parameters"><span style={{display:"inherit"}} title={this.parameterSummaryAsTitle()}>{genomeText}{divider}{modelText}{divider}{groupText}{divider}<span dangerouslySetInnerHTML={{ __html: complexityText }} /></span>{recommenderSearchButton}</div>;
     }
   }
   
@@ -2966,7 +3490,7 @@ class Viewer extends Component {
     let annotationText = Constants.annotations[genome];
     let mode = this.state.hgViewParams.mode;
     let model = this.state.hgViewParams.model;
-    let viewconf = this.state.hgViewconf;
+    let viewconf = this.state.mainHgViewconf;
     if (!viewconf || !viewconf.views) return;
     const childViews = viewconf.views[0].tracks.top;
     let childViewHeights = [];
@@ -2995,9 +3519,6 @@ class Viewer extends Component {
             results.push(<div key={`single-track-label-chromatin-states-${i}`} className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse epilogos-viewer-container-track-label-inverse-always-on" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + sampleLabelTopOffset - 12) +'px',right:'25px'}}>{sampleLabel} - {sampleDescriptiveName}</div>);
           });
         }
-        if (!(this.state.isMobile && (this.state.isPortrait === false))) {
-          results.push(<div key="single-track-label-annotation" className="epilogos-viewer-container-track-label" style={{top:parseInt(childViewHeights.reduce(add))+'px',right:'25px'}}>{annotationText}</div>);
-        }
         break;
       case "paired":
         let splitResult = group.split(/_vs_/);
@@ -3009,8 +3530,79 @@ class Viewer extends Component {
         results.push(<div key="paired-track-label-A" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 15)+'px',right:'25px'}}>{groupAText}</div>);
         results.push(<div key="paired-track-label-B" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:'25px'}}>{groupBText}</div>);
         results.push(<div key="paired-track-label-AB" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 15)+'px',right:'25px'}}>{groupText}</div>);
-        if (!(this.state.isMobile && (this.state.isPortrait === false))) {
-          results.push(<div key="paired-track-label-annotation" className="epilogos-viewer-container-track-label" style={{top:parseInt(childViewHeights.reduce(add))+'px',right:'25px'}}>{annotationText}</div>);
+        break;
+      case "query":
+        // show "Chromatin states" label
+        if (this.state.highlightRawRows.length === 0) {
+          results.push(
+            <div 
+              key="query-mode-query-track-label" 
+              className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
+              style={{
+                top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 2) + "px",
+                right: "25px"
+              }} >
+              <div>
+                Query
+              </div>
+              <div className="epilogos-viewer-container-track-label-inverse-subtext">
+                <RecommenderExpandLink
+                  enabled={this.state.recommenderExpandIsEnabled}
+                  label={this.state.recommenderExpandLinkLabel}
+                  region={this.state.queryRegionIndicatorData}
+                  onClick={this.recommenderExpandOnClick} />
+              </div>
+            </div>);
+          results.push(
+            <div 
+              key="query-mode-main-track-label" 
+              className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
+              style={{
+                top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + parseInt(this.state.queryHgViewHeight)) + "px",
+                right: "25px"
+              }} >
+              <div>
+                Search hit
+              </div>
+              <div className="epilogos-viewer-container-track-label-inverse-subtext">
+                <RecommenderSearchLink 
+                  enabled={this.state.recommenderSearchIsEnabled}
+                  inProgress={this.state.recommenderSearchInProgress}                
+                  label={this.state.recommenderSearchLinkLabel}
+                  onClick={this.recommenderSearchOnClick} />
+                {" "}|{" "}
+                <RecommenderExpandLink
+                  enabled={this.state.recommenderExpandIsEnabled}
+                  label={this.state.recommenderExpandLinkLabel}
+                  region={this.state.mainRegionIndicatorData}
+                  onClick={this.recommenderExpandOnClick} />
+              </div>
+            </div>);
+          results.push(
+            <div 
+              key="query-mode-main-track-label-chromatin-states" 
+              className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
+              style={{
+                top: parseInt(parseInt(this.state.queryHgViewHeight) + parseInt(Constants.defaultApplicationQueryViewPaddingTop) + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15) + "px",
+                right: "25px"
+              }} >
+              Chromatin states
+            </div>);
+        }
+        // show per-row labels
+        else {
+          let samplesQueryMd = Constants.sampleSetRowMetadataByGroup[sampleSet][genome][model][group];
+          let sampleQueryLabels = samplesQueryMd.samples;
+          let sampleQueryCount = sampleQueryLabels.length;
+          let sampleQueryDescriptions = samplesQueryMd.description;
+          let chromatinStateQueryHeight = childViewHeights[1];
+          let heightPerQuerySample = chromatinStateQueryHeight / sampleQueryCount;
+          this.state.highlightRawRows.forEach((i) => {
+            let sampleQueryLabel = sampleQueryLabels[i];
+            let sampleDescriptiveQueryName = sampleQueryDescriptions[sampleQueryLabel];
+            let sampleLabelTopQueryOffset = heightPerQuerySample * i;
+            results.push(<div key={`single-track-label-chromatin-states-${i}`} className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse epilogos-viewer-container-track-label-inverse-always-on" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + sampleLabelTopQueryOffset - 12) +'px',right:'25px'}}>{sampleQueryLabel} - {sampleDescriptiveQueryName}</div>);
+          });
         }
         break;
       default:
@@ -3065,34 +3657,60 @@ class Viewer extends Component {
     
     const hgEpilogosMidpoint = parseInt((document.documentElement.clientHeight)/2.0 + parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
     
-    let hgVerticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-label").clientWidth/2.0) : 0) + "px";
+    let hgVerticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-main-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-main-label").clientWidth/2.0) : 0) + "px";
     
     let hgVerticalDropTopBorderLeft = "rgba(183, 183, 183, 0.75) 1px dashed";
     
-    let hgVerticalDropLabelClassNames = "epilogos-viewer-container-vertical-drop-label";
+    let hgVerticalDropLabelClassNames = "epilogos-viewer-container-vertical-drop-main-label";
         
-    let hgIntervalDropLabelClassNames = "epilogos-viewer-container-interval-drop-label epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse";
+    let hgIntervalDropLabelClassNames = "epilogos-viewer-container-interval-drop-main-label epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse";
     
-    let viewconf = this.state.hgViewconf;
+    let viewconf = this.state.mainHgViewconf;
     
-    const childViews = (viewconf.views) ? viewconf.views[0].tracks.top : [{height:0}];
+    const childViews = (viewconf.views) ? viewconf.views[0].tracks.top : [{ height : 0 }];
     
     let childViewHeights = [];
     
     childViews.forEach((cv, i) => { childViewHeights[i] = cv.height; });
     
-    let verticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-label").clientWidth/2.0) : 0) + "px";
+    let verticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-main-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-main-label").clientWidth/2.0) : 0) + "px";
     
     return (
       <div id="epilogos-viewer-container-parent" ref={(component) => this.epilogosViewerContainerParent = component}>
         
-        <div id="epilogos-viewer-container-interval-drop" className="epilogos-viewer-container-interval-drop epilogos-viewer-container-track-label-parent" ref={(component) => this.epilogosViewerContainerIntervalDrop = component}>
-          <div id="epilogos-viewer-container-interval-drop-region-indicator" ref={(component) => this.epilogosViewerContainerIntervalDropRegionIntervalIndicator = component} style={{top:`10px`, position:"absolute", zIndex:"0", pointerEvents:"none", left:"-300px"}}>
+        <div id="epilogos-viewer-container-interval-drop-query" className="epilogos-viewer-container-interval-drop epilogos-viewer-container-interval-drop-query epilogos-viewer-container-track-label-parent" ref={(component) => this.epilogosViewerContainerIntervalDropQuery = component}>
+          
+          <div id="epilogos-viewer-container-interval-drop-query-region-indicator" ref={(component) => this.epilogosViewerContainerIntervalDropQueryRegionIntervalIndicator = component} style={{top:`10px`, position:"absolute", zIndex:"0", pointerEvents:"none", left:"-300px"}}>
             <RegionIntervalIndicator 
-              data={this.state.regionIndicatorData}
-              outerWidth={this.state.regionIndicatorOuterWidth}
-              width={(this.state.regionIndicatorOuterWidth > 300) ? `${this.state.regionIndicatorOuterWidth}px` : "300px"}
+              data={this.state.queryRegionIndicatorData}
+              outerWidth={this.state.queryRegionIndicatorOuterWidth}
+              width={(this.state.queryRegionIndicatorOuterWidth > 300) ? `${this.state.queryRegionIndicatorOuterWidth}px` : "300px"}
               height="100px"
+              radius="3px"
+              contentTopOffset={this.state.queryRegionIndicatorContentTopOffset}
+              textColorRGBA="0, 0, 0, 1"
+              fillRGB="183, 183, 183"
+              fillOpacity="1"
+              strokeRGB="183, 183, 183"
+              strokeOpacity="0.75"
+              strokeWidth="1"
+              strokeDasharray="1,1" />
+          </div>
+          
+          <div id="epilogos-viewer-container-interval-drop-query-left-top" className="epilogos-viewer-container-interval-drop-query-left-top" ref={(component) => this.epilogosViewerContainerIntervalDropQueryLeftTop = component} style={{ height: `${parseInt(this.state.queryHgViewHeight) + 'px'}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          <div id="epilogos-viewer-container-interval-drop-query-right-top" className="epilogos-viewer-container-interval-drop-query-right-top" ref={(component) => this.epilogosViewerContainerIntervalDropQueryRightTop = component} style={{ height: `${parseInt(this.state.queryHgViewHeight) + 'px'}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          
+        </div>
+        
+        <div id="epilogos-viewer-container-interval-drop-main" className="epilogos-viewer-container-interval-drop epilogos-viewer-container-interval-drop-main epilogos-viewer-container-track-label-parent" ref={(component) => this.epilogosViewerContainerIntervalDropMain = component}>
+        
+          <div id="epilogos-viewer-container-interval-drop-main-region-indicator" ref={(component) => this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator = component} style={{top:`10px`, position:"absolute", zIndex:"0", pointerEvents:"none", left:"-300px"}}>
+            <RegionIntervalIndicator 
+              data={this.state.mainRegionIndicatorData}
+              outerWidth={this.state.mainRegionIndicatorOuterWidth}
+              width={(this.state.mainRegionIndicatorOuterWidth > 300) ? `${this.state.mainRegionIndicatorOuterWidth}px` : "300px"}
+              height="100px"
+              contentTopOffset={this.state.mainRegionIndicatorContentTopOffset}
               radius="3px"
               textColorRGBA="0, 0, 0, 1"
               fillRGB="183, 183, 183"
@@ -3103,17 +3721,17 @@ class Viewer extends Component {
               strokeDasharray="1,1" />
           </div>
 
-          <div id="epilogos-viewer-container-interval-drop-left-top" className="epilogos-viewer-container-interval-drop-left-top" ref={(component) => this.epilogosViewerContainerIntervalDropLeftTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
-          <div id="epilogos-viewer-container-interval-drop-left-bottom" className="epilogos-viewer-container-interval-drop-left-bottom" ref={(component) => this.epilogosViewerContainerIntervalDropLeftBottom = component} style={{height:`${hgNonEpilogosContentHeight}`,top:`${hgNonEpilogosContentTop}`}} />
-          <div id="epilogos-viewer-container-interval-drop-right-top" className="epilogos-viewer-container-interval-drop-right-top" ref={(component) => this.epilogosViewerContainerIntervalDropRightTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
-          <div id="epilogos-viewer-container-interval-drop-right-bottom" className="epilogos-viewer-container-interval-drop-right-bottom" ref={(component) => this.epilogosViewerContainerIntervalDropRightBottom = component} style={{height:`${hgNonEpilogosContentHeight}`,top:`${hgNonEpilogosContentTop}`}} />
+          <div id="epilogos-viewer-container-interval-drop-main-left-top" className="epilogos-viewer-container-interval-drop-main-left-top" ref={(component) => this.epilogosViewerContainerIntervalDropMainLeftTop = component} style={{ height: `${parseInt(hgEpilogosContentHeight) - parseInt(this.state.queryHgViewHeight) + 'px'}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          <div id="epilogos-viewer-container-interval-drop-main-left-bottom" className="epilogos-viewer-container-interval-drop-main-left-bottom" ref={(component) => this.epilogosViewerContainerIntervalDropMainLeftBottom = component} style={{height:`${parseInt(hgEpilogosContentHeight) - parseInt(this.state.queryHgViewHeight) + 'px'}`,top:`${hgNonEpilogosContentTop}`}} />
+          <div id="epilogos-viewer-container-interval-drop-main-right-top" className="epilogos-viewer-container-interval-drop-main-right-top" ref={(component) => this.epilogosViewerContainerIntervalDropMainRightTop = component} style={{ height: `${parseInt(hgEpilogosContentHeight) - parseInt(this.state.queryHgViewHeight) + 'px'}`, top: "0px" , borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          <div id="epilogos-viewer-container-interval-drop-main-right-bottom" className="epilogos-viewer-container-interval-drop-main-right-bottom" ref={(component) => this.epilogosViewerContainerIntervalDropMainRightBottom = component} style={{height:`${parseInt(hgEpilogosContentHeight) - parseInt(this.state.queryHgViewHeight) + 'px'}`,top:`${hgNonEpilogosContentTop}`}} />
         </div>
         
-        <div id="epilogos-viewer-container-vertical-drop" className="epilogos-viewer-container-vertical-drop" ref={(component) => this.epilogosViewerContainerVerticalDrop = component}>
+        <div id="epilogos-viewer-container-vertical-drop-main" className="epilogos-viewer-container-vertical-drop-main" ref={(component) => this.epilogosViewerContainerVerticalDropMain = component}>
           
-          <div id="epilogos-viewer-container-vertical-drop-region-indicator" ref={(component) => this.epilogosViewerContainerVerticalDropRegionMidpointIndicator = component} style={{top:`10px`, left:"calc(50vw - 2px)", position:"absolute", zIndex:"10000", pointerEvents:"all"}}>
+          <div id="epilogos-viewer-container-vertical-drop-main-region-indicator" ref={(component) => this.epilogosViewerContainerVerticalDropMainRegionMidpointIndicator = component} style={{top:`10px`, left:"calc(50vw - 2px)", position:"absolute", zIndex:"10000", pointerEvents:"all"}}>
             <RegionMidpointIndicator 
-              data={this.state.regionIndicatorData}
+              data={this.state.mainRegionIndicatorData}
               width="300px"
               height="100px"
               radius="3px"
@@ -3127,9 +3745,9 @@ class Viewer extends Component {
           </div>
 
 
-          <div id="epilogos-viewer-container-vertical-drop-top" className="epilogos-viewer-container-vertical-drop-top" ref={(component) => this.epilogosViewerContainerVerticalDropTop = component} style={{ height: `${hgEpilogosContentHeight}`, top: "0px", left:"calc(50vw)", borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
+          <div id="epilogos-viewer-container-vertical-drop-main-top" className="epilogos-viewer-container-vertical-drop-main-top" ref={(component) => this.epilogosViewerContainerVerticalDropMainTop = component} style={{ height: `${parseInt(hgEpilogosContentHeight) - parseInt(this.state.queryHgViewHeight) + 'px'}`, top: "0px", left:"calc(50vw)", borderLeft: `${hgVerticalDropTopBorderLeft}` }} />
           
-          <div id="epilogos-viewer-container-vertical-drop-bottom" className="epilogos-viewer-container-vertical-drop-bottom" ref={(component) => this.epilogosViewerContainerVerticalDropBottom = component} style={{height:`${hgNonEpilogosContentHeight}`, top:`${hgNonEpilogosContentTop}`, left:"calc(50vw)"}} />
+          <div id="epilogos-viewer-container-vertical-drop-main-bottom" className="epilogos-viewer-container-vertical-drop-main-bottom" ref={(component) => this.epilogosViewerContainerVerticalDropMainBottom = component} style={{height:`${hgNonEpilogosContentHeight}`, top:`${hgNonEpilogosContentTop}`, left:"calc(50vw)"}} />
           
         </div>
       
@@ -3198,7 +3816,7 @@ class Viewer extends Component {
                 selectedRoiRowIdx={this.state.selectedRoiRowIdx}
                 onRoiColumnSort={this.updateSortOrderOfRoiTableDataIndices}
                 jumpToRegion={this.jumpToRegion}
-                isProductionSite={this.isProductionSite}
+                expandToRegion={this.recommenderExpandOnClick}
                 />
             </div>
           </Drawer>
@@ -3264,11 +3882,33 @@ class Viewer extends Component {
             </Nav>
             
           </Navbar>
-            
-          <div className="higlass-content" style={{"height": this.state.hgViewHeight}}>
+          
+          <div className="higlass-content higlass-query-content" style={{"height": this.state.queryHgViewHeight}}>
             <HiGlassComponent
-              key={this.state.hgViewKey}
-              ref={(component) => this.hgView = component}
+              key={this.state.queryHgViewKey}
+              ref={(component) => this.queryHgView = component}
+              options={{ 
+                bounded: true,
+                pixelPreciseMarginPadding: false,
+                containerPaddingX: 0,
+                containerPaddingY: 0,
+                viewMarginTop: 0,
+                viewMarginBottom: 0,
+                viewMarginLeft: 0,
+                viewMarginRight: 0,
+                viewPaddingTop: Constants.defaultApplicationQueryViewPaddingTop,
+                viewPaddingBottom: 0,
+                viewPaddingLeft: 0,
+                viewPaddingRight: 0 
+              }}
+              viewConfig={this.state.queryHgViewconf}
+              />
+          </div>
+            
+          <div className="higlass-content higlass-main-content" style={{"height": this.state.mainHgViewHeight, "paddingTop":(this.state.hgViewParams.mode==="query")?Constants.defaultApplicationQueryViewPaddingTop:0}}>
+            <HiGlassComponent
+              key={this.state.mainHgViewKey}
+              ref={(component) => this.mainHgView = component}
               options={{ 
                 bounded: true,
                 pixelPreciseMarginPadding: false,
@@ -3283,13 +3923,13 @@ class Viewer extends Component {
                 viewPaddingLeft: 0,
                 viewPaddingRight: 0 
               }}
-              viewConfig={this.state.hgViewconf}
+              viewConfig={this.state.mainHgViewconf}
               />
           </div>
           
           <div className={'navigation-summary-download-popup'} id="epilogos-viewer-navigation-summary-export-data-popup" onMouseEnter={this.onMouseEnterDownload} onMouseLeave={this.onMouseLeaveDownload} style={{visibility:((this.state.downloadVisible)?"visible":"hidden"), position:"absolute", top:this.state.downloadButtonBoundingRect.bottom, left:(this.state.downloadButtonBoundingRect.right - this.state.downloadPopupBoundingRect.width)}}>
             <div>
-              <div className="download-route-label">export</div>
+              <div className="download-route-label">download</div>
               <div>
                 <span className="download-route-link" name="tabix" onClick={() => this.onClickDownloadItemSelect("tabix")}>DATA</span>
                 {"\u00a0"}|{"\u00a0"}

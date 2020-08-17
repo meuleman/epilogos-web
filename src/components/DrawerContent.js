@@ -244,11 +244,11 @@ class DrawerContent extends Component {
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
-    if (Object.keys(Constants.modes).length !== 2) {
-      throw Error("Error - Number of modes must equal two to use <Switch> component");
+    if (Object.keys(Constants.switchModes).length !== 2) {
+      throw Error("Error - Number of switch-modes must equal two to use <Switch> component");
     }
-    Object.keys(Constants.modes).forEach(k => {
-      let kLabel = Constants.modes[k];
+    Object.keys(Constants.switchModes).forEach(k => {
+      let kLabel = Constants.switchModes[k];
       switch(modeIconIdx) {
         case 0:
           modeIcons.push(<div className="drawer-settings-mode-label" style={{ paddingRight: '8px' }}>{kLabel}</div>)
@@ -1092,7 +1092,13 @@ class DrawerContent extends Component {
     const customExemplarRowEvents = {
       onClick: (e, row, rowIndex) => {
         //console.log("row, Constants.applicationRegionTypes.exemplar, rowIndex", row, Constants.applicationRegionTypes.exemplar, rowIndex);
-        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
+        if (this.props.viewParams.mode === "query") {
+          let applyPadding = true;
+          this.props.expandToRegion(row.position, applyPadding);
+        }
+        else {
+          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
+        }
       },
       onMouseEnter: (e, row, rowIndex) => {
         this.setState({

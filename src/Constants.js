@@ -1,5 +1,6 @@
 export const applicationHost = "epilogos.altius.org";
-export const applicationProductionPort = 80;
+export const applicationProductionPort = 443;
+export const applicationProductionProxyPort = 8443;
 export const applicationDevelopmentPort = 3001;
 
 //export const annotationHost = "18.191.132.31";
@@ -10,6 +11,7 @@ export const annotationHost = "annotations.altius.org";
 export const annotationPort = "8443"; // SSL over 8443
 
 export const applicationTabixRootURL = "http://explore.altius.org/tabix";
+export const applicationRecommenderDatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/RecommenderDatabase";
 
 export const urlProxyURL = "https://epilogos.altius.org:9001";
 export const recommenderProxyURL = "https://epilogos.altius.org:9002";
@@ -56,6 +58,13 @@ export const sampleSetsForSettingsDrawer = {
   "vB" : {"visible": false, "value": "vB", "enabled": false, "titleText": "Imputed (833-sample human; Oct 2 2019)" },
   "vC" : {"visible": true, "value": "vC", "enabled": true, "titleText": "Adsera <em>et al.</em> (833-sample human)" },
   "vD" : {"visible": true, "value": "vD", "enabled": true, "titleText": "Gorkin <em>et al.</em> (65-sample mouse)" },
+};
+
+export const sampleSetsForRecommenderOptionDataset = {
+  "vA" : "ROADMAP",
+  "vB" : "ADSERA",
+  "vC" : "ADSERA",
+  "vD" : "GORKIN",
 };
 
 export const sampleSetsForSettingsDrawerOrderedKeys = [
@@ -183,6 +192,12 @@ export const complexitiesForDataExport = {
   "stacked" : "S1_2_3"
 };
 
+export const complexitiesForRecommenderOptionSaliencyLevel = {
+  "KL" : "S1",
+  "KLs" : "S2",
+  "KLss" : "S3",
+};
+
 export const complexitiesForSettingsDrawer = {
   'vA' : {
     'hg19' : {
@@ -245,19 +260,26 @@ export const complexityNotices = {
   }
 };
 
-export const modes = {
+export const switchModes = {
   "single" : "Single",
   "paired" : "Paired"
 };
 
+export const modes = {
+  "single" : "Single",
+  "paired" : "Paired",
+  "query"  : "Query"
+};
+
 export const modeNotices = {
   'single' : 'The <em>single-group</em> viewer renders the chromatin state logo of subsets of 127 genome-wide epigenomic biosamples, along with the state calls for each sample.',
-  'paired' : 'The <em>paired-group</em> viewer renders the chromatin state logos of two individual biosample groupings and their regional differences in one track, permitting simultaneous exploration and comparison of two sets.'
+  'paired' : 'The <em>paired-group</em> viewer renders the chromatin state logos of two individual biosample groupings and their regional differences in one track, permitting simultaneous exploration and comparison of two sets.',
+  'query'  : 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
 };
 
 export const samplesNotices = {
   "single" : 'Samples include those available for viewing a <em>single</em> group of biosamples.',
-  "paired" : 'Samples include those available for comparing <em>two groups</em> of biosamples.',
+  "paired" : 'Samples include those available for comparing <em>two groups</em> of biosamples.'
 };
 
 export const defaultDrawerType = "settings";
@@ -382,6 +404,138 @@ export const groupsByGenome = {
   },
 };
 
+export const groupsForRecommenderOptionGroup = {
+  "vA" : {
+    "hg19" : {
+      "adult_blood_sample" : "Adult_Blood_Sample",
+      "adult_blood_reference" :  "Adult_Blood_Reference",
+      "all" : "All_127_Roadmap_epigenomes",
+      "Blood_T-cell" : "Blood_and_T-cells",
+      "Brain" : "Brain",
+      "CellLine" : "Cell_Line",
+      "cord_blood_sample" : "Cord_Blood_Sample",
+      "cord_blood_reference" : "Cord_Blood_Reference",
+      "Digestive" : "Digestive",
+      "ENCODE2012" : "ENCODE_2012",
+      "Epithelial" : "Epithelial",
+      "ES-deriv" : "ESC_derived",
+      "ESC" : "ESC",
+      "Female" : "Female_donors",
+      "Heart" : "Heart",
+      "HSC_B-cell" : "HSC_and_B-cells",
+      "iPSC" : "iPSC",
+      "Male" : "Male_donors",
+      "Mesench" : "Mesenchymal",
+      "Muscle" : "Muscle",
+      "Neurosph" : "Neurospheres",
+      "NonES-like" : "Non-ESC",
+      "Non-T-cell_Roadmap" : "Non-T-cells",
+      "Other" : "Other",
+      "PrimaryCell" : "Primary_Cell",
+      "PrimaryTissue" : "Primary_Tissue",
+      "Sm._Muscle" : "Smooth_Muscle",
+      "Thymus" : "Thymus",
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : "Immune_and_neurosphere",
+      "adult_blood_sample_vs_adult_blood_reference" : "Adult_Blood_Sample_versus_Reference",
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : "Immune_versus_Non-immune",
+      "Brain_vs_Neurosph" : "Brain_versus_Neurospheres",
+      "Brain_vs_Other" : "Brain_versus_Other",
+      "CellLine_vs_PrimaryCell" : "Cell_Line_versus_Primary_Cell",
+      "cord_blood_sample_vs_cord_blood_reference" : "Cord_Blood_Sample_versus_Reference",
+      "ESC_vs_ES-deriv" : "ESC_versus_ESC_derived",
+      "ESC_vs_iPSC" : "ESC_versus_iPSC",
+      "ESC_vs_NonES-like" : "ESC_versus_non-ESC",
+      "HSC_B-cell_vs_Blood_T-cell" : "HSC_B-cell_versus_Blood_T-cell",
+      "Male_vs_Female" : "Male_donors_versus_Female_donors",
+      "Muscle_vs_Sm._Muscle" : "Muscle_versus_Smooth_Muscle",
+      "PrimaryTissue_vs_PrimaryCell" : "Primary_Tissue_versus_Primary_Cell",
+    },
+    "hg38" : {
+      "adult_blood_sample" : "Adult_Blood_Sample",
+      "adult_blood_reference" :  "Adult_Blood_Reference",
+      "all" : "All_127_Roadmap_epigenomes",
+      "Blood_T-cell" : "Blood_and_T-cells",
+      "Brain" : "Brain",
+      "CellLine" : "Cell_Line",
+      "cord_blood_sample" : "Cord_Blood_Sample",
+      "cord_blood_reference" : "Cord_Blood_Reference",
+      "Digestive" : "Digestive",
+      "ENCODE2012" : "ENCODE_2012",
+      "Epithelial" : "Epithelial",
+      "ES-deriv" : "ESC_derived",
+      "ESC" : "ESC",
+      "Female" : "Female_donors",
+      "Heart" : "Heart",
+      "HSC_B-cell" : "HSC_and_B-cells",
+      "iPSC" : "iPSC",
+      "Male" : "Male_donors",
+      "Mesench" : "Mesenchymal",
+      "Muscle" : "Muscle",
+      "Neurosph" : "Neurospheres",
+      "NonES-like" : "Non-ESC",
+      "Non-T-cell_Roadmap" : "Non-T-cells",
+      "Other" : "Other",
+      "PrimaryCell" : "Primary_Cell",
+      "PrimaryTissue" : "Primary_Tissue",
+      "Sm._Muscle" : "Smooth_Muscle",
+      "Thymus" : "Thymus",
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : "Immune_and_neurosphere",
+      "adult_blood_sample_vs_adult_blood_reference" : "Adult_Blood_Sample_versus_Reference",
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : "Immune_versus_Non-immune",
+      "Brain_vs_Neurosph" : "Brain_versus_Neurospheres",
+      "Brain_vs_Other" : "Brain_versus_Other",
+      "CellLine_vs_PrimaryCell" : "Cell_Line_versus_Primary_Cell",
+      "cord_blood_sample_vs_cord_blood_reference" : "Cord_Blood_Sample_versus_Reference",
+      "ESC_vs_ES-deriv" : "ESC_versus_ESC_derived",
+      "ESC_vs_iPSC" : "ESC_versus_iPSC",
+      "ESC_vs_NonES-like" : "ESC_versus_non-ESC",
+      "HSC_B-cell_vs_Blood_T-cell" : "HSC_B-cell_versus_Blood_T-cell",
+      "Male_vs_Female" : "Male_donors_versus_Female_donors",
+      "Muscle_vs_Sm._Muscle" : "Muscle_versus_Smooth_Muscle",
+      "PrimaryTissue_vs_PrimaryCell" : "Primary_Tissue_versus_Primary_Cell",
+    },
+  },
+  "vD" : {
+    "mm10" : {
+      "all" : "All_65_epigenomes",
+      "digestiveSystem" : "Digestive_System",
+      "e11.5" : "Embryonic_day_11.5",
+      "e11.5_vs_P0" : "Embryonic_day_11.5_versus_Day-of-birth",
+      "e12.5" : "Embryonic_day_12.5",
+      "e13.5" : "Embryonic_day_13.5",
+      "e14.5" : "Embryonic_day_14.5",
+      "e15.5" : "Embryonic_day_15.5",
+      "e16.5" : "Embryonic_day_16.5",
+      "facial-prominence" : "Facial_Prominence",
+      "forebrain" : "Forebrain",
+      "forebrain_vs_hindbrain" : "Forebrain_versus_Hindbrain",
+      "heart" : "Heart",
+      "hindbrain" : "Hindbrain",
+      "intestine" : "Intestine",
+      "kidney" : "Kidney",
+      "limb" : "Limb",
+      "liver" : "Liver",
+      "lung" : "Lung",
+      "neural-tube" : "Neural_Tube",
+      "P0" : "Day-of-birth",
+      "stomach" : "Stomach",
+    }
+  },
+  "vB" : {
+    "hg19" : {
+      "all" : "All_833_biosamples"
+    }
+  },
+  "vC" : {
+    "hg19" : {
+      "all" : "All_833_biosamples"
+    },
+    "hg38" : {
+      "all" : "All_833_biosamples"
+    }
+  }
+};
+
 export const defaultSingleGroupKeys = {
   "hg19" : "all",
   "hg38" : "all",
@@ -421,6 +575,18 @@ export const defaultPairedComplexityKeys = {
 //
 // Chromosomes
 //
+
+export const assemblyChromosomes = {
+  'hg19':[
+    'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chr20', 'chr21', 'chr22', 'chrX', 'chrY'
+  ],
+  'hg38':[
+    'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chr20', 'chr21', 'chr22', 'chrX', 'chrY'
+  ],
+  'mm10':[
+    'chr1', 'chr2', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chrX', 'chrY'
+  ]
+};
 
 export const assemblyBounds = {
   'hg19':{
@@ -882,6 +1048,7 @@ export const viewerHgViewconfTemplates = {
   //"paired" : "H3p4-MW7ShO2lN7UvZdf-Q"  (ibid.)
   "single" : "TCcwZtEfQdOKFdQipfqG1g",
   "paired" : "Zt_2hqjQSXKg9Ankhiz8dA",
+  "query"  : "TCcwZtEfQdOKFdQipfqG1g",
 };
 
 export const viewerHgViewconfGenomeAnnotationUUIDs = {
@@ -1414,5 +1581,13 @@ export const defaultDrawerTabOnOpen = "settings";
 
 export const defaultRoiTableDataLongestNameLength = 4;
 export const defaultRoiTableDataLongestAllowedNameLength = 20;
+
+export const defaultApplicationQueryViewPaddingTop = 50;
+export const defaultApplicationRegionIndicatorContentTopOffset = 40;
+
+export const defaultApplicationRecommenderWeightPattern = 0.35;
+export const defaultApplicationRecommenderWeightShape = 0.65;
+export const defaultApplicationRecommenderTabixSource = "remote";
+export const defaultApplicationRecommenderOutputDestination = "stdout";
 
 export const roiSets = {};

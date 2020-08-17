@@ -128,7 +128,12 @@ class ViewerMobile extends Component {
     this.currentURL.setAttribute('href', window.location.href);
     
     // is this site production or development?
-    this.isProductionSite = (this.currentURL.port === "" || (parseInt(this.currentURL.port) !== 3000 && parseInt(this.currentURL.port) !== 3001));
+    let sitePort = parseInt(this.currentURL.port);
+    if (isNaN(sitePort)) sitePort = 443;
+    this.isProductionSite = ((sitePort === "") || (sitePort === 443)); // || (sitePort !== 3000 && sitePort !== 3001));
+    this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
+    console.log("this.isProductionSite", this.isProductionSite);
+    console.log("this.isProductionProxySite", this.isProductionProxySite);
     
     // references
     this.hgView = React.createRef();
@@ -691,6 +696,7 @@ class ViewerMobile extends Component {
     if ((typeof startLeft === "undefined") || (typeof stopLeft === "undefined") || (typeof startRight === "undefined") || (typeof stopRight === "undefined")) {
       return;
     }
+/*
     let chromSizesURL = params.hgGenomeURLs[params.genome];
     if (this.isProductionSite) {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -698,6 +704,8 @@ class ViewerMobile extends Component {
     else {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
     }
+*/
+    let chromSizesURL = this.getChromSizesURL(params.genome);
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
         if (params.paddingMidpoint === 0) {
@@ -832,6 +840,7 @@ class ViewerMobile extends Component {
   
   updateViewerURLWithLocation = (event) => {
     // handle development vs production site differences
+/*
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
     if (this.isProductionSite) {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -839,6 +848,8 @@ class ViewerMobile extends Component {
     else {
       chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
     }
+*/
+    let chromSizesURL = this.getChromSizesURL(this.state.hgViewParams.genome);
     // convert event.xDomain to update URL
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
@@ -913,6 +924,23 @@ class ViewerMobile extends Component {
     });
   }
   
+  getChromSizesURL = (genome) => {
+    let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];
+    if (this.isProductionSite) {
+      chromSizesURL = chromSizesURL.replace(Constants.applicationDevelopmentPort, Constants.applicationProductionPort);
+    }
+    else if (this.isProductionProxySite) {
+      chromSizesURL = chromSizesURL.replace(Constants.applicationDevelopmentPort, Constants.applicationProductionProxyPort);
+      chromSizesURL = chromSizesURL.replace(/^https/, "http");
+    }
+    else {
+      let port = parseInt(this.currentURL.port);
+      if (isNaN(port)) { port = Constants.applicationProductionPort; }
+      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
+    }
+    return chromSizesURL;
+  }
+  
   handleZoomPastExtent = () => {
     //console.log("this.handleZoomPastExtent()");
     if (this.state.searchInputLocationBeingChanged) return;
@@ -923,16 +951,19 @@ class ViewerMobile extends Component {
         let genome = this.state.hgViewParams.genome;
         let boundsLeft = 20;
         let boundsRight = Constants.assemblyBounds[genome].chrY.ub - boundsLeft;
-        let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];  
         
-        //console.log("handleZoomPastExtent calling...");
-          
+/*
+        let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];  
         if (this.isProductionSite) {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
         }
         else {
           chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
         }
+*/
+
+        //console.log("handleZoomPastExtent calling...");
+        let chromSizesURL = this.getChromSizesURL(genome);
         ChromosomeInfo(chromSizesURL)
           .then((chromInfo) => {
             setTimeout(() => {
@@ -1184,7 +1215,7 @@ class ViewerMobile extends Component {
               let start = parseInt(queryObj.start || this.state.currentPosition.startLeft);
               let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
               //console.log("position: ", chrLeft, chrRight, start, stop);
-              
+/*              
               let chromSizesURL = newHgViewParams.hgGenomeURLs[newGenome];
               if (this.isProductionSite) {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -1192,6 +1223,8 @@ class ViewerMobile extends Component {
               else {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
               }
+*/
+              let chromSizesURL = this.getChromSizesURL(newGenome);
               //console.log("chromSizesURL", chromSizesURL);
               ChromosomeInfo(chromSizesURL)
                 .then((chromInfo) => {
@@ -1416,6 +1449,7 @@ class ViewerMobile extends Component {
               let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
               //console.log("position: ", chrLeft, chrRight, start, stop);
               
+/*
               let chromSizesURL = newHgViewParams.hgGenomeURLs[newGenome];
               if (this.isProductionSite) {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -1423,6 +1457,8 @@ class ViewerMobile extends Component {
               else {
                 chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${parseInt(this.currentURL.port)}`);
               }
+*/
+              let chromSizesURL = this.getChromSizesURL(newGenome);
               //console.log("chromSizesURL", chromSizesURL);
               ChromosomeInfo(chromSizesURL)
                 .then((chromInfo) => {

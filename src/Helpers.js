@@ -48,6 +48,7 @@ export const isValidChromosome = (assembly, chromosomeName) => {
 }
 
 export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, assembly) => {
+  //console.log("str, applyPadding, applyApplicationBinShift, assembly", str, applyPadding, applyApplicationBinShift, assembly);
   if (!applyApplicationBinShift) applyApplicationBinShift = false;
   /*
     Test if the new location passes as a chrN:X-Y pattern, 
@@ -58,14 +59,34 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
     to allow cut-and-paste from the UCSC genome browser.
   */
   let matches = str.replace(/,/g, '').split(/[:-\s]+/g).filter( i => i );
-  if (matches.length < 3) {
-    //console.log("matches failed", matches);
-    return;
-  }
+  let chrom = "";
+  let start = -1;
+  let stop = -1;
   //console.log("matches", matches);
-  let chrom = matches[0];
-  let start = parseInt(matches[1].replace(',',''));
-  let stop = parseInt(matches[2].replace(',',''));
+  if (matches.length === 3) {
+    chrom = matches[0];
+    start = parseInt(matches[1].replace(',',''));
+    stop = parseInt(matches[2].replace(',',''));  
+  }
+  else if (matches.length === 2) {
+    chrom = matches[0];
+    let midpoint = parseInt(matches[1].replace(',',''));
+    start = midpoint - parseInt(Constants.defaultHgViewRegionUpstreamPadding);
+    stop = midpoint + parseInt(Constants.defaultHgViewRegionDownstreamPadding);
+  }
+  else if (matches.length === 1) {
+    chrom = matches[0];
+    if (!isValidChromosome(assembly, chrom)) {
+      return null;
+    }
+    if (Constants.assemblyChromosomes[assembly].includes(chrom)) {
+      start = 0
+      stop = Constants.assemblyBounds[assembly][chrom]['ub'];
+    }
+  }
+  else {
+    return null;
+  }
   //console.log("chrom, start, stop", chrom, start, stop);
   if (!isValidChromosome(assembly, chrom)) {
     return null;
@@ -246,4 +267,64 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         });
       });
   }
+}
+
+export const epilogosTrackFilenameForSampleSet = (sampleSet, genome, model, group, complexity) => {
+  let result = null;
+  switch (sampleSet) {
+    case "vA":
+      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+      result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      break;
+    case "vB":
+      // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+      // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
+      result = `833sample.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+      break;
+    case "vC":
+      // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+      // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
+      result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+      break;
+    case "vD":
+      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+      result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      break;
+    default:
+      throw new Error('Not a valid sample set identifier', sampleSet);
+      //break;
+  }
+  return result;
+}
+
+export const marksTrackFilenameForSampleSet = (sampleSet, genome, model, group) => {
+  let result = null;
+  switch (sampleSet) {
+    case "vA":
+      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+      result = `${genome}.${model}.${group}.marks.multires.mv5`;
+      break;
+    case "vB":
+      // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+      // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
+      result = `833sample.${group}.${genome}.${model}.marks.multires.mv5`;
+      break;
+    case "vC":
+      // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+      // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
+      result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+      break;
+    case "vD":
+      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+      result = `${genome}.${model}.${group}.marks.multires.mv5`;
+      break;
+    default:
+      throw new Error('Not a valid sample set identifier', sampleSet);
+      //break;
+  }
+  return result;
 }

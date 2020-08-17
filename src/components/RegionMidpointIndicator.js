@@ -59,7 +59,6 @@ class RegionMidpointIndicator extends Component {
           <style type="text/css">
             { `.anchor { fill:rgb(${this.props.fillRGB}); fill-opacity:${this.props.fillOpacity}; } ` }
             { `.dashed-line { stroke:rgb(${this.props.strokeRGB}); stroke-opacity:${this.props.strokeOpacity}; stroke-width:${this.props.strokeWidth}; stroke-dasharray:${this.props.strokeDasharray}; } ` }
-            { `.rect { width:100%; height:14px; background:rgba(${this.props.fillRGB},${this.props.fillOpacity}); color:rgba(${this.props.textColorRGBA}); font:bold 12px sans-serif; border-radius:${this.props.radius}; } ` }
           </style>
           <circle cx={`${parseInt(this.props.radius)}`} cy={`${parseInt(this.props.height) - parseInt(this.props.radius)}`} r={this.props.radius} className="anchor" />
           <line x1={`${parseInt(this.props.radius)}`} y1={`${parseInt(this.props.height) - parseInt(this.props.radius)}`} x2={`${parseInt(parseInt(this.props.height) / 2)}`} y2={`${parseInt(parseInt(this.props.height) / 2)}`} className="dashed-line" />
