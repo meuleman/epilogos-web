@@ -1094,7 +1094,9 @@ class DrawerContent extends Component {
         //console.log("row, Constants.applicationRegionTypes.exemplar, rowIndex", row, Constants.applicationRegionTypes.exemplar, rowIndex);
         if (this.props.viewParams.mode === "query") {
           let applyPadding = true;
-          this.props.expandToRegion(row.position, applyPadding);
+          let nonQueryModeSelected = true;
+          this.props.expandToRegion(row.position, applyPadding, nonQueryModeSelected);
+          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
         }
         else {
           this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);

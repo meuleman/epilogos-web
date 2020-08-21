@@ -11,7 +11,7 @@ export const annotationHost = "annotations.altius.org";
 export const annotationPort = "8443"; // SSL over 8443
 
 export const applicationTabixRootURL = "http://explore.altius.org/tabix";
-export const applicationRecommenderDatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/RecommenderDatabase";
+export const applicationRecommenderDatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
 
 export const urlProxyURL = "https://epilogos.altius.org:9001";
 export const recommenderProxyURL = "https://epilogos.altius.org:9002";
@@ -1568,7 +1568,8 @@ export const defaultApplicationSrrIdx = -1;
 
 export const applicationRoiModes = {
   'default' : 'default',
-  'midpoint' : 'midpoint'
+  'midpoint' : 'midpoint',
+  'drawer' : 'drawer',
 };
 export const defaultApplicationRoiMode = "default";
 export const defaultApplicationRoiPaddingAbsolute = 1000;
@@ -1582,12 +1583,16 @@ export const defaultDrawerTabOnOpen = "settings";
 export const defaultRoiTableDataLongestNameLength = 4;
 export const defaultRoiTableDataLongestAllowedNameLength = 20;
 
+export const defaultApplicationNavbarHeight = "55px";
 export const defaultApplicationQueryViewPaddingTop = 50;
-export const defaultApplicationRegionIndicatorContentTopOffset = 40;
+export const defaultApplicationRegionIndicatorContentTopOffset = 39;
+export const defaultApplicationRegionIndicatorContentMainViewOnlyTopOffset = 8;
 
 export const defaultApplicationRecommenderWeightPattern = 0.35;
 export const defaultApplicationRecommenderWeightShape = 0.65;
 export const defaultApplicationRecommenderTabixSource = "remote";
 export const defaultApplicationRecommenderOutputDestination = "stdout";
+
+export const defaultApplicationBinSize = 200;
 
 export const roiSets = {};
