@@ -186,86 +186,116 @@ export const calculateScale = (leftChr, rightChr, start, stop, self) => {
 
 export const hgViewconfDownloadURL = (url, id, suffix) => { return url + suffix + id; }
 
-export const exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
+export const exemplarV1DownloadURL = (assembly, model, complexity, group, sampleSet) => {
   return stripQueryStringAndHashFromPath(document.location.href) + "/assets/epilogos/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + complexity + "/exemplar/top100.txt";
 }
 
+export const exemplarV2DownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  let groupNew = Constants.groupsForRecommenderOptionGroup[sampleSet][assembly][group];
+  let saliencyLevel = Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity];
+  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + groupNew + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+}
+
 export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self) => {
-  // read exemplars into memory
-  //let exemplarURL = this.exemplarDownloadURL(this.state.hgViewParams.genome, this.state.hgViewParams.model, this.state.hgViewParams.complexity, this.state.hgViewParams.group);
-  let exemplarURL = exemplarDownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
+  /*
+    This function reads exemplar regions into memory:
+    
+    - V2 URLs are derived from recommender analyses
+    - V1 URLs are derived from Eric R analyses, pre-higlass
+  */
+  let exemplarV2URL = exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey);
+  let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
   
-  if (exemplarURL) {
-    axios.get(exemplarURL)
-      .then((res) => {
-        if (!res.data) {
-          throw String("Error: Exemplars not returned from query to " + exemplarURL);
+  function updateExemplarRegionsWithResponse(res) {
+    self.setState({
+      exemplarJumpActive: true,
+      exemplarRegions: res.data.split('\n')
+    }, () => {
+      let data = [];
+      let dataCopy = [];
+      let dataIdxBySort = [];
+      let chromatinStates = {};
+      self.state.exemplarRegions.forEach((val, idx) => {
+        let elem = val.split('\t');
+        let chrom = elem[0];
+        let start = elem[1];
+        let stop = elem[2];
+        let state = elem[3];
+        if (!chrom) return;
+        //console.log("chrom, start, stop, state", chrom, start, stop, state);
+        let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
+        if (isNaN(chrom.replace(/chr/, ''))) {
+          paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
         }
-        self.setState({
-          exemplarJumpActive: true,
-          exemplarRegions: res.data.split('\n')
-        }, () => { 
-          //console.log("exemplarRegions", this.state.exemplarRegions); 
-          let data = [];
-          let dataCopy = [];
-          let dataIdxBySort = [];
-          let chromatinStates = {};
-          self.state.exemplarRegions.forEach((val, idx) => {
-            let elem = val.split('\t');
-            let chrom = elem[0];
-            let start = elem[1];
-            let stop = elem[2];
-            let state = elem[3];
-            if (!chrom) return;
-            //console.log("chrom, start, stop, state", chrom, start, stop, state);
-            let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
-            if (isNaN(chrom.replace(/chr/, ''))) {
-              paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
-            }
-            let paddedNumerical = zeroPad(parseInt(state), 3);
-            data.push({ 
-              'idx' : idx + 1,
-              'position' : chrom + ':' + start + '-' + stop,
-              'state' : {
-                'numerical' : state,
-                'paddedNumerical' : paddedNumerical
-              },
-              'element' : {
-                'paddedPosition' : paddedPosition,
-                'position' : chrom + ':' + start + '-' + stop,
-                'state' : state,
-              }
-            });
-            dataCopy.push({
-              'idx' : idx + 1,
-              'element' : paddedPosition,
-              'state' : paddedNumerical
-            });
-            dataIdxBySort.push(idx + 1);
-            chromatinStates[state] = 0;
-          });
-          self.setState({
-            exemplarTableData: data,
-            exemplarTableDataCopy: dataCopy,
-            exemplarTableDataIdxBySort: dataIdxBySort,
-            exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
-          }, () => {
-            //console.log("this.state.exemplarTableData", this.state.exemplarTableData);
-            //console.log("this.state.exemplarTableDataCopy", this.state.exemplarTableDataCopy);
-            //console.log("this.state.exemplarTableDataIdxBySort", this.state.exemplarTableDataIdxBySort);
-            //console.log("this.state.exemplarChromatinStates", this.state.exemplarChromatinStates);
-          });
+        let paddedNumerical = zeroPad(parseInt(state), 3);
+        data.push({ 
+          'idx' : idx + 1,
+          'position' : chrom + ':' + start + '-' + stop,
+          'state' : {
+            'numerical' : state,
+            'paddedNumerical' : paddedNumerical
+          },
+          'element' : {
+            'paddedPosition' : paddedPosition,
+            'position' : chrom + ':' + start + '-' + stop,
+            'state' : state,
+            'chrom' : chrom,
+            'start' : parseInt(start),
+            'stop' : parseInt(stop)
+          }
         });
+        dataCopy.push({
+          'idx' : idx + 1,
+          'element' : paddedPosition,
+          'state' : paddedNumerical
+        });
+        dataIdxBySort.push(idx + 1);
+        chromatinStates[state] = 0;
+      });
+      self.setState({
+        exemplarTableData: data,
+        exemplarTableDataCopy: dataCopy,
+        exemplarTableDataIdxBySort: dataIdxBySort,
+        exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
+      });
+    });
+  };
+  
+  if (exemplarV2URL) {
+    axios.head(exemplarV2URL)
+      .then((res) => {
+        // handle V2 exemplar as normal
+        axios.get(exemplarV2URL)
+          .then((res) => {
+            if (!res.data) {
+              throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
+            }
+            updateExemplarRegionsWithResponse(res);
+          })
+          .catch((err) => {
+            throw String(`Error: v2 exemplar GET failed: ${exemplarV2URL}`)
+          });
       })
       .catch((err) => {
-        //console.log(err.response);
-        let msg = self.errorMessage(err, `Could not retrieve exemplar data`, exemplarURL);
-        self.setState({
-          overlayMessage: msg
-        }, () => {
-          self.fadeInOverlay();
-        });
-      });
+        // fall back to trying V1 exemplar URL
+        axios.head(exemplarV1URL)
+          .then((res) => {
+            axios.get(exemplarV1URL)
+              .then((res) => {
+                if (!res.data) {
+                  throw String(`Error: v1 exemplars not returned from: ${exemplarV2URL}`);
+                }
+                updateExemplarRegionsWithResponse(res);
+              })
+              .catch((err) => {
+                throw String(`Error: v1 exemplar GET failed: ${exemplarV2URL}`)
+              });
+          })
+          .catch((err) => {
+            throw String(`Error: v1 exemplar URL does not exist: ${exemplarV2URL}`);
+          })
+      })
+      
   }
 }
 

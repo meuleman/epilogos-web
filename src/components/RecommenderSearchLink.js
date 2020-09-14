@@ -15,6 +15,7 @@ class RecommenderSearchLink extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      linkTextCursor: "pointer",
       linkTextDecoration: "none",
       iconColor: "rgba(255,255,255,1)",
     }
@@ -43,15 +44,42 @@ class RecommenderSearchLink extends Component {
   
   handleMouseOver = (e) => {
     //console.log("handleMouseOver");
-    if (!this.props.enabled || this.props.inProgress) return;
+    if (!this.props.enabled) {
+      this.setState({
+        linkTextCursor: "not-allowed",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
+    if (this.props.inProgress) {
+      this.setState({
+        linkTextCursor: "wait",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
     this.setState({
+      linkTextCursor: "pointer",
       linkTextDecoration: "underline dotted",
     });
   }
   
   handleMouseOut = (e) => {
     //console.log("handleMouseOut");
-    if (!this.props.enabled || this.props.inProgress) return;
+    if (!this.props.enabled) {
+      this.setState({
+        linkTextCursor: "default",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
+    if (this.props.inProgress) {
+      this.setState({
+        linkTextCursor: "default",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
     this.setState({
       linkTextDecoration: "none",
     });
@@ -62,23 +90,6 @@ class RecommenderSearchLink extends Component {
   }
   
   render() {
-    
-    let buttonBaseStyle = {
-    };
-    
-    let buttonStyle = {...buttonBaseStyle};
-    buttonStyle.cursor = "pointer";
-    
-    let buttonInProgressStyle = {...buttonBaseStyle};
-    buttonInProgressStyle.cursor = "wait";
-    
-    let buttonDisabledStyle = {...buttonBaseStyle};
-    buttonDisabledStyle.cursor = "not-allowed";
-    
-    let buttonLabelInProgressStyle = {
-    };
-    
-    let buttonIconStyle = {};
     
     let buttonSpinnerStyle = {
       position:"relative", 
@@ -95,7 +106,11 @@ class RecommenderSearchLink extends Component {
         onMouseOver={(e) => {this.handleMouseOver(e)}}
         onMouseOut={(e) => {this.handleMouseOut(e)}}
         title={(this.props.enabled) ? RecommenderSearchLinkDefaultDetailedLabel : ""}
-        style={{textDecoration:this.state.linkTextDecoration}} >
+        style={{
+          cursor: this.state.linkTextCursor,
+          textDecoration: this.state.linkTextDecoration,
+          opacity: (this.props.enabled) ? 1.0 : 0.67,
+        }} >
         {(this.props.inProgress && this.props.enabled) ? <span><span style={buttonSpinnerStyle}><Spinner size="9px" title={this.props.label} color={this.state.iconColor} /></span> {this.props.label}</span> : <span><FaGlasses /> {this.props.label}</span>}
       </div>
     )

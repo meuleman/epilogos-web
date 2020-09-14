@@ -969,7 +969,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         sortFunc: (a, b, order, dataField) => {
-          console.log(a.paddedPosition, b.paddedPosition, order, dataField);
+          //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
             return b.paddedPosition.localeCompare(a.paddedPosition);
           }

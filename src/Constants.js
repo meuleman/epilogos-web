@@ -3,6 +3,8 @@ export const applicationProductionPort = 443;
 export const applicationProductionProxyPort = 8443;
 export const applicationDevelopmentPort = 3001;
 
+export const applicationContactEmail = "areynolds@altius.org";
+
 //export const annotationHost = "18.191.132.31";
 //export const annotationPort = "8000";
 
@@ -1029,7 +1031,7 @@ export const viewerHgViewParameters = {
   },
   "hgViewconfEndpointURLSuffix": "api/v1/viewconfs/?d=",
   "hgViewconfAutocompleteURLSuffix": "/suggest/?d=",
-  "hgViewAnimationTime": 100,
+  "hgViewAnimationTime": 10,
   "hgViewGeneSelectionTime": 7000,
   "hgViewTrackEpilogosHeight": 200,
   "hgViewTrackChromatinMarksHeight": 200,
@@ -1592,6 +1594,9 @@ export const defaultApplicationRecommenderWeightPattern = 0.35;
 export const defaultApplicationRecommenderWeightShape = 0.65;
 export const defaultApplicationRecommenderTabixSource = "remote";
 export const defaultApplicationRecommenderOutputDestination = "stdout";
+export const defaultApplicationRecommenderOutputFormat = "JSON";
+export const defaultApplicationRecommenderButtonHideShowThreshold = 100000;
+export const defaultApplicationRecommenderWindowSizeKey = "50k";
 
 export const defaultApplicationBinSize = 200;
 

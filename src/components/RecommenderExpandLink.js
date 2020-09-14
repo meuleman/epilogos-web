@@ -13,6 +13,7 @@ class RecommenderExpandLink extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      linkTextCursor: "pointer",
       linkTextDecoration: "none",
       iconColor: "rgba(255,255,255,1)",
     }
@@ -35,7 +36,17 @@ class RecommenderExpandLink extends Component {
   
   handleMouseUp = (e) => {
     //console.log("handleMouseUp");
-    if (!this.props.enabled) return;
+    if (!this.props.enabled) {
+      this.setState({
+        linkTextCursor: "not-allowed",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
+    this.setState({
+      linkTextCursor: "pointer",
+      linkTextDecoration: "underline dotted",
+    });
     //this.handleMouseOver(e);
   }
   
@@ -49,24 +60,19 @@ class RecommenderExpandLink extends Component {
   
   handleMouseOut = (e) => {
     //console.log("handleMouseOut");
-    if (!this.props.enabled) return;
+    if (!this.props.enabled) {
+      this.setState({
+        linkTextCursor: "default",
+        linkTextDecoration: "none",
+      });
+      return;
+    }
     this.setState({
       linkTextDecoration: "none",
     });
   }
   
   render() {
-    
-    let buttonBaseStyle = {
-    };
-    
-    let buttonStyle = {...buttonBaseStyle};
-    buttonStyle.cursor = "pointer";
-    
-    let buttonDisabledStyle = {...buttonBaseStyle};
-    buttonDisabledStyle.cursor = "not-allowed";
-    
-    let buttonIconStyle = {};
     
     let buttonSpinnerStyle = {
       position:"relative", 
@@ -83,7 +89,11 @@ class RecommenderExpandLink extends Component {
         onMouseOver={(e) => {this.handleMouseOver(e)}}
         onMouseOut={(e) => {this.handleMouseOut(e)}}
         title={(this.props.enabled) ? RecommenderExpandLinkDefaultDetailedLabel : ""}
-        style={{textDecoration:this.state.linkTextDecoration}} >
+        style={{
+          cursor: this.state.linkTextCursor,
+          textDecoration: this.state.linkTextDecoration,
+          opacity: (this.props.enabled) ? 1.0 : 0.67,
+        }} >
         <FaExternalLinkAlt /> {this.props.label}
       </div>
     )
