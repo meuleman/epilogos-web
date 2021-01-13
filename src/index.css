@@ -81,6 +81,10 @@ em {
   background-color: blue !important;
 }
 
+.pretty input[disabled] {
+  display: unset !important;
+}
+
 .epilogos-portal-container {}
 
 .epilogos-portal-container-mobiledevice {}
@@ -942,9 +946,9 @@ input.epilogos-viewer-search-input::placeholder {
   padding-left: 8px;
   padding-right: 8px;
   text-align: right;
-  z-index: 500;
+  z-index: 1;
   opacity: 0.25; 
-  width: 250px;
+  width: 280px;
 }
 
 .epilogos-viewer-container-track-label-inverse-subtext {

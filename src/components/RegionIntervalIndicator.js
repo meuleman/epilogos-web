@@ -46,7 +46,7 @@ class RegionIntervalIndicator extends Component {
       paddingBottom: "4px",
       paddingLeft: "8px",
       paddingRight: "8px",
-      display: "inline-block",
+      display: "inline-table",
       cursor: "pointer",
       width: "max-content",
       pointerEvents: "all",

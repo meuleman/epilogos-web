@@ -24,8 +24,10 @@
     "file-saver": "^2.0.2",
     "higlass": "^1.8.5",
     "higlass-multivec": "^0.2.1",
+    "higlass-transcripts": "^0.2.1",
     "jsonpath": "^1.0.2",
     "pretty-checkbox": "^3.0.3",
+    "pub-sub-es": "^1.2.2",
     "react": "^16.8.6",
     "react-bootstrap-table-next": "^1.4.4",
     "react-burger-menu": "^2.6.10",
@@ -45,6 +47,7 @@
     "react-visibility-sensor": "^5.0.2",
     "reactstrap": "^6.5.0",
     "source-map-explorer": "^2.0.1",
+    "uuid4": "^1.1.4",
     "validator": "^11.1.0"
   },
   "scripts": {

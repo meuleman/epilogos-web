@@ -19,7 +19,7 @@ class Autocomplete extends Component {
       // Selected annotation location
       selectedSuggestionLocation: "",
       // Debounce timeout interval (ms)
-      debounceTimeout: 100,
+      debounceTimeout: 10,
       // Minimum length before lookup
       minimumLength: 2
     };
@@ -34,7 +34,12 @@ class Autocomplete extends Component {
   }
 
   onChange = e => {    
-    if (!e.target || (e.target.value.length === 0)) return;
+    if (!e.target) return;
+    if (e.target.value.length === 0) {
+      this.setState({
+        showSuggestions: false
+      });
+    }
     //console.log("onChange", e.target.value);
     //if ((this.state.userInput.startsWith("chr")) && ((this.state.userInput.indexOf(":") !== -1) || (this.state.userInput.indexOf('\t') !== -1))) {
     if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf('\s') !== -1))) {  

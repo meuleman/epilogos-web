@@ -191,9 +191,8 @@ export const exemplarV1DownloadURL = (assembly, model, complexity, group, sample
 }
 
 export const exemplarV2DownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
-  let groupNew = Constants.groupsForRecommenderOptionGroup[sampleSet][assembly][group];
   let saliencyLevel = Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity];
-  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + groupNew + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
 }
 
 export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self) => {
@@ -203,8 +202,12 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     - V2 URLs are derived from recommender analyses
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
-  let exemplarV2URL = exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey);
+  const newGroupV2 = Constants.groupsForRecommenderOptionGroup[newSampleSet][newGenome][newGroup];
+  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey) : null;
   let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
+
+  //console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
+  //console.log(`Helpers > updateExemplars > exemplarV1URL ${JSON.stringify(exemplarV1URL, null, 2)}`);
   
   function updateExemplarRegionsWithResponse(res) {
     self.setState({
@@ -252,6 +255,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         dataIdxBySort.push(idx + 1);
         chromatinStates[state] = 0;
       });
+      //console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
       self.setState({
         exemplarTableData: data,
         exemplarTableDataCopy: dataCopy,
@@ -260,42 +264,54 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
       });
     });
   };
+
+  function tryExemplarV1URL(exemplarV1URL) {
+    axios.head(exemplarV1URL)
+      .then((res) => {
+        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV1URL`);
+        axios.get(exemplarV1URL)
+          .then((res) => {
+            if (!res.data || res.data.startsWith("<!doctype html>")) {
+              throw String(`Error: v1 exemplars not returned from: ${exemplarV1URL}`);
+            }
+            updateExemplarRegionsWithResponse(res);
+          })
+          .catch((err) => {
+            console.warn(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL}`)
+          });
+      })
+      .catch((err) => {
+        console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL}`);
+      });
+  }
   
   if (exemplarV2URL) {
     axios.head(exemplarV2URL)
       .then((res) => {
         // handle V2 exemplar as normal
+        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV2URL`);
         axios.get(exemplarV2URL)
           .then((res) => {
-            if (!res.data) {
-              throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
+            if (!res.data || res.data.startsWith("<!doctype html>")) {
+              //throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
+              tryExemplarV1URL(exemplarV1URL);
             }
-            updateExemplarRegionsWithResponse(res);
+            else {
+              updateExemplarRegionsWithResponse(res);
+            }
           })
           .catch((err) => {
-            throw String(`Error: v2 exemplar GET failed: ${exemplarV2URL}`)
+            console.warn(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL}`);
+            tryExemplarV1URL(exemplarV1URL);    
           });
       })
       .catch((err) => {
         // fall back to trying V1 exemplar URL
-        axios.head(exemplarV1URL)
-          .then((res) => {
-            axios.get(exemplarV1URL)
-              .then((res) => {
-                if (!res.data) {
-                  throw String(`Error: v1 exemplars not returned from: ${exemplarV2URL}`);
-                }
-                updateExemplarRegionsWithResponse(res);
-              })
-              .catch((err) => {
-                throw String(`Error: v1 exemplar GET failed: ${exemplarV2URL}`)
-              });
-          })
-          .catch((err) => {
-            throw String(`Error: v1 exemplar URL does not exist: ${exemplarV2URL}`);
-          })
-      })
-      
+        tryExemplarV1URL(exemplarV1URL);
+      });
+  }
+  else {
+    tryExemplarV1URL(exemplarV1URL);
   }
 }
 

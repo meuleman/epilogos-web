@@ -181,31 +181,44 @@ class DrawerContent extends Component {
     if (targetName === "mode") {
       // get toggle value from event.target.checked
       event.target.value = (!event.target.checked) ? "single" : "paired";
+      //console.log(`event.target.value ${event.target.value}`);
+      //console.log(`viewParams ${JSON.stringify(this.props.viewParams, null, 2)}`);
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
-        newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.genome];
+        newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
       }
       else if (event.target.value === "paired") {
-        newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.genome];
+        newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
+        newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        newViewParams.complexity = ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) ? "KL" : newViewParams.complexity;
       }
     }
     
     if (targetName === "genome") {
-      const oldGroups = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][event.target.value]);
+      const sampleSet = newViewParams.sampleSet;
+      const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]);
       if (event.target.value === "mm10") {
-        newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys.mm10 : Constants.defaultPairedGroupKeys.mm10;
-        newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys.mm10;
+        newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
+        newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
         //newViewParams.complexity = (newViewParams.mode === "single") ? Constants.defaultSingleComplexityKeys.mm10 : Constants.defaultPairedComplexityKeys.mm10;
       }
       else if (event.target.value === "hg19") {
         if (!oldGroups.includes(newViewParams.group)) {
-          newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys.hg19 : Constants.defaultPairedGroupKeys.hg19;
+          newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].hg19 : Constants.defaultPairedGroupKeys[sampleSet].hg19;
         }
         //newViewParams.model = (newViewParams.mode === "single") ? Constant.defaultSingleModelKeys.hg19 : Constant.defaultPairedModelKeys.hg19;
       }
       else if (event.target.value === "hg38") {
         if (!oldGroups.includes(newViewParams.group)) {
-          newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys.hg38 : Constants.defaultPairedGroupKeys.hg38;  
+          if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired")) {
+            newViewParams.genome = "hg19";
+            newViewParams.mode = "single";
+            newViewParams.complexity = "KL";
+            newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg19;
+          }
+          else {
+            newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].hg38 : Constants.defaultPairedGroupKeys[sampleSet].hg38;
+          }
         }
         //newViewParams.model = (newViewParams.mode === "single") ? Constant.defaultSingleModelKeys.hg38 : Constant.defaultPairedModelKeys.hg38;
       }
@@ -217,7 +230,7 @@ class DrawerContent extends Component {
     if (targetName === "preferred-groups") {
       newViewParams.group = event.target.value;
     }
-    
+
     //
     // back to generic business...
     //
@@ -240,6 +253,7 @@ class DrawerContent extends Component {
   }
   
   modeSectionBody = () => {
+    let activeGenome = this.state.viewParams.genome;
     let activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let modeIcons = [];
@@ -263,7 +277,7 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
-    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vD")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
+    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
     result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} disabled={modeToggleDisabled} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
     const kSectionBodyKey = 'mode-sb';
@@ -273,19 +287,24 @@ class DrawerContent extends Component {
   genomeSectionBody = () => {
     let activeGenome = this.state.viewParams.genome;
     let activeSampleSet = this.state.viewParams.sampleSet;
+    let activeMode = this.state.viewParams.mode;
+    //console.log(`[genomeSectionBody] ${activeGenome} ${activeSampleSet} ${activeMode}`);
     let result = [];
     const kButtonGroupPrefix = 'genome-bg-';
     let kButtonGroupIdx = 0;
     let kButtons = [];
     let kButtonIdx = 0;
-    Object.keys(Constants.genomesForSettingsDrawer[activeSampleSet]).forEach(k => {
-      let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][k];
+    Object.keys(Constants.genomesForSettingsDrawer[activeSampleSet][activeMode]).forEach(k => {
+      let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode][k];
       const kButtonPrefix = 'genome-bg-btn-';
       const kButtonParentPrefix = 'genome-bg-parent-btn-';
       const kButtonLabelPrefix = 'genome-bg-btn-label-';
       kButtonLabels.forEach((label) => {
         const isActive = (activeGenome === label);
-        const isDisabled = false;
+        let isDisabled = false;
+        if ((activeSampleSet === "vC") && (activeGenome === "hg19") && (activeMode === "paired") && (label === "hg38")) {
+          isDisabled = true;
+        }
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -367,6 +386,7 @@ class DrawerContent extends Component {
     let activeGenome = this.state.viewParams.genome;
     let activeComplexity = this.state.viewParams.complexity;
     let activeSampleSet = this.state.viewParams.sampleSet;
+    let activeMode = this.state.viewParams.mode;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'complexity-bg-btn-';
@@ -378,7 +398,8 @@ class DrawerContent extends Component {
         const kLabel = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].titleText;
         const kValue = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].value;
         const isActive = (activeComplexity === k);
-        const isDisabled = !Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
+        let isDisabled = !Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
+        if ((activeSampleSet === "vC") && (activeMode === "paired") && (activeGenome === "hg19") && (activeComplexity === "KL") && (kValue === "KLs")) isDisabled = true;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -569,7 +590,7 @@ class DrawerContent extends Component {
             </div>);
           content.push(modeSection);
           
-// sample set (vA/vB)
+          // sample set (vA/vB)
           let sampleSetSectionBody = self.sampleSetSectionBody();
           let sampleSetSection = (
             <div key="viewer-sampleSet-section" className="drawer-settings-section drawer-settings-section-middle">

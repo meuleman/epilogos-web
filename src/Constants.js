@@ -58,7 +58,7 @@ export const sampleSets = {
 export const sampleSetsForSettingsDrawer = {
   "vA" : {"visible": true, "value": "vA", "enabled": true, "titleText": "Roadmap consortium (127-sample human)" },
   "vB" : {"visible": false, "value": "vB", "enabled": false, "titleText": "Imputed (833-sample human; Oct 2 2019)" },
-  "vC" : {"visible": true, "value": "vC", "enabled": true, "titleText": "Adsera <em>et al.</em> (833-sample human)" },
+  "vC" : {"visible": true, "value": "vC", "enabled": true, "titleText": "Boix <em>et al.</em> (833-sample human)" },
   "vD" : {"visible": true, "value": "vD", "enabled": true, "titleText": "Gorkin <em>et al.</em> (65-sample mouse)" },
 };
 
@@ -82,6 +82,12 @@ export const annotations = {
   "mm10" : "GENCODE vM21",
 };
 
+export const annotationsShortname = {
+  "hg19" : "GENCODE_v19",
+  "hg38" : "GENCODE_v28",
+  "mm10" : "GENCODE_vM21",
+};
+
 export const genomes = {
   "hg19" : "Human",
   "hg38" : "Human",
@@ -90,16 +96,40 @@ export const genomes = {
 
 export const genomesForSettingsDrawer = {
   'vA' : {
-    "Human" : ["hg19", "hg38"]
+    'single' : {
+      "Human" : ["hg19", "hg38"]
+    },
+    'paired' : {
+      "Human" : ["hg19", "hg38"]
+    },
+    'query' : {
+      "Human" : ["hg19", "hg38"]
+    },
   },
   'vB' : {
-    "Human" : ["hg19"],
+    'single' : {
+      "Human" : ["hg19"]
+    },
+    'paired' : {},
   },
   'vC' : {
-    "Human" : ["hg19", "hg38"],
+    'single' : {
+      "Human" : ["hg19", "hg38"]
+    },
+    'paired' : {
+      "Human" : ["hg19", "hg38"]
+    },
   },
   'vD' : {
-    "Mouse" : ["mm10"]
+    'single' : {
+      "Mouse" : ["mm10"]
+    },
+    'paired' : {
+      "Mouse" : ["mm10"]
+    },
+    'query' : {
+      "Mouse" : ["mm10"]
+    },
   }
 };
 
@@ -399,6 +429,24 @@ export const groupsByGenome = {
   "vC" : {
     "hg19" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:false, preferred: false },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:false, preferred: false },
+      "Cancer_vs_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_vs_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true },
+      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:false, preferred: false },
+      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:false, preferred: false },
+      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:false, preferred: false },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:false, preferred: false },
+      "Stem_vs_Non-stem" : { type:"group", subtype:"paired", value:"Stem_vs_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true },
+      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:false, preferred: false },
+      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:false, preferred: false },
+      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:false, preferred: false },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:false, preferred: false },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cell", enabled:true, preferred: true },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:false, preferred: false },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cell", enabled:false, preferred: false },
     },
     "hg38" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
@@ -530,24 +578,44 @@ export const groupsForRecommenderOptionGroup = {
   },
   "vC" : {
     "hg19" : {
-      "all" : "All_833_biosamples"
+      "all" : "All_833_biosamples",
     },
     "hg38" : {
-      "all" : "All_833_biosamples"
+      "all" : "All_833_biosamples",
     }
   }
 };
 
 export const defaultSingleGroupKeys = {
-  "hg19" : "all",
-  "hg38" : "all",
-  "mm10" : "all"
+  "vA": {
+    "hg19" : "all",
+    "hg38" : "all",
+  },
+  "vB": {
+    "hg19" : "all",
+  },
+  "vC": {
+    "hg19" : "all",
+    "hg38" : "all",
+  },
+  "vD": {
+    "mm10" : "all",  
+  },
 };
 
 export const defaultPairedGroupKeys = {
-  "hg19" : "ESC_vs_NonES-like",
-  "hg38" : "ESC_vs_NonES-like",
-  "mm10" : "e11.5_vs_P0"
+  "vA" : {
+    "hg19" : "ESC_vs_NonES-like",
+    "hg38" : "ESC_vs_NonES-like",
+  },
+  "vB" : {
+  },
+  "vC" : {
+    "hg19" : "Male_vs_Female",
+  },
+  "vD" : {
+    "mm10" : "e11.5_vs_P0"
+  },
 };
 
 export const defaultSingleModelKeys = {
@@ -1042,7 +1110,8 @@ export const viewerHgViewParameters = {
     "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes.fixedBin",
     "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes.fixedBin",
     "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes.fixedBin"
-  }
+  },
+  "annotationsTrackType": "horizontal-gene-annotations"
 };
 
 export const viewerHgViewconfTemplates = {
@@ -1055,19 +1124,49 @@ export const viewerHgViewconfTemplates = {
 
 export const viewerHgViewconfGenomeAnnotationUUIDs = {
   "hg19" : {
-    "chromsizes" : "S_2v_ZbeQIicTqHgGqjrTg", // hg19.chromsizes.fixedBin.txt (071620, 200bp-aligned)
-    "genes" : "ftfObGDLT8eLH0_mCK7Hcg"       // gencode.v19.annotation.gtf.v2.hgnc.longest.noChrM.bed14.fixedBin.db (071620, 200bp-aligned)
+    "chromsizes" : "S_2v_ZbeQIicTqHgGqjrTg",   // hg19.chromsizes.fixedBin.txt (071620, 200bp-aligned)
+    "genes" : "ftfObGDLT8eLH0_mCK7Hcg",        // gencode.v19.annotation.gtf.v2.hgnc.longest.noChrM.bed14.fixedBin.db (071620, 200bp-aligned)
+    "transcripts" : "fv1D7uwoRpqWwqFJQ1gdsg",  // gencode.v19.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
   },
   "hg38" : {
-    "chromsizes" : "e7yehSFuSvWu0_9uEK1Apw", // hg38.chromsizes.fixedBin.txt (072020, 200bp-aligned)
-    "genes" : "OAc6qvgJRP2cEr78Eoj79w"       // gencode.v28.basic.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned) 
-                                             // "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052720, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
+    "chromsizes" : "e7yehSFuSvWu0_9uEK1Apw",   // hg38.chromsizes.fixedBin.txt (072020, 200bp-aligned)
+    "genes" : "OAc6qvgJRP2cEr78Eoj79w",        // gencode.v28.basic.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned) 
+                                               // "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052720, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
+    "transcripts" : "a8079g0hSweKXxaaFIMayA",  // gencode.v28.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    "masterlist" : "ZwyS15ivSK6t0loq-dDLSw",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.bed12.beddb (103020, 200bp-aligned)
+    "masterlist_40tpt" : "KRnnDGliSoCQRBNynhw_Hw",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.40_transcripts_per_tile.bed12.beddb (120820, 200bp-aligned, 40 max. transcripts per tile)
+    "masterlist_30tpt" : "CLz8sq5SQdeFNTe2tx7CQA",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.30_transcripts_per_tile.bed12.beddb (120820, 200bp-aligned, 30 max. transcripts per tile)
+    "masterlist_25tpt_ri" : "XX3_8jYKSSGbNXHIvomsvw",
+    "masterlist_1000tpt" : "B8NnrZA9T4m_T0mx2SNDBA",
+    "masterlist_100tpt" : "Dp4kMitVRkKox_IbTmVRag",
+    "masterlist_30tpt_itB" : "XZJiZGZeQGSQYRRsB1tp6A",
+    "masterlist_20tpt_itB" : "D5k7ajwfT9mzwbybaSS0VA",
   },
   "mm10" : {
-    "chromsizes" : "ZHw2pq2tRLqsKxhOSdagWw", // mm10.chromsizes.fixedBin.txt (072020, 200bp-aligned)
-    "genes" : "dAhJNUy8QDmYp8CPtND0VQ"       // mm10.gencode.vM21.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned)
-                                             // "YZ5Wy9w2QTO5OpJmMZdsXg"
+    "chromsizes" : "ZHw2pq2tRLqsKxhOSdagWw",   // mm10.chromsizes.fixedBin.txt (072020, 200bp-aligned)
+    "genes" : "dAhJNUy8QDmYp8CPtND0VQ",        // mm10.gencode.vM21.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned)
+                                               // "YZ5Wy9w2QTO5OpJmMZdsXg"
+    "transcripts" : "J9zBRm5qSb2VDJB7xiNWng",  // gencode.vM21.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
   }
+};
+
+export const viewerHgViewconfDHSComponentBED12ItemRGBColormap = {
+  "255,229,0"   : "Placental / trophoblast",
+  "254,129,2"   : "Lymphoid",
+  "255,0,0"     : "Myeloid / erythroid",
+  "7,175,0"     : "Cardiac",
+  "76,125,20"   : "Musculoskeletal",
+  "65,70,19"    : "Vascular / endothelial",
+  "5,193,217"   : "Primitive / embryonic",
+  "4,103,253"   : "Neural",
+  "0,149,136"   : "Digestive",
+  "187,45,212"  : "Stromal A",
+  "122,0,255"   : "Stromal B",
+  "74,104,118"  : "Renal / cancer",
+  "8,36,91"     : "Cancer / epithelial",
+  "185,70,29"   : "Pulmonary development",
+  "105,33,8"    : "Organ development / renal",
+  "195,195,195" : "Tissue invariant"
 };
 
 export const viewerHgViewconfColormapsCorrect = {
@@ -1461,13 +1560,14 @@ export const allowedQueryParameters = {
   "roiURL"                   : "regions-of-interest URL",
   "srrIdx"                   : "selected ROI row index",
   "sampleSet"                : "sample set",
-  "roiMode"                  : "regions-of-interest display mode",
+  "roiMode"                  : "regions-of-interest display mode (\"default\", \"midpoint\", \"drawer\")",
   "roiPaddingFractional"     : "regions-of-interest padding (fraction)",
   "roiPaddingAbsolute"       : "regions-of-interest padding (absolute)",
   "activeTab"                : "active drawer tab upon open",
   "highlightRows"            : "apply highlight on indexed rows",
   "highlightBehavior"        : "behavior to apply on specified rows (or, alternatively, all other rows)",
   "highlightBehaviorAlpha"   : "alpha transparency value",
+  "annotationsTrackType"     : "annotations track type (\"horizontal-gene-annotations\" or \"horizontal-transcripts\")",
 }
 export const allowedQueryParameterKeys = Object.keys(allowedQueryParameters);
 
@@ -1545,6 +1645,9 @@ export const defaultApplicationHighlightBehavior = "applyAlphaToNonHighlightedRo
 // ?highlightBehaviorAlpha=xyz
 export const defaultApplicationHighlightBehaviorAlpha = 0.1;
 
+// ?annotationsTrackType=xyz
+export const defaultApplicationAnnotationsTrackType = "horizontal-gene-annotations";
+
 export const defaultApplicationPositions = {
   'hg19' : {
     'chr' : 'chr19',
@@ -1567,6 +1670,11 @@ export const defaultApplicationRoiLineLimit = 100;
 
 export const defaultApplicationSerIdx = -1;
 export const defaultApplicationSrrIdx = -1;
+
+export const applicationAnnotationsTrackTypes = {
+  'horizontal-gene-annotations' : 'horizontal-gene-annotations',
+  'horizontal-transcripts' : 'horizontal-transcripts',
+};
 
 export const applicationRoiModes = {
   'default' : 'default',
@@ -1599,5 +1707,7 @@ export const defaultApplicationRecommenderButtonHideShowThreshold = 100000;
 export const defaultApplicationRecommenderWindowSizeKey = "50k";
 
 export const defaultApplicationBinSize = 200;
+
+export const defaultViewerKeyEventChangeEventDebounceTimeout = 500;
 
 export const roiSets = {};
