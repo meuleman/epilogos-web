@@ -1076,9 +1076,10 @@ class Viewer extends Component {
     //console.log("[updateViewportDimensions] newHgViewTrackChromosomeHeight", newHgViewTrackChromosomeHeight);
     //console.log("[updateViewportDimensions] newHgViewTrackGeneAnnotationsHeight", newHgViewTrackGeneAnnotationsHeight);
 
+    let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+
     //console.log(`[updateViewportDimensions] ${mode}`);
     if (mode === "paired") {
-      let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
       let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
       let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
       //deepCopyMainHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
@@ -1130,6 +1131,11 @@ class Viewer extends Component {
       deepCopyMainHgViewconf.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
       //deepCopyMainHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
       
+      if ((this.state.hgViewParams.sampleSet === "vE") || (this.state.hgViewParams.sampleSet === "vF")) {
+        deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(allEpilogosTracksHeight / 2);
+        deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(allEpilogosTracksHeight / 2);
+      }
+
       switch (annotationsTrackType) {
         case "horizontal-gene-annotations": {
           deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyMainHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
@@ -1395,6 +1401,10 @@ class Viewer extends Component {
         epilogosViewerHeaderNavbarLefthalfWidth = (roiTableWidth + 50) + "px";
       }
     }
+
+    // if (this.state.hgViewParams.sampleSet === "vE") {
+    //   console.log(`deepCopyMainHgViewconf ${JSON.stringify(deepCopyMainHgViewconf, null, 2)}`);
+    // }
     
     //let self = this;
     this.setState({
@@ -2295,6 +2305,7 @@ class Viewer extends Component {
         })
         .catch((err) => {
           //console.log("[triggerUpdate] Error - ", JSON.stringify(err));
+          console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`)
           let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
           self.setState({
             overlayMessage: msg,
@@ -2369,9 +2380,15 @@ class Viewer extends Component {
           newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
           newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
         }
-        // console.log("[triggerUpdate] newEpilogosTrackAFilename", newEpilogosTrackAFilename);
-        // console.log("[triggerUpdate] newEpilogosTrackBFilename", newEpilogosTrackBFilename);
-        // console.log("[triggerUpdate] newEpilogosTrackAvsBFilename", newEpilogosTrackAvsBFilename);
+        else if (newSampleSet === "vF") {
+          const modSampleSet = "vE";
+          newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        }
+        console.log("[triggerUpdate] newEpilogosTrackAFilename", newEpilogosTrackAFilename);
+        console.log("[triggerUpdate] newEpilogosTrackBFilename", newEpilogosTrackBFilename);
+        console.log("[triggerUpdate] newEpilogosTrackAvsBFilename", newEpilogosTrackAvsBFilename);
 
         //
         // query for UUIDs
@@ -2383,10 +2400,10 @@ class Viewer extends Component {
         
         newEpilogosTrackAUUIDQueryPromise.then((res) => {
           newEpilogosTrackAUUID = res;
-          return uuidQueryPromise(newEpilogosTrackBFilename);
+          return uuidQueryPromise(newEpilogosTrackBFilename, this);
         }).then((res) => {
           newEpilogosTrackBUUID = res;
-          return uuidQueryPromise(newEpilogosTrackAvsBFilename);
+          return uuidQueryPromise(newEpilogosTrackAvsBFilename, this);
         }).then((res) => {
           newEpilogosTrackAvsBUUID = res;
         }).then(() => {
@@ -2884,17 +2901,29 @@ class Viewer extends Component {
         //
         let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
         let newMarksTrackFilename = Helpers.marksTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup);
+
+        console.log(`single`);
+        console.log(`newEpilogosTrackFilename ${newEpilogosTrackFilename}`);
+        console.log(`newMarksTrackFilename ${newMarksTrackFilename}`);
+
+        if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
+          newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        }
+        // if (newSampleSet === "vE") {
+        //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   newMarksTrackFilename = `833sample.vC.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        // }
         
         //
         // query for UUIDs
         //
         let newEpilogosTrackUUID = null;
         let newMarksTrackUUID = null;
-        let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename);
+        let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename, this);
         
         newEpilogosTrackUUIDQueryPromise.then((res) => {
           newEpilogosTrackUUID = res;
-          return uuidQueryPromise(newMarksTrackFilename);
+          return uuidQueryPromise(newMarksTrackFilename, this);
         }).then((res) => {
           newMarksTrackUUID = res;
         }).then(() => {
@@ -2969,6 +2998,7 @@ class Viewer extends Component {
                 }
                 res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                 res.data.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
+
                 // update track names
                 res.data.views[0].tracks.top[0].name = newEpilogosTrackFilename;
                 res.data.views[0].tracks.top[0].options.name = newEpilogosTrackFilename;
@@ -3074,6 +3104,23 @@ class Viewer extends Component {
                     throw new Error('[triggerUpdate] Unknown annotations track type', newHgViewParams.annotationsTrackType);
                   }
                 }
+                if (newSampleSet === "vE") {
+                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                  let sampleSetVEHeightPerEpilogos = parseInt(sampleSetVEHeightAllEpilogos / 2);
+                  res.data.views[0].tracks.top[0].height = sampleSetVEHeightPerEpilogos;
+                  res.data.views[0].tracks.top[1].height = sampleSetVEHeightPerEpilogos;
+                  res.data.views[0].tracks.top[1].type = res.data.views[0].tracks.top[0].type;
+                  res.data.views[0].tracks.top[1].options = res.data.views[0].tracks.top[0].options;
+                  res.data.views[0].tracks.top[1].resolutions = res.data.views[0].tracks.top[0].resolutions;
+                  //console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
+                }
+                else if (newSampleSet === "vF") {
+                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                  let sampleSetVEHeightPerEpilogos = parseInt(sampleSetVEHeightAllEpilogos / 2);
+                  res.data.views[0].tracks.top[0].height = sampleSetVEHeightPerEpilogos;
+                  res.data.views[0].tracks.top[1].height = sampleSetVEHeightPerEpilogos;
+                  //console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
+                }
                 // get child view heights
                 const childViews = res.data.views[0].tracks.top;
                 let childViewHeightTotal = 0;
@@ -3081,7 +3128,7 @@ class Viewer extends Component {
                 childViewHeightTotal += 10;
                 let childViewHeightTotalPx = childViewHeightTotal + "px";
                 //
-                // console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
+                //console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
                 // update Viewer application state and exemplars (in drawer)
                 self.setState({
                   hgViewParams: newHgViewParams,
@@ -4991,7 +5038,7 @@ class Viewer extends Component {
     let params = this.state.tempHgViewParams;
     //return ((params.genome === "hg19") && (params.model === "15") && ((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")));
     //return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")));
-    return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")) && ((this.state.currentViewScale > 0) && (this.state.currentViewScale <= Constants.defaultApplicationRecommenderButtonHideShowThreshold)) );
+    return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (params.sampleSet !== "vE") && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")) && ((this.state.currentViewScale > 0) && (this.state.currentViewScale <= Constants.defaultApplicationRecommenderButtonHideShowThreshold)) );
   }
   
   recommenderExpandCanBeEnabled = () => {
@@ -5549,7 +5596,11 @@ class Viewer extends Component {
       case "single":
         // show "Chromatin states" label
         if (this.state.highlightRawRows.length === 0) {
-          results.push(<div key="single-track-label-chromatin-states" className="epilogos-viewer-container-track-label" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:'25px'}}>Chromatin states</div>);
+          if (sampleSet === "vE") {
+          }
+          else {
+            results.push(<div key="single-track-label-chromatin-states" className="epilogos-viewer-container-track-label" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:'25px'}}>Chromatin states</div>);
+          }
         }
         // show per-row labels
         else {
@@ -5873,6 +5924,7 @@ class Viewer extends Component {
                 onRoiColumnSort={this.updateSortOrderOfRoiTableDataIndices}
                 jumpToRegion={this.jumpToRegion}
                 expandToRegion={this.recommenderExpandOnClick}
+                isProductionSite={this.isProductionSite}
                 />
             </div>
           </Drawer>

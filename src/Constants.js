@@ -53,6 +53,8 @@ export const sampleSets = {
   "vD" : "2019 July 22 (65-sample mouse)",
   "vB" : "2019 October 2 (833-sample human)",
   "vC" : "2019 October 6 (833-sample human)",
+  "vE" : "2021 January 20 (833-sample human)",
+  "vF" : "2021 January 29 (833-sample human)",
 };
 
 export const sampleSetsForSettingsDrawer = {
@@ -60,6 +62,8 @@ export const sampleSetsForSettingsDrawer = {
   "vB" : {"visible": false, "value": "vB", "enabled": false, "titleText": "Imputed (833-sample human; Oct 2 2019)" },
   "vC" : {"visible": true, "value": "vC", "enabled": true, "titleText": "Boix <em>et al.</em> (833-sample human)" },
   "vD" : {"visible": true, "value": "vD", "enabled": true, "titleText": "Gorkin <em>et al.</em> (65-sample mouse)" },
+  "vE" : {"visible": true, "value": "vE", "enabled": true, "titleText": "Boix <em>et al.</em> (maxvecsum vs colsum agg test)" },
+  "vF" : {"visible": true, "value": "vF", "enabled": true, "titleText": "Boix <em>et al.</em> (maxvecsum w/chromatin state)" },
 };
 
 export const sampleSetsForRecommenderOptionDataset = {
@@ -67,13 +71,17 @@ export const sampleSetsForRecommenderOptionDataset = {
   "vB" : "ADSERA",
   "vC" : "ADSERA",
   "vD" : "GORKIN",
+  "vE" : "ADSERA",
+  "vF" : "ADSERA",
 };
 
 export const sampleSetsForSettingsDrawerOrderedKeys = [
   "vA",
   "vC",
+  "vE",
+  "vF",
   "vB",
-  "vD"
+  "vD",
 ];
 
 export const annotations = {
@@ -130,7 +138,21 @@ export const genomesForSettingsDrawer = {
     'query' : {
       "Mouse" : ["mm10"]
     },
-  }
+  },
+  'vE' : {
+    'single' : {
+      "Human" : ["hg19"]
+    },
+    'paired' : {},
+  },
+  'vF' : {
+    'single' : {
+      "Human" : ["hg19"]
+    },
+    'paired' : {
+      "Human" : ["hg19"]
+    },
+  },
 };
 
 export const genomeNotices = {
@@ -189,6 +211,16 @@ export const modelsForSettingsDrawer = {
     'hg38' : {
       '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
     },
+  },
+  'vE' : {
+    'hg19' : {
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+    }
+  },
+  'vF' : {
+    'hg19' : {
+      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+    }
   },
 }
 
@@ -268,6 +300,16 @@ export const complexitiesForSettingsDrawer = {
       'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
       'KLs' : { value:'KLs', text:'KL*', titleText:'S<sub>2</sub>', enabled:true, visible:true }
     },
+  },
+  'vE' : {
+    'hg19' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+    }
+  },
+  'vF' : {
+    'hg19' : {
+      'KL' : { value:'KL', text:'KL', titleText:'S<sub>1</sub>', enabled:true, visible:true },
+    }
   },
 };
 
@@ -430,27 +472,50 @@ export const groupsByGenome = {
     "hg19" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
       "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:false, preferred: false },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:false, preferred: false },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
       "Cancer_vs_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_vs_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true },
-      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:false, preferred: false },
-      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:false, preferred: false },
+      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:true, preferred: false },
+      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:true, preferred: false },
       "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
-      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:false, preferred: false },
-      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:false, preferred: false },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: false },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: false },
       "Stem_vs_Non-stem" : { type:"group", subtype:"paired", value:"Stem_vs_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true },
-      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:false, preferred: false },
-      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:false, preferred: false },
+      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:true, preferred: false },
+      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:true, preferred: false },
       "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
-      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:false, preferred: false },
-      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:false, preferred: false },
-      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cell", enabled:true, preferred: true },
-      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:false, preferred: false },
-      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cell", enabled:false, preferred: false },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: false },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: false },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cells", enabled:true, preferred: true },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:true, preferred: true },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true },
     },
     "hg38" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
     }
+  },
+  "vE" : {
+    "hg19" : {
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", },
+    },
+  },
+  "vF" : {
+    "hg19" : {
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
+      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
+      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", },
+    },
   },
 };
 
@@ -583,7 +648,15 @@ export const groupsForRecommenderOptionGroup = {
     "hg38" : {
       "all" : "All_833_biosamples",
     }
-  }
+  },
+  "vE" : {
+    "hg19" : {},
+  },
+  "vF" : {
+    "hg19" : {
+      "all" : "All_833_biosamples",
+    },
+  },
 };
 
 export const defaultSingleGroupKeys = {
@@ -601,6 +674,12 @@ export const defaultSingleGroupKeys = {
   "vD": {
     "mm10" : "all",  
   },
+  "vE": {
+    "hg19" : "Female",
+  },
+  "vF": {
+    "hg19" : "Female",
+  },
 };
 
 export const defaultPairedGroupKeys = {
@@ -615,6 +694,11 @@ export const defaultPairedGroupKeys = {
   },
   "vD" : {
     "mm10" : "e11.5_vs_P0"
+  },
+  "vE" : {
+  },
+  "vF" : {
+    "hg19" : "Male_vs_Female",
   },
 };
 

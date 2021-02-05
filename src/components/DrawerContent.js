@@ -173,6 +173,20 @@ class DrawerContent extends Component {
           newViewParams.model = "15";
           newViewParams.complexity = "KL";  
           break;
+        case "vE":
+          newViewParams.mode = "single";
+          newViewParams.group = "Female";
+          newViewParams.genome = "hg19";
+          newViewParams.model = "18";
+          newViewParams.complexity = "KL";  
+          break;
+        case "vF":
+          newViewParams.mode = "single";
+          newViewParams.group = "Female";
+          newViewParams.genome = "hg19";
+          newViewParams.model = "18";
+          newViewParams.complexity = "KL";  
+          break;
         default:
           throw Error("Unknown sampleSet parameter specified in DrawerContent:onClickSettingsButton()");
       }
@@ -253,8 +267,8 @@ class DrawerContent extends Component {
   }
   
   modeSectionBody = () => {
-    let activeGenome = this.state.viewParams.genome;
-    let activeSampleSet = this.state.viewParams.sampleSet;
+    const activeGenome = this.state.viewParams.genome;
+    const activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
@@ -277,7 +291,7 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
-    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
+    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD") && (activeSampleSet !== "vF")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
     result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} disabled={modeToggleDisabled} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
     const kSectionBodyKey = 'mode-sb';
@@ -285,9 +299,9 @@ class DrawerContent extends Component {
   }
   
   genomeSectionBody = () => {
-    let activeGenome = this.state.viewParams.genome;
-    let activeSampleSet = this.state.viewParams.sampleSet;
-    let activeMode = this.state.viewParams.mode;
+    const activeGenome = this.state.viewParams.genome;
+    const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeMode = this.state.viewParams.mode;
     //console.log(`[genomeSectionBody] ${activeGenome} ${activeSampleSet} ${activeMode}`);
     let result = [];
     const kButtonGroupPrefix = 'genome-bg-';
@@ -321,9 +335,9 @@ class DrawerContent extends Component {
   }
   
   modelSectionBody = () => {
-    let activeGenome = this.state.viewParams.genome;
-    let activeModel = this.state.viewParams.model;
-    let activeSampleSet = this.state.viewParams.sampleSet;
+    const activeGenome = this.state.viewParams.genome;
+    const activeModel = this.state.viewParams.model;
+    const activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'model-bg-btn-';
@@ -353,7 +367,7 @@ class DrawerContent extends Component {
   }
   
   sampleSetSectionBody = () => {
-    let activeSampleSet = this.state.viewParams.sampleSet;
+    const activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'sampleSet-bg-btn-';
@@ -361,6 +375,7 @@ class DrawerContent extends Component {
     const kButtonLabelPrefix = 'sampleSet-bg-btn-label-';
     let kButtonIdx = 0;
     Constants.sampleSetsForSettingsDrawerOrderedKeys.forEach(k => {
+      if (((k === "vB") || (k === "vE") || (k === "vF")) && (this.props.isProductionSite)) return;
       if (Constants.sampleSetsForSettingsDrawer[k].visible) {
         const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
         const kValue = Constants.sampleSetsForSettingsDrawer[k].value;
@@ -383,10 +398,11 @@ class DrawerContent extends Component {
   }
   
   complexitySectionBody = () => {
-    let activeGenome = this.state.viewParams.genome;
-    let activeComplexity = this.state.viewParams.complexity;
-    let activeSampleSet = this.state.viewParams.sampleSet;
-    let activeMode = this.state.viewParams.mode;
+    const activeGenome = this.state.viewParams.genome;
+    const activeComplexity = this.state.viewParams.complexity;
+    const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeMode = this.state.viewParams.mode;
+    const activeGroup = this.state.viewParams.group;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'complexity-bg-btn-';
@@ -400,6 +416,7 @@ class DrawerContent extends Component {
         const isActive = (activeComplexity === k);
         let isDisabled = !Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
         if ((activeSampleSet === "vC") && (activeMode === "paired") && (activeGenome === "hg19") && (activeComplexity === "KL") && (kValue === "KLs")) isDisabled = true;
+        if ((activeSampleSet === "vC") && (activeMode === "single") && (activeGenome === "hg19") && (activeComplexity === "KL") && (activeGroup !== "all") && (kValue === "KLs")) isDisabled = true;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -448,8 +465,16 @@ class DrawerContent extends Component {
   }
   
   preferredSampleItems = () => {
-    let activeMode = this.state.viewParams.mode;
-    let md = Constants.groupsByGenome[this.state.viewParams.sampleSet][this.state.viewParams.genome];
+    const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeMode = this.state.viewParams.mode;
+    const activeGenome = this.state.viewParams.genome;
+    const activeComplexity = this.state.viewParams.complexity;
+    let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    if ((activeSampleSet === "vC") && (activeMode === "single") && (activeGenome === "hg19") && (activeComplexity === "KLs")) {
+      md = {
+        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true }
+      };
+    }
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let preferredSamples = jp.query(samples, '$..[?(@.preferred==true)]');
     let enabledPreferredSamples = jp.query(preferredSamples, '$..[?(@.enabled==true)]');
@@ -491,8 +516,16 @@ class DrawerContent extends Component {
   }
   
   sampleItems = () => {
-    let activeMode = this.state.viewParams.mode;
-    let md = Constants.groupsByGenome[this.state.viewParams.sampleSet][this.state.viewParams.genome];
+    const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeMode = this.state.viewParams.mode;
+    const activeGenome = this.state.viewParams.genome;
+    const activeComplexity = this.state.viewParams.complexity;
+    let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    if ((activeSampleSet === "vC") && (activeMode === "single") && (activeGenome === "hg19") && (activeComplexity === "KLs")) {
+      md = {
+        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true }
+      };
+    }
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let enabledSamples = jp.query(samples, '$..[?(@.enabled==true)]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});

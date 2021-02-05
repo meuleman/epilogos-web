@@ -7,7 +7,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import * as Constants from "./Constants.js";
 
-import { FaClipboard } from 'react-icons/fa';
+import { FaBreadSlice, FaClipboard } from 'react-icons/fa';
 
 export const log10 = (val) => {
   return Math.log(val) / Math.LN10;
@@ -338,6 +338,12 @@ export const epilogosTrackFilenameForSampleSet = (sampleSet, genome, model, grou
       // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
       result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
       break;
+    case "vE":
+      result = `833sample.${sampleSet}.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+      break;
+    case "vF":
+      result = `833sample.vE.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+      break;
     default:
       throw new Error('Not a valid sample set identifier', sampleSet);
       //break;
@@ -367,6 +373,13 @@ export const marksTrackFilenameForSampleSet = (sampleSet, genome, model, group) 
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
       // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
       result = `${genome}.${model}.${group}.marks.multires.mv5`;
+      break;
+    case "vE":
+      const complexity = 'KL';
+      result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+      break;
+    case "vF":
+      result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
       break;
     default:
       throw new Error('Not a valid sample set identifier', sampleSet);
