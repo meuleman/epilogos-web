@@ -270,7 +270,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
       .catch((err) => {
         console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
       });
-  };
+  }
   
   if (exemplarV2URL) {
     axios.head(exemplarV2URL)

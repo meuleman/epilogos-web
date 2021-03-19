@@ -9,6 +9,13 @@ module.exports = {
             "experimentalObjectRestSpread": true
         }
     },
+    // "parserOptions": {
+    //     "ecmaFeatures": {
+    //         "jsx": true
+    //     },
+    //     "ecmaVersion": 12,
+    //     "sourceType": "module"
+    // },
     "env": {
         "es6": true,
         "browser": true,
