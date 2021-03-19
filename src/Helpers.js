@@ -28,7 +28,7 @@ export const getJsonFromUrl = () => {
         result[item[0]] = decodeURIComponent(item[1]);
   });
   return result;
-}
+};
 
 export const stripQueryStringAndHashFromPath = (url) => { 
   return url.split("?")[0].split("#")[0]; 
@@ -48,7 +48,6 @@ export const isValidChromosome = (assembly, chromosomeName) => {
 }
 
 export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, assembly) => {
-  //console.log("str, applyPadding, applyApplicationBinShift, assembly", str, applyPadding, applyApplicationBinShift, assembly);
   if (!applyApplicationBinShift) applyApplicationBinShift = false;
   /*
     Test if the new location passes as a chrN:X-Y pattern, 
@@ -87,22 +86,10 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
   else {
     return null;
   }
-  //console.log("chrom, start, stop", chrom, start, stop);
   if (!isValidChromosome(assembly, chrom)) {
     return null;
   }
-  //let padding = (applyPadding) ? parseInt(Constants.defaultHgViewGenePaddingFraction * (stop - start)) : 0;
-  //let assembly = this.state.hgViewParams.genome;
-  //let chrLimit = parseInt(Constants.assemblyBounds[assembly][chrom].ub) - 10;
-  //
-  // Constants.applicationBinShift applies a single-bin correction to the padding 
-  // applied to the specified range (exemplar, etc.). It is not perfect but helps 
-  // when applying a vertical line on selected exemplars.
-  //
-  //start = ((start - padding + (applyApplicationBinShift ? Constants.applicationBinShift : 0)) > 0) ? (start - padding + (applyApplicationBinShift ? Constants.applicationBinShift : 0)) : 0;
-  //stop = ((stop + padding + (applyApplicationBinShift ? Constants.applicationBinShift : 0)) < chrLimit) ? (stop + padding + (applyApplicationBinShift ? Constants.applicationBinShift : 0)) : stop;
   let range = [chrom, start, stop];
-  //console.log("range", range);
   return range;
 }
 
@@ -199,7 +186,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   /*
     This function reads exemplar regions into memory:
     
-    - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender results
+    - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender pipeline results
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
   const newGroupV2 = Constants.groupsForRecommenderOptionGroup[newSampleSet][newGenome][newGroup];
@@ -319,6 +306,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
   let result = { A : null, B : null, AvsB : null };
   let errorRaised = false;
+  let errorMessage = null;
   switch (sampleSet) {
     case "vA":
     case "vB":
@@ -348,6 +336,7 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
           break;
         default:
           errorRaised = true;
+          errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`;
           break;
       }
       break;
@@ -355,7 +344,7 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
       break;
   }
   if (errorRaised) {
-    throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`);
+    throw new Error(errorMessage);
   }
   return result;
 }
