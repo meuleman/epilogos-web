@@ -7,7 +7,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import * as Constants from "./Constants.js";
 
-import { FaBreadSlice, FaClipboard } from 'react-icons/fa';
+import { FaClipboard } from 'react-icons/fa';
 
 export const log10 = (val) => {
   return Math.log(val) / Math.LN10;
@@ -263,7 +263,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
       });
     });
-  };
+  }
 
   function tryExemplarV1URL(exemplarV1URL) {
     axios.head(exemplarV1URL)

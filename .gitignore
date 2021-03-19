@@ -14,6 +14,7 @@
 /epilogos-annotations/build
 /build
 /public/assets/marks
+package-lock.json
 
 # misc
 .DS_Store

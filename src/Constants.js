@@ -37,7 +37,7 @@ export const mobileThresholds = {
 
 export const applicationRegionTypes = {
   "exemplar" : "exemplar",
-  "roi" : "roi"
+  "roi" : "roi",
 };
 
 export const applicationBinShift = 100;
