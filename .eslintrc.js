@@ -46,10 +46,5 @@ module.exports = {
             "Hyperlink",
             {"name": "Link", "linkAttribute": "to"}
         ],
-        "import/resolver" : {
-            "node" : {
-                "paths" : [ "." ],
-            },
-        },
     }
 };

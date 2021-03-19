@@ -250,7 +250,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
       });
     });
-  }
+  };
 
   function tryExemplarV1URL(exemplarV1URL) {
     axios.head(exemplarV1URL)
