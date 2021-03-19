@@ -268,7 +268,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   function tryExemplarV1URL(exemplarV1URL) {
     axios.head(exemplarV1URL)
       .then((res) => {
-        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV1URL`);
+        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV1URL | ${JSON.stringify(res)}`);
         axios.get(exemplarV1URL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
@@ -277,11 +277,11 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
             updateExemplarRegionsWithResponse(res);
           })
           .catch((err) => {
-            console.warn(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL}`)
+            console.warn(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL} | ${JSON.stringify(err)}`)
           });
       })
       .catch((err) => {
-        console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL}`);
+        console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
       });
   }
   
@@ -289,7 +289,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     axios.head(exemplarV2URL)
       .then((res) => {
         // handle V2 exemplar as normal
-        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV2URL`);
+        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
         axios.get(exemplarV2URL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
@@ -301,11 +301,12 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
             }
           })
           .catch((err) => {
-            console.warn(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL}`);
+            console.warn(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
             tryExemplarV1URL(exemplarV1URL);    
           });
       })
       .catch((err) => {
+        console.warn(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
         // fall back to trying V1 exemplar URL
         tryExemplarV1URL(exemplarV1URL);
       });
@@ -317,6 +318,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 
 export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
   let result = { A : null, B : null, AvsB : null };
+  let errorRaised = false;
   switch (sampleSet) {
     case "vA":
     case "vB":
@@ -345,18 +347,23 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
           result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
           break;
         default:
-          throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`);
+          errorRaised = true;
           break;
       }
       break;
     default:
       break;
   }
+  if (errorRaised) {
+    throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`);
+  }
   return result;
 }
 
 export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
   let result = null;
+  let errorRaised = false;
+  let errorMessage = null;
   switch (sampleSet) {
     case "vA":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
@@ -389,10 +396,11 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
             case "Stem":
               result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
               break;
-            default:
+            default: {
               const newComplexity = Constants.complexitiesForDataExport[complexity];
               result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
               break;
+            }
           }
           break;
         case "hg38":
@@ -414,14 +422,16 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
             case "Non-neural":
             case "Non-stem":
             case "Stem":
-            default:
+            default: {
               const newComplexity = Constants.complexitiesForDataExport[complexity];
               result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
               break;
+            }
           }
           break;
         default:
-          throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`);
+          errorRaised = true;
+          errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
           break;
       }
       break;
@@ -437,14 +447,20 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
       result = `833sample.vE.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
       break;
     default:
-      throw new Error('Not a valid sample set identifier', sampleSet);
-      //break;
+      errorRaised = true;
+      errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      break;
+  }
+  if (errorRaised) {
+    throw new Error(errorMessage);
   }
   return result;
 }
 
 export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group) => {
   let result = null;
+  let errorRaised = false;
+  let errorMessage = null;
   switch (sampleSet) {
     case "vA":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
@@ -503,26 +519,31 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
           }
           break;
         default:
-          throw String(`Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`);
+          errorRaised = true;
+          errorMessage = `Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
           break;
       }
-      
       break;
     case "vD":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
       // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
       result = `${genome}.${model}.${group}.marks.multires.mv5`;
       break;
-    case "vE":
+    case "vE": {
       const complexity = 'KL';
       result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
       break;
+    }
     case "vF":
       result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
       break;
     default:
-      throw new Error('Not a valid sample set identifier', sampleSet);
-      //break;
+      errorRaised = true;
+      errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      break;
+  }
+  if (errorRaised) {
+    throw new Error(errorMessage);
   }
   return result;
 }
