@@ -28,7 +28,7 @@ export const getJsonFromUrl = () => {
         result[item[0]] = decodeURIComponent(item[1]);
   });
   return result;
-};
+}
 
 export const stripQueryStringAndHashFromPath = (url) => { 
   return url.split("?")[0].split("#")[0]; 
@@ -270,7 +270,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
       .catch((err) => {
         console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
       });
-  }
+  };
   
   if (exemplarV2URL) {
     axios.head(exemplarV2URL)
