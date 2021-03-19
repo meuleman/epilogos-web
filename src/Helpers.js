@@ -199,11 +199,11 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   /*
     This function reads exemplar regions into memory:
     
-    - V2 URLs are derived from recommender analyses
+    - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender results
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
   const newGroupV2 = Constants.groupsForRecommenderOptionGroup[newSampleSet][newGenome][newGroup];
-  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey) : null;
+  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
   let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
 
   //console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
@@ -315,7 +315,47 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   }
 }
 
-export const epilogosTrackFilenameForSampleSet = (sampleSet, genome, model, group, complexity) => {
+export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
+  let result = { A : null, B : null, AvsB : null };
+  switch (sampleSet) {
+    case "vA":
+    case "vB":
+    case "vD":
+      result.A = `${genome}.${model}.${groupA}.${complexity}.epilogos.multires.mv5`;
+      result.B = `${genome}.${model}.${groupB}.${complexity}.epilogos.multires.mv5`;
+      result.AvsB = `${genome}.${model}.${groupAvsB}.${complexity}.epilogos.multires.mv5`;
+      break;
+    case "vC":
+      switch (genome) {
+        case "hg19":
+          if (groupA.includes("Male_donors") || (groupB.includes("Female_donors"))) {
+            result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+            result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+            result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          }
+          else {
+            result.A = `833sample.${sampleSet}.${genome}.${groupA}.${model}.${complexity}.epilogos.multires.mv5`;
+            result.B = `833sample.${sampleSet}.${genome}.${groupB}.${model}.${complexity}.epilogos.multires.mv5`;
+            result.AvsB = `833sample.${sampleSet}.${genome}.${groupAvsB}.${model}.${complexity}.epilogos.multires.mv5`;
+          }
+          break;
+        case "hg38":
+          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          break;
+        default:
+          throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`);
+          break;
+      }
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
+export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
   let result = null;
   switch (sampleSet) {
     case "vA":
@@ -329,9 +369,61 @@ export const epilogosTrackFilenameForSampleSet = (sampleSet, genome, model, grou
       result = `833sample.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
       break;
     case "vC":
-      // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-      // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
-      result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+      switch (genome) {
+        case "hg19":
+          switch (group) {
+            case "all":
+              result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+              break;
+            case "Blood_T-cell":
+            case "Cancer":
+            case "Female":
+            case "HSC_B-cell":
+            case "Immune":
+            case "Male":
+            case "Neural":
+            case "Non-cancer":
+            case "Non-immune":
+            case "Non-neural":
+            case "Non-stem":
+            case "Stem":
+              result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+              break;
+            default:
+              const newComplexity = Constants.complexitiesForDataExport[complexity];
+              result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+              break;
+          }
+          break;
+        case "hg38":
+          switch (group) {
+            case "all":
+              result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+              break;
+            case "Female":
+            case "Male":
+              result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+              break;
+            case "Blood_T-cell":
+            case "Cancer":
+            case "HSC_B-cell":
+            case "Immune":
+            case "Neural":
+            case "Non-cancer":
+            case "Non-immune":
+            case "Non-neural":
+            case "Non-stem":
+            case "Stem":
+            default:
+              const newComplexity = Constants.complexitiesForDataExport[complexity];
+              result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+              break;
+          }
+          break;
+        default:
+          throw String(`Error: Unknown genome specified for Helpers.epilogosTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`);
+          break;
+      }
       break;
     case "vD":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
@@ -351,7 +443,7 @@ export const epilogosTrackFilenameForSampleSet = (sampleSet, genome, model, grou
   return result;
 }
 
-export const marksTrackFilenameForSampleSet = (sampleSet, genome, model, group) => {
+export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group) => {
   let result = null;
   switch (sampleSet) {
     case "vA":
@@ -365,9 +457,56 @@ export const marksTrackFilenameForSampleSet = (sampleSet, genome, model, group) 
       result = `833sample.${group}.${genome}.${model}.marks.multires.mv5`;
       break;
     case "vC":
-      // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-      // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
-      result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+      switch (genome) {
+        case "hg19":
+          switch (group) {
+            case "all":
+            case "Blood_T-cell":
+            case "Cancer":
+            case "Female":
+            case "HSC_B-cell":
+            case "Immune":
+            case "Male":
+            case "Neural":
+            case "Non-cancer":
+            case "Non-immune":
+            case "Non-neural":
+            case "Non-stem":
+            case "Stem":
+              result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+              break;
+            default:
+              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+              break;
+          }
+          break;
+        case "hg38":
+          switch (group) {
+            case "all":
+            case "Female":
+            case "Male":
+              result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+              break;
+            case "Blood_T-cell":
+            case "Cancer":
+            case "HSC_B-cell":
+            case "Immune":
+            case "Neural":
+            case "Non-cancer":
+            case "Non-immune":
+            case "Non-neural":
+            case "Non-stem":
+            case "Stem":
+            default:
+              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+              break;
+          }
+          break;
+        default:
+          throw String(`Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`);
+          break;
+      }
+      
       break;
     case "vD":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"

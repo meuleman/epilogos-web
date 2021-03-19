@@ -1174,6 +1174,17 @@ class ViewerMobile extends Component {
         let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
         let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
         let newEpilogosTrackAvsBFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
+        if (newSampleSet === "vC") {
+          newEpilogosTrackAFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        }
+        else if (newSampleSet === "vF") {
+          const modSampleSet = "vE";
+          newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+          newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        }
         
         //
         // query for UUIDs
@@ -1400,6 +1411,10 @@ class ViewerMobile extends Component {
           default:
             throw new Error('Not a valid sample set identifier', newSampleSet);
             //break;
+        }
+
+        if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
+          newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
         }
         
         //console.log("newEpilogosTrackFilename", newEpilogosTrackFilename);

@@ -400,6 +400,10 @@ class Viewer extends Component {
       self.state.tempHgViewParams = newTempHgViewParams;
       self.state.recommenderSearchIsEnabled = self.recommenderSearchCanBeEnabled();
       self.state.recommenderExpandIsEnabled = self.recommenderExpandCanBeEnabled();
+      const sampleSet = self.state.hgViewParams.sampleSet;
+      const genome = self.state.hgViewParams.genome;
+      const group = self.state.hgViewParams.group;
+      const isGroupPreferredSample = Constants.groupsByGenome[sampleSet][genome][group].preferred;
       self.triggerUpdate("update");
       //console.log("[constructor] updateWithDefaults > self.state.activeTab", self.state.activeTab);
       if (typeof self.state.activeTab !== "undefined" && self.state.activeTab !== "settings") {
@@ -408,6 +412,7 @@ class Viewer extends Component {
             drawerIsOpen: true,
             drawerActiveTabOnOpen: self.state.activeTab,
             drawerContentKey: self.state.drawerContentKey + 1,
+            advancedOptionsVisible: !isGroupPreferredSample,
           }, () => {
             //console.log("[constructor] updateWithDefaults > self.state.exemplarTableData", self.state.exemplarTableData);
             //console.log("[constructor] updateWithDefaults > self.state.selectedNonRoiRowIdxOnLoad", self.state.selectedNonRoiRowIdxOnLoad);
@@ -447,7 +452,7 @@ class Viewer extends Component {
     //
     else if (queryObj.roiURL) {
       setTimeout(() => {
-        //console.log("[constructor] queryObj.roiURL", queryObj.roiURL);
+        console.log("[constructor] queryObj.roiURL", queryObj.roiURL);
         this.updateRois(queryObj.roiURL, updateWithRoisInMemory);
       }, 0);
     }
@@ -1473,7 +1478,7 @@ class Viewer extends Component {
               stopRight : stopRight
             }
           }, () => {          
-            console.log("[hgViewUpdatePositionForChromInfo] calling [updateViewerURL]");
+            //console.log("[hgViewUpdatePositionForChromInfo] calling [updateViewerURL]");
             self.updateViewerURL(params.mode,
                                  params.genome,
                                  params.model,
@@ -1643,8 +1648,15 @@ class Viewer extends Component {
   
   handleDrawerStateChange = (state) => {
     if (state.isOpen === this.state.drawerIsOpen) return; // short-circuit a repeat call
-    //console.log(`[handleDrawerStateChange] new state ${JSON.stringify(state)}`);
-    let mode = this.state.hgViewParams.mode;
+    // console.log(`[handleDrawerStateChange] new state ${JSON.stringify(state)}`);
+    // let mode = this.state.hgViewParams.mode;
+    const sampleSet = this.state.hgViewParams.sampleSet;
+    const genome = this.state.hgViewParams.genome;
+    const group = this.state.hgViewParams.group;
+    const isGroupPreferredSample = Constants.groupsByGenome[sampleSet][genome][group].preferred;
+    if (!isGroupPreferredSample) {
+      this.toggleAdvancedOptionsVisible();
+    }
     if (state.isOpen) { // open
       //let windowInnerHeight = window.innerHeight + "px";
       let windowInnerHeight = document.documentElement.clientHeight + "px";
@@ -1652,10 +1664,10 @@ class Viewer extends Component {
       let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 70) + "px";
       this.setState({
         drawerSelection: Constants.defaultDrawerType,
-        drawerHeight: epilogosViewerDrawerHeight
+        drawerHeight: epilogosViewerDrawerHeight,
       }, () => {
         this.setState({ 
-          drawerIsOpen: state.isOpen
+          drawerIsOpen: state.isOpen,
         });
         {/* if ( ((this.state.selectedExemplarRowIdx > 0) && (this.state.exemplarTableData.length > 0)) || ((this.state.selectedRoiRowIdx > 0) && (this.state.roiTableData.length > 0)) ) {
           console.log(`[handleDrawerStateChange] this.state.selectedExemplarRowIdx ${this.state.selectedExemplarRowIdx} this.state.selectedRoiRowIdx ${this.state.selectedRoiRowIdx}`);
@@ -1748,7 +1760,7 @@ class Viewer extends Component {
     }
     else { // closed
       this.setState({ 
-        drawerIsOpen: state.isOpen
+        drawerIsOpen: state.isOpen,
       });
       {/* if ( ((this.state.selectedExemplarRowIdx > 0) && (this.state.exemplarTableData.length > 0)) || ((this.state.selectedRoiRowIdx > 0) && (this.state.roiTableData.length > 0)) ) {
         console.log(`[handleDrawerStateChange] this.state.selectedExemplarRowIdx ${this.state.selectedExemplarRowIdx} this.state.selectedRoiRowIdx ${this.state.selectedRoiRowIdx}`);
@@ -1998,10 +2010,15 @@ class Viewer extends Component {
     });
     if ((this.epilogosViewerContainerVerticalDropMain.style) && (this.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { this.fadeOutVerticalDrop() }
     if ((this.epilogosViewerContainerIntervalDropMain.style) && (this.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { this.fadeOutIntervalDrop() }
-    console.log("[jumpToRegion]", pos, regionType, rowIndex);
+    //console.log("[jumpToRegion]", pos, regionType, rowIndex);
+    const upstreamPadding = (regionType !== Constants.applicationRegionTypes.exemplar) ? Constants.defaultHgViewRegionUpstreamPadding : (stop - start < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarUpstreamPadding : Constants.defaultHgViewRegionUpstreamPadding;
+    const downstreamPadding = (regionType !== Constants.applicationRegionTypes.exemplar) ? Constants.defaultHgViewRegionDownstreamPadding : (stop - start < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarDownstreamPadding : Constants.defaultHgViewRegionDownstreamPadding;
+
+
+
     this.openViewerAtChrPosition(pos,
-                                 Constants.defaultHgViewRegionUpstreamPadding,
-                                 Constants.defaultHgViewRegionDownstreamPadding,
+                                 upstreamPadding,
+                                 downstreamPadding,
                                  regionType,
                                  rowIndex,
                                  strand,
@@ -2202,7 +2219,13 @@ class Viewer extends Component {
     let genome = this.state.tempHgViewParams.genome;
     let genomeText = Constants.genomes[genome];
     let group = this.state.tempHgViewParams.group;
-    let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+    let groupText = null;
+    try {
+      groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+    }
+    catch (err) {
+      console.log(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group}`);
+    }
     let model = this.state.tempHgViewParams.model;
     let modelText = Constants.models[model];
     let complexity = this.state.tempHgViewParams.complexity;
@@ -2327,7 +2350,7 @@ class Viewer extends Component {
       //
       // try to fix bad URL parameters
       //
-      if (newGroup.includes("_vs_")) { newMode = "paired"; newViewconfUUID = Constants.viewerHgViewconfTemplates.paired; }
+      if (newGroup.includes("_vs_") || newGroup.includes("_versus_")) { newMode = "paired"; newViewconfUUID = Constants.viewerHgViewconfTemplates.paired; }
       // 
       // we also need the UUID of the chromsizes and gene annotations track, which is 'genome'-specific
       //
@@ -2372,20 +2395,38 @@ class Viewer extends Component {
         let splitResult = newGroup.split(/_vs_/);
         let newGroupA = splitResult[0];
         let newGroupB = splitResult[1];
-        let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
-        let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
-        let newEpilogosTrackAvsBFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-        if (newSampleSet === "vC") {
-          newEpilogosTrackAFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-          newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-          newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        if (typeof newGroupB === "undefined") {
+          splitResult = newGroup.split(/_versus_/);
+          newGroupA = splitResult[0];
+          newGroupB = splitResult[1];
         }
-        else if (newSampleSet === "vF") {
-          const modSampleSet = "vE";
-          newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-          newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-          newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        }
+
+        const pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
+
+        const newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
+        const newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
+        const newEpilogosTrackAvsBFilename = pairedEpilogosTrackFilenames.AvsB;
+
+        // let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
+        // let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
+        // let newEpilogosTrackAvsBFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
+        // if (newSampleSet === "vC") {
+        //   newEpilogosTrackAFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   if (newGroupA.includes("Male_donors") || newGroupA.includes("Female_donors")) {
+        //     newEpilogosTrackAFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroupA}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[newComplexity]}.mv5`;
+        //     newEpilogosTrackBFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroupB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[newComplexity]}.mv5`;
+        //     newEpilogosTrackAvsBFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroup}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[newComplexity]}.mv5`;
+        //   }
+        // }
+        // else if (newSampleSet === "vF") {
+        //   const modSampleSet = "vE";
+        //   newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        //   newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        // }
+
         console.log("[triggerUpdate] newEpilogosTrackAFilename", newEpilogosTrackAFilename);
         console.log("[triggerUpdate] newEpilogosTrackBFilename", newEpilogosTrackBFilename);
         console.log("[triggerUpdate] newEpilogosTrackAvsBFilename", newEpilogosTrackAvsBFilename);
@@ -2899,16 +2940,16 @@ class Viewer extends Component {
         //
         // the "single" template uses an epilogos track and the marks track, the paths for which are constructed from the temporary hgview parameters object
         //
-        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
-        let newMarksTrackFilename = Helpers.marksTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup);
+        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
+        let newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup);
 
         console.log(`single`);
         console.log(`newEpilogosTrackFilename ${newEpilogosTrackFilename}`);
         console.log(`newMarksTrackFilename ${newMarksTrackFilename}`);
 
-        if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
-          newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        }
+        // if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
+        //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
+        // }
         // if (newSampleSet === "vE") {
         //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
         //   newMarksTrackFilename = `833sample.vC.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
@@ -3448,8 +3489,8 @@ class Viewer extends Component {
         
       }
       else if (newMode === "query") {
-        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
-        let newMarksTrackFilename = Helpers.marksTrackFilenameForSampleSet(newSampleSet, newGenome, newModel, newGroup);
+        let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
+        let newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup);
         let newEpilogosTrackUUID = null;
         let newMarksTrackUUID = null;
         let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename);
@@ -4037,8 +4078,14 @@ class Viewer extends Component {
         fractionOfWindowWidthUsedForDrawerPaddingBaseUnits = parseInt(0.075 * parseFloat(stop - start));
         upstreamRoiDrawerPadding = fractionOfWindowWidthUsedByDrawerBaseUnits + fractionOfWindowWidthUsedForDrawerPaddingBaseUnits;
         downstreamRoiDrawerPadding = fractionOfWindowWidthUsedForDrawerPaddingBaseUnits;
-        start -= upstreamRoiDrawerPadding;
-        stop += downstreamRoiDrawerPadding;
+        if (stop - start >= Constants.defaultHgViewShortExemplarLengthThreshold) {
+          start -= upstreamRoiDrawerPadding;
+          stop += downstreamRoiDrawerPadding;
+        }
+        else {
+          start -= upstreamPadding;
+          stop += downstreamPadding;
+        }
         if ((this.state.hgViewParams.sampleSet === "vC") && (this.state.hgViewParams.mode === "paired") && (this.state.hgViewParams.genome === "hg19")) {
           start -= 12500;
           stop += 12500;
@@ -4120,7 +4167,7 @@ class Viewer extends Component {
       }, 0);
     } 
     else {
-      console.log("[openViewerAtChrPosition] calling [hgViewUpdatePosition] for mainView (zero-height queryView)", chrLeft, start, stop, chrRight, start, stop);
+      //console.log("[openViewerAtChrPosition] calling [hgViewUpdatePosition] for mainView (zero-height queryView)", chrLeft, start, stop, chrRight, start, stop);
       this.hgViewUpdatePosition(this.state.hgViewParams, 
                                 chrLeft, 
                                 start, 
@@ -4504,9 +4551,9 @@ class Viewer extends Component {
         roiEncodedURL: reencodedRoiURL,
         roiRawURL: roiRawURL
       }, () => {
-        //console.log("[updateRois] this.state.roiEncodedURL", this.state.roiEncodedURL);
+        console.log("[updateRois] this.state.roiEncodedURL", this.state.roiEncodedURL);
         let proxyRoiURL = `${Constants.urlProxyURL}/${this.state.roiEncodedURL}`;
-        //console.log("[updateRois] proxyRoiURL", proxyRoiURL);
+        console.log("[updateRois] proxyRoiURL", proxyRoiURL);
         axios.get(proxyRoiURL)
           .then((res) => {
             if (res.data) { 
@@ -5036,9 +5083,21 @@ class Viewer extends Component {
   
   recommenderSearchCanBeEnabled = () => {
     let params = this.state.tempHgViewParams;
+    
     //return ((params.genome === "hg19") && (params.model === "15") && ((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")));
     //return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")));
-    return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (params.sampleSet !== "vE") && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")) && ((this.state.currentViewScale > 0) && (this.state.currentViewScale <= Constants.defaultApplicationRecommenderButtonHideShowThreshold)) );
+    
+    let test = true;
+    if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
+    else if (params.sampleSet === "vE") test = false;
+    // else if (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) test = false;
+    else if ((this.state.currentViewScale <= 0) || (this.state.currentViewScale > Constants.defaultApplicationRecommenderButtonHideShowThreshold)) test = false;
+    else if (params.mode === "paired") test = false;
+    else if ((params.sampleSet === "vC") && (params.genome === "hg38") && (params.group !== "all")) test = false;
+    //console.log(`recommenderSearchCanBeEnabled ${test}`);
+    return test;
+
+    // return (((!this.isProductionSite) && (!this.isProductionProxySite)) && (params.sampleSet !== "vE") && (this.state.currentPosition.chrLeft === this.state.currentPosition.chrRight) && ((params.mode === "single") || (params.mode === "query")) && ((this.state.currentViewScale > 0) && (this.state.currentViewScale <= Constants.defaultApplicationRecommenderButtonHideShowThreshold)) );
   }
   
   recommenderExpandCanBeEnabled = () => {
@@ -5626,12 +5685,22 @@ class Viewer extends Component {
         let splitResult = group.split(/_vs_/);
         let groupA = splitResult[0];
         let groupB = splitResult[1];
+        if (typeof groupB === "undefined") {
+          splitResult = group.split(/_versus_/);
+          groupA = splitResult[0];
+          groupB = splitResult[1];
+        }
         //console.log(`[trackLabels] groups A ${groupA} | B ${groupB}`);
-        let groupAText = Constants.groupsByGenome[sampleSet][genome][groupA].text;
-        let groupBText = Constants.groupsByGenome[sampleSet][genome][groupB].text;
-        results.push(<div key="paired-track-label-A" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 15)+'px',right:'25px'}}>{groupAText}</div>);
-        results.push(<div key="paired-track-label-B" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:'25px'}}>{groupBText}</div>);
-        results.push(<div key="paired-track-label-AB" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 15)+'px',right:'25px'}}>{groupText}</div>);
+        try {
+          let groupAText = Constants.groupsByGenome[sampleSet][genome][groupA].text;
+          let groupBText = Constants.groupsByGenome[sampleSet][genome][groupB].text;
+          results.push(<div key="paired-track-label-A" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 15)+'px',right:'25px'}}>{groupAText}</div>);
+          results.push(<div key="paired-track-label-B" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:'25px'}}>{groupBText}</div>);
+          results.push(<div key="paired-track-label-AB" className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" style={{top:parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 15)+'px',right:'25px'}}>{groupText}</div>);
+        } catch (error) {
+          console.log(`sampleSet | genome | groupA > ${sampleSet} | ${genome} | ${groupA}`);
+          console.log(`sampleSet | genome | groupB > ${sampleSet} | ${genome} | ${groupB}`);
+        }
         break;
       case "query":
         // show "Chromatin states" label
