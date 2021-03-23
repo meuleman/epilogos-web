@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 import { 
   TabContent, 
@@ -313,7 +314,6 @@ class DrawerContent extends Component {
   }
   
   modeSectionBody = () => {
-    const activeGenome = this.state.viewParams.genome;
     const activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
     let modeIcons = [];
@@ -586,7 +586,7 @@ class DrawerContent extends Component {
     function contentByType(type) {
       switch (type) {
         
-        case "roi":
+        case "roi": {
           let roiResult = "";
           roiResult = <BootstrapTable 
                         id="drawer-content-roi-table"
@@ -600,13 +600,14 @@ class DrawerContent extends Component {
                         rowEvents={customRoiRowEvents}
                         />
           return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{roiResult}</div>;
-           
-        case "exemplars":
+        }
+
+        case "exemplars": {
           let exemplarResult = "";
           let exemplarTooltips = [];
           const kExemplarTooltipPrefix = 'tooltip-exemplar-';
           let kExemplarTooltipIdx = 0;
-          //self.state.chromatinStates.forEach((val, idx) => {
+            // eslint-disable-next-line no-unused-vars
           self.props.exemplarChromatinStates.forEach((val, idx) => {
             let exemplarId = "exemplar-chromatinState-" + val;
             //console.log("val", val);
@@ -631,8 +632,9 @@ class DrawerContent extends Component {
                              rowEvents={customExemplarRowEvents}
                              />
           return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{exemplarResult}{exemplarTooltips}</div>;
+        }
 
-        case "settings":
+        case "settings": {
           let parameters = [];
           let content = [];
           
@@ -769,7 +771,7 @@ class DrawerContent extends Component {
           let advancedOptionsSection = (
             <div key="viewer-advanced-options-section" className="drawer-settings-section drawer-settings-section-middle drawer-settings-section-ao-switch">
               <div key="viewer-advanced-options-section-header" className="drawer-settings-section-header drawer-settings-section-header-ao">
-                <div style={{display:"block", width:"100%", height:"24px", textAlign:"center"}} onClick={(e) => {self.props.toggleAdvancedOptionsVisible();}}>Advanced options {(!self.props.advancedOptionsVisible?<FaChevronCircleDown className="epilogos-content-hiw-divider-widget" size="1.25em" />:<FaChevronCircleUp className="epilogos-content-hiw-divider-widget" size="1.25em" />)}</div>
+                <div style={{display:"block", width:"100%", height:"24px", textAlign:"center"}} onClick={() => { self.props.toggleAdvancedOptionsVisible();}}>Advanced options {(!self.props.advancedOptionsVisible?<FaChevronCircleDown className="epilogos-content-hiw-divider-widget" size="1.25em" />:<FaChevronCircleUp className="epilogos-content-hiw-divider-widget" size="1.25em" />)}</div>
               </div>
               <div key="viewer-advanced-options-section-body" className="drawer-settings-section-body">
                 <Collapse isOpen={self.props.advancedOptionsVisible}>
@@ -780,6 +782,7 @@ class DrawerContent extends Component {
           content.push(advancedOptionsSection);
           
           return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} className="drawer-settings">{content}</div>;
+        }
 
         default:
           return <div></div>;
@@ -807,6 +810,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -838,6 +842,7 @@ class DrawerContent extends Component {
           paddingRight: '2px',
         },
         sort: true,
+        // eslint-disable-next-line no-unused-vars
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
@@ -848,6 +853,7 @@ class DrawerContent extends Component {
           }          
         },
         onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -883,6 +889,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -919,6 +926,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -930,6 +938,7 @@ class DrawerContent extends Component {
               return <div><ReactTooltip key="roi-column-sort-score-undefined" id="roi-column-sort-score-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by score</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
           }
         },
+        // eslint-disable-next-line no-unused-vars
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
           if (order === 'asc') {
             return b - a;
@@ -961,6 +970,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         onSort: (field, order) => { this.props.onRoiColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -996,6 +1006,7 @@ class DrawerContent extends Component {
         },
         sort: true,
         onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -1025,6 +1036,7 @@ class DrawerContent extends Component {
           textAlign: 'left'
         },
         sort: true,
+        // eslint-disable-next-line no-unused-vars
         sortFunc: (a, b, order, dataField) => {
           if (order === 'asc') {
             return b.paddedNumerical.localeCompare(a.paddedNumerical);
@@ -1034,6 +1046,7 @@ class DrawerContent extends Component {
           }          
         },
         onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -1065,6 +1078,7 @@ class DrawerContent extends Component {
           paddingRight: '6px',
         },
         sort: true,
+        // eslint-disable-next-line no-unused-vars
         sortFunc: (a, b, order, dataField) => {
           //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
@@ -1075,6 +1089,7 @@ class DrawerContent extends Component {
           }          
         },
         onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
             case "asc":
@@ -1089,14 +1104,17 @@ class DrawerContent extends Component {
       }, 
     ];
     
+    // eslint-disable-next-line no-unused-vars
     function idxExemplarAttrs(cell, row, rowIndex, colIndex) {
       return { id : `exemplar_idx_${rowIndex}` };
     }
     
+    // eslint-disable-next-line no-unused-vars
     function idxRoiAttrs(cell, row, rowIndex, colIndex) {
       return { id : `roi_idx_${rowIndex}` };
     }
     
+    // eslint-disable-next-line no-unused-vars
     function elementRoiFormatter(cell, row) {
       return <div><span>{ row.position }</span></div>
     }
@@ -1109,6 +1127,8 @@ class DrawerContent extends Component {
       return <div><span title={ row.name }>{ row.name }</span></div>
     }
 */
+
+    // eslint-disable-next-line no-unused-vars
     function nameRoiFormatter(cell, row) {
       const name = row.name;
       return (name.length >= self.props.roiTableDataLongestAllowedNameLength) ? (
@@ -1122,20 +1142,24 @@ class DrawerContent extends Component {
       );
     }
     
+    // eslint-disable-next-line no-unused-vars
     function scoreRoiFormatter(cell, row) {
       //return <div><span style={{whiteSpace:"nowrap"}}>{ row.score }</span></div>
       const formattedScore = (parseFloat(row.score) !== 0.0) ? Number.parseFloat(row.score).toPrecision(4) : 0;
       return <div><span>{ formattedScore }</span></div>
     }
     
+    // eslint-disable-next-line no-unused-vars
     function strandRoiFormatter(cell, row) {
       return <div><span>{ row.strand }</span></div>
     }
     
+    // eslint-disable-next-line no-unused-vars
     function elementExemplarFormatter(cell, row) {
       return <div><span>{ row.position }</span></div>
     }
     
+    // eslint-disable-next-line no-unused-vars
     function stateFormatter(cell, row) {
       return (
         <div data-tip data-for={`chromatinState-${row.state.numerical}`}>
@@ -1144,6 +1168,7 @@ class DrawerContent extends Component {
       );
     }
     
+    // eslint-disable-next-line no-unused-vars
     const customRoiRowStyle = (row, rowIndex) => {
       const style = {};
       if (row.idx === this.props.selectedRoiRowIdx) {
@@ -1157,6 +1182,7 @@ class DrawerContent extends Component {
       return style;
     };
     
+    // eslint-disable-next-line no-unused-vars
     const customExemplarRowStyle = (row, rowIndex) => {
       const style = {};
       if (row.idx === this.props.selectedExemplarRowIdx) {
@@ -1171,15 +1197,18 @@ class DrawerContent extends Component {
     };
     
     const customRoiRowEvents = {
-      onClick: (e, row, rowIndex) => {
+      // eslint-disable-next-line no-unused-vars
+      onClick: (evt, row, rowIndex) => {
         this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx, row.element.strand);
       },
-      onMouseEnter: (e, row, rowIndex) => {
+      // eslint-disable-next-line no-unused-vars
+      onMouseEnter: (evt, row, rowIndex) => {
         this.setState({
           currentRoiMouseoverRow: row.idx
         });
       },
-      onMouseLeave: (e, row, rowIndex) => {
+      // eslint-disable-next-line no-unused-vars
+      onMouseLeave: (evt, row, rowIndex) => {
         this.setState({
           currentRoiMouseoverRow: -1
         });
@@ -1187,8 +1216,8 @@ class DrawerContent extends Component {
     };
     
     const customExemplarRowEvents = {
-      onClick: (e, row, rowIndex) => {
-        //console.log("row, Constants.applicationRegionTypes.exemplar, rowIndex", row, Constants.applicationRegionTypes.exemplar, rowIndex);
+      // eslint-disable-next-line no-unused-vars
+      onClick: (evt, row, rowIndex) => {
         if (this.props.viewParams.mode === "query") {
           let applyPadding = true;
           let nonQueryModeSelected = true;
@@ -1200,12 +1229,14 @@ class DrawerContent extends Component {
           this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
         }
       },
-      onMouseEnter: (e, row, rowIndex) => {
+      // eslint-disable-next-line no-unused-vars
+      onMouseEnter: (evt, row, rowIndex) => {
         this.setState({
           currentExemplarMouseoverRow: row.idx
         });
       },
-      onMouseLeave: (e, row, rowIndex) => {
+      // eslint-disable-next-line no-unused-vars
+      onMouseLeave: (evt, row, rowIndex) => {
         this.setState({
           currentExemplarMouseoverRow: -1
         });
@@ -1269,4 +1300,22 @@ class DrawerContent extends Component {
   }
 }
 
-export default DrawerContent; 
+export default DrawerContent;
+
+DrawerContent.propTypes = {
+  activeTab: PropTypes.string,
+  advancedOptionsVisible: PropTypes.bool,
+  changeViewParams: PropTypes.func,
+  expandToRegion: PropTypes.func,
+  isProductionSite: PropTypes.bool,
+  jumpToRegion: PropTypes.func,
+  onExemplarColumnSort: PropTypes.func,
+  onRoiColumnSort: PropTypes.func,
+  roiMaxColumns: PropTypes.number,
+  roiTableDataLongestAllowedNameLength: PropTypes.number,
+  roiTableDataLongestNameLength: PropTypes.number,
+  selectedExemplarRowIdx: PropTypes.number,
+  selectedRoiRowIdx: PropTypes.number,
+  updateActiveTab: PropTypes.func,
+  viewParams: PropTypes.object,
+}

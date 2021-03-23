@@ -1,8 +1,5 @@
-import React, { Component, Fragment } from 'react';
-
-// Application constants
-import * as Constants from '../Constants.js'; 
-
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
 export const RecommenderExpandLinkDefaultLabel = "Expand";
@@ -19,7 +16,8 @@ class RecommenderExpandLink extends Component {
     }
   }
   
-  handleClick = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  handleClick = (evt) => {
     //console.log("handleClick");
     if (!this.props.enabled || !this.props.region) return;
     this.setState({
@@ -29,12 +27,14 @@ class RecommenderExpandLink extends Component {
     });
   }
 
-  handleMouseDown = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  handleMouseDown = (evt) => {
     //console.log("handleMouseDown");
     if (!this.props.enabled) return;
   }
   
-  handleMouseUp = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  handleMouseUp = (evt) => {
     //console.log("handleMouseUp");
     if (!this.props.enabled) {
       this.setState({
@@ -50,7 +50,8 @@ class RecommenderExpandLink extends Component {
     //this.handleMouseOver(e);
   }
   
-  handleMouseOver = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  handleMouseOver = (evt) => {
     //console.log("handleMouseOver");
     if (!this.props.enabled) return;
     this.setState({
@@ -58,7 +59,8 @@ class RecommenderExpandLink extends Component {
     });
   }
   
-  handleMouseOut = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  handleMouseOut = (evt) => {
     //console.log("handleMouseOut");
     if (!this.props.enabled) {
       this.setState({
@@ -72,14 +74,7 @@ class RecommenderExpandLink extends Component {
     });
   }
   
-  render() {
-    
-    let buttonSpinnerStyle = {
-      position:"relative", 
-      top:"0px", 
-      paddingRight:"0px"
-    };
-    
+  render() { 
     return (
       <div 
         className={(this.props.enabled) ? "epilogos-recommender-link-element" : "epilogos-recommender-link-element-disabled"}
@@ -98,7 +93,13 @@ class RecommenderExpandLink extends Component {
       </div>
     )
   }
-  
 }
 
 export default RecommenderExpandLink;
+
+RecommenderExpandLink.propTypes = { 
+  enabled: PropTypes.bool,
+  label: PropTypes.string,
+  region: PropTypes.object,
+  onClick: PropTypes.func,
+};

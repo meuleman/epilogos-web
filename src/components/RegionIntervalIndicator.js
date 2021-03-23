@@ -1,31 +1,25 @@
-import React, { Component, Fragment } from 'react';
-
-// Application constants
-import * as Constants from '../Constants.js'; 
-
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FaClipboard } from 'react-icons/fa';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class RegionIntervalIndicator extends Component {
 
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
   
   render() {
     
     if (!this.props.data) return;
     
-    //console.log("this.props.data", this.props.data);
-    //console.log("this.props.outerWidth", this.props.outerWidth);
+    // console.log("this.props.data", this.props.data);
+    // console.log("this.props.outerWidth", this.props.outerWidth);
     
-    const width = parseInt(this.props.width);
     const height = parseInt(this.props.height);
     const radius = parseInt(this.props.radius);
     const lineWidth = parseInt(height / 2);
     const lineHeight = parseInt(height / 2);
-    const circleCX = radius;
-    const circleCY = height - radius;
     
     const contentTop = lineHeight - this.props.contentTopOffset;
     const contentLeft = lineWidth - 8 + (this.props.outerWidth / 2);
@@ -100,7 +94,22 @@ class RegionIntervalIndicator extends Component {
       </div>
     )
   }
-  
 }
 
 export default RegionIntervalIndicator;
+
+RegionIntervalIndicator.propTypes = { 
+  contentTopOffset: PropTypes.number,
+  data: PropTypes.object,
+  fillOpacity: PropTypes.string,
+  fillRGB: PropTypes.string,
+  height: PropTypes.string,
+  outerWidth: PropTypes.number,
+  radius: PropTypes.string,
+  strokeDasharray: PropTypes.string,
+  strokeOpacity: PropTypes.string,
+  strokeRGB: PropTypes.string,
+  strokeWidth: PropTypes.string,
+  textColorRGBA: PropTypes.string,
+  width: PropTypes.string,
+};

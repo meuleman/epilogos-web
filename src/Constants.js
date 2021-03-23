@@ -168,6 +168,12 @@ export const drawerTitleByType = {
   "exemplars" : "Exemplars"
 };
 
+export const drawerTypeByName = {
+  "settings" : "settings",
+  "exemplars" : "exemplars",
+  "roi": "roi",
+};
+
 export const models = {
   "15" : "15-state",
   "18" : "18-state",

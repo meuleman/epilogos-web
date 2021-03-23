@@ -56,7 +56,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "rsync -avzhe --progress ./build/* /var/www/epilogos"
+    "deploy": "rsync -avzhe --progress ./build/* /var/www/epilogos",
+    "postinstall": "./hooks/npm-post-install"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -70,7 +71,6 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "cross-env": "^5.2.0",
-    "eslint": "^7.22.0",
     "eslint-plugin-react": "^7.22.0"
   }
 }

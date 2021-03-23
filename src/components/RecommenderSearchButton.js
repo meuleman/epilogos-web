@@ -1,8 +1,5 @@
-import React, { Component, Fragment } from 'react';
-
-// Application constants
-import * as Constants from '../Constants.js'; 
-
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FaGlasses } from 'react-icons/fa';
 import Spinner from "react-svg-spinner";
 
@@ -20,14 +17,16 @@ class RecommenderSearchButton extends Component {
     }
   }
   
-  handleClick = (e) => {
-    //console.log("handleClick");
+  // eslint-disable-next-line no-unused-vars
+  handleClick = (evt) => {
+    // console.log("handleClick");
     if (!this.props.enabled || this.props.inProgress) return;
     this.props.onClick();
   }
 
-  handleMouseDown = (e) => {
-    //console.log("handleMouseDown");
+  // eslint-disable-next-line no-unused-vars
+  handleMouseDown = (evt) => {
+    // console.log("handleMouseDown");
     if (!this.props.enabled || this.props.inProgress) return;
     this.setState({
       buttonBackground: "rgba(127,127,127,1)",
@@ -36,14 +35,16 @@ class RecommenderSearchButton extends Component {
     });
   }
   
-  handleMouseUp = (e) => {
-    //console.log("handleMouseUp");
+  // eslint-disable-next-line no-unused-vars
+  handleMouseUp = (evt) => {
+    // console.log("handleMouseUp");
     if (!this.props.enabled || this.props.inProgress) return;
-    //this.handleMouseOver(e);
+    // this.handleMouseOver(evt);
   }
   
-  handleMouseOver = (e) => {
-    //console.log("handleMouseOver");
+  // eslint-disable-next-line no-unused-vars
+  handleMouseOver = (evt) => {
+    // console.log("handleMouseOver");
     if (!this.props.enabled || this.props.inProgress) return;
     this.setState({
       buttonBackground: "rgba(127,127,127,1)",
@@ -52,8 +53,9 @@ class RecommenderSearchButton extends Component {
     });
   }
   
-  handleMouseOut = (e) => {
-    //console.log("handleMouseOut");
+  // eslint-disable-next-line no-unused-vars
+  handleMouseOut = (evt) => {
+    // console.log("handleMouseOut");
     if (!this.props.enabled || this.props.inProgress) return;
     this.setState({
       buttonBackground: "rgba(230,230,230,1)",
@@ -62,6 +64,7 @@ class RecommenderSearchButton extends Component {
     });
   }
   
+  // eslint-disable-next-line no-unused-vars
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.inProgress && !this.props.inProgress) {
       this.setState({
@@ -73,9 +76,6 @@ class RecommenderSearchButton extends Component {
   }
   
   render() {
-    
-    //if (!this.props.left) return <div />;
-    
     let buttonBaseStyle = {
       position: "relative",
       top: "-1px",
@@ -126,11 +126,11 @@ class RecommenderSearchButton extends Component {
         <button
           className="recommender-button"
           style={(this.props.inProgress && this.props.enabled) ? buttonInProgressStyle : (!this.props.enabled) ? buttonDisabledStyle : buttonStyle}
-          onClick={(e) => {this.handleClick(e)}}
-          onMouseDown={(e) => {this.handleMouseDown(e)}}
-          onMouseUp={(e) => {this.handleMouseUp(e)}}
-          onMouseOver={(e) => {this.handleMouseOver(e)}}
-          onMouseOut={(e) => {this.handleMouseOut(e)}}
+          onClick={(evt) => {this.handleClick(evt)}}
+          onMouseDown={(evt) => {this.handleMouseDown(evt)}}
+          onMouseUp={(evt) => {this.handleMouseUp(evt)}}
+          onMouseOver={(evt) => {this.handleMouseOver(evt)}}
+          onMouseOut={(evt) => {this.handleMouseOut(evt)}}
           title={(this.props.enabled) ? this.props.label : ""}
           >
           {(this.props.inProgress && this.props.enabled) ? <span style={buttonSpinnerStyle}><Spinner size="11px" title={this.props.label} color={this.state.iconColor} /></span> : <FaGlasses color={this.state.iconColor} style={buttonIconStyle} />}
@@ -139,7 +139,13 @@ class RecommenderSearchButton extends Component {
       </div>
     )
   }
-  
 }
 
 export default RecommenderSearchButton;
+
+RecommenderSearchButton.propTypes = { 
+  enabled: PropTypes.bool,
+  inProgress: PropTypes.bool,
+  label: PropTypes.string,
+  onClick: PropTypes.func,
+};

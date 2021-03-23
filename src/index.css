@@ -44,43 +44,46 @@ em {
   outline: none !important;
 }
 
-.pretty input:checked ~ .state.p-warning label:after,
+/* prevent the entire page becoming a control surface that opens/closes the drawer */
+.bm-burger-button {
+  position: fixed;
+  width: 36px;
+  height: 30px;
+  left: 36px;
+  top: 36px;
+}
+
+/* attempt to recolor the pretty-checkbox controls */
+.pretty input:checked~ .state.p-warning label:after,
 .pretty.p-toggle .state.p-warning label:after {
   background-color: blue !important;
 }
-
-.pretty input:checked ~ .state.p-warning-o label:before,
+.pretty input:checked~ .state.p-warning-o label:before,
 .pretty.p-toggle .state.p-warning-o label:before {
   border-color: blue !important;
 }
-
-.pretty input:checked ~ .state.p-warning-o .icon,
-.pretty input:checked ~ .state.p-warning-o .svg,
-.pretty input:checked ~ .state.p-warning-o svg,
+.pretty input:checked~ .state.p-warning-o .icon,
+.pretty input:checked~ .state.p-warning-o .svg,
+.pretty input:checked~ .state.p-warning-o svg,
 .pretty.p-toggle .state.p-warning-o .icon,
 .pretty.p-toggle .state.p-warning-o .svg,
 .pretty.p-toggle .state.p-warning-o svg {
   color: blue !important;
   stroke: blue !important;
 }
-
-.pretty.p-default:not(.p-fill) input:checked ~ .state.p-warning-o label:after {
+.pretty.p-default:not(.p-fill) input:checked~ .state.p-warning-o label:after {
   background-color: blue !important;
 }
-
-.pretty.p-switch input:checked ~ .state.p-warning:before {
+.pretty.p-switch input:checked~ .state.p-warning:before {
   border-color: blue !important;
 }
-
-.pretty.p-switch.p-fill input:checked ~ .state.p-warning:before {
+.pretty.p-switch.p-fill input:checked~ .state.p-warning:before {
   background-color: blue !important;
 }
-
-.pretty.p-switch.p-slim input:checked ~ .state.p-warning:before {
+.pretty.p-switch.p-slim input:checked~ .state.p-warning:before {
   border-color: blue !important;
   background-color: blue !important;
 }
-
 .pretty input[disabled] {
   display: unset !important;
 }

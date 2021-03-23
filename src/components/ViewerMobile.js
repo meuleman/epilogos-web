@@ -9,7 +9,6 @@ import {
   NavbarBrand,
   NavItem,
   Nav,
-  Collapse,
   Button
 } from "reactstrap";
 
@@ -54,7 +53,6 @@ class ViewerMobile extends Component {
       drawerWidth: 0,
       drawerHeight: 0,
       drawerIsOpen: false,
-      drawerSelection: null,
       drawerTitle: "Title",
       drawerContentKey: 0,
       drawerSelection: Constants.defaultDrawerType,
@@ -108,7 +106,6 @@ class ViewerMobile extends Component {
       selectedRoiStart: -1,
       selectedRoiStop: -1,
       selectedRoiBeingUpdated: false,
-      searchInputLocationBeingChanged: false,
       currentViewScale: -1,
       previousViewScale: -1,
       currentViewScaleAsString: "",
@@ -132,8 +129,8 @@ class ViewerMobile extends Component {
     if (isNaN(sitePort)) sitePort = 443;
     this.isProductionSite = ((sitePort === "") || (sitePort === 443)); // || (sitePort !== 3000 && sitePort !== 3001));
     this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
-    console.log("this.isProductionSite", this.isProductionSite);
-    console.log("this.isProductionProxySite", this.isProductionProxySite);
+    // console.log("this.isProductionSite", this.isProductionSite);
+    // console.log("this.isProductionProxySite", this.isProductionProxySite);
     
     // references
     this.hgView = React.createRef();
@@ -573,10 +570,8 @@ class ViewerMobile extends Component {
             }, 1000);
           });
         }
-        catch (e) {
-          if (e instanceof TypeError) {
-            console.warn(`roiTableRows ${JSON.stringify(roiTableRows)}`);
-          }
+        catch (err) {
+          throw new Error(`roiTableRows ${JSON.stringify(roiTableRows)} | ${JSON.stringify(err)}`);
         }
       }, 1500);
     });
@@ -598,12 +593,14 @@ class ViewerMobile extends Component {
     }
   }
   
-  closeDrawer = (cb) => { this.setState({ drawerIsOpen: false }, ()=>{if (cb) cb();}); }
+  closeDrawer = (cb) => { this.setState({ drawerIsOpen: false }, () => { if (cb) cb(); }); }
   
   toggleDrawer = (name) => {
+    const drawerType = (name) ? Constants.drawerTypeByName[name] : Constants.defaultDrawerType;
     let windowInnerWidth = this.state.width;
     let epilogosViewerHeaderNavbarLefthalfWidth = `${parseInt(windowInnerWidth)}px`;
     this.setState({
+      drawerSelection: drawerType,
       drawerWidth: parseInt(epilogosViewerHeaderNavbarLefthalfWidth)
     }, () => {
       this.handleDrawerStateChange({
@@ -738,7 +735,9 @@ class ViewerMobile extends Component {
           );
         }
       })
-      .catch((err) => console.error("Error - hgViewUpdatePosition failed - ", err));
+      .catch((err) => {
+        throw new Error(`Error - hgViewUpdatePosition failed - ${JSON.stringify(err)}`);
+      });
       
       setTimeout(() => {
         this.setState({
@@ -905,9 +904,8 @@ class ViewerMobile extends Component {
           //console.log("updateViewerURLWithLocation() finished");
         });
       })
-      .catch((err) => {
-        //console.log("Error - updateViewerURLWithLocation failed to translate absolute coordinates to chromosomal coordinates - ", err);
-      })
+      // eslint-disable-next-line no-unused-vars
+      .catch((err) => {})
   }
   
   updateScale = () => {
@@ -1063,7 +1061,7 @@ class ViewerMobile extends Component {
       //
       // return a Promise to request a UUID from a filename pattern
       //
-      function uuidQueryPromise(fn, self) {
+      const uuidQueryPromise = function(fn, self) {
         let hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
         //console.log(`uuidQueryPromise ${hgUUIDQueryURL}`);
         return axios.get(hgUUIDQueryURL).then((res) => {
@@ -1650,7 +1648,7 @@ class ViewerMobile extends Component {
     //console.log("(before) this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
     let resortData = Array.from(this.state.roiTableDataCopy);
     switch(field) {
-      case 'idx':
+      case 'idx': {
         //console.log("resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
@@ -1659,7 +1657,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => (b.idx > a.idx) ? 1 : -1);
         }
         break;
-      case 'element':
+      }
+      case 'element': {
         //console.log("resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.paddedPosition.localeCompare(a.element.paddedPosition));
@@ -1668,7 +1667,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => a.element.paddedPosition.localeCompare(b.element.paddedPosition));
         }
         break;
-      case 'name':
+      }
+      case 'name': {
         if (order === "asc") {
           resortData.sort((a, b) => a.name.localeCompare(b.name));
         }
@@ -1676,7 +1676,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => b.name.localeCompare(a.name));
         }
         break;
-      case 'score':
+      }
+      case 'score': {
         if (order === "asc") {
           resortData.sort((a, b) => (parseFloat(a.score) > parseFloat(b.score)) ? 1 : -1);
         }
@@ -1684,7 +1685,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => (parseFloat(b.score) > parseFloat(a.score)) ? 1 : -1);
         }
         break;
-      case 'strand':
+      }
+      case 'strand': {
         if (order === "asc") {
           resortData.sort((a, b) => b.strand.localeCompare(a.strand));
         }
@@ -1692,6 +1694,7 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => a.strand.localeCompare(b.strand));
         }
         break;
+      }
       default:
         throw new Error('Unknown data table field', field);
     }
@@ -1708,7 +1711,7 @@ class ViewerMobile extends Component {
     //console.log("(before) this.state.exemplarTableDataIdxBySort", this.state.exemplarTableDataIdxBySort);
     let resortData = Array.from(this.state.exemplarTableDataCopy);
     switch(field) {
-      case 'idx':
+      case 'idx': {
         //console.log("resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
@@ -1717,7 +1720,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => (b.idx > a.idx) ? 1 : -1);
         }
         break;
-      case 'state':
+      }
+      case 'state': {
         //console.log("resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.state.localeCompare(a.state));
@@ -1726,7 +1730,8 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => a.state.localeCompare(b.state));
         }
         break;
-      case 'element':
+      }
+      case 'element': {
         //console.log("resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.localeCompare(a.element));
@@ -1735,6 +1740,7 @@ class ViewerMobile extends Component {
           resortData.sort((a, b) => a.element.localeCompare(b.element));
         }
         break;
+      }
       default:
         throw new Error('Unknown data table field', field);
     }
@@ -1773,10 +1779,11 @@ class ViewerMobile extends Component {
     switch (regionType) {
       case Constants.applicationRegionTypes.roi:
         switch (this.state.roiMode) {
-          case Constants.applicationRoiModes.default:
+          case Constants.applicationRoiModes.default: {
             regionLabel = `${String.fromCharCode(8676)} ${region} ${String.fromCharCode(8677)}`;
             break;
-          case Constants.applicationRoiModes.midpoint:
+          }
+          case Constants.applicationRoiModes.midpoint: {
             const start = parseInt(pos[1]);
             const stop = parseInt(pos[2]);
             const midpoint = parseInt(start + ((stop - start) / 2));
@@ -1784,17 +1791,17 @@ class ViewerMobile extends Component {
             regionLabel = midpointLabel;
             regionIndicatorData.regionLabel = regionLabel;
             break;
+          }
           default:
-            throw new Error('Unknown ROI mode', this.state.roiMode);  
-            //break;
+            throw new Error('[jumpToRegion] Error: Unknown ROI mode', this.state.roiMode);  
         }
         break;
-      case Constants.applicationRegionTypes.exemplar:
+      case Constants.applicationRegionTypes.exemplar: {
         regionLabel = region;
         break;
+      }
       default:
-        throw new Error('Unknown application region type', regionType);
-        //break;
+        throw new Error('[jumpToRegion] Error: Unknown application region type', regionType);
     }
     this.setState({
       //verticalDropLabel: regionLabel,
@@ -1818,13 +1825,9 @@ class ViewerMobile extends Component {
     let posnInt = parseInt(pos[1]);
     let start = posnInt;
     let stop = posnInt;
-    let unpaddedStart = start;
-    let unpaddedStop = stop;
     switch (regionType) {
-      
-      case Constants.applicationRegionTypes.exemplar:
+      case Constants.applicationRegionTypes.exemplar: {
         stop = parseInt(pos[2]);
-        unpaddedStop = stop;
         if (strand === "+") {
           start -= upstreamPadding;
           stop += downstreamPadding;
@@ -1838,21 +1841,19 @@ class ViewerMobile extends Component {
           stop += downstreamPadding;
         }
         break;
-        
-      case Constants.applicationRegionTypes.roi:
+      }
+      case Constants.applicationRegionTypes.roi: {
         if (this.state.roiMode === "default") {
           const queryObj = Helpers.getJsonFromUrl();
           const intervalPaddingFraction = (queryObj.roiPaddingFractional) ? parseFloat(queryObj.roiPaddingFractional) : Constants.defaultApplicationRoiPaddingFraction;
           const intervalPaddingAbsolute = (queryObj.roiPaddingAbsolute) ? parseInt(queryObj.roiPaddingAbsolute) : Constants.defaultApplicationRoiPaddingAbsolute;
           stop = parseInt(pos[2]);
-          unpaddedStop = stop;
           let roiPadding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (stop - start)) : intervalPaddingAbsolute;
           start -= roiPadding;
           stop += roiPadding;
         }
         else if (this.state.roiMode === "midpoint") {
           stop = parseInt(pos[2]);
-          unpaddedStop = stop;
           let roiMidpoint = parseInt(start + ((stop - start) / 2));
           start = roiMidpoint - parseInt(this.state.roiPaddingAbsolute);
           stop = roiMidpoint + parseInt(this.state.roiPaddingAbsolute);
@@ -1861,7 +1862,7 @@ class ViewerMobile extends Component {
           throw new URIError("Unknown ROI mode");
         }
         break;
-        
+      }
       default:
         break;
     }
@@ -1871,7 +1872,7 @@ class ViewerMobile extends Component {
     if (!rowIndex || (rowIndex < 0)) return;
     setTimeout(() => {
       switch (regionType) {
-        case Constants.applicationRegionTypes.exemplar:
+        case Constants.applicationRegionTypes.exemplar: {
           let newCurrentPosition = {...this.state.currentPosition};
           newCurrentPosition.chrLeft = chrLeft;
           newCurrentPosition.chrRight = chrRight;
@@ -1911,8 +1912,8 @@ class ViewerMobile extends Component {
             if (exemplarEl) exemplarEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
           });
           break;
-          
-        case Constants.applicationRegionTypes.roi:
+        }
+        case Constants.applicationRegionTypes.roi: {
           this.setState({
             selectedRoiBeingUpdated: true,
             selectedRoiRowIdx: parseInt(rowIndex),
@@ -1935,7 +1936,8 @@ class ViewerMobile extends Component {
             const roiEl = document.getElementById(`roi_idx_${(rowIndex - 1)}`);
             if (roiEl) roiEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" }); 
           });
-          break;          
+          break;
+        }
         default:
           break;
       }
@@ -1963,7 +1965,7 @@ class ViewerMobile extends Component {
     
     let results = [];
     switch (mode) {
-      case "single":
+      case "single": {
         // show "Chromatin states" label
         if ((this.state.orientationIsPortrait) && (this.state.highlightRawRows.length === 0)) {
           results.push(<div key="single-track-label-chromatin-states" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:rightShift}}>Chromatin states</div>);
@@ -1986,7 +1988,8 @@ class ViewerMobile extends Component {
         // add gene annotation track label (e.g. "GENCODE vXYZ")
         results.push(<div key="single-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
         break;
-      case "paired":
+      }
+      case "paired": {
         let splitResult = group.split(/_vs_/);
         let groupA = splitResult[0];
         let groupB = splitResult[1];
@@ -2000,6 +2003,7 @@ class ViewerMobile extends Component {
           results.push(<div key="paired-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
         }
         break;
+      }
       default:
         break;
     }
@@ -2057,7 +2061,7 @@ class ViewerMobile extends Component {
           </Drawer>
         </div>
       
-        <div ref="epilogos-viewer" id="epilogos-viewer-container" className="epilogos-viewer-container">
+        <div ref={(ref) => this.epilogosViewer = ref} id="epilogos-viewer-container" className="epilogos-viewer-container">
         
           <Navbar id="epilogos-viewer-container-navbar" color="#000000" expand="md" className="navbar-top navbar-top-custom justify-content-start" style={{"zIndex":10001, backgroundColor:"#000000", cursor:"pointer", maxHeight:"38px", paddingLeft:"10px", paddingRight:"10px", paddingTop:"5px", paddingBottom:"6px"}}>
           

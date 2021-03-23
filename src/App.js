@@ -78,7 +78,7 @@ class App extends Component {
   
   render() {    
     return (
-      <div ref="epilogos" id="epilogos-container">
+      <div ref={(ref) => this.epilogos = ref} id="epilogos-container">
         { this.state.application === "portal" && <Portal /> }
         { (this.state.application === "viewer" && !isMobile) && <Viewer /> }
         { (this.state.application === "viewer" && isMobile) && <ViewerMobile /> }

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+printf "\nPost-install steps (npm)\n"
+
+printf "\nFixing `pretty-checkbox` CSS (full and minimized)\n"
+
+PRETTY_CHECKBOX_DIST_DIR="$(git rev-parse --show-toplevel)/node_modules/pretty-checkbox/dist"
+PRETTY_CHECKBOX_DIST_CSS="${PRETTY_CHECKBOX_DIST_DIR}/pretty-checkbox.css"
+PRETTY_CHECKBOX_DIST_MIN_CSS="${PRETTY_CHECKBOX_DIST_DIR}/pretty-checkbox.min.css"
+
+if [[ -f ${PRETTY_CHECKBOX_DIST_CSS} ]]
+then
+    sed -i 's/f0ad4e/0000ff/g' ${PRETTY_CHECKBOX_DIST_CSS}
+    printf "\nFixed full CSS\n"
+fi
+
+if [[ -f ${PRETTY_CHECKBOX_DIST_MIN_CSS} ]]
+then
+    sed -i 's/f0ad4e/0000ff/g' ${PRETTY_CHECKBOX_DIST_MIN_CSS}
+    printf "\nFixed minimized CSS\n"
+fi
+
+printf "\nPost-install complete!\n"
+
+exit $?

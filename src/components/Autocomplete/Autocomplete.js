@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import PropTypes from 'prop-types';
 import { DebounceInput } from "react-debounce-input";
 import axios from "axios";
 
@@ -42,18 +43,18 @@ class Autocomplete extends Component {
     }
     //console.log("onChange", e.target.value);
     //if ((this.state.userInput.startsWith("chr")) && ((this.state.userInput.indexOf(":") !== -1) || (this.state.userInput.indexOf('\t') !== -1))) {
-    if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf('\s') !== -1))) {  
+    if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf(" ") !== -1))) {  
       this.setState({
         showSuggestions: false,
         userInput: e.target.value
       }, () => {
-        console.log("calling this.props.onChangeInput", this.state.userInput);
-        this.props.onChangeInput(this.state.userInput);
+        // console.log("calling this.props.onChangeInput", this.state.userInput);
+        // this.props.onChangeInput(this.state.userInput);
       })
       return;
     }
     const queryAnnotationHost = () => {
-      let annotationUrl = this.props.annotationScheme + "://" + this.props.annotationHost + ":" + this.props.annotationPort + "/sets?q=" + this.state.userInput + "&assembly=" + this.props.annotationAssembly;
+      let annotationUrl = this.props.annotationScheme + "://" + this.props.annotationHost + ":" + this.props.annotationPort + "/sets?q=" + this.state.userInput.trim() + "&assembly=" + this.props.annotationAssembly;
       //console.log("annotationUrl", annotationUrl);
       axios.get(annotationUrl)
         .then((res) => {
@@ -77,15 +78,14 @@ class Autocomplete extends Component {
             });
           }
         })
-        .catch((err) => {
-          //console.log("Error", err);
-        });
+        // eslint-disable-next-line no-unused-vars
+        .catch((err) => {});
     }
 
     this.setState({ userInput: e.target.value }, 
     () => { 
       queryAnnotationHost();
-      this.props.onChangeInput(this.state.userInput);
+      // this.props.onChangeInput(this.state.userInput);
     });
     
   };
@@ -263,3 +263,17 @@ class Autocomplete extends Component {
 }
 
 export default Autocomplete;
+
+Autocomplete.propTypes = {
+  annotationAssembly: PropTypes.string,
+  annotationHost: PropTypes.string,
+  annotationPort: PropTypes.string,
+  annotationScheme: PropTypes.string,
+  className: PropTypes.string,
+  maxSuggestionHeight: PropTypes.number,
+  onChangeLocation: PropTypes.func,
+  onFocus: PropTypes.func,
+  placeholder: PropTypes.string, 
+  suggestionsClassName: PropTypes.string,
+  title: PropTypes.string,
+};

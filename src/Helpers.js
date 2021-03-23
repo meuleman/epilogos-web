@@ -31,7 +31,7 @@ export const getJsonFromUrl = () => {
 }
 
 export const stripQueryStringAndHashFromPath = (url) => { 
-  return url.split("?")[0].split("#")[0]; 
+  return url.split("?")[0].split("#")[0];
 }
 
 export const isValidChromosome = (assembly, chromosomeName) => {
@@ -72,6 +72,11 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
     let midpoint = parseInt(matches[1].replace(',',''));
     start = midpoint - parseInt(Constants.defaultHgViewRegionUpstreamPadding);
     stop = midpoint + parseInt(Constants.defaultHgViewRegionDownstreamPadding);
+    if (start > stop) {
+      const temp_start = start;
+      start = stop;
+      stop = temp_start;
+    }
   }
   else if (matches.length === 1) {
     chrom = matches[0];

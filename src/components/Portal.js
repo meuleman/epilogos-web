@@ -56,8 +56,8 @@ class Portal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      height: props.height, 
-      width: props.width,
+      height: 0, 
+      width: 0,
       contactEmail: "info@altius.org",
       twitterHref: "https://twitter.com/AltiusInst",
       linkedInHref: "https://www.linkedin.com/company/altius-institute-for-biomedical-sciences",
@@ -217,8 +217,8 @@ class Portal extends Component {
     this.initHgViewRefresh();
   }
   
-  componentDidUpdate(prevProps, prevState) {
-  }
+    // eslint-disable-next-line no-unused-vars
+  componentDidUpdate(prevProps, prevState) {}
   
   componentWillUnmount() {
     window.removeEventListener("resize");
@@ -503,14 +503,15 @@ class Portal extends Component {
     );
   }
   
-  onClick = (event) => { 
-    event.preventDefault();
-    if (event.currentTarget.dataset.id) {
-      window.open(event.currentTarget.dataset.id, event.currentTarget.dataset.target || "_blank");
+  onClick = (evt) => { 
+    evt.preventDefault();
+    if (evt.currentTarget.dataset.id) {
+      window.open(evt.currentTarget.dataset.id, evt.currentTarget.dataset.target || "_blank");
     }
   }
   
-  onClickScrollOffscreenContentIntoView = (event) => {
+  // eslint-disable-next-line no-unused-vars
+  onClickScrollOffscreenContentIntoView = (evt) => {
     //
     // We temporarily disable the hgView visibility sensor as it
     // will otherwise interrupt scrolling the HIW section into view.
@@ -520,7 +521,7 @@ class Portal extends Component {
     this.setState({ hgViewParentVisibilitySensorIsActive: false }, 
       () => {
 /*
-        this.refs.offscreenContent.scrollIntoView({
+        this.offscreenContent.scrollIntoView({
           behavior: 'smooth',
           block: 'start', 
           inline: 'nearest'
@@ -539,19 +540,21 @@ class Portal extends Component {
       })
   }
   
-  onClickScrollOffscreenToolsContentIntoView = (event) => {
-    this.refs.offscreenToolsContent.scrollIntoView({
+  // eslint-disable-next-line no-unused-vars
+  onClickScrollOffscreenToolsContentIntoView = (evt) => {
+    this.offscreenToolsContent.scrollIntoView({
       behavior: 'smooth',
       block: 'start', 
       inline: 'nearest'
     });
   }
   
-  onDoubleClickHgView = (event) => {
-    event.stopImmediatePropagation();
+  onDoubleClickHgView = (evt) => {
+    evt.stopImmediatePropagation();
   }
   
-  onMouseUpHgViewParent = (event) => { /*console.log("onMouseUpHgViewParent!");*/ }
+  // eslint-disable-next-line no-unused-vars
+  onMouseUpHgViewParent = (evt) => {}
   
   onClickHgViewParent = (event) => {
     //
@@ -591,9 +594,10 @@ class Portal extends Component {
     //
     // Option 1
     //
-    this.setState((prevState) => ({
+    //this.setState((prevState) => ({
+    this.setState({
       hgViewClickPageX: pageX
-    }), () => {
+    }, () => {
       this.onClickHgViewParentClickImmediate();
     });
     return;
@@ -659,7 +663,7 @@ class Portal extends Component {
         this.openViewerAtChrRange(chrRange);
       })
       .catch((err) => {
-        //console.log("Error - onClickHgViewParentClickImmediate failed to translate absolute coordinates to chromosomal coordinates - ", err);
+        throw new Error(`Error - onClickHgViewParentClickImmediate failed to translate absolute coordinates to chromosomal coordinates - ${JSON.stringify(err)}`)
       });
   }
   
@@ -726,14 +730,16 @@ class Portal extends Component {
     window.location.href = viewerUrl;
   }
   
-  onMouseEnterHgViewParent = (event) => {
+  // eslint-disable-next-line no-unused-vars
+  onMouseEnterHgViewParent = (evt) => {
     document.body.style.overflow = "hidden";
     this.setState({
       hgViewRefreshTimerActive: false
     });
   }
   
-  onMouseLeaveHgViewParent = (event) => {
+  // eslint-disable-next-line no-unused-vars
+  onMouseLeaveHgViewParent = (evt) => {
     document.body.style.overflow = "auto";
     this.setState({
       hgViewRefreshTimerActive: true
@@ -753,16 +759,16 @@ class Portal extends Component {
     });
   }
   
-  onClickPortalGo = (event) => {
-    //console.log("onClickPortalGo");
+  // eslint-disable-next-line no-unused-vars
+  onClickPortalGo = (evt) => {
     let range = this.getRangeFromString(this.state.singleGroupSearchInputValue);
     if (range) {
       this.openViewerAtChrRange(range);
     }
   }
-  
-  onClickPortalIFL = (event) => {
-    //console.log("onClickPortalIFL");
+
+  // eslint-disable-next-line no-unused-vars
+  onClickPortalIFL = (evt) => {
     let range = this.getRandomRangeFromExemplarRegions();
     if (range) {
       this.openViewerAtChrRange(range);
@@ -817,7 +823,6 @@ class Portal extends Component {
   }
   
   onChangePortalLocation = (location) => {
-    console.log("onChangePortalLocation", location);
     let range = this.getRangeFromString(location);
     if (range) {
       this.openViewerAtChrRange(range);
@@ -863,7 +868,7 @@ class Portal extends Component {
     
     return (
       
-      <div ref="epilogos-portal" id="epilogos-portal-container" className={(isMobile) ? "epilogos-portal-container-mobiledevice" : "epilogos-portal-container"}>
+      <div ref={(ref) => this.epilogosPortal = ref} id="epilogos-portal-container" className={(isMobile) ? "epilogos-portal-container-mobiledevice" : "epilogos-portal-container"}>
       
         <div id="epilogos-portal-container-overlay" className="epilogos-portal-container-overlay" ref={(component) => this.epilogosPortalContainerOverlay = component} onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!"); this.setState({ overlayVisible: false });*/ })}}>
         
@@ -969,7 +974,7 @@ class Portal extends Component {
           {" "}
         </div>
         
-        <div className="epilogos-offscreen-content" ref="offscreenContent" id="test-offscreen-content">
+        <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenContent = ref} id="test-offscreen-content">
         
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header">
             <span className="epilogos-content-column-header-emphasis">how epilogos works</span>
@@ -1070,7 +1075,7 @@ class Portal extends Component {
             
         </div>
         
-        <div className="epilogos-offscreen-content" ref="offscreenToolsContent">
+        <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsContent = ref}>
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-tools"><span className="epilogos-content-column-header-emphasis">tools</span></div>
         </div>
         
@@ -1100,7 +1105,7 @@ class Portal extends Component {
         </Container>
         
         
-        <div className="epilogos-offscreen-content" ref="offscreenToolsContent">
+        <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsCreditsContent = ref}>
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-credits"><span className="epilogos-content-column-header-emphasis">credits</span></div>
         </div>
         
