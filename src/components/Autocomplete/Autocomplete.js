@@ -47,9 +47,6 @@ class Autocomplete extends Component {
       this.setState({
         showSuggestions: false,
         userInput: e.target.value
-      }, () => {
-        // console.log("calling this.props.onChangeInput", this.state.userInput);
-        // this.props.onChangeInput(this.state.userInput);
       })
       return;
     }
@@ -112,73 +109,91 @@ class Autocomplete extends Component {
     
     //console.log("e.keyCode", e.keyCode);
 
+    const ESCAPE_KEY = 27;
+    const RETURN_KEY = 13;
+    const LEFT_ARROW_KEY = 37;
+    const UP_ARROW_KEY = 38;
+    const RIGHT_ARROW_KEY = 39;
+    const DOWN_ARROW_KEY = 40;
+
     // Enter
-    if (e.keyCode === 13) {
-      document.activeElement.blur();
-      setTimeout(() => {
-        let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
-        let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
-        if (colonDashTest || whitespaceTest) {
+    switch (e.keyCode) {
+      case ESCAPE_KEY: {
+        if (this.state.showSuggestions) {
+          document.activeElement.blur();
+          this.clearUserInput();
+        }
+        break;
+      }
+      case RETURN_KEY: {
+        document.activeElement.blur();
+        setTimeout(() => {
+          let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
+          let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
+          if (colonDashTest || whitespaceTest) {
+            let newUserInput = "";
+            let newLocation = this.state.userInput;
+            this.setState({
+              activeSuggestion: 0,
+              showSuggestions: false,
+              userInput: newUserInput,
+              selectedSuggestionLocation: newLocation
+            }, () => { 
+              //console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
+              //console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
+              this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
+              this.clearUserInput();
+            });
+            return;
+          }
+          //console.log("filteredSuggestions[activeSuggestion]", JSON.stringify(this.state.filteredSuggestions[this.state.activeSuggestion]));
           let newUserInput = "";
-          let newLocation = this.state.userInput;
+          let newLocation = "";
+          if (typeof this.state.filteredSuggestions[this.state.activeSuggestion] !== "undefined") {
+            newUserInput = this.state.filteredSuggestions[this.state.activeSuggestion].name;
+            newLocation = this.state.filteredSuggestions[this.state.activeSuggestion].location
+          }
+          else {
+            newUserInput = this.state.userInput;
+            newLocation = this.state.userInput;
+          }
+          //console.log("newLocation", newLocation);
           this.setState({
             activeSuggestion: 0,
             showSuggestions: false,
             userInput: newUserInput,
             selectedSuggestionLocation: newLocation
           }, () => { 
-            //console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
-            //console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
-            this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
+            this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
             this.clearUserInput();
           });
+        }, this.state.debounceTimeout);
+        break;
+      }
+      case LEFT_ARROW_KEY:
+      case RIGHT_ARROW_KEY:
+        break;
+      case UP_ARROW_KEY: {
+        if (this.state.activeSuggestion === 0) {
           return;
         }
-        //console.log("filteredSuggestions[activeSuggestion]", JSON.stringify(this.state.filteredSuggestions[this.state.activeSuggestion]));
-        let newUserInput = "";
-        let newLocation = "";
-        if (typeof this.state.filteredSuggestions[this.state.activeSuggestion] !== "undefined") {
-          newUserInput = this.state.filteredSuggestions[this.state.activeSuggestion].name;
-          newLocation = this.state.filteredSuggestions[this.state.activeSuggestion].location
-        }
-        else {
-          newUserInput = this.state.userInput;
-          newLocation = this.state.userInput;
-        }
-        //console.log("newLocation", newLocation);
-        this.setState({
-          activeSuggestion: 0,
-          showSuggestions: false,
-          userInput: newUserInput,
-          selectedSuggestionLocation: newLocation
-        }, () => { 
-          this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
-          this.clearUserInput();
-        });
-      }, this.state.debounceTimeout);
-    }
-    
-    // Up arrow
-    else if (e.keyCode === 38) {
-      if (this.state.activeSuggestion === 0) {
-        return;
-      }
-      this.setState({ activeSuggestion: activeSuggestion - 1 }, () => { 
-        //console.log("scrolling to suggestion:", this.state.activeSuggestion);
-        this.scrollToActiveSuggestion() 
-      });
-    }
-    
-    // Down arrow
-    else if (e.keyCode === 40) {
-      if ((this.state.activeSuggestion + 1) === this.state.filteredSuggestions.length) {
-        return;
-      }
-      else {
-        this.setState({ activeSuggestion: this.state.activeSuggestion + 1 }, () => { 
-          //console.log("scrolling to suggestion:", this.state.activeSuggestion); 
+        this.setState({ activeSuggestion: activeSuggestion - 1 }, () => { 
+          //console.log("scrolling to suggestion:", this.state.activeSuggestion);
           this.scrollToActiveSuggestion() 
         });
+        break;
+      }
+      case DOWN_ARROW_KEY: {
+        if ((this.state.activeSuggestion + 1) === this.state.filteredSuggestions.length) {
+          return;
+        }
+        else {
+          this.setState({ activeSuggestion: this.state.activeSuggestion + 1 }, () => { 
+            //console.log("scrolling to suggestion:", this.state.activeSuggestion); 
+            this.scrollToActiveSuggestion() 
+          });
+        }
+        break;
       }
     }
   };

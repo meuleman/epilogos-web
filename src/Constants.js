@@ -477,6 +477,9 @@ export const groupsByGenome = {
   "vC" : {
     "hg19" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
+      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
+      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true },
       "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
       "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true },
       "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true },
@@ -504,6 +507,9 @@ export const groupsByGenome = {
     },
     "hg38" : {
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
+      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
+      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true },
       "Male_donors_versus_Female_donors" : { type:"group", subtype:"paired", value:"Male_donors_versus_Female_donors", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
       "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true },
       "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true },
@@ -1834,5 +1840,6 @@ export const defaultApplicationGenericExemplarKey = "na";
 export const defaultApplicationBinSize = 200;
 
 export const defaultViewerKeyEventChangeEventDebounceTimeout = 500;
+export const defaultViewerHistoryChangeEventDebounceTimeout = 1500;
 
 export const roiSets = {};
