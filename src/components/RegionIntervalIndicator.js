@@ -11,7 +11,7 @@ class RegionIntervalIndicator extends Component {
   
   render() {
     
-    if (!this.props.data) return;
+    if ((!this.props.data) || (!this.props.outerWidth) || (this.props.outerWidth && isNaN(this.props.outerWidth))) return null;
     
     // console.log("this.props.data", this.props.data);
     // console.log("this.props.outerWidth", this.props.outerWidth);

@@ -21,29 +21,136 @@ class Autocomplete extends Component {
       selectedSuggestionLocation: "",
       // Debounce timeout interval (ms)
       debounceTimeout: 10,
+      minimumLength: 0,
       // Minimum length before lookup
-      minimumLength: 2
+      queryMinimumLength: 2,
+      // Maintain flag for focus state
+      isInFocus: false,
     };
+
+    this.inputRef = React.createRef();
+
+    this.inFocusStyle = {
+      borderColor: 'rgba(255, 255, 255, 0.75)',
+      borderWidth: 'thin',
+      borderStyle: 'solid',
+      boxSizing: 'border-box',
+      backgroundPosition: '9px 7px',
+      transition: 'all 0.5s ease-in, background-position 0s',
+    };
+
+    this.inBlurStyle = {
+      borderColor: 'rgba(0, 0, 0, 0)',
+      borderWidth: 'unset',
+      borderStyle: 'unset',
+      boxSizing: 'border-box',
+      backgroundPosition: '9px 8px',
+      transition: 'all 0.5s ease-in, background-position 0s',
+    };
+
+    this.applyFocusTimeoutMs = 250;
+    this.applyBlurTimeoutMs = 250;
   }
   
   componentDidMount() {
-    setTimeout(() => { document.getElementById("autocomplete-input").focus() }, 500);
+    // setTimeout(() => { document.getElementById("autocomplete-input").focus() }, 500);
   }
   
   clearUserInput = () => {
-    this.setState({ userInput: "" });
+    this.setState({
+      userInput: '',
+    }, () => {
+      this.inputRef.value = '';
+    });
   }
 
-  onChange = e => {    
+  isValidChromosome = (chr) => {
+    // console.log(`chr ${chr}`);
+    switch (chr) {
+      case 'chr1':
+      case 'chr2':
+      case 'chr3':
+      case 'chr4':
+      case 'chr5':
+      case 'chr6':
+      case 'chr7':
+      case 'chr8':
+      case 'chr9':
+      case 'chr10':
+      case 'chr11':
+      case 'chr12':
+      case 'chr13':
+      case 'chr14':
+      case 'chr15':
+      case 'chr16':
+      case 'chr17':
+      case 'chr18':
+      case 'chr19':
+      case 'chr20':
+      case 'chr21':
+      case 'chr22':
+      case 'chrX':
+      case 'chrY':
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  applyFocus = () => {
+    // console.log(`Autocomplete - applyFocus() - start - ${this.inputRef.value}`);
+    let newUserInput = this.inputRef.value.replace(/\//g, '');
+    this.setState({
+      userInput: newUserInput
+    }, () => {
+      // console.log(`Autocomplete - applyFocus() - post setstate - ${this.state.userInput}`);
+      this.inputRef.value = newUserInput;
+      setTimeout(() => { 
+        this.inputRef.focus();
+      }, this.applyFocusTimeoutMs);
+    });
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onFocus = (e) => {
+    // console.log(`Autocomplete - onFocus() - start - ${this.inputRef.value} - ${this.state.userInput}`);
+    let newUserInput = this.inputRef.value.replace(/\//g, '');
+    this.setState({
+      userInput: newUserInput,
+      isInFocus: true,
+    }, () => {
+      this.inputRef.value = newUserInput;
+    });
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onBlur = (e) => {
+    // console.log(`Autocomplete - onBlur() - start - ${this.inputRef.value} - ${this.state.userInput}`);
+    this.setState({
+      userInput: '',
+      isInFocus: false
+    }, () => {
+      this.inputRef.value = '';
+    });
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onPaste = (e) => {
+    setTimeout(() => {
+      this.props.onChangeInput(this.inputRef.value);
+    }, 100);
+  }
+
+  onChange = (e) => {    
     if (!e.target) return;
+    // console.log("onChange", e.target.value);
     if (e.target.value.length === 0) {
       this.setState({
         showSuggestions: false
       });
     }
-    //console.log("onChange", e.target.value);
-    //if ((this.state.userInput.startsWith("chr")) && ((this.state.userInput.indexOf(":") !== -1) || (this.state.userInput.indexOf('\t') !== -1))) {
     if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf(" ") !== -1))) {  
+      // console.log("onChange", e.target.value);
       this.setState({
         showSuggestions: false,
         userInput: e.target.value
@@ -52,11 +159,11 @@ class Autocomplete extends Component {
     }
     const queryAnnotationHost = () => {
       let annotationUrl = this.props.annotationScheme + "://" + this.props.annotationHost + ":" + this.props.annotationPort + "/sets?q=" + this.state.userInput.trim() + "&assembly=" + this.props.annotationAssembly;
-      //console.log("annotationUrl", annotationUrl);
+      // console.log("annotationUrl", annotationUrl);
       axios.get(annotationUrl)
         .then((res) => {
           if (res.data.hits) {
-            //console.log("(autocomplete) res.data.hits", res.data.hits);
+            // console.log("(autocomplete) res.data.hits", res.data.hits);
             let hitNames = Object.keys(res.data.hits);
             let hitObjects = [];
             hitNames.forEach((hitName) => {
@@ -66,7 +173,7 @@ class Autocomplete extends Component {
                 hitObjects.push(withinHitObj);
               });
             });
-            //console.log("hitObjects", hitObjects);
+            // console.log("hitObjects", hitObjects);
             const filteredSuggestions = hitObjects;
             this.setState({
               activeSuggestion: 0,
@@ -79,12 +186,23 @@ class Autocomplete extends Component {
         .catch((err) => {});
     }
 
-    this.setState({ userInput: e.target.value }, 
-    () => { 
-      queryAnnotationHost();
-      // this.props.onChangeInput(this.state.userInput);
-    });
-    
+    if (!e.target.value.startsWith('/')) {
+      this.setState({ 
+        userInput: e.target.value 
+      }, () => { 
+        if (this.state.userInput.length >= this.state.queryMinimumLength)
+          queryAnnotationHost();
+        // this.props.onChangeInput(this.state.userInput);
+      });
+    }
+    else {
+      let newUserInput = e.target.value.replace(/\//g, '');
+      this.setState({
+        userInput: newUserInput
+      }, () => {
+        this.inputRef.value = newUserInput;
+      });
+    }
   };
 
   onClick = e => {
@@ -107,7 +225,7 @@ class Autocomplete extends Component {
   onKeyDown = e => {
     const { activeSuggestion } = this.state;
     
-    //console.log("e.keyCode", e.keyCode);
+    // console.log("e.keyCode", e.keyCode);
 
     const ESCAPE_KEY = 27;
     const RETURN_KEY = 13;
@@ -115,22 +233,38 @@ class Autocomplete extends Component {
     const UP_ARROW_KEY = 38;
     const RIGHT_ARROW_KEY = 39;
     const DOWN_ARROW_KEY = 40;
+    const FORWARD_SLASH_KEY = 191;
 
-    // Enter
+    // console.log(`Autocomplete - onKeyDown() - e.keyCode ${e.keyCode}`);
     switch (e.keyCode) {
+      case FORWARD_SLASH_KEY: {
+        // console.log(`Autocomplete - onKeyDown() - FORWARD_SLASH_KEY - this.state.userInput - ${this.state.userInput}`);
+        let newUserInput = this.state.userInput.replace(/\//g, '');
+        // console.log(`Autocomplete - onKeyDown() - FORWARD_SLASH_KEY - newUserInput - ${newUserInput}`);
+        this.setState({
+          userInput: newUserInput
+        }, () => {
+          this.inputRef.value = newUserInput;
+        });
+        break;
+      }
       case ESCAPE_KEY: {
-        if (this.state.showSuggestions) {
-          document.activeElement.blur();
-          this.clearUserInput();
-        }
+        this.clearUserInput();
+        setTimeout(() => {
+          this.inputRef.blur();
+        }, this.applyBlurTimeoutMs);
         break;
       }
       case RETURN_KEY: {
-        document.activeElement.blur();
         setTimeout(() => {
+          console.log(`this.state.userInput ${this.state.userInput}`);
           let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
-          let whitespaceTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)*$/.test(this.state.userInput));
-          if (colonDashTest || whitespaceTest) {
+          let whitespaceOnlyTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)+$/.test(this.state.userInput));
+          let chromosomeOnlyTest = (/^chr([a-zA-Z0-9]+)$/.test(this.state.userInput)) && this.isValidChromosome(this.state.userInput);
+          // console.log(`colonDashTest ${colonDashTest}`);
+          // console.log(`whitespaceOnlyTest ${whitespaceOnlyTest}`);
+          // console.log(`chromosomeOnlyTest ${chromosomeOnlyTest}`);
+          if (colonDashTest || whitespaceOnlyTest || chromosomeOnlyTest) {
             let newUserInput = "";
             let newLocation = this.state.userInput;
             this.setState({
@@ -139,14 +273,14 @@ class Autocomplete extends Component {
               userInput: newUserInput,
               selectedSuggestionLocation: newLocation
             }, () => { 
-              //console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
-              //console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
-              this.props.onChangeLocation(this.state.selectedSuggestionLocation, false);
+              // console.log(`Autocomplete > this.state.userInput ${this.state.userInput}`);
+              // console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
+              this.props.onChangeLocation(this.state.selectedSuggestionLocation, false, this.state.userInput);
               this.clearUserInput();
             });
             return;
           }
-          //console.log("filteredSuggestions[activeSuggestion]", JSON.stringify(this.state.filteredSuggestions[this.state.activeSuggestion]));
+          // console.log("filteredSuggestions[activeSuggestion]", JSON.stringify(this.state.filteredSuggestions[this.state.activeSuggestion]));
           let newUserInput = "";
           let newLocation = "";
           if (typeof this.state.filteredSuggestions[this.state.activeSuggestion] !== "undefined") {
@@ -157,15 +291,16 @@ class Autocomplete extends Component {
             newUserInput = this.state.userInput;
             newLocation = this.state.userInput;
           }
-          //console.log("newLocation", newLocation);
+          // console.log("newLocation", newLocation);
           this.setState({
             activeSuggestion: 0,
             showSuggestions: false,
             userInput: newUserInput,
             selectedSuggestionLocation: newLocation
           }, () => { 
-            this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
+            this.props.onChangeLocation(this.state.selectedSuggestionLocation, true, this.state.userInput);
             this.clearUserInput();
+            this.inputRef.blur();
           });
         }, this.state.debounceTimeout);
         break;
@@ -178,7 +313,7 @@ class Autocomplete extends Component {
           return;
         }
         this.setState({ activeSuggestion: activeSuggestion - 1 }, () => { 
-          //console.log("scrolling to suggestion:", this.state.activeSuggestion);
+          // console.log("scrolling to suggestion:", this.state.activeSuggestion);
           this.scrollToActiveSuggestion() 
         });
         break;
@@ -189,7 +324,7 @@ class Autocomplete extends Component {
         }
         else {
           this.setState({ activeSuggestion: this.state.activeSuggestion + 1 }, () => { 
-            //console.log("scrolling to suggestion:", this.state.activeSuggestion); 
+            // console.log("scrolling to suggestion:", this.state.activeSuggestion); 
             this.scrollToActiveSuggestion() 
           });
         }
@@ -211,20 +346,18 @@ class Autocomplete extends Component {
 
   render() {
     const {
-      onChange,
       onClick,
       onKeyDown,
       state: {
         activeSuggestion,
         filteredSuggestions,
         showSuggestions,
-        userInput
       }
     } = this;
 
     let suggestionsListComponent;
 
-    if (showSuggestions && userInput) {
+    if (showSuggestions && this.state.userInput) {
       if (filteredSuggestions.length) {
         suggestionsListComponent = (
           <ul className={this.props.suggestionsClassName} style={(this.props.maxSuggestionHeight)?{maxHeight:`${this.props.maxSuggestionHeight}px`}:{}}>
@@ -236,11 +369,18 @@ class Autocomplete extends Component {
                 className = "suggestion-active";
               }
 
-              return (
+              return (!this.props.isMobile) ? (
                 <li className={className} onClick={onClick} key={index} id={"suggestion-" + index}>
                   <div>
                     <span className="suggestion-name">{suggestion.name}</span><br />
                     <span className="suggestion-description">{suggestion.description}</span><br />
+                    <span className="suggestion-location">{suggestion.location}</span> <span className="suggestion-strand">({suggestion.strand})</span>
+                  </div>
+                </li>
+              ) : (
+                <li className={className} onClick={onClick} key={index} id={"suggestion-" + index}>
+                  <div>
+                    <span className="suggestion-name">{suggestion.name}</span><br />
                     <span className="suggestion-location">{suggestion.location}</span> <span className="suggestion-strand">({suggestion.strand})</span>
                   </div>
                 </li>
@@ -259,17 +399,22 @@ class Autocomplete extends Component {
       <Fragment>
         <DebounceInput
           id="autocomplete-input"
+          inputRef={(ref) => { this.inputRef = ref; }}
           minLength={this.state.minimumLength}
           debounceTimeout={this.state.debounceTimeout}
           className={ `${ this.props.className }` }
           type="text"
-          onChange={onChange}
+          onChange={e => this.onChange(e)}
+          onPaste={e => this.onPaste(e)}
           onKeyDown={onKeyDown}
-          onFocus={this.props.onFocus}
-          value={userInput}
+          onFocus={e => this.onFocus(e)}
+          onBlur={e => this.onBlur(e)}
+          value={this.state.userInput.replace('/', '')}
           placeholder={ `${ this.props.placeholder }` }
           autoComplete="off"
           title={this.props.title}
+          style={(this.state.isInFocus) ? this.inFocusStyle : this.inBlurStyle}
+          disabled={this.props.isDisabled}
         />
         {suggestionsListComponent}
       </Fragment>
@@ -287,8 +432,10 @@ Autocomplete.propTypes = {
   className: PropTypes.string,
   maxSuggestionHeight: PropTypes.number,
   onChangeLocation: PropTypes.func,
-  onFocus: PropTypes.func,
+  onChangeInput: PropTypes.func,
   placeholder: PropTypes.string, 
   suggestionsClassName: PropTypes.string,
   title: PropTypes.string,
+  isMobile: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };

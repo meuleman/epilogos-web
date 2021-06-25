@@ -99,7 +99,7 @@ class Portal extends Component {
     this.offscreenContent = React.createRef();
     this.epilogosPortalContainerOverlay = React.createRef();
     this.epilogosPortalOverlayNotice = React.createRef();
-    
+   
     // read exemplars into memory
     let exemplarURL = this.exemplarDownloadURL(Constants.portalHgViewParameters.genome, Constants.portalHgViewParameters.model, Constants.portalHgViewParameters.complexity, Constants.portalHgViewParameters.group, Constants.portalHgViewParameters.sampleSet);
     //console.log("exemplarURL", exemplarURL);
@@ -135,6 +135,14 @@ class Portal extends Component {
     // get current URL attributes (protocol, port, etc.)
     this.currentURL = document.createElement('a');
     this.currentURL.setAttribute('href', window.location.href);
+
+    // is this site production or development?
+    let sitePort = parseInt(this.currentURL.port);
+    if (isNaN(sitePort)) sitePort = 443;
+    this.isProductionSite = ((sitePort === "") || (sitePort === 443)); // || (sitePort !== 3000 && sitePort !== 3001));
+    this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
+    // console.log("[constructor] this.isProductionSite", this.isProductionSite);
+    // console.log("[constructor] this.isProductionProxySite", this.isProductionProxySite);
     
     // update HiGlass viewconf from server endpoint
     let hgViewconfURL = this.hgViewconfDownloadURL(this.state.hgViewParams.hgViewconfEndpointURL, this.state.hgViewParams.hgViewconfId);
@@ -204,7 +212,7 @@ class Portal extends Component {
   }
   
   componentDidMount() {
-    document.getElementById("root").style.overflow = "scroll";
+    document.getElementById("root").style.overflowY = "scroll";
     setTimeout(() => { 
       this.updateViewportDimensions();
     }, 1000);
@@ -217,7 +225,7 @@ class Portal extends Component {
     this.initHgViewRefresh();
   }
   
-    // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   componentDidUpdate(prevProps, prevState) {}
   
   componentWillUnmount() {
@@ -752,13 +760,6 @@ class Portal extends Component {
     });
   }
   
-  onChangePortalInput = (value) => {
-    //console.log("onChangePortalInput", value);
-    this.setState({
-      singleGroupSearchInputValue: value
-    });
-  }
-  
   // eslint-disable-next-line no-unused-vars
   onClickPortalGo = (evt) => {
     let range = this.getRangeFromString(this.state.singleGroupSearchInputValue);
@@ -821,6 +822,13 @@ class Portal extends Component {
     //console.log("range", range);
     return range;
   }
+
+  onChangePortalInput = (value) => {
+    //console.log("onChangePortalInput", value);
+    this.setState({
+      singleGroupSearchInputValue: value
+    });
+  }
   
   onChangePortalLocation = (location) => {
     let range = this.getRangeFromString(location);
@@ -865,6 +873,8 @@ class Portal extends Component {
   }
     
   render() {
+
+    const devNonce = (this.isProductionSite) ? "" : <div style={{fontSize:"12px", margin:"0", padding:"0", textAlign:"center", color:"grey"}}>development</div>
     
     return (
       
@@ -895,9 +905,10 @@ class Portal extends Component {
                 </Col>
               
                 <Col xl={6}>
+                  {devNonce}
                   <div className="epilogos-content-header text-center" style={{"userSelect":"text"}} onClick={() => { this.reinitHgViewRefresh() }}>
                     epilogos
-                  </div>          
+                  </div>
                   <div className="epilogos-content-query-autocomplete" style={{"userSelect":"text"}}>              
                     <div className="epilogos-content-placeholder-text epilogos-content-ero-search">
                       <div className="epilogos-content-ero-search">
@@ -1121,6 +1132,7 @@ class Portal extends Component {
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line">
                       <div>▪ <em>Wouter Meuleman</em> (concept, project lead)</div>
                       <div>▪ <em>Alex Reynolds</em> (website design and implementation)</div>
+                      <div>▪ <em>Jacob Quon</em> (software implementation)</div>
                       <div>▪ <em>Eric Rynes</em> (software implementation)</div>
                       <div>▪ <em>Chad Lundberg</em> (UI/UX design)</div>
                     </div>
@@ -1149,7 +1161,7 @@ class Portal extends Component {
                     </div>
                     <div className="">
                       <div>Code is available from GitHub:</div>
-                      <div><GoMarkGithub /> <span style={{fontSize:"0.85em"}}>Core: <a href="https://github.com/Altius/epilogos" onClick={this.onClick} data-id="https://github.com/Altius/epilogos" data-target="_blank">https://github.com/Altius/epilogos</a></span></div>
+                      <div><GoMarkGithub /> <span style={{fontSize:"0.85em"}}>Core: <a href="https://github.com/meuleman/epilogos" onClick={this.onClick} data-id="https://github.com/meuleman/epilogos" data-target="_blank">https://github.com/meuleman/epilogos</a></span></div>
                     </div>
                   </div>
                 </div>

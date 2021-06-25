@@ -13,7 +13,7 @@ export const annotationHost = "annotations.altius.org";
 export const annotationPort = "8443"; // SSL over 8443
 
 export const applicationTabixRootURL = "http://explore.altius.org/tabix";
-export const applicationRecommenderDatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
+export const applicationRecommenderV1DatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
 
 export const urlProxyURL = "https://epilogos.altius.org:9001";
 export const recommenderProxyURL = "https://epilogos.altius.org:9002";
@@ -36,7 +36,7 @@ export const mobileThresholds = {
 };
 
 export const applicationRegionTypes = {
-  "exemplar" : "exemplar",
+  "exemplars" : "exemplars",
   "roi" : "roi",
 };
 
@@ -66,7 +66,7 @@ export const sampleSetsForSettingsDrawer = {
   "vF" : {"visible": false, "value": "vF", "enabled": false, "titleText": "Boix <em>et al.</em> (maxvecsum w/chromatin state)" },
 };
 
-export const sampleSetsForRecommenderOptionDataset = {
+export const sampleSetsForRecommenderV1OptionDataset = {
   "vA" : "ROADMAP",
   "vB" : "ADSERA",
   "vC" : "ADSERA",
@@ -127,6 +127,9 @@ export const genomesForSettingsDrawer = {
     'paired' : {
       "Human" : ["hg19", "hg38"]
     },
+    'query' : {
+      "Human" : ["hg19", "hg38"]
+    },
   },
   'vD' : {
     'single' : {
@@ -164,8 +167,9 @@ export const genomeNotices = {
 export const defaultSingleGroupGenomeKey = "hg19";
 
 export const drawerTitleByType = {
-  "settings" : "Settings",
-  "exemplars" : "Exemplars"
+  "settings" : "settings",
+  "exemplars" : "exemplars",
+  "roi" : "roi",
 };
 
 export const drawerTypeByName = {
@@ -262,7 +266,7 @@ export const complexitiesForDataExport = {
   "stacked" : "S1_2_3"
 };
 
-export const complexitiesForRecommenderOptionSaliencyLevel = {
+export const complexitiesForRecommenderV1OptionSaliencyLevel = {
   "KL" : "S1",
   "KLs" : "S2",
   "KLss" : "S3",
@@ -476,6 +480,9 @@ export const groupsByGenome = {
   },
   "vC" : {
     "hg19" : {
+      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false },
+      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false },
+      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true },
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
       "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
       "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
@@ -506,6 +513,9 @@ export const groupsByGenome = {
       "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true },
     },
     "hg38" : {
+      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false },
+      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false },
+      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true },
       "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
       "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
       "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
@@ -561,7 +571,7 @@ export const groupsByGenome = {
   },
 };
 
-export const groupsForRecommenderOptionGroup = {
+export const groupsForRecommenderV1OptionGroup = {
   "vA" : {
     "hg19" : {
       "adult_blood_sample" : "Adult_Blood_Sample",
@@ -689,6 +699,7 @@ export const groupsForRecommenderOptionGroup = {
     },
     "hg38" : {
       "all" : "All_833_biosamples",
+      "Non-stem" : "Non-stem",
     }
   },
   "vE" : {
@@ -1711,7 +1722,8 @@ export const applicationPortal = "portal";
 export const applicationViewer = "viewer";
 
 // drawer width
-export const defaultMinimumDrawerWidth = 378;
+export const defaultMinimumDrawerWidth = 412;
+export const defaultMaximumDrawerWidth = 412;
 
 // ?mode=xyz
 export const applicationModes = modes;
@@ -1828,18 +1840,20 @@ export const defaultApplicationQueryViewPaddingTop = 50;
 export const defaultApplicationRegionIndicatorContentTopOffset = 39;
 export const defaultApplicationRegionIndicatorContentMainViewOnlyTopOffset = 8;
 
-export const defaultApplicationRecommenderWeightPattern = 0.35;
-export const defaultApplicationRecommenderWeightShape = 0.65;
-export const defaultApplicationRecommenderTabixSource = "remote";
-export const defaultApplicationRecommenderOutputDestination = "stdout";
-export const defaultApplicationRecommenderOutputFormat = "JSON";
+// export const defaultApplicationRecommenderWeightPattern = 0.35;
+// export const defaultApplicationRecommenderWeightShape = 0.65;
 export const defaultApplicationRecommenderButtonHideShowThreshold = 100000;
-export const defaultApplicationRecommenderWindowSizeKey = "50k";
+
+export const defaultApplicationRecommenderV1TabixSource = "remote";
+export const defaultApplicationRecommenderV1OutputDestination = "stdout";
+export const defaultApplicationRecommenderV1OutputFormat = "JSON";
+export const defaultApplicationRecommenderV1ButtonHideShowThreshold = defaultApplicationRecommenderButtonHideShowThreshold;
+export const defaultApplicationRecommenderV1WindowSizeKey = "50k";
 export const defaultApplicationGenericExemplarKey = "na";
 
 export const defaultApplicationBinSize = 200;
 
 export const defaultViewerKeyEventChangeEventDebounceTimeout = 500;
-export const defaultViewerHistoryChangeEventDebounceTimeout = 1500;
+export const defaultViewerHistoryChangeEventDebounceTimeout = 1000;
 
 export const roiSets = {};

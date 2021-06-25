@@ -4,6 +4,9 @@ import { FaGlasses } from 'react-icons/fa';
 import Spinner from "react-svg-spinner";
 
 export const RecommenderSearchButtonDefaultLabel = "Similar regions";
+export const RecommenderV1SearchButtonDefaultLabel = "V1";
+export const RecommenderV2SearchButtonDefaultLabel = "V2";
+export const RecommenderV3SearchButtonDefaultLabel = "V2";
 export const RecommenderSearchButtonInProgressLabel = "Searching...";
 
 class RecommenderSearchButton extends Component {
@@ -122,7 +125,7 @@ class RecommenderSearchButton extends Component {
     // style={{top:"17px", left:`${(this.props.left - (this.props.inProgress ? 30 : 60))}px`, position:"absolute", zIndex:"10000", pointerEvents:"all"}}
     
     return (
-      <div className={(this.props.enabled) ? "epilogos-recommender-element" : "epilogos-recommender-element-disabled"}>
+      <div className={(!this.props.visible) ? "epilogos-recommender-element-hidden" : (this.props.enabled) ? "epilogos-recommender-element" : "epilogos-recommender-element-disabled"}>
         <button
           className="recommender-button"
           style={(this.props.inProgress && this.props.enabled) ? buttonInProgressStyle : (!this.props.enabled) ? buttonDisabledStyle : buttonStyle}
@@ -144,6 +147,7 @@ class RecommenderSearchButton extends Component {
 export default RecommenderSearchButton;
 
 RecommenderSearchButton.propTypes = { 
+  visible: PropTypes.bool,
   enabled: PropTypes.bool,
   inProgress: PropTypes.bool,
   label: PropTypes.string,

@@ -27,6 +27,10 @@ body {
   touch-action: none !important;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
@@ -177,7 +181,7 @@ em {
 }
 
 .navbar-middle {
-  display: none;
+  display: flex;
 }
 
 .navbar-righthalf {
@@ -188,7 +192,7 @@ em {
 
 .navigation-summary {
   color: white;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
   font-size: 0.95em;
   font-weight: 400;
   display: inline-flex;
@@ -202,15 +206,16 @@ em {
 }
 
 .navigation-summary-parameters {
+  display: flex;
   color: white;
   text-align: left;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
   font-size: 0.95em;
   font-weight: 400;
   padding-left: 20px;
   position: relative;
-  top: 0px;
-  opacity: 0;
+  top: 2px;
+  /* opacity: 0; */
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
   z-index: 10001;
 }
@@ -256,16 +261,20 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 }
 
 .epilogos-recommender-element {
-  padding-left: 20px;
+  padding-left: 10px;
   z-index: 1000;
   display: inherit;
 }
 
 .epilogos-recommender-element-disabled {
-  padding-left: 20px;
+  padding-left: 10px;
   cursor: default;
   pointer-events: none;
   display: inherit;
+}
+
+.epilogos-recommender-element-hidden {
+  visibility: hidden;
 }
 
 .epilogos-recommender-link-element {
@@ -370,6 +379,12 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
   background-color: white;
 }
 
+.navigation-summary-download-disabled {
+  color: #525252;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
 .navigation-summary-download-popup {
   color: black;
   background-color: white;
@@ -380,7 +395,7 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
   text-align: right;
   z-index: 1000;
   font-size: 1.1em;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
   border-left: 1px black solid;
   border-bottom: 1px black solid;
   border-right: 1px black solid;
@@ -935,6 +950,18 @@ input.epilogos-viewer-search-input::placeholder {
   top: 1px;
 }
 
+input.epilogos-viewer-search-input:disabled::placeholder {
+  color: #525252;
+  cursor: not-allowed;
+}
+
+input.epilogos-viewer-search-input:disabled {
+  background-color: #343434;
+  color: #666;
+  cursor: not-allowed;
+  background-image: url(./components/Autocomplete/search.525252.png);
+}
+
 .epilogos-viewer-container-track-label-parent {
   z-index: 1;
 }
@@ -991,7 +1018,7 @@ input.epilogos-viewer-search-input::placeholder {
 }
 
 .epilogos-viewer-container-track-label-small-inverse {
-  color: black;
+  color: rgb(112, 112, 112);
   text-shadow: -1px 0 rgba(255,255,255,0.5), 0 1px rgba(255,255,255,0.5), 1px 0 rgba(255,255,255,0.5), 0 -1px rgba(255,255,255,0.5);
   font-weight: 500;
 }
@@ -1210,6 +1237,16 @@ input.epilogos-viewer-search-input::placeholder {
   cursor: pointer;
 }
 
+.hamburger-button-disabled {
+  color: #525252;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.epilogos-viewer-hamburger-button-disabled {
+  cursor: not-allowed !important;
+}
+
 .hamburger-button:hover {
   /* background: #005fff; */
 }
@@ -1305,6 +1342,40 @@ input.epilogos-viewer-search-input::placeholder {
   border-top: 0px !important;
 }
 
+.elementTable > tbody > tr > td {
+  border-top: 1px dotted black !important;
+}
+
+.elementTable > tbody > tr:hover > td {
+  color: white !important;
+}
+
+.queryTargetElementTable {
+  overflow-y: scroll;
+  margin-bottom: 0px !important;
+  border-top: 0px !important;
+}
+
+.queryTargetElementTable::-webkit-scrollbar {
+  background-color: grey;
+}
+
+.queryTargetElementTable::-webkit-scrollbar-track {
+  background-color: grey;
+}
+
+.queryTargetElementTable > thead > tr > th {
+  border-top: 0px !important;
+}
+
+.queryTargetElementTable > tbody > tr > td {
+  border-top: 1px dotted black !important;
+}
+
+.queryTargetElementTable > tbody > tr:hover > td {
+  color: white !important;
+}
+
 .nav-tabs {
   border-bottom: 1px solid blue !important;
   font-size: 0.9em;
@@ -1363,13 +1434,7 @@ input.epilogos-viewer-search-input::placeholder {
   letter-spacing: 0.01px;
 }
 
-.elementTable > tbody > tr > td {
-  border-top: 1px dotted black !important;
-}
 
-.elementTable > tbody > tr:hover > td {
-  color: white !important;
-}
 
 .drawer-tab-content {
   background-color: #ffffff;

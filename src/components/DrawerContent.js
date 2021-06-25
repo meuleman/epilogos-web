@@ -17,7 +17,7 @@ import classnames from 'classnames';
 // Application constants
 import * as Constants from '../Constants.js'; 
 
-import { FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa'
+import { FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 
 // Pretty-checkbox (pure CSS radio buttons)
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
@@ -231,6 +231,9 @@ class DrawerContent extends Component {
             else if (this.state.viewParams.group === "Male_donors_versus_Female_donors") {
               newViewParams.group = "Male_vs_Female";
             }
+            else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+              newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+            }
             else {
               newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg19;
             }
@@ -263,6 +266,12 @@ class DrawerContent extends Component {
             }
             else if (this.state.viewParams.group === "Male_vs_Female") {
               newViewParams.group = "Male_donors_versus_Female_donors";
+            }
+            else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+              newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+            }
+            else if (this.state.viewParams.group === "Adult_versus_Embryonic") {
+              newViewParams.group = "Adult_versus_Embryonic";
             }
             else {
               newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg38;
@@ -354,7 +363,11 @@ class DrawerContent extends Component {
     let kButtonGroupIdx = 0;
     let kButtons = [];
     let kButtonIdx = 0;
-    Object.keys(Constants.genomesForSettingsDrawer[activeSampleSet][activeMode]).forEach(k => {
+    const genomes = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode];
+    if (!genomes) {
+      return <div></div>;
+    }
+    Object.keys(genomes).forEach(k => {
       let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode][k];
       const kButtonPrefix = 'genome-bg-btn-';
       const kButtonParentPrefix = 'genome-bg-parent-btn-';
@@ -1222,11 +1235,11 @@ class DrawerContent extends Component {
           let applyPadding = true;
           let nonQueryModeSelected = true;
           this.props.expandToRegion(row.position, applyPadding, nonQueryModeSelected);
-          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
+          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
         }
         else {
           //console.log(`row ${JSON.stringify(row)}`);
-          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplar, row.idx);
+          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
         }
       },
       // eslint-disable-next-line no-unused-vars
@@ -1256,15 +1269,16 @@ class DrawerContent extends Component {
                 settings
               </NavLink>
             </NavItem>
-            <NavItem disabled={!self.state.tabs.exemplars}>
-              <NavLink
-                className={classnames({ active: self.state.activeTab === 'exemplars' })}
-                onClick={() => { self.toggle('exemplars'); }}
-                disabled={!self.state.tabs.exemplars}
-              >
-                exemplars
-              </NavLink>
-            </NavItem>
+            {(self.props && self.props.exemplarsEnabled) ?
+              <NavItem disabled={!self.state.tabs.exemplars}>
+                <NavLink
+                  className={classnames({ active: self.state.activeTab === 'exemplars' })}
+                  onClick={() => { self.toggle('exemplars'); }}
+                  disabled={!self.state.tabs.exemplars}
+                >
+                  exemplars
+                </NavLink>
+              </NavItem> : ""}
             {(self.props && self.props.roiEnabled) ?
               <NavItem disabled={!self.state.tabs.roi}>
                 <NavLink

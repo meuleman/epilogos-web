@@ -19,8 +19,9 @@ export const zeroPad = (n, width, z) => {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
-export const getJsonFromUrl = () => {
-  let query = window.location.search.substr(1);
+export const getJsonFromSpecifiedUrl = (urlStr) => {
+  const url = new URL(urlStr);
+  let query = url.search.substr(1);
   let result = {};
   query.split("&").forEach(function(part) {
       var item = part.split("=");
@@ -28,6 +29,18 @@ export const getJsonFromUrl = () => {
         result[item[0]] = decodeURIComponent(item[1]);
   });
   return result;
+}
+
+export const getJsonFromUrl = () => {
+  return getJsonFromSpecifiedUrl(window.location);
+  // let query = window.location.search.substr(1);
+  // let result = {};
+  // query.split("&").forEach(function(part) {
+  //     var item = part.split("=");
+  //     if (item[0].length > 0)
+  //       result[item[0]] = decodeURIComponent(item[1]);
+  // });
+  // return result;
 }
 
 export const stripQueryStringAndHashFromPath = (url) => { 
@@ -109,7 +122,7 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
   let scaleSummary = (self.state.chromsAreIdentical) ? self.state.currentViewScaleAsString : "";
   
   if (showClipboard) {
-    if (parseInt(self.state.width)>1400) {
+    if (parseInt(self.state.width)>1250) {
       return <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}><span title={"Viewer genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard></div>
     }
     else {
@@ -183,25 +196,25 @@ export const exemplarV1DownloadURL = (assembly, model, complexity, group, sample
 }
 
 export const exemplarV2DownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
-  let saliencyLevel = Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity];
+  let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
   return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
 }
 
-export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self) => {
+export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
   /*
     This function reads exemplar regions into memory:
     
     - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender pipeline results
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
-  const newGroupV2 = Constants.groupsForRecommenderOptionGroup[newSampleSet][newGenome][newGroup];
-  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderWindowSizeKey) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+  const newGroupV2 = Constants.groupsForRecommenderV1OptionGroup[newSampleSet][newGenome][newGroup];
+  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderV1WindowSizeKey) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
   let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
 
-  //console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
-  //console.log(`Helpers > updateExemplars > exemplarV1URL ${JSON.stringify(exemplarV1URL, null, 2)}`);
+  // console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
+  // console.log(`Helpers > updateExemplars > exemplarV1URL ${JSON.stringify(exemplarV1URL, null, 2)}`);
   
-  function updateExemplarRegionsWithResponse(res) {
+  function updateExemplarRegionsWithResponse(res, cb) {
     self.setState({
       exemplarJumpActive: true,
       exemplarRegions: res.data.split('\n')
@@ -248,12 +261,16 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         chromatinStates[state] = 0;
       });
       //console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
-      self.setState({
-        exemplarTableData: data,
-        exemplarTableDataCopy: dataCopy,
-        exemplarTableDataIdxBySort: dataIdxBySort,
-        exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
-      });
+      setTimeout(() => {
+        self.setState({
+          exemplarTableData: data,
+          exemplarTableDataCopy: dataCopy,
+          exemplarTableDataIdxBySort: dataIdxBySort,
+          exemplarChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v))
+        }, () => {
+          if (cb) cb();
+        });
+      }, 1000);
     });
   }
 
@@ -266,7 +283,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
             if (!res.data || res.data.startsWith("<!doctype html>")) {
               throw String(`Error: v1 exemplars not returned from: ${exemplarV1URL}`);
             }
-            updateExemplarRegionsWithResponse(res);
+            updateExemplarRegionsWithResponse(res, cb);
           })
           .catch((err) => {
             console.warn(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL} | ${JSON.stringify(err)}`)
@@ -289,7 +306,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
               tryExemplarV1URL(exemplarV1URL);
             }
             else {
-              updateExemplarRegionsWithResponse(res);
+              updateExemplarRegionsWithResponse(res, cb);
             }
           })
           .catch((err) => {
@@ -323,10 +340,10 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
     case "vC":
       switch (genome) {
         case "hg19":
-          if (groupA.includes("Male_donors") || (groupB.includes("Female_donors"))) {
-            result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
-            result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
-            result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          if ( groupA.includes("Adult") || groupB.includes("Embryonic") || groupA.includes("Male_donors") || groupB.includes("Female_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
+            result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+            result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+            result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
           }
           else {
             result.A = `833sample.${sampleSet}.${genome}.${groupA}.${model}.${complexity}.epilogos.multires.mv5`;
@@ -335,9 +352,9 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
           }
           break;
         case "hg38":
-          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
-          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
-          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderOptionSaliencyLevel[complexity]}.mv5`;
+          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
           break;
         default:
           errorRaised = true;
@@ -540,4 +557,71 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
     throw new Error(errorMessage);
   }
   return result;
+}
+
+export const splitPairedGroupString = (group) => {
+  let splitResult = group.split(/_vs_/);
+  let groupA = splitResult[0];
+  let groupB = splitResult[1];
+  if (typeof groupB === "undefined") {
+    splitResult = group.split(/_versus_/);
+    groupA = splitResult[0];
+    groupB = splitResult[1];
+  }
+  return {
+    groupA: groupA,
+    groupB: groupB
+  }
+}
+
+export const constructViewerURL = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, state) => {
+  let viewerUrl = stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+  viewerUrl += "&sampleSet=" + sampleSet;
+  viewerUrl += "&mode=" + mode;
+  viewerUrl += "&genome=" + genome;
+  viewerUrl += "&model=" + model;
+  viewerUrl += "&complexity=" + complexity;
+  viewerUrl += "&group=" + group;
+  viewerUrl += "&chrLeft=" + chrLeft;
+  viewerUrl += "&chrRight=" + chrRight;
+  viewerUrl += "&start=" + parseInt(start);
+  viewerUrl += "&stop=" + parseInt(stop);
+  // newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType
+  if (state.hgViewParams.annotationsTrackType !== Constants.defaultApplicationAnnotationsTrackType) {
+    viewerUrl += "&annotationsTrackType=" + state.hgViewParams.annotationsTrackType;
+  }
+  if (parseInt(state.selectedExemplarRowIdx) >= 0) {
+    viewerUrl += "&serIdx=" + parseInt(state.selectedExemplarRowIdx);
+  }
+  if (state.roiEncodedURL.length > 0) {
+    viewerUrl += `&roiURL=${state.roiEncodedURL}`;
+  }
+  if (state.roiMode && (state.roiMode.length > 0) && (state.roiMode !== Constants.defaultApplicationRoiMode) && ((parseInt(state.selectedExemplarRowIdx) >= 0) || ((parseInt(state.selectedRoiRowIdx) >= 0) && (state.roiTableData.length > 0)))) {
+    viewerUrl += `&roiMode=${state.roiMode}`;
+  }
+  if (state.roiPaddingAbsolute && (parseInt(state.roiPaddingAbsolute) > 0) && (parseInt(state.roiPaddingAbsolute) !== Constants.defaultApplicationRoiPaddingAbsolute)) {
+    viewerUrl += `&roiPaddingAbsolute=${state.roiPaddingAbsolute}`;
+  }
+  if (state.roiPaddingFractional && ((parseFloat(state.roiPaddingFractional) > 0) && (parseFloat(state.roiPaddingFractional) < 1)) && (parseFloat(state.roiPaddingFractional) !== Constants.defaultApplicationRoiPaddingFraction)) {
+    viewerUrl += `&roiPaddingFractional=${state.roiPaddingFractional}`;
+  }
+  // console.log(`state.selectedRoiRowIdx ${state.selectedRoiRowIdx}`);
+  // console.log(`state.roiTableData.length ${state.roiTableData.length}`);
+  if ((parseInt(state.selectedRoiRowIdx) >= 0) && (state.roiTableData.length > 0)) {
+    viewerUrl += "&srrIdx=" + parseInt(state.selectedRoiRowIdx);
+  }
+  //
+  // row highlighting
+  //
+  if (state.highlightRawRows && (state.highlightRawRows.length > 0)) {
+    viewerUrl += `&highlightRows=${encodeURIComponent(state.highlightRawRows)}`;
+    if (state.highlightBehavior && (state.highlightBehavior.length > 0) && (state.highlightBehavior !== Constants.defaultApplicationHighlightBehavior)) {
+      viewerUrl += `&highlightBehavior=${state.highlightBehavior}`;
+    }
+    if (state.highlightBehaviorAlpha && ((parseFloat(state.highlightBehaviorAlpha) > 0) && (parseFloat(state.highlightBehaviorAlpha) < 1)) && (parseFloat(state.highlightBehaviorAlpha) !== Constants.defaultApplicationHighlightBehaviorAlpha)) {
+      viewerUrl += `&highlightBehaviorAlpha=${state.highlightBehaviorAlpha}`;
+    }
+  }
+  //console.log(`viewerUrl ${viewerUrl}`);
+  return viewerUrl;
 }
