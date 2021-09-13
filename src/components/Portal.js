@@ -34,6 +34,7 @@ import "higlass-multivec/dist/higlass-multivec.js";
 
 // Application constants
 import * as Constants from "../Constants.js";
+import * as Helpers from "../Helpers.js";
 
 // Application autocomplete
 import Autocomplete from "./Autocomplete/Autocomplete";
@@ -47,6 +48,9 @@ import { isMobile } from 'react-device-detect';
 
 // Test if components are visible
 import VisibilitySensor from "react-visibility-sensor";
+
+import RecommenderSearchButton from "./RecommenderSearchButton";
+import { RecommenderV3SearchButtonDefaultLabel } from "./RecommenderSearchButton";
 
 // Query JSON objects (to build dropdowns and other inputs)
 // cf. https://www.npmjs.com/package/jsonpath-lite
@@ -92,6 +96,11 @@ class Portal extends Component {
       overlayMessage: "Placeholder",
       previousWidth: 0,
       previousHeight: 0,
+      recommenderV3SearchIsVisible: true,
+      recommenderV3SearchIsEnabled: true,
+      recommenderV3SearchInProgress: false,
+      recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+      recommenderV3SearchButtonCanBeAnimated: false,
     };
     
     this.hgView = React.createRef();
@@ -99,6 +108,7 @@ class Portal extends Component {
     this.offscreenContent = React.createRef();
     this.epilogosPortalContainerOverlay = React.createRef();
     this.epilogosPortalOverlayNotice = React.createRef();
+    this.epilogosPortalRecommenderV3Button = React.createRef();
    
     // read exemplars into memory
     let exemplarURL = this.exemplarDownloadURL(Constants.portalHgViewParameters.genome, Constants.portalHgViewParameters.model, Constants.portalHgViewParameters.complexity, Constants.portalHgViewParameters.group, Constants.portalHgViewParameters.sampleSet);
@@ -502,14 +512,54 @@ class Portal extends Component {
       </div>
     );
   }
-  
+
+  recommenderV3SearchButtonCanAnimate = () => {
+    return this.state.recommenderV3SearchButtonCanBeAnimated;
+  }
+
+  recommenderV3SearchButtonSetCanBeAnimated = (flag) => {
+    // console.log(`setting recommenderV3SearchButtonCanBeAnimated to ${flag}`);
+    this.setState({
+      recommenderV3SearchButtonCanBeAnimated: flag
+    });
+  }
+
   singleGroupExemplarJump = () => {
     return (
       <div className="epilogos-content-ero-block">
-        <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={!this.state.exemplarJumpActive} title="Jump to an interesting epilogo">I’m Feeling Lucky</Button>
-      </div>
-    );
+        <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={(this.state.singleGroupSearchInputValue.length > 0)} title="Jump to an interesting epilogo">
+          <RecommenderSearchButton
+            ref={(component) => this.epilogosPortalRecommenderV3Button = component}
+            onClick={this.onClickPortalIFL}
+            inProgress={this.state.recommenderV3SearchInProgress}
+            visible={this.state.recommenderV3SearchIsVisible}
+            enabled={this.state.recommenderV3SearchIsEnabled}
+            label={this.state.recommenderV3SearchButtonLabel}
+            canAnimate={this.recommenderV3SearchButtonCanAnimate}
+            canAnimateButton={this.recommenderV3SearchButtonSetCanBeAnimated}
+            forceStartColor={"rgba(230, 230, 230, 1)"}
+            size={20}
+            />
+        </Button>
+      </div>      
+    )
   }
+
+  // singleGroupExemplarJump = () => {
+  //   return (
+  //     <div className="epilogos-content-ero-block">
+  //       <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={(this.state.singleGroupSearchInputValue.length > 0)} title="Jump to an interesting epilogo">I'm Feeling Lucky</Button>
+  //     </div>
+  //   );
+  // }
+
+  // singleGroupExemplarJump = () => {
+  //   return (
+  //     <div className="epilogos-content-ero-block">
+  //       <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={!this.state.exemplarJumpActive} title="Jump to an interesting epilogo">I'm Feeling Lucky</Button>
+  //     </div>
+  //   );
+  // }
   
   onClick = (evt) => { 
     evt.preventDefault();
@@ -702,9 +752,15 @@ class Portal extends Component {
   
   openViewerAtChrRange = (range) => {
     let chrLeft = range[0];
-    let chrRight = range[1];
-    let start = parseInt(range[2]);
-    let stop = parseInt(range[3]);
+    let chrRight = range[0];
+    let start = parseInt(range[1]);
+    let stop = parseInt(range[2]);
+    if (range.length === 4) {
+      chrLeft = range[0];
+      chrRight = range[1];
+      start = parseInt(range[2]);
+      stop = parseInt(range[3]);
+    }
     let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + Constants.portalHgViewParameters.mode;
@@ -772,12 +828,42 @@ class Portal extends Component {
   onClickPortalIFL = (evt) => {
     let range = this.getRandomRangeFromExemplarRegions();
     if (range) {
-      this.openViewerAtChrRange(range);
+      this.openQueryTargetViewerAtChrRange(range);
     }
+  }
+
+  openQueryTargetViewerAtChrRange = (range) => {
+    let chrLeft = range[0];
+    let chrRight = range[0];
+    let start = parseInt(range[1]);
+    let stop = parseInt(range[2]);
+    if (range.length === 4) {
+      chrLeft = range[0];
+      chrRight = range[1];
+      start = parseInt(range[2]);
+      stop = parseInt(range[3]);
+    }
+    const newMode = "qt";
+    let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
+    viewerUrl += "&mode=" + newMode;
+    viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;
+    viewerUrl += "&model=" + Constants.portalHgViewParameters.model;
+    viewerUrl += "&complexity=" + Constants.portalHgViewParameters.complexity;
+    viewerUrl += "&group=" + Constants.portalHgViewParameters.group;
+    viewerUrl += "&chrLeft=" + chrLeft;
+    viewerUrl += "&chrRight=" + chrRight;
+    viewerUrl += "&start=" + start;
+    viewerUrl += "&stop=" + stop;
+    const viewerUrlTarget = "_self";
+    window.open(viewerUrl, viewerUrlTarget);
   }
   
   getRandomRangeFromExemplarRegions = () => {
     let randomRegion = this.state.exemplarRegions[this.state.exemplarRegions.length * Math.random() | 0];
+    if (!randomRegion) {
+      randomRegion = `${Constants.defaultApplicationPositions['hg19']['chr']}\t${Constants.defaultApplicationPositions['hg19']['start']}\t${Constants.defaultApplicationPositions['hg19']['stop']}`;
+    }
     let regionFields = randomRegion.split('\t');
     let chrLeft = regionFields[0];
     let chrRight = regionFields[0];
@@ -824,14 +910,15 @@ class Portal extends Component {
   }
 
   onChangePortalInput = (value) => {
-    //console.log("onChangePortalInput", value);
+    // console.log("onChangePortalInput", value);
     this.setState({
       singleGroupSearchInputValue: value
     });
   }
   
-  onChangePortalLocation = (location) => {
-    let range = this.getRangeFromString(location);
+  onChangePortalLocation = (location, applyPadding) => {
+    // let range = this.getRangeFromString(location);
+    const range = Helpers.getRangeFromString(location, applyPadding, false, this.state.hgViewParams.genome);
     if (range) {
       this.openViewerAtChrRange(range);
     }

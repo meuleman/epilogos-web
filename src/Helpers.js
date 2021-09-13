@@ -5,9 +5,12 @@ import axios from "axios";
 // Copy data to clipboard
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import * as Constants from "./Constants.js";
-
 import { FaClipboard } from 'react-icons/fa';
+
+import * as Constants from "./Constants.js";
+import { RecommenderV3SearchButtonDefaultLabel } from "./components/RecommenderSearchButton";
+import { RecommenderSearchLinkDefaultLabel } from "./components/RecommenderSearchLink";
+import { RecommenderExpandLinkDefaultLabel } from "./components/RecommenderExpandLink";
 
 export const log10 = (val) => {
   return Math.log(val) / Math.LN10;
@@ -78,7 +81,11 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
   if (matches.length === 3) {
     chrom = matches[0];
     start = parseInt(matches[1].replace(',',''));
-    stop = parseInt(matches[2].replace(',',''));  
+    stop = parseInt(matches[2].replace(',',''));
+    if (applyPadding) {
+      start -= parseInt(Constants.defaultHgViewRegionUpstreamPadding);
+      stop += parseInt(Constants.defaultHgViewRegionDownstreamPadding);
+    }
   }
   else if (matches.length === 2) {
     chrom = matches[0];
@@ -97,8 +104,8 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
       return null;
     }
     if (Constants.assemblyChromosomes[assembly].includes(chrom)) {
-      start = 0
-      stop = Constants.assemblyBounds[assembly][chrom]['ub'];
+      start = 1
+      stop = Constants.assemblyBounds[assembly][chrom]['ub'] - 1;
     }
   }
   else {
@@ -107,13 +114,21 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
   if (!isValidChromosome(assembly, chrom)) {
     return null;
   }
-  let range = [chrom, start, stop];
+  if (start < 0) {
+    start = 0;
+  }
+  if (stop >= Constants.assemblyBounds[assembly][chrom]['ub']) {
+    stop = Constants.assemblyBounds[assembly][chrom]['ub'];
+  }
+  const range = [chrom, start, stop];
   return range;
 }
 
 export const positionSummaryElement = (showClipboard, showScale, self) => {
+  // console.log(`positionSummaryElement called ${self.state.width}`);
   if (showClipboard == null) showClipboard = true;
   if ((typeof self.state.currentPosition === "undefined") || (typeof self.state.currentPosition.chrLeft === "undefined") || (typeof self.state.currentPosition.chrRight === "undefined") || (typeof self.state.currentPosition.startLeft === "undefined") || (typeof self.state.currentPosition.stopRight === "undefined")) {
+    // console.log(`positionSummaryElement > ${JSON.stringify(self.state.currentPosition)}`);
     return <div />
   }
 
@@ -122,7 +137,8 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
   let scaleSummary = (self.state.chromsAreIdentical) ? self.state.currentViewScaleAsString : "";
   
   if (showClipboard) {
-    if (parseInt(self.state.width)>1250) {
+    if (parseInt(self.state.width)>1150) {
+      // console.log(`positionSummaryElement > ${positionSummary}`);
       return <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}><span title={"Viewer genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard></div>
     }
     else {
@@ -326,6 +342,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 }
 
 export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
+  // console.log(`groupA, groupB, groupAvsB ${groupA}, ${groupB}, ${groupAvsB}`);
   let result = { A : null, B : null, AvsB : null };
   let errorRaised = false;
   let errorMessage = null;
@@ -339,8 +356,21 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
       break;
     case "vC":
       switch (genome) {
-        case "hg19":
-          if ( groupA.includes("Adult") || groupB.includes("Embryonic") || groupA.includes("Male_donors") || groupB.includes("Female_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
+        case "hg19": {
+          if (( groupA === "Male" ) && ( groupB === "Female" ) && ( model === '15' )) {
+            groupA = "Male_donors";
+            groupB = "Female_donors";
+          }
+          if (
+            (( groupA === "Adult" ) && ( groupB === "Embryonic" )) ||
+            (( groupA === "Male_donors" ) && ( groupB === "Female_donors" )) ||
+            (( groupA === "Cancer" ) && ( groupB === "Non-cancer" )) ||
+            (( groupA === "Immune" ) && ( groupB === "Non-immune" )) ||
+            (( groupA === "Neural" ) && ( groupB === "Non-neural" ))
+           ) {
+            groupAvsB = `${groupA}_versus_${groupB}`;
+          }
+          if ( groupA.includes("Adult") || groupA.includes("Cancer") || groupA.includes("Immune") || groupA.includes("Neural") || groupB.includes("Embryonic") || groupA.includes("Male_donors") || groupB.includes("Female_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
             result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
             result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
             result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
@@ -351,11 +381,13 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
             result.AvsB = `833sample.${sampleSet}.${genome}.${groupAvsB}.${model}.${complexity}.epilogos.multires.mv5`;
           }
           break;
-        case "hg38":
+        }
+        case "hg38": {
           result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
           result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
           result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
           break;
+        }
         default:
           errorRaised = true;
           errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`;
@@ -563,7 +595,7 @@ export const splitPairedGroupString = (group) => {
   let splitResult = group.split(/_vs_/);
   let groupA = splitResult[0];
   let groupB = splitResult[1];
-  if (typeof groupB === "undefined") {
+  if ((typeof groupA === "undefined") || (typeof groupB === "undefined")) {
     splitResult = group.split(/_versus_/);
     groupA = splitResult[0];
     groupB = splitResult[1];
@@ -625,3 +657,148 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   //console.log(`viewerUrl ${viewerUrl}`);
   return viewerUrl;
 }
+
+export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
+  const newHgViewParams = {...oldHgViewParams};
+  newHgViewParams.genome = newGenome;
+  const sampleSet = newHgViewParams.sampleSet;
+  const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][newGenome]);
+  if (newGenome === "mm10") {
+    newHgViewParams.group = (newHgViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
+    newHgViewParams.model = (newHgViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
+  }
+  else if (newGenome === "hg19") {
+    if (newHgViewParams.mode === "paired") {
+      if (newHgViewParams.complexity === "KLss") newHgViewParams.complexity = "KL";
+      if ((newHgViewParams.genome === "hg19") && (oldHgViewParams.genome === "hg38")) {
+        const oldGroupsVersusToVs = {};
+        Object.keys(Constants.groupsByGenome[sampleSet][newGenome]).forEach((g) => {
+          let k = g.replace("_vs_", "_versus_");
+          oldGroupsVersusToVs[k] = g;
+        });
+        if (oldGroupsVersusToVs[oldHgViewParams.group]) {
+          newHgViewParams.group = oldGroupsVersusToVs[oldHgViewParams.group];
+        }
+        else if (oldHgViewParams.group === "Male_donors_versus_Female_donors") {
+          newHgViewParams.group = "Male_vs_Female";
+        }
+        else if (oldHgViewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+          newHgViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+        }
+        else {
+          newHgViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg19;
+        }
+      }
+    }
+    else if (newHgViewParams.mode === "single") {
+      if ((newHgViewParams.genome === "hg19") && (oldHgViewParams.genome === "hg38")) {
+        if (newHgViewParams.group === "Male_donors") {
+          newHgViewParams.group = "Male";
+        }
+        else if (newHgViewParams.group === "Female_donors") {
+          newHgViewParams.group = "Female";
+        }
+      }
+      if (!oldGroups.includes(newHgViewParams.group)) {
+        newHgViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg19;
+      }
+    }
+  }
+  else if (newGenome === "hg38") {
+    if (newHgViewParams.mode === "paired") {
+      if (newHgViewParams.complexity === "KLss") newHgViewParams.complexity = "KL";
+      if ((newHgViewParams.genome === "hg38") && (oldHgViewParams.genome === "hg19")) {
+        const oldGroupsVsToVersus = {};
+        Object.keys(Constants.groupsByGenome[sampleSet][newGenome]).forEach((g) => {
+          let k = g.replace("_versus_", "_vs_");
+          oldGroupsVsToVersus[k] = g;
+        });
+        if (oldGroupsVsToVersus[oldHgViewParams.group]) {
+          newHgViewParams.group = oldGroupsVsToVersus[oldHgViewParams.group];
+        }
+        else if (oldHgViewParams.group === "Male_vs_Female") {
+          newHgViewParams.group = "Male_donors_versus_Female_donors";
+        }
+        else if (oldHgViewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+          newHgViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+        }
+        else if (oldHgViewParams.group === "Adult_versus_Embryonic") {
+          newHgViewParams.group = "Adult_versus_Embryonic";
+        }
+        else {
+          newHgViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg38;
+        }
+      }
+    }
+    else if (newHgViewParams.mode === "single") {
+      if ((newHgViewParams.genome === "hg38") && (oldHgViewParams.genome === "hg19")) {
+        if (newHgViewParams.group === "Male") {
+          newHgViewParams.group = "Male_donors";
+        }
+        else if (newHgViewParams.group === "Female") {
+          newHgViewParams.group = "Female_donors";
+        }
+      }
+      if (!oldGroups.includes(newHgViewParams.group)) {
+        newHgViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg38;
+      }
+    }
+  }
+
+  return newHgViewParams;
+}
+
+export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
+    let params = self.state.tempHgViewParams;
+    let datasetAltname = params.sampleSet;
+    let assembly = params.genome;
+    let stateModel = params.model;
+    let groupEncoded = encodeURIComponent(Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][params.genome][params.group]);
+    let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[params.complexity];
+    let chromosome = qChr;
+    let start = qStart;
+    let end = qEnd;
+    let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
+    let outputFormat = Constants.defaultApplicationRecommenderV1OutputFormat;
+    
+    let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}`;
+    
+    // console.log(`[recommenderV3SearchOnClick] recommenderV3URL ${recommenderV3URL}`);
+    
+    return axios.get(recommenderV3URL).then((res) => {
+      if (res.data) {
+        // console.log(`[recommenderV3SearchOnClick] res.data ${JSON.stringify(res.data)}`);
+        if (res.data.hits && res.data.hits.length == 1) {
+          return res.data;
+        }
+        else
+          throw new Error("No recommendations found");
+      }
+      else {
+        throw new Error("No recommendations found");
+      }
+    })
+    .catch((err) => {
+      err.response = {};
+      err.response.status = "404";
+      err.response.statusText = `No recommendations found (possible missing or corrupt index data for specified parameters - please contact ${Constants.applicationContactEmail} for assistance)`;
+      //console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
+      let msg = self.errorMessage(err, err.response.statusText, null);
+      self.setState({
+        overlayMessage: msg,
+      }, () => {
+        self.fadeInOverlay(() => {
+          self.setState({
+            selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+            recommenderV3SearchInProgress: false,
+            recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+            recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+            recommenderV3ExpandIsEnabled: false,
+            recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+            genomeSelectIsActive: true,
+            autocompleteInputDisabled: false,
+          })
+        });
+      });
+    })
+  }

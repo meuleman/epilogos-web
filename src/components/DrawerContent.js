@@ -145,7 +145,7 @@ class DrawerContent extends Component {
     let newViewParams = {...this.state.viewParams};
     newViewParams[event.target.name] = event.target.value;
     let targetName = (event.target && event.target.name) ? event.target.name : null
-    
+
     //
     // we have do some annoying custom things specific to the selected genome or mode
     //
@@ -154,18 +154,20 @@ class DrawerContent extends Component {
       switch (event.target.value) {
         case "vA":
         case "vB":
-          newViewParams.mode = "single";
-          newViewParams.group = "all";
+          // newViewParams.mode = "single";
+          // newViewParams.group = "all";
           newViewParams.genome = "hg19";
           newViewParams.model = "15";
-          newViewParams.complexity = "KL";  
+          newViewParams.complexity = "KL";
+          newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
           break;
         case "vC":
-          newViewParams.mode = "single";
-          newViewParams.group = "all";
+          // newViewParams.mode = "single";
+          // newViewParams.group = "all";
           newViewParams.genome = "hg19";
           newViewParams.model = "18";
-          newViewParams.complexity = "KL";  
+          newViewParams.complexity = "KL";
+          newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
           break;
         case "vD":
           newViewParams.mode = "single";
@@ -201,94 +203,135 @@ class DrawerContent extends Component {
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
         newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        if ((newViewParams.sampleSet === "vC") && (newViewParams.model === "15")) {
+          newViewParams.model = "18";
+        }
       }
       else if (event.target.value === "paired") {
         newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
         newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
-        newViewParams.complexity = ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) ? "KL" : newViewParams.complexity;
+        newViewParams.complexity = ( ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) || (newViewParams.complexity === "KLss") ) ? "KL" : newViewParams.complexity;
       }
     }
-    
-    if (targetName === "genome") {
-      const sampleSet = newViewParams.sampleSet;
-      const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]);
-      //console.log(`event.target.value ${JSON.stringify(event.target.value)}`);
-      if (event.target.value === "mm10") {
-        newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
-        newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
-      }
-      else if (event.target.value === "hg19") {
-        if (newViewParams.mode === "paired") {
-          if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
-            const oldGroupsVersusToVs = {};
-            Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
-              let k = g.replace("_vs_", "_versus_");
-              oldGroupsVersusToVs[k] = g;
-            });
-            if (oldGroupsVersusToVs[this.state.viewParams.group]) {
-              newViewParams.group = oldGroupsVersusToVs[this.state.viewParams.group];
-            }
-            else if (this.state.viewParams.group === "Male_donors_versus_Female_donors") {
-              newViewParams.group = "Male_vs_Female";
-            }
-            else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
-              newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
-            }
-            else {
-              newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg19;
-            }
+
+    // deprecated: please see -- Helpers.adjustHgViewParamsForNewGenome
+
+    // if (targetName === "genome") {
+    //   const sampleSet = newViewParams.sampleSet;
+    //   const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]);
+    //   //console.log(`event.target.value ${JSON.stringify(event.target.value)}`);
+    //   if (event.target.value === "mm10") {
+    //     newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
+    //     newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
+    //   }
+    //   else if (event.target.value === "hg19") {
+    //     if (newViewParams.mode === "paired") {
+    //       if (newViewParams.complexity === "KLss") newViewParams.complexity = "KL";
+    //       if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
+    //         const oldGroupsVersusToVs = {};
+    //         Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
+    //           let k = g.replace("_vs_", "_versus_");
+    //           oldGroupsVersusToVs[k] = g;
+    //         });
+    //         if (oldGroupsVersusToVs[this.state.viewParams.group]) {
+    //           newViewParams.group = oldGroupsVersusToVs[this.state.viewParams.group];
+    //         }
+    //         else if (this.state.viewParams.group === "Male_donors_versus_Female_donors") {
+    //           newViewParams.group = "Male_vs_Female";
+    //         }
+    //         else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+    //           newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+    //         }
+    //         else {
+    //           newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg19;
+    //         }
+    //       }
+    //     }
+    //     else if (newViewParams.mode === "single") {
+    //       if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
+    //         if (newViewParams.group === "Male_donors") {
+    //           newViewParams.group = "Male";
+    //         }
+    //         else if (newViewParams.group === "Female_donors") {
+    //           newViewParams.group = "Female";
+    //         }
+    //       }
+    //       if (!oldGroups.includes(newViewParams.group)) {
+    //         newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg19;
+    //       }
+    //     }
+    //   }
+    //   else if (event.target.value === "hg38") {
+    //     if (newViewParams.mode === "paired") {
+    //       if (newViewParams.complexity === "KLss") newViewParams.complexity = "KL";
+    //       if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
+    //         const oldGroupsVsToVersus = {};
+    //         Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
+    //           let k = g.replace("_versus_", "_vs_");
+    //           oldGroupsVsToVersus[k] = g;
+    //         });
+    //         if (oldGroupsVsToVersus[this.state.viewParams.group]) {
+    //           newViewParams.group = oldGroupsVsToVersus[this.state.viewParams.group];
+    //         }
+    //         else if (this.state.viewParams.group === "Male_vs_Female") {
+    //           newViewParams.group = "Male_donors_versus_Female_donors";
+    //         }
+    //         else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
+    //           newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
+    //         }
+    //         else if (this.state.viewParams.group === "Adult_versus_Embryonic") {
+    //           newViewParams.group = "Adult_versus_Embryonic";
+    //         }
+    //         else {
+    //           newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg38;
+    //         }
+    //       }
+    //     }
+    //     else if (newViewParams.mode === "single") {
+    //       if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
+    //         if (newViewParams.group === "Male") {
+    //           newViewParams.group = "Male_donors";
+    //         }
+    //         else if (newViewParams.group === "Female") {
+    //           newViewParams.group = "Female_donors";
+    //         }
+    //       }
+    //       if (!oldGroups.includes(newViewParams.group)) {
+    //         newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg38;
+    //       }
+    //     }
+    //   }
+    // }
+
+    if (targetName === "model") {
+      if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "15")) {
+        if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
+          const vCKeysToInspect15State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          if (vCKeysToInspect15State.indexOf(newViewParams.group) === -1) {
+            newViewParams.group = "Adult_versus_Embryonic";
           }
-        }
-        else if (newViewParams.mode === "single") {
-          if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
-            if (newViewParams.group === "Male_donors") {
-              newViewParams.group = "Male";
-            }
-            else if (newViewParams.group === "Female_donors") {
-              newViewParams.group = "Female";
-            }
-          }
-          if (!oldGroups.includes(newViewParams.group)) {
-            newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg19;
-          }
-        }
-      }
-      else if (event.target.value === "hg38") {
-        if (newViewParams.mode === "paired") {
-          if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
-            const oldGroupsVsToVersus = {};
-            Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
-              let k = g.replace("_versus_", "_vs_");
-              oldGroupsVsToVersus[k] = g;
-            });
-            if (oldGroupsVsToVersus[this.state.viewParams.group]) {
-              newViewParams.group = oldGroupsVsToVersus[this.state.viewParams.group];
-            }
-            else if (this.state.viewParams.group === "Male_vs_Female") {
-              newViewParams.group = "Male_donors_versus_Female_donors";
-            }
-            else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
-              newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
-            }
-            else if (this.state.viewParams.group === "Adult_versus_Embryonic") {
+          else {
+            const vCKeysToInspect15StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+            // console.log(`newViewParams.sampleSet ${newViewParams.sampleSet}`);
+            // console.log(`newViewParams.genome ${newViewParams.genome}`);
+            // console.log(`Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome] ${JSON.stringify(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome])}`);
+            if (vCKeysToInspect15StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
               newViewParams.group = "Adult_versus_Embryonic";
             }
-            else {
-              newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg38;
-            }
           }
         }
-        else if (newViewParams.mode === "single") {
-          if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
-            if (newViewParams.group === "Male") {
-              newViewParams.group = "Male_donors";
-            }
-            else if (newViewParams.group === "Female") {
-              newViewParams.group = "Female_donors";
-            }
+      }
+      if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "18")) {
+        if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
+          const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          if (vCKeysToInspect18State.indexOf(newViewParams.group) === -1) {
+            newViewParams.group = "all";
           }
-          if (!oldGroups.includes(newViewParams.group)) {
-            newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg38;
+          else {
+            const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
+            if (vCKeysToInspect18StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
+              newViewParams.group = "all";
+            }
           }
         }
       }
@@ -305,7 +348,7 @@ class DrawerContent extends Component {
     // back to generic business...
     //
     let newViewParamsAreEqual = this.compareViewParams(newViewParams, this.props.viewParams);
-    //if (!newViewParamsAreEqual) { console.log("new", newViewParams); }
+    // if (!newViewParamsAreEqual) { console.log("new", newViewParams); }
     let newTabs = {...this.state.tabs};
     newTabs.exemplars = newViewParamsAreEqual;
     this.setState({
@@ -392,6 +435,7 @@ class DrawerContent extends Component {
   
   modelSectionBody = () => {
     const activeGenome = this.state.viewParams.genome;
+    const activeMode = this.state.viewParams.mode;
     const activeModel = this.state.viewParams.model;
     const activeSampleSet = this.state.viewParams.sampleSet;
     let result = [];
@@ -400,12 +444,27 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
-    Object.keys(Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]).forEach(k => {
-      if (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].visible) {
+    let activeObj = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode];
+    if (!activeObj) {
+      console.log(`activeSampleSet ${activeSampleSet}`);
+      console.log(`activeGenome ${activeGenome}`);
+      console.log(`activeMode ${activeMode}`);
+      console.log(`activeSampleSet ${activeSampleSet}`);
+      return result;
+    }
+    if (this.props.isProductionSite) { 
+      const activeObjEntries = Object.entries(activeObj);
+      // eslint-disable-next-line no-unused-vars
+      const activeObjEntriesAvailableForProduction = activeObjEntries.filter(([k, v]) => (v.availableForProduction));
+      const activeObjEntriesAvailableForProductionObj = Object.fromEntries(activeObjEntriesAvailableForProduction);
+      activeObj = activeObjEntriesAvailableForProductionObj;
+    }
+    Object.keys(activeObj).forEach(k => {
+      if (activeObj[k].visible) {
         const isActive = (activeModel === k);
-        const isDisabled = !Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
-        const kLabel = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].titleText;
-        const kValue = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][k].value;
+        const isDisabled = !activeObj[k].enabled;
+        const kLabel = activeObj[k].titleText;
+        const kValue = activeObj[k].value;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -465,14 +524,18 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'complexity-bg-parent-btn-';
     const kButtonLabelPrefix = 'complexity-bg-btn-label-';
     let kButtonIdx = 0;
-    Object.keys(Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome]).forEach(k => {
-      if (Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].visible) {
-        const kLabel = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].titleText;
-        const kValue = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].value;
+    let activeObj = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome];
+    Object.keys(activeObj).forEach(k => {
+      if (activeObj[k].visible) {
+        const kLabel = activeObj[k].titleText;
+        const kValue = activeObj[k].value;
         const isActive = (activeComplexity === k);
-        let isDisabled = !Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome][k].enabled;
+        let isDisabled = !activeObj[k].enabled;
+        if ((activeSampleSet === "vA") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Roadmap
+        if ((activeSampleSet === "vD") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Gorkin
         if ((activeSampleSet === "vC") && (activeMode === "paired") && (activeComplexity === "KL") && (kValue === "KLs")) isDisabled = true;
         if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KL") && (activeGroup !== "all") && (kValue === "KLs")) isDisabled = true;
+        if (isDisabled) return;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -522,17 +585,19 @@ class DrawerContent extends Component {
   
   preferredSampleItems = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeModel = parseInt(this.state.viewParams.model);
     const activeMode = this.state.viewParams.mode;
     const activeGenome = this.state.viewParams.genome;
     const activeComplexity = this.state.viewParams.complexity;
     let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
-        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true }
+        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18]  }
       };
     }
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let preferredSamples = jp.query(samples, '$..[?(@.preferred==true)]');
+    preferredSamples = preferredSamples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
     let enabledPreferredSamples = jp.query(preferredSamples, '$..[?(@.enabled==true)]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledPreferredSampleItems = toObj(jp.query(enabledPreferredSamples, "$..value"), jp.query(enabledPreferredSamples, "$..text"));
@@ -573,16 +638,18 @@ class DrawerContent extends Component {
   
   sampleItems = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeModel = parseInt(this.state.viewParams.model);
     const activeMode = this.state.viewParams.mode;
     const activeGenome = this.state.viewParams.genome;
     const activeComplexity = this.state.viewParams.complexity;
     let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
-        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true }
+        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] }
       };
     }
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
+    samples = samples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
     let enabledSamples = jp.query(samples, '$..[?(@.enabled==true)]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledSampleItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..text"));
@@ -698,20 +765,20 @@ class DrawerContent extends Component {
           content.push(sampleSetSection);
           
           // genome
-          let genomeSectionBody = self.genomeSectionBody();
-          let genomeSection = (
-            <div key="viewer-genome-section" className="drawer-settings-section drawer-settings-section-middle">
-              <div key="viewer-genome-section-header" className="drawer-settings-section-header">
-                <div key="viewer-genome-section-header-text" className="drawer-settings-section-header-text">Genome</div>
-                <div key="viewer-genome-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("genome")}} style={{visibility:(self.state.hideshowWidgetIsVisible.mode)?"visible":"hidden"}}>{!self.state.hideshow.genome ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
-              </div>
-              <div key="viewer-genome-section-body" className="drawer-settings-section-body">
-                <Collapse isOpen={self.state.hideshow.genome}>
-                  {genomeSectionBody}
-                </Collapse>
-              </div>
-            </div>);
-          content.push(genomeSection);
+          // let genomeSectionBody = self.genomeSectionBody();
+          // let genomeSection = (
+          //   <div key="viewer-genome-section" className="drawer-settings-section drawer-settings-section-middle">
+          //     <div key="viewer-genome-section-header" className="drawer-settings-section-header">
+          //       <div key="viewer-genome-section-header-text" className="drawer-settings-section-header-text">Genome</div>
+          //       <div key="viewer-genome-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("genome")}} style={{visibility:(self.state.hideshowWidgetIsVisible.mode)?"visible":"hidden"}}>{!self.state.hideshow.genome ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
+          //     </div>
+          //     <div key="viewer-genome-section-body" className="drawer-settings-section-body">
+          //       <Collapse isOpen={self.state.hideshow.genome}>
+          //         {genomeSectionBody}
+          //       </Collapse>
+          //     </div>
+          //   </div>);
+          // content.push(genomeSection);
           
           // state model
           let modelSectionBody = self.modelSectionBody();
@@ -1231,6 +1298,7 @@ class DrawerContent extends Component {
     const customExemplarRowEvents = {
       // eslint-disable-next-line no-unused-vars
       onClick: (evt, row, rowIndex) => {
+        // console.log(`row ${JSON.stringify(row)}`);
         if (this.props.viewParams.mode === "query") {
           let applyPadding = true;
           let nonQueryModeSelected = true;

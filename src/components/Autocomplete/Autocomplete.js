@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import PropTypes from 'prop-types';
 import { DebounceInput } from "react-debounce-input";
 import axios from "axios";
+import * as Helpers from "../../Helpers.js";
 
 class Autocomplete extends Component {
 
@@ -10,7 +11,7 @@ class Autocomplete extends Component {
 
     this.state = {
       // The active selection's index
-      activeSuggestion: 0,
+      activeSuggestion: -1,
       // The suggestions that match the user's input
       filteredSuggestions: [],
       // Whether or not the suggestion list is shown
@@ -61,6 +62,7 @@ class Autocomplete extends Component {
       userInput: '',
     }, () => {
       this.inputRef.value = '';
+      this.props.onChangeInput(this.state.userInput);
     });
   }
 
@@ -126,12 +128,14 @@ class Autocomplete extends Component {
   // eslint-disable-next-line no-unused-vars
   onBlur = (e) => {
     // console.log(`Autocomplete - onBlur() - start - ${this.inputRef.value} - ${this.state.userInput}`);
-    this.setState({
-      userInput: '',
-      isInFocus: false
-    }, () => {
-      this.inputRef.value = '';
-    });
+    setTimeout(() => {
+      this.setState({
+        userInput: '',
+        isInFocus: false
+      }, () => {
+        this.inputRef.value = '';
+      });
+    }, 500);
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -154,7 +158,12 @@ class Autocomplete extends Component {
       this.setState({
         showSuggestions: false,
         userInput: e.target.value
-      })
+      }, () => {
+        const range = Helpers.getRangeFromString(this.state.userInput, false, false, this.props.annotationAssembly);
+        if (range) {
+          this.props.onChangeInput(this.state.userInput);
+        }
+      });
       return;
     }
     const queryAnnotationHost = () => {
@@ -176,23 +185,29 @@ class Autocomplete extends Component {
             // console.log("hitObjects", hitObjects);
             const filteredSuggestions = hitObjects;
             this.setState({
-              activeSuggestion: 0,
+              activeSuggestion: -1,
               filteredSuggestions,
               showSuggestions: true
             });
           }
         })
         // eslint-disable-next-line no-unused-vars
-        .catch((err) => {});
+        .catch((err) => {
+          // this could be the name of a valid chromosome
+          if (this.isValidChromosome(this.state.userInput.trim())) {
+            this.props.onChangeInput(this.state.userInput);
+          }
+        });
     }
 
     if (!e.target.value.startsWith('/')) {
       this.setState({ 
         userInput: e.target.value 
       }, () => { 
-        if (this.state.userInput.length >= this.state.queryMinimumLength)
+        if (this.state.userInput.length >= this.state.queryMinimumLength) {
           queryAnnotationHost();
-        // this.props.onChangeInput(this.state.userInput);
+        }
+        this.props.onChangeInput(this.state.userInput);
       });
     }
     else {
@@ -205,12 +220,13 @@ class Autocomplete extends Component {
     }
   };
 
-  onClick = e => {
-    document.activeElement.blur();
+  onClick = (e) => {
+    // document.activeElement.blur();
     let selectedSuggestionName = e.currentTarget.getElementsByClassName("suggestion-name")[0].innerText;
     let selectedSuggestionLocation = e.currentTarget.getElementsByClassName("suggestion-location")[0].innerText;
+    // console.log(`selectedSuggestionName ${selectedSuggestionName} selectedSuggestionLocation ${selectedSuggestionLocation}`);
     this.setState({
-      activeSuggestion: 0,
+      activeSuggestion: -1,
       filteredSuggestions: [],
       showSuggestions: false,
       userInput: selectedSuggestionName,
@@ -256,15 +272,18 @@ class Autocomplete extends Component {
         break;
       }
       case RETURN_KEY: {
+        if (this.state.activeSuggestion === -1 && !this.state.userInput.startsWith("chr")) {
+          return;
+        }
         setTimeout(() => {
-          console.log(`this.state.userInput ${this.state.userInput}`);
+          // console.log(`this.state.userInput ${this.state.userInput}`);
           let colonDashTest = this.state.userInput.startsWith("chr") && (this.state.userInput.indexOf(":") !== -1);
           let whitespaceOnlyTest = this.state.userInput.startsWith("chr") && (/^[\S]+(\s+[\S]+)+$/.test(this.state.userInput));
           let chromosomeOnlyTest = (/^chr([a-zA-Z0-9]+)$/.test(this.state.userInput)) && this.isValidChromosome(this.state.userInput);
           // console.log(`colonDashTest ${colonDashTest}`);
           // console.log(`whitespaceOnlyTest ${whitespaceOnlyTest}`);
           // console.log(`chromosomeOnlyTest ${chromosomeOnlyTest}`);
-          if (colonDashTest || whitespaceOnlyTest || chromosomeOnlyTest) {
+          if ((colonDashTest || whitespaceOnlyTest || chromosomeOnlyTest) && (this.state.activeSuggestion === -1)) {
             let newUserInput = "";
             let newLocation = this.state.userInput;
             this.setState({
@@ -332,6 +351,16 @@ class Autocomplete extends Component {
       }
     }
   };
+
+  // eslint-disable-next-line no-unused-vars
+  onMouseEnter = (e) => {
+    // console.log(`onMouseEnter`);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onMouseLeave = (e) => {
+    // console.log(`onMouseLeave`);
+  }
   
   scrollToActiveSuggestion = () => {
     let element = document.getElementById("suggestion-" + this.state.activeSuggestion);
@@ -346,7 +375,6 @@ class Autocomplete extends Component {
 
   render() {
     const {
-      onClick,
       onKeyDown,
       state: {
         activeSuggestion,
@@ -370,7 +398,7 @@ class Autocomplete extends Component {
               }
 
               return (!this.props.isMobile) ? (
-                <li className={className} onClick={onClick} key={index} id={"suggestion-" + index}>
+                <li className={className} onMouseEnter={(e) => this.onMouseEnter(e)} onMouseLeave={(e) => this.onMouseLeave(e)} onClick={(e) => this.onClick(e) } key={index} id={"suggestion-" + index}>
                   <div>
                     <span className="suggestion-name">{suggestion.name}</span><br />
                     <span className="suggestion-description">{suggestion.description}</span><br />
@@ -378,7 +406,7 @@ class Autocomplete extends Component {
                   </div>
                 </li>
               ) : (
-                <li className={className} onClick={onClick} key={index} id={"suggestion-" + index}>
+                <li className={className} onClick={(e) => this.onClick(e)} key={index} id={"suggestion-" + index}>
                   <div>
                     <span className="suggestion-name">{suggestion.name}</span><br />
                     <span className="suggestion-location">{suggestion.location}</span> <span className="suggestion-strand">({suggestion.strand})</span>

@@ -11,7 +11,7 @@ import {
 
 // higlass-multivec
 // cf. https://www.npmjs.com/package/higlass-multivec
-import "higlass-multivec/dist/higlass-multivec.min.js";
+import "higlass-multivec/dist/higlass-multivec.js";
 
 // higlass-transcripts
 // cf. https://github.com/higlass/higlass-transcripts
@@ -21,8 +21,8 @@ import "higlass-transcripts/dist/higlass-transcripts.js";
 import * as Constants from "../Constants.js";
 import * as Helpers from "../Helpers.js";
 
-import { FaChevronCircleDown, FaChevronCircleUp, FaExternalLinkAlt, FaGlasses, FaClipboard } from 'react-icons/fa';
-import Spinner from "react-svg-spinner";
+import { FaChevronCircleDown, FaChevronCircleUp, FaExternalLinkAlt, FaClipboard, FaLockOpen, FaLock } from 'react-icons/fa';
+// import Spinner from "react-svg-spinner";
 
 // Tooltip (for state and other mouseover help)
 import ReactTooltip from 'react-tooltip';
@@ -49,7 +49,7 @@ class QueryTargetContent extends Component {
     this.state = {
       queryTargetContentKey: 0,
       topPanelTop: 0,
-      bottomPanelTop: parseInt((this.props.contentHeight - this.props.navbarHeight - 12) / 2) - 1,
+      bottomPanelTop: parseInt((this.props.contentHeight - this.props.navbarHeight - 18) / 2) + 8,
       width: this.props.contentWidth,
       height: this.props.contentHeight - this.props.navbarHeight,
       panelHeight : parseInt((this.props.contentHeight - this.props.navbarHeight - 24) / 2),
@@ -92,6 +92,10 @@ class QueryTargetContent extends Component {
       hgQueryEnabled: true,
       hgTargetEnabled: true,
       hitsPanelEnabled: true,
+      lockPanelEnabled: true,
+      panelViewsLocked: true,
+      unlockPanelViewsHover: false,
+      lockPanelViewsHover: false,
     };
 
     this.state.hitsPanelWidth = parseInt(this.state.drawerWidth) - 68 + 26;
@@ -105,7 +109,7 @@ class QueryTargetContent extends Component {
       const newWidth = parseInt(document.documentElement.clientWidth);
       const newPanelHeight = parseInt((newHeight - this.props.navbarHeight - 24) / 2);
       const newPanelWidth = newWidth - 38 - this.props.drawerWidth;
-      const newQueryPanelHeight = newPanelHeight - 10;
+      const newQueryPanelHeight = newPanelHeight - 20;
       const newQueryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
       const newQueryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
       const newQueryEpilogosTrackHeight = newQueryPanelHeight - newQueryChromosomeTrackHeight - newQueryGeneAnnotationTrackHeight - 10;
@@ -132,7 +136,7 @@ class QueryTargetContent extends Component {
       return this.queryTargetHgView.api;
     }
 
-    this.updateCurrentReccomendationIdx = (direction) => {
+    this.updateCurrentRecommendationIdx = (direction) => {
       let newHitIdx = this.props.hitsIdxBySort.indexOf(this.state.selectedHitIdx); // this.state.selectedHitIdx;
       switch (direction) {
         case "previous":
@@ -146,6 +150,7 @@ class QueryTargetContent extends Component {
           break;
       }
       newHitIdx = this.props.hitsIdxBySort[newHitIdx];
+      // console.log(`updateCurrentRecommendationIdx ${direction} : ${this.state.selectedHitIdx} -> ${newHitIdx}`);
       this.setState({
         selectedHitIdx: newHitIdx,
       }, () => {
@@ -330,7 +335,7 @@ class QueryTargetContent extends Component {
       const queryPanelWidth = self.state.panelWidth;
       const queryPanelHeight = self.state.panelHeight - 10;
       const querySpacerTrackWidth = queryPanelWidth;
-      const querySpacerTrackHeight = 10;
+      const querySpacerTrackHeight = 20;
       const queryChromosomeTrackWidth = queryPanelWidth;
       const queryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
       const queryGeneAnnotationTrackWidth = queryPanelWidth;
@@ -446,6 +451,30 @@ class QueryTargetContent extends Component {
           backgroundColor: 'white'
         },
       };
+      // const queryGeneAnnotationTrack = {
+      //   name: 'gene-annotations',
+      //   server: 'https://explore.altius.org/api/v1',
+      //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
+      //   uid: uuid4(),
+      //   type: 'horizontal-transcripts',
+      //   width: queryGeneAnnotationTrackWidth,
+      //   height: queryGeneAnnotationTrackHeight,
+      //   position: 'top',
+      //   options: {
+      //     name: 'gene-annotations',
+      //     blockStyle: 'directional',
+      //     highlightTranscriptType: 'none',
+      //     showToggleTranscriptsButton: false,
+      //     trackMargin: {top:10, bottom:10, left:0, right:0},
+      //     labelFontSize: 11,
+      //     labelFontWeight: 5,
+      //     transcriptHeight: 16,
+      //     transcriptSpacing: 5,
+      //     maxRows: 3,
+      //     minRows: 3,
+      //     utrColor: '#afafaf',
+      //   },
+      // };
       const querySpacerTrack = {
         name: 'spacer',
         tilesetUid: '',
@@ -621,6 +650,30 @@ class QueryTargetContent extends Component {
           backgroundColor: 'white'
         },
       };
+      // const targetGeneAnnotationTrack = {
+      //   name: 'gene-annotations',
+      //   server: 'https://explore.altius.org/api/v1',
+      //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
+      //   uid: uuid4(),
+      //   type: 'horizontal-transcripts',
+      //   width: queryGeneAnnotationTrackWidth,
+      //   height: queryGeneAnnotationTrackHeight,
+      //   position: 'top',
+      //   options: {
+      //     name: 'gene-annotations',
+      //     blockStyle: 'directional',
+      //     highlightTranscriptType: 'none',
+      //     showToggleTranscriptsButton: false,
+      //     trackMargin: {top:10, bottom:10, left:0, right:0},
+      //     labelFontSize: 11,
+      //     labelFontWeight: 5,
+      //     transcriptHeight: 16,
+      //     transcriptSpacing: 5,
+      //     maxRows: 3,
+      //     minRows: 3,
+      //     utrColor: '#afafaf',
+      //   },
+      // };
       targetView.tracks.top.push(targetSpacerTrack);
       targetView.tracks.top.push(targetEpilogosTrack);
       targetView.tracks.top.push(targetChromosomeTrack);
@@ -699,8 +752,10 @@ class QueryTargetContent extends Component {
         if (!this.state.viewAdjusted) {
           this.setState({ 
             viewAdjusted: true,
-            selectedHitIdx: 0,
+            selectedHitIdx: this.props.currentSelectedHitIdx,
             hitsTableKey: this.state.hitsTableKey + 1,
+          }, () => {
+            // console.log(`componentDidMount - ${this.state.selectedHitIdx}`);
           });
         }
         const [newAbsLeft, newAbsRight] = this.updateRegionLabel(event, 'query').map(d => Math.round(parseInt(d)/Constants.defaultApplicationBinSize)*Constants.defaultApplicationBinSize);
@@ -733,7 +788,7 @@ class QueryTargetContent extends Component {
   }
 
   toggleEnabled = (control, flag) => {
-    console.log(`toggleEnabled ${control} ${flag}`);
+    // console.log(`toggleEnabled ${control} ${flag}`);
     this.setState({
       [control]: flag
     });
@@ -741,13 +796,25 @@ class QueryTargetContent extends Component {
 
   handleClick = (control) => {
     switch (control) {
+      case 'unlockPanelViews': {
+        this.setState({
+          panelViewsLocked: false,
+        });
+        break;
+      }
+      case 'lockPanelViews': {
+        this.setState({
+          panelViewsLocked: true,
+        });
+        break;
+      }
       case 'expandQuery': {
-        console.log(`expandQuery`);
+        // console.log(`expandQuery`);
         this.props.expandParentViewerToRegion(this.state.queryRegion);
         break;
       }
       case 'expandTarget': {
-        console.log(`expandTarget`);
+        // console.log(`expandTarget`);
         this.props.expandParentViewerToRegion(this.state.targetRegion);
         break;
       }
@@ -802,7 +869,7 @@ class QueryTargetContent extends Component {
   }
 
   searchRegion = (position) => {
-    console.log(`searchRegion ${JSON.stringify(position)}`);
+    // console.log(`searchRegion ${JSON.stringify(position)}`);
     // searchRegion {"left":{"chr":"chr5","start":179323000,"stop":179348000},"right":{"chr":"chr5","start":179323000,"stop":179348000}}
 
     const queryChr = position.left.chr;
@@ -841,7 +908,7 @@ class QueryTargetContent extends Component {
       
       const recommenderURL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}`;
       
-      console.log(`[searchPromise] recommenderURL ${recommenderURL}`);
+      // console.log(`[searchPromise] recommenderURL ${recommenderURL}`);
 
       return axios.get(recommenderURL).then((res) => {
         if (res.data) {
@@ -869,7 +936,7 @@ class QueryTargetContent extends Component {
       const search = searchRegionForHitsPromise(queryChr, queryStart, queryEnd, self);
       search.then((res) => {
         if (!res.query) {
-          console.log(`res ${JSON.stringify(res)}`);
+          // console.log(`res ${JSON.stringify(res)}`);
         }
         const qriData = {
           chromosome: res.query.chromosome,
@@ -880,26 +947,33 @@ class QueryTargetContent extends Component {
           regionLabel: `${res.query.chromosome}:${res.query.start}-${res.query.end}`,
         };
         
+        // console.log(`qriData ${JSON.stringify(qriData)}`);
+        // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
+
+        const queryRegion = {
+          'left' : {
+            'chr' : qriData.chromosome,
+            'start' : qriData.start,
+            'stop' : qriData.stop,
+          },
+          'right' : {
+            'chr' : qriData.chromosome,
+            'start' : qriData.start,
+            'stop' : qriData.stop,
+          }
+        }; // position;
+
         // update query-region-indicator data
         self.props.updateParentViewerState("queryRegionIndicatorData", qriData);
-        self.props.updateParentViewerState("queryTargetQueryRegion", position);
+        //self.props.updateParentViewerState("queryTargetQueryRegion", position);
+        self.props.updateParentViewerState("queryTargetQueryRegion", queryRegion);
 
         // update recommendation hits
         // set current region
         // redraw hits table
         self.props.updateParentViewerRois(res.hits[0], () => {
-          const queryRegion = {
-            'left' : {
-              'chr' : qriData.chromosome,
-              'start' : qriData.start,
-              'stop' : qriData.stop,
-            },
-            'right' : {
-              'chr' : qriData.chromosome,
-              'start' : qriData.start,
-              'stop' : qriData.stop,
-            }
-          }; // position;
+          console.log(`queryRegion ${JSON.stringify(queryRegion)}`);
+          self.props.updateParentViewerState("queryRegionIndicatorData", qriData);
           const firstHit = self.props.hits[0];
           const targetRegion = {
             'left' : {
@@ -917,28 +991,39 @@ class QueryTargetContent extends Component {
           self.updateQueryRegionLabel([queryRegion.left.chr, queryRegion.left.start], [queryRegion.right.chr, queryRegion.right.stop]);
           const queryAbsLeft = chromInfo.chrToAbs([qriData.chromosome, qriData.start]);
           const queryAbsRight = chromInfo.chrToAbs([qriData.chromosome, qriData.stop]);
-          console.log(`qriData ${JSON.stringify(qriData)}`);
-          console.log(`position ${JSON.stringify(position)}`);
-          console.log(`queryAbsLeft ${JSON.stringify(queryAbsLeft)}`);
-          console.log(`queryAbsRight ${JSON.stringify(queryAbsRight)}`);
+          // console.log(`========`);
+          // console.log(`qriData ${JSON.stringify(qriData)}`);
+          // console.log(`position ${JSON.stringify(position)}`);
+          // console.log(`queryAbsLeft ${JSON.stringify(queryAbsLeft)}`);
+          // console.log(`queryAbsRight ${JSON.stringify(queryAbsRight)}`);
+          // console.log(`========`);
           self.setState({
+            selectedHitIdx: 1,
             queryRegionIndicatorData: qriData,
-            queryTargetQueryRegion: position,
+            queryTargetQueryRegion: queryRegion,
             queryRegion: queryRegion,
             originalAbsLeft: queryAbsLeft,
             originalAbsRight: queryAbsRight,
           }, () => {
             self.setState({
-              selectedHitIdx: 1,
               hitsTableKey: self.state.hitsTableKey + 1,
               targetRegion: targetRegion,
               targetRegionLabel: targetRegionLabel,
               viewAdjusted: false,
             }, () => {
+              // console.log(`updateParentViewerRois - ${self.state.selectedHitIdx}`);
+              // console.log(`queryRegion ${JSON.stringify(self.state.queryRegion)}`);
               // redraw higlass view with updated query and target regions
-              self.jumpToTargetRegion(targetRegionLabel);
-              self.updateQueryRegionLabel([queryRegion.left.chr, queryRegion.left.start], [queryRegion.right.chr, queryRegion.right.stop]);
-              self.updateTargetRegionLabel([targetRegion.left.chr, targetRegion.left.start], [targetRegion.right.chr, targetRegion.right.stop]);
+              // self.jumpToQueryRegion([
+              //   queryRegion.left.chr, 
+              //   queryRegion.right.chr,
+              //   queryRegion.left.start,
+              //   queryRegion.left.stop,
+              //   queryRegion.right.start,
+              //   queryRegion.right.stop]);
+              // self.jumpToTargetRegion(targetRegionLabel);
+              // self.updateQueryRegionLabel([queryRegion.left.chr, queryRegion.left.start], [queryRegion.right.chr, queryRegion.right.stop]);
+              // self.updateTargetRegionLabel([targetRegion.left.chr, targetRegion.left.start], [targetRegion.right.chr, targetRegion.right.stop]);
               self.enableUI();
             });
           });
@@ -960,15 +1045,35 @@ class QueryTargetContent extends Component {
     // re-enable disabled controls
     this.setControlsEnabledState(true, () => {
       this.props.updateParentViewerHamburgerMenuState(true);
-      this.props.updateParentViewerAutocompleteState(true);
+      // this.props.updateParentViewerAutocompleteState(true);
       this.props.updateParentViewerDownloadState(true);
       this.setState({
+        key: this.state.key + 1,
         hgQueryEnabled: true,
         hgTargetEnabled: true,
         hitsPanelEnabled: true,
         searchQueryInProgress: false,
         searchTargetInProgress: false,
         hitsTableKey: this.state.hitsTableKey + 1,
+      }, () => {
+        console.log(`queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
+        this.jumpToQueryRegion([
+          this.state.queryRegion.left.chr, 
+          this.state.queryRegion.right.chr,
+          this.state.queryRegion.left.start,
+          this.state.queryRegion.left.stop,
+          this.state.queryRegion.right.start,
+          this.state.queryRegion.right.stop]);
+        setTimeout(() => {
+          this.jumpToTargetRegionByIdx(0);
+        }, 100)
+        // setTimeout(() => {
+        //   this.updateTargetRegionLabel(
+        //     [this.state.targetRegion.left.chr, 
+        //     this.state.targetRegion.left.start], 
+        //     [this.state.targetRegion.right.chr, 
+        //     this.state.targetRegion.right.stop]);
+        // }, 500);
       });
     });
   }
@@ -1013,6 +1118,14 @@ class QueryTargetContent extends Component {
   titleForControl = (control) => {
     let title = "";
     switch (control) {
+      case 'unlockPanelViews': {
+        title = 'Unlock query and search views';
+        break;
+      }
+      case 'lockPanelViews': {
+        title = 'Lock query and search views';
+        break;
+      }
       case 'expandQuery': {
         title = 'Expand view on query region';
         break;
@@ -1022,11 +1135,11 @@ class QueryTargetContent extends Component {
         break;
       }
       case 'searchQuery': {
-        title = 'Search for recommendations';
+        title = 'Show other interesting epilogos like this';
         break;
       }
       case 'searchTarget': {
-        title = 'Search for recommendations';
+        title = 'Show other interesting epilogos like this';
         break;
       }
       case 'copyQuery': {
@@ -1279,9 +1392,11 @@ class QueryTargetContent extends Component {
 
   jumpToQueryRegion = (position) => {
     const [chrLeft, chrRight, startLeft, stopLeft, startRight, stopRight] = position;
+    // console.log(`chrLeft, chrRight, startLeft, stopLeft, startRight, stopRight`, chrLeft, chrRight, startLeft, stopLeft, startRight, stopRight);
     const genome = this.state.hgViewParams.genome;
     const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, genome);
     if (chromInfoCacheExists) {
+      // console.log(`this.chromInfoCache[genome] ${JSON.stringify(this.chromInfoCache[genome])}`);
       updateQueryTargetHgViewconf(this.chromInfoCache[genome], this);
     }
     else {
@@ -1297,6 +1412,7 @@ class QueryTargetContent extends Component {
     }
 
     function updateQueryTargetHgViewconf(chromInfo, self) {
+      // console.log(`queryTargetHgView ${JSON.stringify(Object.keys(self.queryTargetHgView))}`);
       const animationTime = 10;
       self.queryTargetHgView.zoomTo(
         self.state.queryTargetHgViewconf.views[0].uid,
@@ -1310,12 +1426,16 @@ class QueryTargetContent extends Component {
   }
 
   updateForNewRecommendations = () => {
-    console.log(`updateForNewRecommendations()`);
+    // console.log(`updateForNewRecommendations()`);
     this.setState({
-      hitsTableKey: this.state.hitsTableKey + 1,
+      selectedHitIdx: 1
+    }, () => {
+      this.setState({
+        hitsTableKey: this.state.hitsTableKey + 1,
+      });
+      const position = this.props.hits[0].position;
+      this.jumpToTargetRegion(position, 0);
     });
-    const position = this.props.hits[0].position;
-    this.jumpToTargetRegion(position, 0);
   }
 
   jumpToTargetRegion = (position) => {
@@ -1339,9 +1459,13 @@ class QueryTargetContent extends Component {
     function updateQueryTargetHgViewconf(chromInfo, self) {
       // recover query range
       // console.log(`self.props.queryRegion ${JSON.stringify(self.props.queryRegion)}`);
-      const queryChromosome = self.state.queryRegion.left.chr;
-      const queryStart = parseInt(self.state.queryRegion.left.start);
-      const queryEnd = parseInt(self.state.queryRegion.right.stop);
+      // console.log(`self.state.queryRegion ${JSON.stringify(self.state.queryRegion)}`);
+      // const queryChromosome = self.state.queryRegion.left.chr;
+      // const queryStart = parseInt(self.state.queryRegion.left.start);
+      // const queryEnd = parseInt(self.state.queryRegion.right.stop);
+      const queryChromosome = self.props.queryRegion.left.chr;
+      const queryStart = parseInt(self.props.queryRegion.left.start);
+      const queryEnd = parseInt(self.props.queryRegion.right.stop);
 
       // update target position
       const positionMatches = position.replace(/,/g, '').split(/[:-\s]+/g).filter( i => i );
@@ -1389,11 +1513,11 @@ class QueryTargetContent extends Component {
             if (!self.queryTargetHgView) return;
             self.queryTargetHgView.api.on('location', (event) => { 
               const [newAbsLeft, newAbsRight] = self.updateRegionLabel(event, 'query').map(d => Math.round(parseInt(d)/Constants.defaultApplicationBinSize)*Constants.defaultApplicationBinSize);
-              console.log(`--- (A)`);
-              console.log(`newAbsLeft ${newAbsLeft} self.state.originalAbsLeft ${self.state.originalAbsLeft}`);
-              console.log(`newAbsRight ${newAbsRight} self.state.originalAbsRight ${self.state.originalAbsRight}`);
-              console.log(`queryScale.diff ${self.state.queryScale.diff}`);
-              console.log(`Constants.defaultApplicationRecommenderButtonHideShowThreshold ${Constants.defaultApplicationRecommenderButtonHideShowThreshold}`);
+              // console.log(`--- (A)`);
+              // console.log(`newAbsLeft ${newAbsLeft} self.state.originalAbsLeft ${self.state.originalAbsLeft}`);
+              // console.log(`newAbsRight ${newAbsRight} self.state.originalAbsRight ${self.state.originalAbsRight}`);
+              // console.log(`queryScale.diff ${self.state.queryScale.diff}`);
+              // console.log(`Constants.defaultApplicationRecommenderButtonHideShowThreshold ${Constants.defaultApplicationRecommenderButtonHideShowThreshold}`);
               if ((newAbsLeft === self.state.originalAbsLeft) || (newAbsRight === self.state.originalAbsRight)) {
                 if (self.state.viewAdjusted) self.setState({ viewAdjusted: false });
                 self.toggleEnabled('searchQueryEnabled', false);
@@ -1441,7 +1565,7 @@ class QueryTargetContent extends Component {
       ...panelStyle,
       top: this.state.topPanelTop,
       left: this.state.drawerWidth,
-      height: this.state.panelHeight - 10,
+      height: this.state.panelHeight - 20,
       marginTop: 0,
       marginBottom: 10,
       marginLeft: 0,
@@ -1529,7 +1653,13 @@ class QueryTargetContent extends Component {
 
     const genericPanelLabelHeaderButtonIconSize = '0.8em';
 
+    const genericPanelLockButtonIconSize = '0.7rem';
+
     const genericPanelLabelHeaderButtonIconStyle = {
+      fontWeight: '300',
+    };
+
+    const genericPanelLockButtonIconStyle = {
       fontWeight: '300',
     };
 
@@ -1548,6 +1678,11 @@ class QueryTargetContent extends Component {
       paddingBottom: '3px',
       borderRadius: '3px',
       cursor: 'pointer',
+    }
+
+    const genericPanelLockButtonBaseStyle = {
+      ...genericPanelLabelHeaderButtonBaseStyle,
+      marginLeft: '4px',
     }
 
     const genericPanelLabelHeaderButtonDisabledStyle = {
@@ -1693,17 +1828,30 @@ class QueryTargetContent extends Component {
       pointerEvents: 'none',
     };
 
-    const buttonSpinnerSize = '11px';
+    // const buttonSpinnerSize = '11px';
+    // const buttonSpinnerParentStyle = {
+    //   position: 'relative', 
+    // };
+    // const buttonSpinnerStyle = {
+    //   fontSize: '1.1rem'
+    // };
+    // const buttonSpinnerIconColor = "rgba(255,255,255,1)";
 
-    const buttonSpinnerParentStyle = {
-      position: 'relative', 
+    const genericLockPanelEnabledStyle = {
+      position: 'relative',
+      zIndex: 2,
+      color: "white",
+      backgroundColor: "black",
+      top: this.state.topPanelTop + this.state.panelHeight - 18,
+      left: this.state.drawerWidth + this.state.panelWidth / 2 - 14,
+      width: 27,
+      height: 12,
+      fontSize: '0.8rem',
     };
 
-    const buttonSpinnerStyle = {
-      fontSize: '1.1rem'
+    const genericLockPanelDisabledStyle = {
+      display: 'none',
     };
-
-    const buttonSpinnerIconColor = "rgba(255,255,255,1)";
 
     return (
       <Fragment>
@@ -1727,14 +1875,14 @@ class QueryTargetContent extends Component {
                   {this.state.queryHeaderLabel}
                 </div>
                 <div style={genericPanelLabelHeaderControlBlockStyle}>
-                  <div
+                  { /* <div
                     title={this.titleForControl('searchQuery')} 
                     style={(!this.state.searchQueryEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} :(!this.state.searchQueryHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}
                     onMouseEnter={()=>{this.toggleHover('searchQueryHover')}}
                     onMouseLeave={()=>{this.toggleHover('searchQueryHover')}}
                     onClick={()=>{this.handleClick('searchQuery')}}>
-                    {(this.state.searchQueryInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGlasses size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
-                  </div>
+                    {(this.state.searchQueryInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
+                  </div> */ }
                   <CopyToClipboard text={this.readableRegion(this.state.queryRegion)}>
                     <div
                       title={this.titleForControl('copyQuery')} 
@@ -1767,14 +1915,14 @@ class QueryTargetContent extends Component {
                   {this.state.targetHeaderLabel}
                 </div>
                 <div style={genericPanelLabelHeaderControlBlockStyle}>
-                  <div
+                  { /* <div
                     title={this.titleForControl('searchTarget')} 
                     style={(!this.state.searchTargetEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} :(!this.state.searchTargetHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}
                     onMouseEnter={()=>{this.toggleHover('searchTargetHover')}}
                     onMouseLeave={()=>{this.toggleHover('searchTargetHover')}}
                     onClick={()=>{this.handleClick('searchTarget')}}>
-                    {(this.state.searchTargetInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGlasses size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
-                  </div>
+                    {(this.state.searchTargetInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
+                  </div> */ }
                   <CopyToClipboard text={this.readableRegion(this.state.targetRegion)}>
                     <div
                       title={this.titleForControl('copyTarget')} 
@@ -1810,6 +1958,30 @@ class QueryTargetContent extends Component {
               {this.hitsTable()}
             </div>
           </div>
+
+          <div className="target-lock-content" style={(this.state.lockPanelEnabled) ? genericLockPanelEnabledStyle : genericLockPanelDisabledStyle}>
+            {
+              (this.state.panelViewsLocked) 
+              ?
+              <div
+                title={this.titleForControl('unlockPanelViews')}  
+                style={(!this.state.expandTargetEnabled) ? {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.unlockPanelViewsHover) ? {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}} 
+                onMouseEnter={()=>{this.toggleHover('unlockPanelViewsHover')}}
+                onMouseLeave={()=>{this.toggleHover('unlockPanelViewsHover')}}
+                onClick={()=>{this.handleClick('unlockPanelViews')}}>
+                <FaLock size={genericPanelLockButtonIconSize} style={genericPanelLockButtonIconStyle} />
+              </div>
+              :
+              <div
+                title={this.titleForControl('lockPanelViews')}  
+                style={(!this.state.expandTargetEnabled) ? {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.lockPanelViewsHover) ? {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLockButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}} 
+                onMouseEnter={()=>{this.toggleHover('lockPanelViewsHover')}}
+                onMouseLeave={()=>{this.toggleHover('lockPanelViewsHover')}}
+                onClick={()=>{this.handleClick('lockPanelViews')}}>
+                <FaLockOpen size={genericPanelLockButtonIconSize} style={genericPanelLockButtonIconStyle} />
+              </div>
+            }
+          </div>
         </div>
       </Fragment>
     );
@@ -1838,7 +2010,7 @@ QueryTargetContent.propTypes = {
   hgViewParams: PropTypes.object,
   currentSelectedHitIdx: PropTypes.number,
   hitsIdxBySort: PropTypes.array,
-  updateParentViewerURL: PropTypes.string,
+  updateParentViewerURL: PropTypes.func,
   expandParentViewerToRegion: PropTypes.func,
   updateParentViewerHamburgerMenuState: PropTypes.func,
   updateParentViewerAutocompleteState: PropTypes.func,

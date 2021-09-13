@@ -102,6 +102,11 @@ export const genomes = {
   "mm10" : "Mouse"
 };
 
+export const assembliesForGenomeCategory = {
+  "Human" : ["hg19", "hg38"],
+  "Mouse" : ["mm10"],
+};
+
 export const genomesForSettingsDrawer = {
   'vA' : {
     'single' : {
@@ -188,48 +193,90 @@ export const models = {
 export const modelsForSettingsDrawer = {
   'vA' : {
     'hg19' : {
-      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
-      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
-      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+      'single' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true, availableForProduction: true },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
+      'paired' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true, availableForProduction: true },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
     },
     'hg38' : {
-      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
-      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true },
-      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+      'single' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true, availableForProduction: true },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
+      'paired' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:true, visible:true, availableForProduction: true },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
     }
   },
   'vD' : {
     'mm10' : {
-      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:false, visible:false },
-      '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:false, visible:false },
-      'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false },
+      'single' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:false, visible:false, availableForProduction: false },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:false, visible:false, availableForProduction: false },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
+      'paired' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: true  },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:false, visible:false, availableForProduction: false },
+        '25' : { type:'stateModel', value:'25', text:'25-state (imputed)', titleText:'25-state', enabled:false, visible:false, availableForProduction: false  },
+        'stacked' : { type:'stateModel', value:'stacked', text:'15-/18-/25-state', titleText:'15-/18-/25-state (stacked)', enabled:false, visible:false, availableForProduction: false },
+      },
     }
   },
   'vB' : {
     'hg19' : {
-      '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true },
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      'single' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: false },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: false },
+      }
     }
   },
   'vC' : {
     'hg19' : {
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      'single' : {
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+      },
+      'paired' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: false },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+      },
     },
     'hg38' : {
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      'single' : {
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true },
+      },
+      'paired' : {
+        '15' : { type:'stateModel', value:'15', text:'15-state (observed)', titleText:'15-state', enabled:true, visible:true, availableForProduction: false  },
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: true  },
+      },
     },
   },
   'vE' : {
     'hg19' : {
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      'single' : {
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: false },
+      }
     }
   },
   'vF' : {
     'hg19' : {
-      '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true },
+      'single' : {
+        '18' : { type:'stateModel', value:'18', text:'18-state (observed, aux.)', titleText:'18-state', enabled:true, visible:true, availableForProduction: false  },  
+      }
     }
   },
 }
@@ -371,202 +418,202 @@ export const defaultDrawerType = "settings";
 export const groupsByGenome = {
   "vA" : {
     "hg19" : {
-      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
-      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
-      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
-      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
-      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
-      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
-      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
-      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
-      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
-      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
-      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
-      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
-      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
-      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false },
-      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
-      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
-      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
-      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
-      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
-      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
-      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false },
-      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true },
-      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false },
-      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false },
-      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false },
-      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false },
-      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false },
-      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false },
-      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true },
-      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false },
-      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false },
-      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true },
+      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false, availableForModels:[15,25] },
+      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false, availableForModels:[15,25] },
+      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false, availableForModels:[15,25] },
+      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true, availableForModels:[15,18,25] },
     },
     "hg38" : {
-      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false },
-      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false },
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true },
-      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true },
-      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true },
-      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false },
-      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false },
-      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false },
-      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false },
-      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
-      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false },
-      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false },
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
-      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false },
-      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false },
-      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false },
-      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false },
-      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false },
-      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false },
-      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false },
-      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false },
-      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false },
-      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false },
-      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true },
-      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false },
-      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false },
-      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false },
-      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false },
-      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false },
-      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false },
-      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true },
-      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false },
-      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false },
-      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true },
+      "adult_blood_sample" : { type:"group", subtype:"single", value:"adult_blood_sample", text:"Adult Blood Sample", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "adult_blood_reference" :  { type:"group", subtype:"single", value:"adult_blood_reference", text:"Adult Blood Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 127 Roadmap epigenomes", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", sortValue:"002", text:"Blood & T-cells", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Brain" : { type:"group", subtype:"single", value:"Brain", sortValue:"003", text:"Brain", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "CellLine" : { type:"group", subtype:"single", value:"CellLine", text:"Cell Line", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_sample" : { type:"group", subtype:"single", value:"cord_blood_sample", text:"Cord Blood Sample", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_reference" : { type:"group", subtype:"single", value:"cord_blood_reference", text:"Cord Blood Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "ES-deriv" : { type:"group", subtype:"single", value:"ES-deriv", text:"ESC derived", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC" : { type:"group", subtype:"single", value:"ESC", text:"ESC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cells", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "iPSC" : { type:"group", subtype:"single", value:"iPSC", text:"iPSC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Muscle" : { type:"group", subtype:"single", value:"Muscle", text:"Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Neurosph" : { type:"group", subtype:"single", value:"Neurosph", text:"Neurospheres", enabled:true, preferred: false, availableForModels:[15,25] },
+      "NonES-like" : { type:"group", subtype:"single", value:"NonES-like", text:"Non-ESC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Non-T-cell_Roadmap" : { type:"group", subtype:"single", value:"Non-T-cell_Roadmap", text:"Non-T-cells", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Other" : { type:"group", subtype:"single", value:"Other", text:"Other", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryCell" : { type:"group", subtype:"single", value:"PrimaryCell", text:"Primary Cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryTissue" : { type:"group", subtype:"single", value:"PrimaryTissue", text:"Primary Tissue", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Sm._Muscle" : { type:"group", subtype:"single", value:"Sm._Muscle", text:"Smooth Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ImmuneAndNeurosphCombinedIntoOneGroup" : { type:"group", subtype:"single", value:"ImmuneAndNeurosphCombinedIntoOneGroup", text:"Immune and neurosphere", enabled:true, preferred: false, availableForModels:[15,25] },
+      "adult_blood_sample_vs_adult_blood_reference" : { type:"group", subtype:"paired", value:"adult_blood_sample_vs_adult_blood_reference", text:"Adult Blood Sample vs. Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "Blood_T-cell_vs_Non-T-cell_Roadmap" : { type:"group", subtype:"paired", value:"Blood_T-cell_vs_Non-T-cell_Roadmap", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Brain_vs_Neurosph" : { type:"group", subtype:"paired", value:"Brain_vs_Neurosph", text:"Brain vs. Neurospheres", enabled:true, preferred: false, availableForModels:[15,25] },
+      "Brain_vs_Other" : { type:"group", subtype:"paired", value:"Brain_vs_Other", text:"Brain vs. Other", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "CellLine_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"CellLine_vs_PrimaryCell", text:"Cell Line vs. Primary Cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "cord_blood_sample_vs_cord_blood_reference" : { type:"group", subtype:"paired", value:"cord_blood_sample_vs_cord_blood_reference", text:"Cord Blood Sample vs. Reference", enabled:false, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_ES-deriv" : { type:"group", subtype:"paired", value:"ESC_vs_ES-deriv", text:"ESC vs. ESC derived", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_iPSC" : { type:"group", subtype:"paired", value:"ESC_vs_iPSC", text:"ESC vs. iPSC", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "ESC_vs_NonES-like" : { type:"group", subtype:"paired", value:"ESC_vs_NonES-like", sortValue:"000", text:"ESC vs. non-ESC", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", text:"HSC B-cell vs. Blood T-cell", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"001", text:"Male donors vs. Female donors", enabled:true, preferred: true, availableForModels:[15,18,25] },
+      "Muscle_vs_Sm._Muscle" : { type:"group", subtype:"paired", value:"Muscle_vs_Sm._Muscle", text:"Muscle vs. Smooth Muscle", enabled:true, preferred: false, availableForModels:[15,18,25] },
+      "PrimaryTissue_vs_PrimaryCell" : { type:"group", subtype:"paired", value:"PrimaryTissue_vs_PrimaryCell", sortValue:"003", text:"Primary tissue vs. Primary cells", enabled:true, preferred: true, availableForModels:[15,18,25] },
     },
   },
   "vD" : {
     "mm10" : {
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 65 epigenomes", enabled:true, preferred: true },
-      "digestiveSystem" : { type:"group", subtype:"single", value:"digestiveSystem", sortValue:"002", text:"Digestive System", enabled:true, preferred: true },
-      "e11.5" : { type:"group", subtype:"single", value:"e11.5", sortValue:"003", text:"Embryonic day 11.5", enabled:true, preferred: true },
-      "e11.5_vs_P0" : { type:"group", subtype:"paired", value:"e11.5_vs_P0", text:"Embryonic day 11.5 vs. Day-of-birth", enabled:true, preferred: true },
-      "e12.5" : { type:"group", subtype:"single", value:"e12.5", text:"Embryonic day 12.5", enabled:true, preferred: false },
-      "e13.5" : { type:"group", subtype:"single", value:"e13.5", text:"Embryonic day 13.5", enabled:true, preferred: false },
-      "e14.5" : { type:"group", subtype:"single", value:"e14.5", text:"Embryonic day 14.5", enabled:true, preferred: false },
-      "e15.5" : { type:"group", subtype:"single", value:"e15.5", text:"Embryonic day 15.5", enabled:true, preferred: false },
-      "e16.5" : { type:"group", subtype:"single", value:"e16.5", text:"Embryonic day 16.5", enabled:false, preferred: false },
-      "facial-prominence" : { type:"group", subtype:"single", value:"facial-prominence", text:"Facial prominence", enabled:true, preferred: false },
-      "forebrain" : { type:"group", subtype:"single", value:"forebrain", text:"Forebrain", enabled:true, preferred: false },
-      "forebrain_vs_hindbrain" : { type:"group", subtype:"paired", value:"forebrain_vs_hindbrain", text:"Forebrain vs. Hindbrain", enabled:true, preferred: true },
-      "heart" : { type:"group", subtype:"single", value:"heart", text:"Heart", enabled:true, preferred: false },
-      "hindbrain" : { type:"group", subtype:"single", value:"hindbrain", text:"Hindbrain", enabled:true, preferred: false },
-      "intestine" : { type:"group", subtype:"single", value:"intestine", text:"Intestine", enabled:true, preferred: false },
-      "kidney" : { type:"group", subtype:"single", value:"kidney", text:"Kidney", enabled:true, preferred: false },
-      "limb" : { type:"group", subtype:"single", value:"limb", text:"Limb", enabled:true, preferred: false },
-      "liver" : { type:"group", subtype:"single", value:"liver", text:"Liver", enabled:true, preferred: false },
-      "lung" : { type:"group", subtype:"single", value:"lung", text:"Lung", enabled:true, preferred: false },
-      "neural-tube" : { type:"group", subtype:"single", value:"neural-tube", text:"Neural Tube", enabled:true, preferred: false },
-      "P0" : { type:"group", subtype:"single", value:"P0", sortValue:"004", text:"Day-of-birth", enabled:true, preferred: true },
-      "stomach" : { type:"group", subtype:"single", value:"stomach", text:"Stomach", enabled:true, preferred: false },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"All 65 epigenomes", enabled:true, preferred: true, availableForModels:[15] },
+      "digestiveSystem" : { type:"group", subtype:"single", value:"digestiveSystem", sortValue:"002", text:"Digestive System", enabled:true, preferred: true, availableForModels:[15] },
+      "e11.5" : { type:"group", subtype:"single", value:"e11.5", sortValue:"003", text:"Embryonic day 11.5", enabled:true, preferred: true, availableForModels:[15] },
+      "e11.5_vs_P0" : { type:"group", subtype:"paired", value:"e11.5_vs_P0", text:"Embryonic day 11.5 vs. Day-of-birth", enabled:true, preferred: true, availableForModels:[15] },
+      "e12.5" : { type:"group", subtype:"single", value:"e12.5", text:"Embryonic day 12.5", enabled:true, preferred: false, availableForModels:[15] },
+      "e13.5" : { type:"group", subtype:"single", value:"e13.5", text:"Embryonic day 13.5", enabled:true, preferred: false, availableForModels:[15] },
+      "e14.5" : { type:"group", subtype:"single", value:"e14.5", text:"Embryonic day 14.5", enabled:true, preferred: false, availableForModels:[15] },
+      "e15.5" : { type:"group", subtype:"single", value:"e15.5", text:"Embryonic day 15.5", enabled:true, preferred: false, availableForModels:[15] },
+      "e16.5" : { type:"group", subtype:"single", value:"e16.5", text:"Embryonic day 16.5", enabled:false, preferred: false, availableForModels:[15] },
+      "facial-prominence" : { type:"group", subtype:"single", value:"facial-prominence", text:"Facial prominence", enabled:true, preferred: false, availableForModels:[15] },
+      "forebrain" : { type:"group", subtype:"single", value:"forebrain", text:"Forebrain", enabled:true, preferred: false, availableForModels:[15] },
+      "forebrain_vs_hindbrain" : { type:"group", subtype:"paired", value:"forebrain_vs_hindbrain", text:"Forebrain vs. Hindbrain", enabled:true, preferred: true, availableForModels:[15] },
+      "heart" : { type:"group", subtype:"single", value:"heart", text:"Heart", enabled:true, preferred: false, availableForModels:[15] },
+      "hindbrain" : { type:"group", subtype:"single", value:"hindbrain", text:"Hindbrain", enabled:true, preferred: false, availableForModels:[15] },
+      "intestine" : { type:"group", subtype:"single", value:"intestine", text:"Intestine", enabled:true, preferred: false, availableForModels:[15] },
+      "kidney" : { type:"group", subtype:"single", value:"kidney", text:"Kidney", enabled:true, preferred: false, availableForModels:[15] },
+      "limb" : { type:"group", subtype:"single", value:"limb", text:"Limb", enabled:true, preferred: false, availableForModels:[15] },
+      "liver" : { type:"group", subtype:"single", value:"liver", text:"Liver", enabled:true, preferred: false, availableForModels:[15] },
+      "lung" : { type:"group", subtype:"single", value:"lung", text:"Lung", enabled:true, preferred: false, availableForModels:[15] },
+      "neural-tube" : { type:"group", subtype:"single", value:"neural-tube", text:"Neural Tube", enabled:true, preferred: false, availableForModels:[15] },
+      "P0" : { type:"group", subtype:"single", value:"P0", sortValue:"004", text:"Day-of-birth", enabled:true, preferred: true, availableForModels:[15] },
+      "stomach" : { type:"group", subtype:"single", value:"stomach", text:"Stomach", enabled:true, preferred: false, availableForModels:[15] },
     }
   },
   "vB" : {
     "hg19" : {
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] },
     }
   },
   "vC" : {
     "hg19" : {
-      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false },
-      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false },
-      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true },
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
-      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
-      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
-      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true },
-      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true },
-      "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true },
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false },
-      "Male_donors_mostly_observed" : { type:"group", subtype:"single", value:"Male_donors_mostly_observed", text:"Male donors (mostly observed)", enabled:false, preferred: false },
-      "Male_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Male_donors_mostly_imputed", text:"Male donors (mostly imputed)", enabled:false, preferred: false },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false },
-      "Female_donors_mostly_observed" : { type:"group", subtype:"single", value:"Female_donors_mostly_observed", text:"Female donors (mostly observed)", enabled:false, preferred: false },
-      "Female_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Female_donors_mostly_imputed", text:"Female donors (mostly imputed)", enabled:false, preferred: false },
-      "Cancer_vs_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_vs_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true },
-      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:true, preferred: false },
-      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:true, preferred: false },
-      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
-      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: false },
-      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: false },
-      "Stem_vs_Non-stem" : { type:"group", subtype:"paired", value:"Stem_vs_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true },
-      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:true, preferred: false },
-      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:true, preferred: false },
-      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
-      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: false },
-      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: false },
-      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cells", enabled:true, preferred: true },
-      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:true, preferred: true },
-      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true },
+      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false, availableForModels:[18] },
+      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false, availableForModels:[18] },
+      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true, availableForModels:[15, 18] },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] },
+      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false, availableForModels:[18] },
+      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false, availableForModels:[18] },
+      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true, availableForModels:[18] },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true, availableForModels:[15, 18] },
+      "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true, availableForModels:[18] },
+      "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true, availableForModels:[18] },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: false, availableForModels:[18] },
+      "Male_donors_mostly_observed" : { type:"group", subtype:"single", value:"Male_donors_mostly_observed", text:"Male donors (mostly observed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Male_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Male_donors_mostly_imputed", text:"Male donors (mostly imputed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: false, availableForModels:[18] },
+      "Female_donors_mostly_observed" : { type:"group", subtype:"single", value:"Female_donors_mostly_observed", text:"Female donors (mostly observed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Female_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Female_donors_mostly_imputed", text:"Female donors (mostly imputed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Cancer_vs_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_vs_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true, availableForModels:[15, 18] },
+      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:true, preferred: false, availableForModels:[18] },
+      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true, availableForModels:[15, 18] },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: false, availableForModels:[18] },
+      "Stem_vs_Non-stem" : { type:"group", subtype:"paired", value:"Stem_vs_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true, availableForModels:[18] },
+      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:true, preferred: false, availableForModels:[18] },
+      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs. Non-neural", enabled:true, preferred: true, availableForModels:[15, 18] },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: false, availableForModels:[18] },
+      "HSC_B-cell_vs_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_vs_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cells", enabled:true, preferred: true, availableForModels:[18] },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:true, preferred: true, availableForModels:[18] },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true, availableForModels:[18] },
     },
     "hg38" : {
-      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false },
-      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false },
-      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true },
-      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true },
-      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false },
-      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false },
-      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true },
-      "Male_donors_versus_Female_donors" : { type:"group", subtype:"paired", value:"Male_donors_versus_Female_donors", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true },
-      "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true },
+      "Adult" : { type:"group", subtype:"single", value:"Adult", text:"Adult", enabled:false, preferred:false, availableForModels:[18] },
+      "Embryonic" : { type:"group", subtype:"single", value:"Embryonic", text:"Embryonic", enabled:false, preferred:false, availableForModels:[18] },
+      "Adult_versus_Embryonic" : { type:"group", subtype:"paired", value:"Adult_versus_Embryonic", sortValue:"000", text:"Adult vs. Embryonic", enabled:true, preferred:true, availableForModels:[15,18] },
+      "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] },
+      "All_833_biosamples_mostly_imputed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_imputed", text:"833 samples (mostly imputed)", enabled:false, preferred:false, availableForModels:[18] },
+      "All_833_biosamples_mostly_observed" : { type:"group", subtype:"single", value:"All_833_biosamples_mostly_observed", text:"833 samples (mostly observed)", enabled:false, preferred:false, availableForModels:[18] },
+      "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed" : { type:"group", subtype:"paired", value:"All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed", sortValue:"000", text:"833 samples (mostly imputed vs observed)", enabled:true, preferred:true, availableForModels:[18] },
+      "Male_donors_versus_Female_donors" : { type:"group", subtype:"paired", value:"Male_donors_versus_Female_donors", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true, availableForModels:[15, 18] },
+      "Male_donors_mostly_observed_versus_Female_donors_mostly_observed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_observed_versus_Female_donors_mostly_observed", sortValue:"000", text:"Male vs. Female (mostly observed)", enabled:true, preferred: true, availableForModels:[18] },
+      "Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed" : { type:"group", subtype:"paired", value:"Male_donors_mostly_imputed_versus_Female_donors_mostly_imputed", sortValue:"000", text:"Male vs. Female (mostly imputed)", enabled:true, preferred: true, availableForModels:[18] },
       "Male_donors" : { type:"group", subtype:"single", value:"Male_donors", text:"Male donors", enabled:true, preferred: false },
-      "Male_donors_mostly_observed" : { type:"group", subtype:"single", value:"Male_donors_mostly_observed", text:"Male donors (mostly observed)", enabled:false, preferred: false },
-      "Male_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Male_donors_mostly_imputed", text:"Male donors (mostly imputed)", enabled:false, preferred: false },
+      "Male_donors_mostly_observed" : { type:"group", subtype:"single", value:"Male_donors_mostly_observed", text:"Male donors (mostly observed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Male_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Male_donors_mostly_imputed", text:"Male donors (mostly imputed)", enabled:false, preferred: false, availableForModels:[18] },
       "Female_donors" : { type:"group", subtype:"single", value:"Female_donors", text:"Female donors", enabled:true, preferred: false },
-      "Female_donors_mostly_observed" : { type:"group", subtype:"single", value:"Female_donors_mostly_observed", text:"Female donors (mostly observed)", enabled:false, preferred: false },
-      "Female_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Female_donors_mostly_imputed", text:"Female donors (mostly imputed)", enabled:false, preferred: false },
-      "Cancer_versus_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_versus_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true },
-      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:true, preferred: false },
-      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:true, preferred: false },
-      "Immune_versus_Non-immune" : { type:"group", subtype:"paired", value:"Immune_versus_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
+      "Female_donors_mostly_observed" : { type:"group", subtype:"single", value:"Female_donors_mostly_observed", text:"Female donors (mostly observed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Female_donors_mostly_imputed" : { type:"group", subtype:"single", value:"Female_donors_mostly_imputed", text:"Female donors (mostly imputed)", enabled:false, preferred: false, availableForModels:[18] },
+      "Cancer_versus_Non-cancer" : { type:"group", subtype:"paired", value:"Cancer_versus_Non-cancer", sortValue:"001", text:"Cancer vs. Non-cancer", enabled:true, preferred: true, availableForModels:[15,18] },
+      "Cancer" : { type:"group", subtype:"single", value:"Cancer", text:"Cancer", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-cancer" : { type:"group", subtype:"single", value:"Non-cancer", text:"Non-cancer", enabled:true, preferred: false, availableForModels:[18] },
+      "Immune_versus_Non-immune" : { type:"group", subtype:"paired", value:"Immune_versus_Non-immune", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true, availableForModels:[15,18] },
       "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: false },
       "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: false },
-      "Stem_versus_Non-stem" : { type:"group", subtype:"paired", value:"Stem_versus_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true },
-      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:true, preferred: false },
-      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:true, preferred: false },
-      "Neural_versus_Non-neural" : { type:"group", subtype:"paired", value:"Neural_versus_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
-      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: false },
-      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: false },
-      "HSC_B-cell_versus_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_versus_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cells", enabled:true, preferred: true },
-      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:true, preferred: true },
-      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true },
+      "Stem_versus_Non-stem" : { type:"group", subtype:"paired", value:"Stem_versus_Non-stem", sortValue:"003", text:"Stem vs Non-stem", enabled:true, preferred: true, availableForModels:[18] },
+      "Stem" : { type:"group", subtype:"single", value:"Stem", text:"Stem", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-stem" : { type:"group", subtype:"single", value:"Non-stem", text:"Non-stem", enabled:true, preferred: false, availableForModels:[18] },
+      "Neural_versus_Non-neural" : { type:"group", subtype:"paired", value:"Neural_versus_Non-neural", sortValue:"004", text:"Neural vs. Non-neural", enabled:true, preferred: true, availableForModels:[15,18] },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: false, availableForModels:[18] },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: false, availableForModels:[18] },
+      "HSC_B-cell_versus_Blood_T-cell" : { type:"group", subtype:"paired", value:"HSC_B-cell_versus_Blood_T-cell", sortValue:"005", text:"HSC & B-cell vs Blood & T-cells", enabled:true, preferred: true, availableForModels:[18] },
+      "HSC_B-cell" : { type:"group", subtype:"single", value:"HSC_B-cell", text:"HSC & B-cell", enabled:true, preferred: true, availableForModels:[18] },
+      "Blood_T-cell" : { type:"group", subtype:"single", value:"Blood_T-cell", text:"Blood & T-cells", enabled:true, preferred: true, availableForModels:[18] },
     }
   },
   "vE" : {
     "hg19" : {
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", },
-      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", },
-      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", },
-      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", },
-      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", availableForModels:[18], },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", availableForModels:[18], },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", availableForModels:[18], },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", availableForModels:[18], },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", availableForModels:[18], },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", availableForModels:[18], },
     },
   },
   "vF" : {
     "hg19" : {
-      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true },
-      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs Non-immune", enabled:true, preferred: true },
-      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs Non-neural", enabled:true, preferred: true },
-      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", },
-      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", },
-      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", },
-      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", },
-      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", },
-      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", },
+      "Male_vs_Female" : { type:"group", subtype:"paired", value:"Male_vs_Female", sortValue:"000", text:"Male donors vs. Female donors", enabled:true, preferred: true, availableForModels:[18] },
+      "Immune_vs_Non-immune" : { type:"group", subtype:"paired", value:"Immune_vs_Non-immune", sortValue:"002", text:"Immune vs. Non-immune", enabled:true, preferred: true, availableForModels:[18] },
+      "Neural_vs_Non-neural" : { type:"group", subtype:"paired", value:"Neural_vs_Non-neural", sortValue:"004", text:"Neural vs. Non-neural", enabled:true, preferred: true, availableForModels:[18] },
+      "Male" : { type:"group", subtype:"single", value:"Male", text:"Male donors", enabled:true, preferred: true, sortValue:"002", availableForModels:[18], },
+      "Female" : { type:"group", subtype:"single", value:"Female", text:"Female donors", enabled:true, preferred: true, sortValue:"001", availableForModels:[18], },
+      "Immune" : { type:"group", subtype:"single", value:"Immune", text:"Immune", enabled:true, preferred: true, sortValue:"003", availableForModels:[18], },
+      "Non-immune" : { type:"group", subtype:"single", value:"Non-immune", text:"Non-immune", enabled:true, preferred: true, sortValue:"004", availableForModels:[18], },
+      "Neural" : { type:"group", subtype:"single", value:"Neural", text:"Neural", enabled:true, preferred: true, sortValue:"005", availableForModels:[18], },
+      "Non-neural" : { type:"group", subtype:"single", value:"Non-neural", text:"Non-neural", enabled:true, preferred: true, sortValue:"006", availableForModels:[18], },
     },
   },
 };
@@ -1264,13 +1311,15 @@ export const viewerHgViewconfGenomeAnnotationUUIDs = {
   "hg19" : {
     "chromsizes" : "S_2v_ZbeQIicTqHgGqjrTg",   // hg19.chromsizes.fixedBin.txt (071620, 200bp-aligned)
     "genes" : "ftfObGDLT8eLH0_mCK7Hcg",        // gencode.v19.annotation.gtf.v2.hgnc.longest.noChrM.bed14.fixedBin.db (071620, 200bp-aligned)
-    "transcripts" : "fv1D7uwoRpqWwqFJQ1gdsg",  // gencode.v19.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    // "transcripts" : "fv1D7uwoRpqWwqFJQ1gdsg",  // gencode.v19.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    "transcripts" : "CILWmEMfQV29UAaZPP3vNg",  // gencode.v19.annotation.gtf.higlass-transcripts.longest-isoform.072921.beddb (072921, 200bp-aligned)
   },
   "hg38" : {
     "chromsizes" : "e7yehSFuSvWu0_9uEK1Apw",   // hg38.chromsizes.fixedBin.txt (072020, 200bp-aligned)
     "genes" : "OAc6qvgJRP2cEr78Eoj79w",        // gencode.v28.basic.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned) 
                                                // "GGdqU5CMReiYGykp0-HZXQ" // "Nd3aGEjkTY6SDea-qav0hA" (v28, 052720, with coloring) // "GGdqU5CMReiYGykp0-HZXQ" (v28, 052720, no coloring) // "S3KI5KVSQomVCsG1zYS6vQ" (v30, 051920, with coloring) // "JhJdxHRQRN-52p_h_ErHsA" (v30, no coloring)
-    "transcripts" : "a8079g0hSweKXxaaFIMayA",  // gencode.v28.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    // "transcripts" : "a8079g0hSweKXxaaFIMayA",  // gencode.v28.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    "transcripts" : "Ag93_s8WT5Of9WHwJCl_tA",  // gencode.v28.annotation.gtf.higlass-transcripts.longest-isoform.072921.beddb (072921, 200bp-aligned)
     "masterlist" : "ZwyS15ivSK6t0loq-dDLSw",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.bed12.beddb (103020, 200bp-aligned)
     "masterlist_40tpt" : "KRnnDGliSoCQRBNynhw_Hw",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.40_transcripts_per_tile.bed12.beddb (120820, 200bp-aligned, 40 max. transcripts per tile)
     "masterlist_30tpt" : "CLz8sq5SQdeFNTe2tx7CQA",   // masterlist_DHSs_733samples_WM20180608_all_mean_signal_colorsMax.bed.unc.30_transcripts_per_tile.bed12.beddb (120820, 200bp-aligned, 30 max. transcripts per tile)
@@ -1284,7 +1333,8 @@ export const viewerHgViewconfGenomeAnnotationUUIDs = {
     "chromsizes" : "ZHw2pq2tRLqsKxhOSdagWw",   // mm10.chromsizes.fixedBin.txt (072020, 200bp-aligned)
     "genes" : "dAhJNUy8QDmYp8CPtND0VQ",        // mm10.gencode.vM21.annotation.gtf.genePred.hgnc.longest.noChrM.bed14.fixedBin.db (072020, 200bp-aligned)
                                                // "YZ5Wy9w2QTO5OpJmMZdsXg"
-    "transcripts" : "J9zBRm5qSb2VDJB7xiNWng",  // gencode.vM21.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    //"transcripts" : "J9zBRm5qSb2VDJB7xiNWng",  // gencode.vM21.annotation.gtf.higlass-transcripts.beddb (092620, 200bp-aligned)
+    "transcripts" : "Fbt9wV3SQ8uehuPA43x67w",  // gencode.vM21.annotation.gtf.higlass-transcripts.longest-isoform.072921.beddb (072921, 200bp-aligned)
   }
 };
 
@@ -1786,6 +1836,7 @@ export const defaultApplicationHighlightBehaviorAlpha = 0.33;
 
 // ?annotationsTrackType=xyz
 export const defaultApplicationAnnotationsTrackType = "horizontal-gene-annotations";
+// export const defaultApplicationAnnotationsTrackType = "horizontal-transcripts";
 
 export const defaultApplicationPositions = {
   'hg19' : {
@@ -1854,6 +1905,6 @@ export const defaultApplicationGenericExemplarKey = "na";
 export const defaultApplicationBinSize = 200;
 
 export const defaultViewerKeyEventChangeEventDebounceTimeout = 500;
-export const defaultViewerHistoryChangeEventDebounceTimeout = 1000;
+export const defaultViewerHistoryChangeEventDebounceTimeout = 750;
 
 export const roiSets = {};

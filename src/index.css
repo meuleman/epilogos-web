@@ -170,10 +170,16 @@ em {
   padding-right: 15px !important;
   cursor: default !important;
   justify-content: safe !important;
+  max-height: 56px;
 }
 
 .navbar-brand-custom {
   max-height: 40px;
+}
+
+.navbar-righthalf-custom {
+  position: relative;
+  top: 5px;
 }
 
 .navbar-brand {
@@ -193,11 +199,12 @@ em {
 .navigation-summary {
   color: white;
   letter-spacing: 0.025em;
-  font-size: 0.95em;
+  font-size: 0.925em;
   font-weight: 400;
   display: inline-flex;
   position: relative;
   top: 1px;
+  max-height: 39px;
 }
 
 .navigation-summary-mobiledevice {
@@ -209,12 +216,12 @@ em {
   display: flex;
   color: white;
   text-align: left;
-  letter-spacing: 0.025em;
-  font-size: 0.95em;
+  letter-spacing: 0.0125em;
+  font-size: 0.925em;
   font-weight: 400;
-  padding-left: 20px;
+  /* padding-left: 20px; */
   position: relative;
-  top: 2px;
+  /* top: 3px; */
   /* opacity: 0; */
   text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
   z-index: 10001;
@@ -222,7 +229,7 @@ em {
 
 .navigation-summary-assembly {
   position: relative;
-  top: 2px;
+  top: 1px;
 }
 
 .navigation-summary-position {
@@ -246,7 +253,7 @@ em {
   top: -1px;
   font-size: 1em;
   margin-left: 2px;
-  margin-right: 17px;
+  margin-right: 15px;
   color: rgb(230,230,230);
 }
 
@@ -260,16 +267,19 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 	outline: inherit;
 }
 
-.epilogos-recommender-element {
-  padding-left: 10px;
+.epilogos-recommender-element, .epilogos-recommender-element-disabled {
+  /* padding-left: 10px; */
   z-index: 1000;
   display: inherit;
+  margin-right: 18px;
+  top: 1px;
+  position: relative;
 }
 
 .epilogos-recommender-element-disabled {
-  padding-left: 10px;
-  cursor: default;
-  pointer-events: none;
+  /* padding-left: 10px; */
+  /* cursor: default; */
+  /* pointer-events: none; */
   display: inherit;
 }
 
@@ -286,6 +296,28 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 /*   cursor: default; */
 /*   pointer-events: none; */
   display: inherit;
+}
+
+.genome-select-element-hidden {
+  visibility: hidden;
+}
+
+.genome-select-element-disabled {
+  z-index: 1000;
+  display: inherit;
+}
+
+.genome-select-element {
+  display: inherit;
+  padding-top: 5px;
+  padding-bottom: 12px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: -5px;
+  margin-right: -5px;
+  position: relative;
+  top: -5px;
+  background-color: white;
 }
 
 .navigation-recommender {
@@ -358,7 +390,7 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
   font-size: 1.25em;
   padding-bottom: 10px;
   padding-top: 2px;
-  margin-left: 10px;
+  margin-left: 6px;
   padding-left: 8px;
   padding-right: 8px;
   cursor: pointer;
@@ -410,7 +442,15 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
   line-height: 0.9em;
 }
 
-.download-route-link {
+.genome-route-label {
+  font-variant: small-caps;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
+  line-height: 0.9em;
+}
+
+.download-route-link, .genome-route-link, .genome-route-link-disabled {
   font-variant: small-caps;
   font-weight: 600;
   font-size: 0.9em;
@@ -418,8 +458,17 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
   color: blue;
 }
 
+.genome-route-link-disabled {
+  cursor: default;
+  color: #333333;
+}
 
-.download-route-link:hover {
+.genome-route-link, .genome-route-link-disabled {
+  font-variant: none !important;
+}
+
+
+.download-route-link:hover, .genome-route-link:hover {
   text-decoration: underline;
   color: blue;
 }
@@ -485,8 +534,8 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 }
 
 .brand-content-header-viewer {
-  font-size: 1.1em;
-  margin-top: 3px;
+  font-size: 1.15em;
+  margin-top: 1px;
   margin-left: 4px;
   margin-right: 3px;
   letter-spacing: 0.9px;
@@ -903,16 +952,24 @@ li {
   border: none;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.08);
   margin: 0 auto;
-  height: 26px !important;
+  height: 25px !important;
   width: 227px !important;
-  font-size: 0.65em;
-  background-image: url(./components/Autocomplete/search.dddddd.png);
+  /* font-size: 0.7em; */
+  font-size: 0.9rem;
+  position: relative;
+  top: 1px;
+  /* background-image: url(./components/Autocomplete/search.dddddd.png); */
+  background-image: url(./components/Autocomplete/search.png);
   background-repeat: no-repeat;
-  background-size: 11px 11px;
-  background-position: 9px 8px;
-  background-color: #525252;
-  color: white;
+  background-size: 10px 10px;
+  background-position: 9px 5px;
+  background-origin: border-box;
+  /* background-color: #525252; */
+  background-color: rgb(230, 230, 230);
+  /* color: white; */
+  color: black;
   padding-left: 28px;
+  margin-right: 16px;
 }
 
 .epilogos-viewer-search-input-viewermobile {
@@ -941,25 +998,30 @@ input.epilogos-content-search-input::placeholder { /* Chrome, Firefox, Opera, Sa
 }
 
 input.epilogos-viewer-search-input::placeholder {
-  color: #ddd;
+  /* color: #ddd; */
+  color: black;
   font-weight: 400;
-  font-size: larger;
-  opacity: 0.8; /* Firefox */
+  /* font-size: larger; */
+  /* opacity: 0.8; Firefox */
   text-align: left;
   position: relative;
-  top: 1px;
+  top: -1px;
 }
 
 input.epilogos-viewer-search-input:disabled::placeholder {
-  color: #525252;
+  /* color: #525252; */
+  color: black;
   cursor: not-allowed;
 }
 
 input.epilogos-viewer-search-input:disabled {
-  background-color: #343434;
-  color: #666;
+  /* background-color: #343434; */
+  background-color: rgb(120, 120, 120);
+  /* color: #666; */
+  color: black;
   cursor: not-allowed;
-  background-image: url(./components/Autocomplete/search.525252.png);
+  /* background-image: url(./components/Autocomplete/search.525252.png); */
+  background-image: url(./components/Autocomplete/search.png);
 }
 
 .epilogos-viewer-container-track-label-parent {
@@ -1300,12 +1362,13 @@ input.epilogos-viewer-search-input:disabled {
   text-align: left;
   padding: 0.75rem;
   line-height: 1.35em;
+  color: rgb(20,20,20);
 }
 
 .suggestion-active,
 .suggestions li:hover {
   background-color: #6d6ca5;
-  color: #ffffff;
+  color: #ffffff !important;
   cursor: pointer;
   text-align: left;
 }
@@ -1759,4 +1822,26 @@ input.epilogos-viewer-search-input:disabled {
 
 .bm-menu-wrap {
   transition: all 0.2s ease 0s !important;
+}
+
+.icon-start-color {
+  color: rgba(0, 127, 255, 1);
+  -webkit-animation: icon-color 1.25s infinite ease;
+          animation: icon-color 1.25s infinite ease;
+}
+
+@-webkit-keyframes icon-color {
+  0%{color: rgba(0, 127, 255, 1);}
+  50%{color: rgba(230, 230, 230, 1);}
+  100%{color: rgba(0, 127, 255, 1);}
+}
+
+@keyframes icon-color {
+  0%{color: rgba(0, 127, 255, 1);}
+  50%{color: rgba(230, 230, 230, 1);}
+  100%{color: rgba(0, 127, 255, 1);}
+}
+
+.icon-end-color {
+  color: rgba(0, 127, 255, 1);
 }
