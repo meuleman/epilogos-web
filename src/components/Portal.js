@@ -57,6 +57,9 @@ import { RecommenderV3SearchButtonDefaultLabel } from "./RecommenderSearchButton
 export const jp = require("jsonpath");
 
 class Portal extends Component {
+
+  _gemRefreshTimer = null;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -100,7 +103,8 @@ class Portal extends Component {
       recommenderV3SearchIsEnabled: true,
       recommenderV3SearchInProgress: false,
       recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-      recommenderV3SearchButtonCanBeAnimated: false,
+      recommenderV3CanAnimate: true,
+      recommenderV3AnimationHasFinished: false,
     };
     
     this.hgView = React.createRef();
@@ -111,8 +115,15 @@ class Portal extends Component {
     this.epilogosPortalRecommenderV3Button = React.createRef();
    
     // read exemplars into memory
-    let exemplarURL = this.exemplarDownloadURL(Constants.portalHgViewParameters.genome, Constants.portalHgViewParameters.model, Constants.portalHgViewParameters.complexity, Constants.portalHgViewParameters.group, Constants.portalHgViewParameters.sampleSet);
-    //console.log("exemplarURL", exemplarURL);
+    let exemplarURL = this.exemplarDownloadURL(
+      Constants.portalHgViewParameters.genome, 
+      Constants.portalHgViewParameters.model, 
+      Constants.portalHgViewParameters.complexity, 
+      Constants.portalHgViewParameters.group, 
+      Constants.portalHgViewParameters.sampleSet
+    );
+
+    // console.log("exemplarURL", exemplarURL);
     if (exemplarURL) {
       axios.get(exemplarURL)
         .then((res) => {
@@ -153,86 +164,57 @@ class Portal extends Component {
     this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
     // console.log("[constructor] this.isProductionSite", this.isProductionSite);
     // console.log("[constructor] this.isProductionProxySite", this.isProductionProxySite);
+
+    const portalHgViewconf = Constants.portalHgViewconf;
+
+    // navbar height
+    let epilogosPortalHeaderNavbar = document.getElementById("epilogos-portal-container-navbar");
+    let epilogosPortalHeaderNavbarHeight = epilogosPortalHeaderNavbar ? parseInt(epilogosPortalHeaderNavbar.clientHeight) + "px" : 0;
     
-    // update HiGlass viewconf from server endpoint
-    let hgViewconfURL = this.hgViewconfDownloadURL(this.state.hgViewParams.hgViewconfEndpointURL, this.state.hgViewParams.hgViewconfId);
-    //console.log("hgViewconfURL", hgViewconfURL);
+    // query height
+    let epilogosContentQuery = document.getElementById("epilogos-content-query-parent");
+    let epilogosContentQueryHeight = epilogosContentQuery ? parseInt(epilogosContentQuery.clientHeight) + "px" : 0;
     
-    axios.get(hgViewconfURL)
-      .then((res) => {
-        if (!res.data) {
-          throw Error(`Viewconf not returned from query to ${hgViewconfURL}`);
-        }
-        
-        //
-        // we need to set the initial heights of portal elements based off of a 
-        // vertical partitioning or slicing up of the front page
-        //
-        
-        // navbar height
-        let epilogosPortalHeaderNavbar = document.getElementById("epilogos-portal-container-navbar");
-        let epilogosPortalHeaderNavbarHeight = epilogosPortalHeaderNavbar ? parseInt(epilogosPortalHeaderNavbar.clientHeight) + "px" : 0;
-        
-        // query height
-        let epilogosContentQuery = document.getElementById("epilogos-content-query-parent");
-        let epilogosContentQueryHeight = epilogosContentQuery ? parseInt(epilogosContentQuery.clientHeight) + "px" : 0;
-        
-        // hiw height
-        let epilogosContentHiwDivider = document.getElementById("epilogos-content-hiw-divider-text-parent");
-        let epilogosContentHiwDividerHeight = epilogosContentHiwDivider ? parseInt(epilogosContentHiwDivider.clientHeight) + "px" : 0;
-        
-        // peek height
-        let epilogosContentHiwPeek = document.getElementById("epilogos-content-hiw-peek-parent");
-        let epilogosContentHiwPeekHeight = epilogosContentHiwPeek ? parseInt(epilogosContentHiwPeek.clientHeight) + "px" : 0;
-        
-        // customize track heights -- requires preknowledge of track order
-        res.data.views[0].tracks.top[0].height = Math.min(this.state.hgViewParams.hgViewTrackEpilogosHeight, parseInt(window.innerHeight) - parseInt(epilogosPortalHeaderNavbarHeight) - parseInt(epilogosContentQueryHeight) - parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) - parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - parseInt(epilogosContentHiwDividerHeight) - parseInt(epilogosContentHiwPeekHeight));
-        res.data.views[0].tracks.top[1].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
-        res.data.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight;
-        
-        // get child view heights
-        const childViews = res.data.views[0].tracks.top;
-        let childViewHeightTotal = 0;
-        childViews.forEach((cv) => { childViewHeightTotal += cv.height });
-        childViewHeightTotal += 10;
-        let childViewHeightTotalPx = childViewHeightTotal + "px";
-        
-        // update conf
-        this.setState({
-          hgViewHeight: childViewHeightTotalPx,
-          hgViewconf: res.data
-        });
-      })
-      .catch((err) => {
-        //console.log(err);
-        let epilogosContentQueryHeight = (window.innerHeight - 60) + "px";
-        let epilogosContentQueryPaddingTop = parseInt((parseInt(epilogosContentQueryHeight))/8) + "px";
-        let msg = <div className="portal-overlay-notice"><div className="portal-overlay-notice-header">{err.response.status} Error</div><div className="portal-overlay-notice-body"><div>{err.response.statusText}: {hgViewconfURL}</div><div className="portal-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
-        this.setState({
-          overlayMessage: msg,
-          epilogosContentHeight: epilogosContentQueryHeight,
-          epilogosContentPadding: epilogosContentQueryPaddingTop,
-          hgViewHeight: "0px",
-          hgViewconf: {}
-        }, () => {
-          //console.log("this.state", this.state);
-          this.fadeInOverlay();
-        });
-      });
+    // hiw height
+    let epilogosContentHiwDivider = document.getElementById("epilogos-content-hiw-divider-text-parent");
+    let epilogosContentHiwDividerHeight = epilogosContentHiwDivider ? parseInt(epilogosContentHiwDivider.clientHeight) + "px" : 0;
+    
+    // peek height
+    let epilogosContentHiwPeek = document.getElementById("epilogos-content-hiw-peek-parent");
+    let epilogosContentHiwPeekHeight = epilogosContentHiwPeek ? parseInt(epilogosContentHiwPeek.clientHeight) + "px" : 0;
+    
+    // customize track heights -- requires preknowledge of track order
+    portalHgViewconf.views[0].tracks.top[0].height = Math.min(this.state.hgViewParams.hgViewTrackEpilogosHeight, parseInt(window.innerHeight) - parseInt(epilogosPortalHeaderNavbarHeight) - parseInt(epilogosContentQueryHeight) - parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) - parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - parseInt(epilogosContentHiwDividerHeight) - parseInt(epilogosContentHiwPeekHeight));
+    portalHgViewconf.views[0].tracks.top[1].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
+    portalHgViewconf.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight;
+
+    // get child view heights
+    const childViews = portalHgViewconf.views[0].tracks.top;
+    let childViewHeightTotal = 0;
+    childViews.forEach((cv) => { childViewHeightTotal += cv.height });
+    childViewHeightTotal += 10;
+    let childViewHeightTotalPx = childViewHeightTotal + "px";
+
+    this.state.hgViewHeight = childViewHeightTotalPx;
+    this.state.hgViewconf = portalHgViewconf;
   }
   
   componentDidMount() {
     document.getElementById("root").style.overflowY = "scroll";
+    this.updateHgViewWithRandomExemplar();
     setTimeout(() => { 
       this.updateViewportDimensions();
+      this._gemRefreshTimer = setInterval(() => {
+        this.restartGemAnimation();
+      }, Constants.defaultRecommenderGemRefreshTimer);
+      /* 
+        Push the hgView refresh to a separate function to clear intervals between
+        updates and reduce the chance of Chrome getting a memory leak that causes 
+        the user to intervene and reload the page.
+      */
+      this.initHgViewRefresh();
     }, 1000);
     window.addEventListener("resize", this.updateViewportDimensions);
-    /* 
-      Push the hgView refresh to a separate function to clear intervals between
-      updates and reduce the chance of Chrome getting a memory leak that causes 
-      the user to intervene and reload the page.
-    */
-    this.initHgViewRefresh();
   }
   
   // eslint-disable-next-line no-unused-vars
@@ -240,22 +222,51 @@ class Portal extends Component {
   
   componentWillUnmount() {
     window.removeEventListener("resize");
+    this._gemRefreshTimer = null;
+  }
+
+  restartGemAnimation = () => {
+    if (this.state.recommenderV3AnimationHasFinished) {
+      this.recommenderV3ManageAnimation(true, false, () => {
+        this.epilogosPortalRecommenderV3Button.toggleGemJello();
+      });
+      // this.recommenderV3ManageAnimation(true, false);
+    }
   }
   
   initHgViewRefresh = () => {
-    //console.log("this.initHgViewRefresh()");
+    // console.log("this.initHgViewRefresh()");
     let self = this;    
     window.ref = window.setInterval(function() { 
       if (self.state.hgViewconf && self.state.hgViewconf.views && self.state.hgViewLoopEnabled && document.hasFocus() && self.state.hgViewRefreshTimerActive && self.state.hgViewParentIsVisible) {
-        //console.log("attempting update...", document.hasFocus());
-        self.updateHgViewWithRandomGene();
+        // console.log("attempting update...", document.hasFocus());
+        // self.updateHgViewWithRandomGene();
+        self.updateHgViewWithRandomExemplar();
       } 
     }, this.state.hgViewParams.hgViewGeneSelectionTime);
   }
   
   reinitHgViewRefresh = () => {
     clearInterval(window.ref);
-    this.updateHgViewWithRandomGene();
+    // this.updateHgViewWithRandomGene();
+    this.updateHgViewWithRandomExemplar();
+    this.initHgViewRefresh();
+  }
+
+  updateHgViewWithRandomExemplar = () => {
+    const randomExemplar = this.hgRandomExemplar();
+    const chromosome = randomExemplar["chromosome"];
+    const start = randomExemplar["start"];
+    const end = randomExemplar["stop"];
+    const assembly = this.state.hgViewParams.genome;
+    const exemplarLength = parseInt(end) - parseInt(start);
+    const padding = parseInt(Constants.defaultHgViewGenePaddingFraction * exemplarLength);
+    const chrLimit = parseInt(Constants.assemblyBounds[assembly][chromosome].ub);
+    const txStart = ((start - padding) > 0) ? (start - padding) : 0;
+    const txEnd = ((end + padding) < chrLimit) ? (end + padding) : end;
+    this.hgViewUpdatePosition(assembly, chromosome, txStart, txEnd, chromosome, txStart, txEnd, 0);
+    // this.hgViewUpdatePosition(assembly, chromosome, start, end, chromosome, start, end, 0);
+    clearInterval(window.ref);
     this.initHgViewRefresh();
   }
   
@@ -376,12 +387,23 @@ class Portal extends Component {
       'url': annotationUrl
     };
   }
+
+  hgRandomExemplar = () => {
+    const exemplar = Constants.portalExemplars[Math.floor(Math.random() * Constants.portalExemplars.length)];
+    return {
+      'chromosome' : exemplar[0],
+      'start' : exemplar[1],
+      'stop' : exemplar[2]
+    };
+  }
   
   hgViewUpdatePosition = (genome, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding) => {
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];
     if (this.currentURL.port === "" || parseInt(this.currentURL.port) !== Constants.applicationDevelopmentPort) {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
+      // chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
+      chromSizesURL = chromSizesURL.replace(":" + parseInt(this.currentURL.port), "");
     }
+    // console.log(`chromSizesURL ${chromSizesURL}`);
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
         if (padding === 0) {
@@ -418,7 +440,18 @@ class Portal extends Component {
   }
   
   exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
-    let downloadURL = this.stripQueryStringAndHashFromPath(document.location.href) + "/assets/epilogos/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + complexity + "/exemplar/top100.txt";
+    let downloadURL = this.stripQueryStringAndHashFromPath(document.location.href) 
+      + "/assets/epilogos/" 
+      + sampleSet 
+      + "/" 
+      + assembly 
+      + "/" 
+      + model 
+      + "/" 
+      + group 
+      + "/" 
+      + complexity 
+      + "/exemplar/top100.txt";
     return downloadURL;
   }
   
@@ -513,53 +546,61 @@ class Portal extends Component {
     );
   }
 
-  recommenderV3SearchButtonCanAnimate = () => {
-    return this.state.recommenderV3SearchButtonCanBeAnimated;
-  }
-
-  recommenderV3SearchButtonSetCanBeAnimated = (flag) => {
-    // console.log(`setting recommenderV3SearchButtonCanBeAnimated to ${flag}`);
+  recommenderV3ManageAnimation = (canAnimate, hasFinished, cb) => {
+    // console.log(`recommenderV3ManageAnimation canAnimate ${canAnimate} hasFinished ${hasFinished}`);
     this.setState({
-      recommenderV3SearchButtonCanBeAnimated: flag
+      recommenderV3CanAnimate: canAnimate
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          recommenderV3AnimationHasFinished: hasFinished,
+        }, () => {
+          if (cb) cb();
+        });
+      }, 500);
     });
   }
 
   singleGroupExemplarJump = () => {
     return (
-      <div className="epilogos-content-ero-block">
-        <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={(this.state.singleGroupSearchInputValue.length > 0)} title="Jump to an interesting epilogo">
-          <RecommenderSearchButton
-            ref={(component) => this.epilogosPortalRecommenderV3Button = component}
-            onClick={this.onClickPortalIFL}
-            inProgress={this.state.recommenderV3SearchInProgress}
-            visible={this.state.recommenderV3SearchIsVisible}
-            enabled={this.state.recommenderV3SearchIsEnabled}
-            label={this.state.recommenderV3SearchButtonLabel}
-            canAnimate={this.recommenderV3SearchButtonCanAnimate}
-            canAnimateButton={this.recommenderV3SearchButtonSetCanBeAnimated}
-            forceStartColor={"rgba(230, 230, 230, 1)"}
-            size={20}
-            />
+      <div 
+        className="epilogos-content-ero-block"
+        style={{
+          paddingTop: "30px",
+        }}
+        >
+        <Button color="primary" className="btn-custom btn-sm btn-portal-custom" onClick={this.onClickPortalIFL} disabled={(this.state.singleGroupSearchInputValue.length > 0)} title="Jump to an interesting epilogo">
+          <div style={{
+            position: "relative",
+            bottom: "1px",
+            marginRight: "8px",
+            fontSize: "larger",
+          }}>
+            <RecommenderSearchButton
+              ref={(component) => this.epilogosPortalRecommenderV3Button = component}            
+              label={this.state.recommenderV3SearchButtonLabel}
+              onClick={this.onClickPortalIFL}
+              inProgress={this.state.recommenderV3SearchInProgress}
+              isVisible={this.state.recommenderV3SearchIsVisible}
+              isEnabled={this.state.recommenderV3SearchIsEnabled}
+              manageAnimation={this.recommenderV3ManageAnimation}
+              canAnimate={this.state.recommenderV3CanAnimate}
+              hasFinishedAnimating={this.state.recommenderV3AnimationHasFinished}
+              enabledColor={"rgb(255,215,0)"}
+              disabledColor={"rgb(120,120,120)"}
+              size={20}
+              />
+          </div>
+          <div style={{
+            color: "rgb(255,215,0)",
+            fontSize: "larger",
+          }}>
+            Click me!
+          </div>
         </Button>
       </div>      
     )
   }
-
-  // singleGroupExemplarJump = () => {
-  //   return (
-  //     <div className="epilogos-content-ero-block">
-  //       <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={(this.state.singleGroupSearchInputValue.length > 0)} title="Jump to an interesting epilogo">I'm Feeling Lucky</Button>
-  //     </div>
-  //   );
-  // }
-
-  // singleGroupExemplarJump = () => {
-  //   return (
-  //     <div className="epilogos-content-ero-block">
-  //       <Button color="primary" className="btn-custom btn-sm" onClick={this.onClickPortalIFL} disabled={!this.state.exemplarJumpActive} title="Jump to an interesting epilogo">I'm Feeling Lucky</Button>
-  //     </div>
-  //   );
-  // }
   
   onClick = (evt) => { 
     evt.preventDefault();
@@ -818,7 +859,9 @@ class Portal extends Component {
   
   // eslint-disable-next-line no-unused-vars
   onClickPortalGo = (evt) => {
+    // console.log(`onClickPortalGo: ${this.state.singleGroupSearchInputValue}`);
     let range = this.getRangeFromString(this.state.singleGroupSearchInputValue);
+    // console.log(`range: ${range}`);
     if (range) {
       this.openViewerAtChrRange(range);
     }
@@ -843,7 +886,8 @@ class Portal extends Component {
       start = parseInt(range[2]);
       stop = parseInt(range[3]);
     }
-    const newMode = "qt";
+    // const newMode = "qt";
+    const newMode = "single";
     let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + newMode;
@@ -910,7 +954,7 @@ class Portal extends Component {
   }
 
   onChangePortalInput = (value) => {
-    // console.log("onChangePortalInput", value);
+    console.log("onChangePortalInput", value);
     this.setState({
       singleGroupSearchInputValue: value
     });
@@ -1010,12 +1054,15 @@ class Portal extends Component {
                           onChangeLocation={this.onChangePortalLocation}
                           onChangeInput={this.onChangePortalInput}
                           suggestionsClassName="portal-suggestions suggestions"
+                          showGoButton={true}
+                          onClickGo={this.onClickPortalGo}
                         />
                         <p />
-                        {this.singleGroupJump()} {this.singleGroupExemplarJump()}
+                        {/* this.singleGroupJump() */}
                         <div className="epilogos-content-ero-search epilogos-content-ero-search-text">
                           <em>e.g.</em>, use query terms like HGNC symbols (<strong>HOXA1</strong>, <strong>NFKB1</strong>, etc.) or genomic regions (<strong>chr17:41155790-41317987</strong>, etc.)
                         </div>
+                        {this.singleGroupExemplarJump()}
                       </div>
                     </div>
                     

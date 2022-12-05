@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FaClipboard } from 'react-icons/fa';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import * as Helpers from "../Helpers.js";
 
 class RegionIntervalIndicator extends Component {
 
@@ -21,7 +22,7 @@ class RegionIntervalIndicator extends Component {
     const lineWidth = parseInt(height / 2);
     const lineHeight = parseInt(height / 2);
     
-    const contentTop = lineHeight - this.props.contentTopOffset;
+    const contentTop = lineHeight - this.props.contentTopOffset + 4;
     const contentLeft = lineWidth - 8 + (this.props.outerWidth / 2);
     const contentStyle = {
       position: "absolute",
@@ -44,6 +45,7 @@ class RegionIntervalIndicator extends Component {
       cursor: "pointer",
       width: "max-content",
       pointerEvents: "all",
+      filter: "drop-shadow(0 0 0.35rem black)",
     };
     
     function stateToColorBox(self) {
@@ -56,7 +58,7 @@ class RegionIntervalIndicator extends Component {
       contents.push(
         <div key="region-interval-indicator-with-label">
           <div key="region-interval-indicator-with-label-content">
-            <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
+            <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel} {Helpers.calculateScale(this.props.data.chromosome, this.props.data.chromosome, this.props.data.start, this.props.data.stop).scaleAsStr}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
           </div>
           <div key="region-interval-indicator-with-label-interval">
             <span className="navigation-summary-position-clipboard-inverse-label-no-shift navigation-summary-position-region-label">{stateToColorBox(this)}{"\u00a0"}{"\u00a0"}{this.props.data.regionState.label}</span>
@@ -67,7 +69,7 @@ class RegionIntervalIndicator extends Component {
     else {
       contents.push(
         <div key="region-interval-indicator-no-label-interval">
-          <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
+          <span className="navigation-summary-position-clipboard-inverse-no-shift" onClick={() => {navigator.clipboard.writeText(this.props.data.regionLabel)}}>{this.props.data.regionLabel} {Helpers.calculateScale(this.props.data.chromosome, this.props.data.chromosome, this.props.data.start, this.props.data.stop).scaleAsStr}</span> <CopyToClipboard text={this.props.data.regionLabel}><FaClipboard className="navigation-summary-position-clipboard-inverse" /></CopyToClipboard>
         </div>
       );
     }

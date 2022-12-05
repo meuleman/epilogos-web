@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { FaToggleOn } from 'react-icons/fa'
+
 // Application constants and helpers
 import * as Constants from "../Constants.js";
 
@@ -142,9 +144,15 @@ class GenomeSelectButton extends Component {
           </button>
           {(this.props.enabled) ? 
             <div style={{position:"absolute",backgroundColor:"white",color:"black",zIndex:1000,width:"fit-content",right:"-1px", top:"40px"}}>
-              <div className={'navigation-summary-download-popup'}>
+              <div className={'navigation-summary-download-popup navigation-genome-popup'}>
                 <div className="genome-route-label">genome</div>
                 {this.genomeAssembliesDiv(this.props.category)}
+                <div className="genome-route-label genome-route-label-next">annotations</div>
+                <div className="genome-route-annotations-content">
+                  <span className={(this.props.geneAnnotationTrackType === "cv") ? "genome-route-annotations-label genome-route-annotations-label-selected" : "genome-route-annotations-label"} onClick={()=>{if (this.props.geneAnnotationTrackType === "ht") this.props.setGeneAnnotationTrackType("cv")}}>basic</span>
+                  <FaToggleOn className={(this.props.geneAnnotationTrackType === "cv") ? "fa-toggle fa-toggle-gatt fa-toggle-cv" : "fa-toggle fa-toggle-gatt fa-toggle-ht"} onClick={()=>{this.props.setGeneAnnotationTrackType((this.props.geneAnnotationTrackType === "cv") ? "ht" : "cv")}} />
+                  <span className={(this.props.geneAnnotationTrackType === "ht") ? "genome-route-annotations-label genome-route-annotations-label-selected" : "genome-route-annotations-label"} onClick={()=>{if (this.props.geneAnnotationTrackType === "cv") this.props.setGeneAnnotationTrackType("ht")}}>detailed</span>
+                </div>
               </div>
             </div> 
             : ""}
@@ -161,8 +169,10 @@ GenomeSelectButton.propTypes = {
   active: PropTypes.bool,
   label: PropTypes.string,
   onClick: PropTypes.func,
-  disable: PropTypes.bool,
+  disable: PropTypes.func,
   assembly: PropTypes.string,
   switchToGenome: PropTypes.func,
   category: PropTypes.string,
+  geneAnnotationTrackType: PropTypes.string,
+  setGeneAnnotationTrackType: PropTypes.func,
 };

@@ -204,10 +204,19 @@ class ViewerMobile extends Component {
     newTempHgViewParams.stop = parseInt(queryObj.stop || Constants.defaultApplicationStop);
     newTempHgViewParams.mode = queryObj.mode || Constants.defaultApplicationMode;
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
-    newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType;
-    if (!(newTempHgViewParams.annotationsTrackType in Constants.applicationAnnotationsTrackTypes)) {
-      newTempHgViewParams.annotationsTrackType = Constants.defaultApplicationAnnotationsTrackType;
+    // newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType;
+    // if (!(newTempHgViewParams.annotationsTrackType in Constants.applicationAnnotationsTrackTypes)) {
+    //   newTempHgViewParams.annotationsTrackType = Constants.defaultApplicationAnnotationsTrackType;
+    // }
+    newTempHgViewParams.gatt = queryObj.gatt || Constants.defaultApplicationGattCategory;
+    if (!(newTempHgViewParams.gatt in Constants.defaultApplicationGattCategories)) {
+      newTempHgViewParams.gatt = Constants.defaultApplicationGattCategory;
     }
+    newTempHgViewParams.gac = queryObj.gac || Constants.defaultApplicationGacCategory;
+    if (!(newTempHgViewParams.gac in Constants.defaultApplicationGacCategories)) {
+      newTempHgViewParams.gac = Constants.defaultApplicationGacCategory;
+    }
+
     this.state.selectedExemplarRowIdxOnLoad = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
     this.state.selectedExemplarRowIdx = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
     this.state.selectedNonRoiRowIdxOnLoad = parseInt(this.state.selectedExemplarRowIdx);
@@ -1769,16 +1778,16 @@ class ViewerMobile extends Component {
                 res.data.views[0].tracks.top[3].options.backgroundColor = "white";
                 res.data.views[0].tracks.top[4].options.backgroundColor = "white";
                 // annotations-specific work
-                res.data.views[0].tracks.top[4].type = newHgViewParams.annotationsTrackType;
-                switch (newHgViewParams.annotationsTrackType) {
-                  case "horizontal-gene-annotations": {
+                res.data.views[0].tracks.top[4].type = Constants.defaultApplicationGattCategories[newHgViewParams.gatt];
+                switch (newHgViewParams.gatt) {
+                  case "cv": {
                     res.data.views[0].tracks.top[4].tilesetUid = newGenesUUID;
                     res.data.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
                     res.data.views[0].tracks.top[4].name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[4].options.name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     break;
                   }
-                  case "horizontal-transcripts": {
+                  case "ht": {
                     res.data.views[0].tracks.top[4].options.startCollapsed = false;
                     res.data.views[0].tracks.top[4].options.showToggleTranscriptsButton = false;
                     // res.data.views[0].tracks.top[4].options.backgroundColor = "white";
@@ -1806,7 +1815,7 @@ class ViewerMobile extends Component {
                     break;
                   }
                   default: {
-                    throw new Error('[triggerUpdate] Unknown annotations track type', newHgViewParams.annotationsTrackType);
+                    throw new Error('[triggerUpdate] Unknown annotations track type', newHgViewParams.gatt);
                   }
                 }
                 // get child view heights
@@ -1860,7 +1869,7 @@ class ViewerMobile extends Component {
                       self.updateViewerLocation(event);
                     });
                     // put in transcript track hooks
-                    if (newHgViewParams.annotationsTrackType === "horizontal-transcripts") {
+                    if (newHgViewParams.gatt === "horizontal-transcripts") {
                       setTimeout(() => {
                         //const self = this;
                         // const chromatinStateTrackObj = this.mainHgView.api.getComponent().getTrackObject(
@@ -2215,16 +2224,16 @@ class ViewerMobile extends Component {
                 res.data.views[0].tracks.top[2].uid = uuid4();
                 res.data.views[0].tracks.top[3].uid = uuid4();
                 // annotations-specific work
-                res.data.views[0].tracks.top[3].type = newHgViewParams.annotationsTrackType;
-                switch (newHgViewParams.annotationsTrackType) {
-                  case "horizontal-gene-annotations": {
+                res.data.views[0].tracks.top[3].type = Constants.defaultApplicationGattCategories[newHgViewParams.gatt];
+                switch (newHgViewParams.gatt) {
+                  case "cv": {
                     res.data.views[0].tracks.top[3].tilesetUid = newGenesUUID;
                     res.data.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
                     res.data.views[0].tracks.top[3].name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[3].options.name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     break;
                   }
-                  case "horizontal-transcripts": {
+                  case "ht": {
                     res.data.views[0].tracks.top[3].tilesetUid = (newGenome !== "hg38") ? newTranscriptsUUID : newMasterlistUUID;
                     res.data.views[0].tracks.top[3].name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(self.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
@@ -2273,7 +2282,7 @@ class ViewerMobile extends Component {
                     break;
                   }
                   default: {
-                    throw new Error('[triggerUpdate] Unknown annotations track type', newHgViewParams.annotationsTrackType);
+                    throw new Error('[triggerUpdate] Unknown annotations track type', newHgViewParams.gatt);
                   }
                 }
                 if (newSampleSet === "vE") {
@@ -2339,7 +2348,7 @@ class ViewerMobile extends Component {
                       self.updateViewerLocation(event);
                     });
                     // add transcript event hook
-                    if (newHgViewParams.annotationsTrackType === "horizontal-transcripts") {
+                    if (newHgViewParams.gatt === "ht") {
                       setTimeout(() => {
                         const chromatinStateTrackObj = self.hgView.api.getComponent().getTrackObject(
                             res.data.views[0].uid,
@@ -2537,7 +2546,109 @@ class ViewerMobile extends Component {
   
   changeViewParams = (isDirty, tempHgViewParams) => {
     //let hideOverlay = !isDirty; /* false = overlay; true = hide overlay */
+
+    //
+    // to preserve as much of the old view parameter combination as possible, we look at
+    // what is available in the new view parameters and keep that, where possible, or attempt
+    // to choose sensible pre-defined defaults
+    //
+
+    // console.log(`(old) this.state.hgViewParams.sampleSet ${this.state.hgViewParams.sampleSet}`);
+    // console.log(`(new) tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
+
+    // if we are switching from Roadmap to Adsera, or vice versa, preserve the genome selection
+    if (((tempHgViewParams.sampleSet === "vA") && (this.state.hgViewParams.sampleSet === "vC")) || ((tempHgViewParams.sampleSet === "vC") && (this.state.hgViewParams.sampleSet === "vA"))) {
+      tempHgViewParams.genome = this.state.hgViewParams.genome;
+      if ((this.state.hgViewParams.complexity === "KL") || (this.state.hgViewParams.complexity === "KLs")) {
+        tempHgViewParams.complexity = this.state.hgViewParams.complexity;
+      }
+      if ((this.state.hgViewParams.sampleSet === "vC") || ((this.state.hgViewParams.sampleSet === "vA") && (this.state.hgViewParams.model === "18"))) {
+        tempHgViewParams.model = this.state.hgViewParams.model;
+      }
+    }
+    // if we are switching from Roadmap/Adsera to Gorkin, or vice versa, switch genome to useful default
+    if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC"))) {
+      tempHgViewParams.genome = "mm10";
+    }
+    if ((this.state.hgViewParams.sampleSet === "vD") && ((tempHgViewParams.sampleSet === "vA") || (tempHgViewParams.sampleSet === "vC"))) {
+      tempHgViewParams.genome = "hg19";
+    }
+    //
+    // adjust group
+    //
+    let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+    if (availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group) === -1) {
+      if (this.state.hgViewParams.mode === "single") {
+        tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+      }
+      else if (this.state.hgViewParams.mode === "paired") {
+        // console.log(`availableGroupsForNewSampleSet | (${this.state.hgViewParams.group}) ${availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group)} | ${JSON.stringify(availableGroupsForNewSampleSet)}`);
+        //
+        // it can be possible for an A_vs_B group name to have an according A_versus_B name (and vice versa)
+        //
+        tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
+        const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
+        if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
+          // console.log(`testing substituteGroupNameVsToVersus...`);
+          if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVsToVersus) !== -1) {
+            tempHgViewParams.group = substituteGroupNameVsToVersus;
+          }
+        }
+        else if (substituteGroupNameVersusToVs !== this.state.hgViewParams.group) {
+          // console.log(`testing substituteGroupNameVersusToVs...`);
+          if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVersusToVs) !== -1) {
+            tempHgViewParams.group = substituteGroupNameVersusToVs;
+          }
+        }
+      }
+    }
+    //
+    // adjust complexity
+    //
+    try {
+      let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
+      // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
+      // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
+      // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
+      // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
+      if (availableComplexitiesForNewGroup.indexOf(this.state.hgViewParams.complexity) === -1) {
+        tempHgViewParams.complexity = "KL"; // this should always be available
+      }
+    }
+    catch (error) {
+      // tempHgViewParams.complexity = "KL";
+      // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
+      // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
+      // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
+      // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
+    }
+    //
+    // adjust model
+    //
+    try {
+      let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
+      // console.log(`availableModelsForNewGroup | (${tempHgViewParams.model}) ${availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model))} | ${JSON.stringify(availableModelsForNewGroup)}`);
+      if (availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model)) === -1) {
+        tempHgViewParams.model = this.state.hgViewParams.model; // this might be available
+        if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
+          tempHgViewParams.model = "18";
+        }
+        if ((tempHgViewParams.sampleSet === "vA") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
+          tempHgViewParams.model = "18";
+        }
+      }
+    }
+    catch (error) {
+      // console.log(`error ${JSON.stringify(error, null, 2)}`);
+      tempHgViewParams.model = this.state.hgViewParams.model; // this should presumably be available
+      if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
+        tempHgViewParams.model = "18";
+      }
+    }
+
     //console.log("tempHgViewParams", tempHgViewParams);
+
     this.setState({
       tempHgViewParams: {...tempHgViewParams}
     }, () => {
@@ -3024,6 +3135,7 @@ class ViewerMobile extends Component {
                 suggestionsClassName={"suggestions viewer-suggestions"}
                 maxSuggestionHeight={this.state.maxAutocompleteSuggestionHeight}
                 isMobile={true}
+                showGoButton={false}
               />
             </NavItem>
             

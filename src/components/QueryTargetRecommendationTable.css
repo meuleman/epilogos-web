@@ -1,0 +1,27 @@
+.queryTargetElementTable {
+  overflow-y: scroll;
+  margin-bottom: 0px !important;
+  border-top: 0px !important;
+  scroll-behavior: smooth;
+}
+
+.queryTargetElementTable::-webkit-scrollbar {
+  background-color: grey;
+}
+
+.queryTargetElementTable::-webkit-scrollbar-track {
+  background-color: grey;
+}
+
+.queryTargetElementTable > thead > tr > th {
+  border-top: 0px !important;
+}
+
+.queryTargetElementTable > tbody > tr > td {
+  border-top: 1px dotted black !important;
+}
+
+.queryTargetElementTable > tbody > tr:hover > td {
+  background-color: #747474 !important;
+  color: white !important;
+}

@@ -77,7 +77,7 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
   let chrom = "";
   let start = -1;
   let stop = -1;
-  //console.log("matches", matches);
+  // console.log("matches", matches);
   if (matches.length === 3) {
     chrom = matches[0];
     start = parseInt(matches[1].replace(',',''));
@@ -162,32 +162,32 @@ export const calculateScale = (leftChr, rightChr, start, stop, self) => {
     diff = parseInt(stop) - parseInt(start);
   }
   else {
-    //console.log(`updateScale > chromosomes are different`);
+    // console.log(`updateScale > chromosomes are different`);
     const leftDiff = parseInt(Constants.assemblyBounds[self.state.hgViewParams.genome][leftChr]['ub']) - parseInt(start);
     const rightDiff = parseInt(stop);
     const allChrs = Object.keys(Constants.assemblyBounds[self.state.hgViewParams.genome]).sort((a, b) => { return parseInt(a.replace("chr", "")) - parseInt(b.replace("chr", "")); });
-    //console.log(`leftChr ${leftChr} | rightChr ${rightChr} | start ${start} | stop ${stop} | leftDiff ${leftDiff} | rightDiff ${rightDiff} | allChrs ${allChrs}`);
+    // console.log(`leftChr ${leftChr} | rightChr ${rightChr} | start ${start} | stop ${stop} | leftDiff ${leftDiff} | rightDiff ${rightDiff} | allChrs ${allChrs}`);
     let log10DiffFlag = false;
     for (let i = 0; i < allChrs.length; i++) {
       const currentChr = allChrs[i];
       if (currentChr === leftChr) {
-        //console.log(`adding ${leftDiff} for chromosome ${currentChr}`);
+        // console.log(`adding ${leftDiff} for chromosome ${currentChr}`);
         diff += (leftDiff > 0) ? leftDiff : 1;
         log10DiffFlag = true;
       }
       else if (currentChr === rightChr) {
-        //console.log(`adding ${rightDiff} for chromosome ${currentChr}`);
+        // console.log(`adding ${rightDiff} for chromosome ${currentChr}`);
         diff += (rightDiff > 0) ? rightDiff : 1;
         log10DiffFlag = false;
         break;
       }
       else if (log10DiffFlag) {
-        //console.log(`adding ${Constants.assemblyBounds[this.state.hgViewParams.genome][currentChr]['ub']} for chromosome ${currentChr}`);
+        // console.log(`adding ${Constants.assemblyBounds[this.state.hgViewParams.genome][currentChr]['ub']} for chromosome ${currentChr}`);
         diff += Constants.assemblyBounds[self.state.hgViewParams.genome][currentChr]['ub'];
       }
     }
   }
-  //console.log(`calculateScale ${diff}`);
+  // console.log(`calculateScale ${diff}`);
   log10Diff = log10(diff);
   scaleAsStr = (log10Diff < 3) ? `${Math.ceil(diff/100)*100}nt` :
                (log10Diff < 4) ? `${Math.floor(diff/1000)}kb` :
@@ -223,17 +223,19 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender pipeline results
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
-  const newGroupV2 = Constants.groupsForRecommenderV1OptionGroup[newSampleSet][newGenome][newGroup];
-  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.defaultApplicationRecommenderV1WindowSizeKey) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
-  let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
+  const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
+  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+  // let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
 
   // console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
   // console.log(`Helpers > updateExemplars > exemplarV1URL ${JSON.stringify(exemplarV1URL, null, 2)}`);
   
   function updateExemplarRegionsWithResponse(res, cb) {
+    const newExemplarRegions = res.data.split('\n');
+    // console.log(`updateExemplarRegionsWithResponse ${JSON.stringify(newExemplarRegions)}`);
     self.setState({
       exemplarJumpActive: true,
-      exemplarRegions: res.data.split('\n')
+      exemplarRegions: newExemplarRegions,
     }, () => {
       let data = [];
       let dataCopy = [];
@@ -246,7 +248,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         let stop = elem[2];
         let state = elem[3];
         if (!chrom) return;
-        //console.log("chrom, start, stop, state", chrom, start, stop, state);
+        // console.log("chrom, start, stop, state", chrom, start, stop, state);
         let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
         if (isNaN(chrom.replace(/chr/, ''))) {
           paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
@@ -276,7 +278,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         dataIdxBySort.push(idx + 1);
         chromatinStates[state] = 0;
       });
-      //console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
+      // console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
       setTimeout(() => {
         self.setState({
           exemplarTableData: data,
@@ -290,54 +292,75 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     });
   }
 
-  function tryExemplarV1URL(exemplarV1URL) {
-    axios.head(exemplarV1URL)
-      .then((res) => {
-        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV1URL | ${JSON.stringify(res)}`);
-        axios.get(exemplarV1URL)
-          .then((res) => {
-            if (!res.data || res.data.startsWith("<!doctype html>")) {
-              throw String(`Error: v1 exemplars not returned from: ${exemplarV1URL}`);
-            }
-            updateExemplarRegionsWithResponse(res, cb);
-          })
-          .catch((err) => {
-            console.warn(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL} | ${JSON.stringify(err)}`)
-          });
-      })
-      .catch((err) => {
-        console.warn(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
-      });
+  // function tryExemplarV1URL(exemplarV1URL) {
+  //   axios.head(exemplarV1URL)
+  //     .then((res) => {
+  //       // console.log(`Helpers > updateExemplars > attempting to GET exemplarV1URL | ${JSON.stringify(res)}`);
+  //       axios.get(exemplarV1URL)
+  //         .then((res) => {
+  //           if (!res.data || res.data.startsWith("<!doctype html>")) {
+  //             throw String(`Error: v1 exemplars not returned from: ${exemplarV1URL}`);
+  //           }
+  //           // console.log(`Helpers > updateExemplars > updating with exemplarV1URL`);
+  //           updateExemplarRegionsWithResponse(res, cb);
+  //         })
+  //         .catch((err) => {
+  //           console.log(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL} | ${JSON.stringify(err)}`)
+  //         });
+  //     })
+  //     .catch((err) => {
+  //       console.log(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
+  //     });
+  // }
+
+  function handleNoExemplarsFound(self) {
+    // console.log(`handleNoExemplarsFound()`)
+    self.setState({
+      selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+      exemplarTableData: [],
+      exemplarTableDataCopy: [],
+      exemplarTableDataIdxBySort: [],
+    }, () => {
+      self.updateViewerURLForCurrentState();
+    });
   }
   
   if (exemplarV2URL) {
     axios.head(exemplarV2URL)
+      // eslint-disable-next-line no-unused-vars
       .then((res) => {
         // handle V2 exemplar as normal
-        console.warn(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
+        // console.log(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
         axios.get(exemplarV2URL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
-              //throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
-              tryExemplarV1URL(exemplarV1URL);
+              // throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
+              // tryExemplarV1URL(exemplarV1URL);
+              handleNoExemplarsFound(self);
             }
             else {
+              // console.log(`Helpers > updateExemplars > updating with exemplarV2URL`);
               updateExemplarRegionsWithResponse(res, cb);
             }
           })
+          // eslint-disable-next-line no-unused-vars
           .catch((err) => {
-            console.warn(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
-            tryExemplarV1URL(exemplarV1URL);    
+            // console.log(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
+            // tryExemplarV1URL(exemplarV1URL);
+            handleNoExemplarsFound(self);
           });
       })
+      // eslint-disable-next-line no-unused-vars
       .catch((err) => {
-        console.warn(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
+        // console.log(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
         // fall back to trying V1 exemplar URL
-        tryExemplarV1URL(exemplarV1URL);
+        // tryExemplarV1URL(exemplarV1URL);
+        handleNoExemplarsFound(self);
       });
   }
   else {
-    tryExemplarV1URL(exemplarV1URL);
+    // tryExemplarV1URL(exemplarV1URL);
+    handleNoExemplarsFound(self);
   }
 }
 
@@ -350,9 +373,22 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
     case "vA":
     case "vB":
     case "vD":
-      result.A = `${genome}.${model}.${groupA}.${complexity}.epilogos.multires.mv5`;
-      result.B = `${genome}.${model}.${groupB}.${complexity}.epilogos.multires.mv5`;
-      result.AvsB = `${genome}.${model}.${groupAvsB}.${complexity}.epilogos.multires.mv5`;
+      switch (groupAvsB) {
+        case "Cancer_versus_Non-cancer":
+        case "Immune_versus_Non-immune":
+        case "Neural_versus_Non-neural":
+        case "Stem_versus_Non-stem":
+          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+          break;
+        default: {
+          result.A = `${genome}.${model}.${groupA}.${complexity}.epilogos.multires.mv5`;
+          result.B = `${genome}.${model}.${groupB}.${complexity}.epilogos.multires.mv5`;
+          result.AvsB = `${genome}.${model}.${groupAvsB}.${complexity}.epilogos.multires.mv5`;
+          break;
+        }
+      }
       break;
     case "vC":
       switch (genome) {
@@ -370,7 +406,7 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
            ) {
             groupAvsB = `${groupA}_versus_${groupB}`;
           }
-          if ( groupA.includes("Adult") || groupA.includes("Cancer") || groupA.includes("Immune") || groupA.includes("Neural") || groupB.includes("Embryonic") || groupA.includes("Male_donors") || groupB.includes("Female_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
+          if ( groupA.includes("Adult") || groupA.includes("Cancer") || groupA.includes("Immune") || groupA.includes("Neural") || groupA.includes("Male_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
             result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
             result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
             result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
@@ -411,7 +447,55 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
     case "vA":
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
       // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      
+      switch (genome) {
+        case "hg19": {
+          switch (group) {
+            case "Male_donors":
+            case "Female_donors":
+            case "Stem":
+            case "Non-stem":
+            case "Cancer":
+            case "Non-cancer":
+            case "Immune":
+            case "Non-immune":
+            case "Neural":
+            case "Non-neural":
+              result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+              break;
+            default: {
+              result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+              break;
+            }
+          }
+          break;
+        }
+        case "hg38": {
+          switch (group) {
+            case "Male_donors":
+            case "Female_donors":
+            case "Stem":
+            case "Non-stem":
+            case "Cancer":
+            case "Non-cancer":
+            case "Immune":
+            case "Non-immune":
+            case "Neural":
+            case "Non-neural":
+              result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+              break;
+            default: {
+              result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+              break;
+            }
+          }
+          break;
+        }
+        default: {
+          result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+          break;
+        }
+      }
       break;
     case "vB":
       // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
@@ -505,11 +589,59 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
   let errorRaised = false;
   let errorMessage = null;
   switch (sampleSet) {
-    case "vA":
+    case "vA": {
       // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
       // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      result = `${genome}.${model}.${group}.marks.multires.mv5`;
+      switch (genome) {
+        case "hg19": {
+          switch (group) {
+            case "Male_donors":
+            case "Female_donors":
+            case "Stem":
+            case "Non-stem":
+            case "Cancer":
+            case "Non-cancer":
+            case "Immune":
+            case "Non-immune":
+            case "Neural":
+            case "Non-neural":
+              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+              break;
+            default: {
+              result = `${genome}.${model}.${group}.marks.multires.mv5`;
+              break;
+            }
+          }
+          break;
+        }
+        case "hg38": {
+          switch (group) {
+            case "Male_donors":
+            case "Female_donors":
+            case "Stem":
+            case "Non-stem":
+            case "Cancer":
+            case "Non-cancer":
+            case "Immune":
+            case "Non-immune":
+            case "Neural":
+            case "Non-neural":
+              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+              break;
+            default: {
+              result = `${genome}.${model}.${group}.marks.multires.mv5`;
+              break;
+            }
+          }
+          break;
+        }
+        default: {
+          result = `${genome}.${model}.${group}.marks.multires.mv5`;
+          break;
+        }
+      }
       break;
+    }
     case "vB":
       // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
       // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
@@ -561,10 +693,11 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
               break;
           }
           break;
-        default:
+        default: {
           errorRaised = true;
           errorMessage = `Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
           break;
+        }
       }
       break;
     case "vD":
@@ -580,10 +713,11 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
     case "vF":
       result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
       break;
-    default:
+    default: {
       errorRaised = true;
       errorMessage = `Not a valid sample set identifier ${sampleSet}`;
       break;
+    }
   }
   if (errorRaised) {
     throw new Error(errorMessage);
@@ -618,10 +752,9 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   viewerUrl += "&chrRight=" + chrRight;
   viewerUrl += "&start=" + parseInt(start);
   viewerUrl += "&stop=" + parseInt(stop);
-  // newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType
-  if (state.hgViewParams.annotationsTrackType !== Constants.defaultApplicationAnnotationsTrackType) {
-    viewerUrl += "&annotationsTrackType=" + state.hgViewParams.annotationsTrackType;
-  }
+  
+  // console.log(`[constructViewerURL] selectedExemplarRowIdx ${state.selectedExemplarRowIdx} | selectedRoiRowIdx ${state.selectedRoiRowIdx}`);
+
   if (parseInt(state.selectedExemplarRowIdx) >= 0) {
     viewerUrl += "&serIdx=" + parseInt(state.selectedExemplarRowIdx);
   }
@@ -654,7 +787,21 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
       viewerUrl += `&highlightBehaviorAlpha=${state.highlightBehaviorAlpha}`;
     }
   }
-  //console.log(`viewerUrl ${viewerUrl}`);
+  //
+  // QueryTarget viewer lock
+  //
+  if (state.queryTargetLockFlag !== Constants.defaultQueryTargetLockFlag) {
+    viewerUrl += `&qtViewLock=${(state.queryTargetLockFlag) ? 't' : 'f'}`;
+  }
+  //
+  // Gene annotation track type and block count flag
+  //
+  viewerUrl += "&gatt=" + state.hgViewParams.gatt;
+  if (state.hgViewParams.gac !== Constants.defaultApplicationGacCategory) {
+    viewerUrl += "&gac=" + state.hgViewParams.gac;
+  }
+
+  // console.log(`viewerUrl ${viewerUrl}`);
   return viewerUrl;
 }
 
@@ -748,7 +895,7 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
   return newHgViewParams;
 }
 
-export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
+export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self) => {
     let params = self.state.tempHgViewParams;
     let datasetAltname = params.sampleSet;
     let assembly = params.genome;
@@ -758,10 +905,17 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
     let chromosome = qChr;
     let start = qStart;
     let end = qEnd;
+    let windowSizeKb = parseInt(qWindowSizeKb);
+    let windowSize = (windowSizeKb < 10 + 8) ? 5 :
+                     (windowSizeKb < 25 + 13) ? 10 :
+                     (windowSizeKb < 50 + 13) ? 25 :
+                     (windowSizeKb < 75 + 13) ? 50 :
+                     (windowSizeKb < 100 + 50) ? 75 : 100;
+    let scaleLevel = parseInt(windowSize / 5);
     let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
-    let outputFormat = Constants.defaultApplicationRecommenderV1OutputFormat;
+    let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
     
-    let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}`;
+    let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
     
     // console.log(`[recommenderV3SearchOnClick] recommenderV3URL ${recommenderV3URL}`);
     
@@ -780,9 +934,10 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
     })
     .catch((err) => {
       err.response = {};
+      err.response.title = "Please try again";
       err.response.status = "404";
-      err.response.statusText = `No recommendations found (possible missing or corrupt index data for specified parameters - please contact ${Constants.applicationContactEmail} for assistance)`;
-      //console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
+      err.response.statusText = `Could not retrieve recommendations for region query. Please try another region.`;
+      // console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
       let msg = self.errorMessage(err, err.response.statusText, null);
       self.setState({
         overlayMessage: msg,
@@ -790,6 +945,7 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
         self.fadeInOverlay(() => {
           self.setState({
             selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+            recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
             recommenderV3SearchInProgress: false,
             recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
             recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
@@ -801,4 +957,36 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, self) => {
         });
       });
     })
-  }
+}
+
+//
+// return a Promise to request a UUID from a filename pattern
+//
+export const uuidQueryPromise = function(fn, self) {
+  const hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
+  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+  return axios.get(hgUUIDQueryURL).then((res) => {
+    if (res.data && res.data.results && res.data.results[0]) {
+      return res.data.results[0].uuid;
+    }
+    else {
+      let err = {};
+      err.response = {};
+      err.response.status = "404";
+      err.response.statusText = "No tileset data found for specified UUID";
+      //throw {response:{status:"404", statusText:"No tileset data found for specified UUID"}};
+      throw err;
+    }
+  })
+  .catch((err) => {
+    //console.log("[triggerUpdate] Error - ", JSON.stringify(err));
+    //console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`)
+    let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
+    self.setState({
+      overlayMessage: msg,
+      mainHgViewconf: {}
+    }, () => {
+      self.fadeInOverlay();
+    });
+  });
+}

@@ -61,7 +61,8 @@ class DrawerContent extends Component {
         samples: true,
         preferredSamples: true,
         sampleSet: true,
-        advancedOptions: this.props.advancedOptionsVisible
+        advancedOptions: this.props.advancedOptionsVisible,
+        gatt: true,
       },
       hideshowWidgetIsVisible: {
         genome: false,
@@ -71,7 +72,8 @@ class DrawerContent extends Component {
         samples: false,
         preferredSamples: false,
         sampleSet: false,
-        advancedOptions: true
+        advancedOptions: true,
+        gatt: false,
       },
       tabs: {
         settings: true,
@@ -150,49 +152,50 @@ class DrawerContent extends Component {
     // we have do some annoying custom things specific to the selected genome or mode
     //
     if (targetName === "sampleSet") {
-      //console.warn("switching sampleSet!", targetName);
-      switch (event.target.value) {
-        case "vA":
-        case "vB":
-          // newViewParams.mode = "single";
-          // newViewParams.group = "all";
-          newViewParams.genome = "hg19";
-          newViewParams.model = "15";
-          newViewParams.complexity = "KL";
-          newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
-          break;
-        case "vC":
-          // newViewParams.mode = "single";
-          // newViewParams.group = "all";
-          newViewParams.genome = "hg19";
-          newViewParams.model = "18";
-          newViewParams.complexity = "KL";
-          newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
-          break;
-        case "vD":
-          newViewParams.mode = "single";
-          newViewParams.group = "all";
-          newViewParams.genome = "mm10";
-          newViewParams.model = "15";
-          newViewParams.complexity = "KL";  
-          break;
-        case "vE":
-          newViewParams.mode = "single";
-          newViewParams.group = "Female";
-          newViewParams.genome = "hg19";
-          newViewParams.model = "18";
-          newViewParams.complexity = "KL";  
-          break;
-        case "vF":
-          newViewParams.mode = "single";
-          newViewParams.group = "Female";
-          newViewParams.genome = "hg19";
-          newViewParams.model = "18";
-          newViewParams.complexity = "KL";  
-          break;
-        default:
-          throw Error("Unknown sampleSet parameter specified in DrawerContent:onClickSettingsButton()");
-      }
+      // console.warn("switching sampleSet!", targetName);
+      // switch (event.target.value) {
+      //   case "vA":
+      //   case "vB":
+      //     // newViewParams.mode = "single";
+      //     // newViewParams.group = "all";
+      //     newViewParams.genome = "hg19";
+      //     newViewParams.model = "15";
+      //     newViewParams.complexity = "KL";
+      //     newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
+      //     break;
+      //   case "vC":
+      //     // newViewParams.mode = "single";
+      //     // newViewParams.group = "all";
+      //     newViewParams.genome = "hg19";
+      //     newViewParams.model = "18";
+      //     newViewParams.complexity = "KL";
+      //     newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
+      //     break;
+      //   case "vD":
+      //     newViewParams.mode = "single";
+      //     newViewParams.group = "all";
+      //     newViewParams.genome = "mm10";
+      //     newViewParams.model = "15";
+      //     newViewParams.complexity = "KL";  
+      //     break;
+      //   case "vE":
+      //     newViewParams.mode = "single";
+      //     newViewParams.group = "Female";
+      //     newViewParams.genome = "hg19";
+      //     newViewParams.model = "18";
+      //     newViewParams.complexity = "KL";  
+      //     break;
+      //   case "vF":
+      //     newViewParams.mode = "single";
+      //     newViewParams.group = "Female";
+      //     newViewParams.genome = "hg19";
+      //     newViewParams.model = "18";
+      //     newViewParams.complexity = "KL";  
+      //     break;
+      //   default:
+      //     throw Error("Unknown sampleSet parameter specified in DrawerContent:onClickSettingsButton()");
+      // }
+      // console.log(`newViewParams ${JSON.stringify(newViewParams)}`);
     }
     
     if (targetName === "mode") {
@@ -214,96 +217,20 @@ class DrawerContent extends Component {
       }
     }
 
-    // deprecated: please see -- Helpers.adjustHgViewParamsForNewGenome
-
-    // if (targetName === "genome") {
-    //   const sampleSet = newViewParams.sampleSet;
-    //   const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]);
-    //   //console.log(`event.target.value ${JSON.stringify(event.target.value)}`);
-    //   if (event.target.value === "mm10") {
-    //     newViewParams.group = (newViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
-    //     newViewParams.model = (newViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
-    //   }
-    //   else if (event.target.value === "hg19") {
-    //     if (newViewParams.mode === "paired") {
-    //       if (newViewParams.complexity === "KLss") newViewParams.complexity = "KL";
-    //       if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
-    //         const oldGroupsVersusToVs = {};
-    //         Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
-    //           let k = g.replace("_vs_", "_versus_");
-    //           oldGroupsVersusToVs[k] = g;
-    //         });
-    //         if (oldGroupsVersusToVs[this.state.viewParams.group]) {
-    //           newViewParams.group = oldGroupsVersusToVs[this.state.viewParams.group];
-    //         }
-    //         else if (this.state.viewParams.group === "Male_donors_versus_Female_donors") {
-    //           newViewParams.group = "Male_vs_Female";
-    //         }
-    //         else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
-    //           newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
-    //         }
-    //         else {
-    //           newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg19;
-    //         }
-    //       }
-    //     }
-    //     else if (newViewParams.mode === "single") {
-    //       if ((newViewParams.genome === "hg19") && (this.state.viewParams.genome === "hg38")) {
-    //         if (newViewParams.group === "Male_donors") {
-    //           newViewParams.group = "Male";
-    //         }
-    //         else if (newViewParams.group === "Female_donors") {
-    //           newViewParams.group = "Female";
-    //         }
-    //       }
-    //       if (!oldGroups.includes(newViewParams.group)) {
-    //         newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg19;
-    //       }
-    //     }
-    //   }
-    //   else if (event.target.value === "hg38") {
-    //     if (newViewParams.mode === "paired") {
-    //       if (newViewParams.complexity === "KLss") newViewParams.complexity = "KL";
-    //       if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
-    //         const oldGroupsVsToVersus = {};
-    //         Object.keys(Constants.groupsByGenome[sampleSet][event.target.value]).forEach((g) => {
-    //           let k = g.replace("_versus_", "_vs_");
-    //           oldGroupsVsToVersus[k] = g;
-    //         });
-    //         if (oldGroupsVsToVersus[this.state.viewParams.group]) {
-    //           newViewParams.group = oldGroupsVsToVersus[this.state.viewParams.group];
-    //         }
-    //         else if (this.state.viewParams.group === "Male_vs_Female") {
-    //           newViewParams.group = "Male_donors_versus_Female_donors";
-    //         }
-    //         else if (this.state.viewParams.group === "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed") {
-    //           newViewParams.group = "All_833_biosamples_mostly_imputed_versus_All_833_biosamples_mostly_observed";
-    //         }
-    //         else if (this.state.viewParams.group === "Adult_versus_Embryonic") {
-    //           newViewParams.group = "Adult_versus_Embryonic";
-    //         }
-    //         else {
-    //           newViewParams.group = Constants.defaultPairedGroupKeys[sampleSet].hg38;
-    //         }
-    //       }
-    //     }
-    //     else if (newViewParams.mode === "single") {
-    //       if ((newViewParams.genome === "hg38") && (this.state.viewParams.genome === "hg19")) {
-    //         if (newViewParams.group === "Male") {
-    //           newViewParams.group = "Male_donors";
-    //         }
-    //         else if (newViewParams.group === "Female") {
-    //           newViewParams.group = "Female_donors";
-    //         }
-    //       }
-    //       if (!oldGroups.includes(newViewParams.group)) {
-    //         newViewParams.group = Constants.defaultSingleGroupKeys[sampleSet].hg38;
-    //       }
-    //     }
-    //   }
-    // }
+    if (targetName === "gatt") {
+      // get toggle value from event.target.checked
+      event.target.value = (!event.target.checked) ? "cv" : "ht";
+      newViewParams.gatt = event.target.value;
+    }
 
     if (targetName === "model") {
+      if ((newViewParams.sampleSet === "vA") && (newViewParams.mode === "paired")) {
+        // is the group available for the selected model? if not, we need to revert to a useful default
+        let vAGroupAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+        if (vAGroupAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
+          newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        }
+      }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "15")) {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
           const vCKeysToInspect15State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
@@ -325,12 +252,15 @@ class DrawerContent extends Component {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
           const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect18State.indexOf(newViewParams.group) === -1) {
-            newViewParams.group = "all";
+            newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
           }
           else {
             const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
-            if (vCKeysToInspect18StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
-              newViewParams.group = "all";
+            if (!vCKeysToInspect18StateModelAvailability) {
+              newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+            }
+            else if (vCKeysToInspect18StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
+              newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
           }
         }
@@ -438,18 +368,22 @@ class DrawerContent extends Component {
     const activeMode = this.state.viewParams.mode;
     const activeModel = this.state.viewParams.model;
     const activeSampleSet = this.state.viewParams.sampleSet;
+    const activeGroup = this.state.viewParams.group;
+    // const activeGroupAvailabilityForModels = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup].availableForModels;
+    // const activeGroupAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup];
+    const activeGenomeAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome];
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'model-bg-btn-';
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
-    let activeObj = Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode];
+    let activeObj = (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]) ? Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode] : null;
     if (!activeObj) {
-      console.log(`activeSampleSet ${activeSampleSet}`);
-      console.log(`activeGenome ${activeGenome}`);
-      console.log(`activeMode ${activeMode}`);
-      console.log(`activeSampleSet ${activeSampleSet}`);
+      // console.log(`activeSampleSet ${activeSampleSet}`);
+      // console.log(`activeGenome ${activeGenome}`);
+      // console.log(`activeMode ${activeMode}`);
+      // console.log(`activeSampleSet ${activeSampleSet}`);
       return result;
     }
     if (this.props.isProductionSite) { 
@@ -462,7 +396,10 @@ class DrawerContent extends Component {
     Object.keys(activeObj).forEach(k => {
       if (activeObj[k].visible) {
         const isActive = (activeModel === k);
-        const isDisabled = !activeObj[k].enabled;
+        // console.log(`activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value) ${activeObj[k].value} ${JSON.stringify(activeGroupAvailabilityForModels)} ${activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value))} ${!activeObj[k].enabled}`);
+        const isInactiveForModel = activeGenomeAvailability[activeGroup] && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
+        const isDisabled = !activeObj[k].enabled || isInactiveForModel;
+        // console.log(`isDisabled ${isDisabled}`);
         const kLabel = activeObj[k].titleText;
         const kValue = activeObj[k].value;
         let kButtonKey = kButtonPrefix + kButtonIdx;
@@ -511,13 +448,52 @@ class DrawerContent extends Component {
     const kSectionBodyKey = 'sampleSet-sb';
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
-  
+
+  geneAnnotationSectionBody = () => {
+    let result = [];
+    let geneAnnotationIcons = [];
+    let geneAnnotationIconIdx = 0;
+    if (Object.keys(Constants.switchGeneAnnotations).length !== 2) {
+      throw Error("Error - Number of switch-gene-annotations must equal two to use <Switch> component");
+    }
+    Object.keys(Constants.switchGeneAnnotations).forEach(k => {
+      let kLabel = Constants.switchGeneAnnotations[k];
+      switch(geneAnnotationIconIdx) {
+        case 0:
+          geneAnnotationIcons.push(<div className="drawer-settings-gatt-label" style={{ paddingRight: '8px' }}>{kLabel}</div>)
+          break;
+        case 1:
+          geneAnnotationIcons.push(<div className="drawer-settings-gatt-label" style={{ paddingLeft: '8px' }}>{kLabel}</div>)
+          break;
+        default:
+          break;
+      }
+      geneAnnotationIconIdx++;
+    });
+    const geneAnnotationIconGroupPrefix = 'gatt-bg-';
+    let geneAnnotationIconGroupIdx = 0;
+    let geneAnnotationToggleDisabled = false;
+    const geneAnnotationIconGroupKey = geneAnnotationIconGroupPrefix + geneAnnotationIconGroupIdx;
+    result.push(
+      <label key={geneAnnotationIconGroupKey}>
+        <span className={(this.state.viewParams.gatt === "cv") ? "drawer-settings-gatt-label-active" : "drawer-settings-gatt-label-not-active"}>
+          {geneAnnotationIcons[0]}
+        </span>
+        <Toggle defaultChecked={(this.state.viewParams.gatt === "ht")} disabled={geneAnnotationToggleDisabled} icons={false} name="gatt" onChange={this.onClickSettingsButton} />
+        <span className={(this.state.viewParams.gatt === "ht") ? "drawer-settings-gatt-label-active" : "drawer-settings-gatt-label-not-active"}>
+          {geneAnnotationIcons[1]}
+        </span>
+      </label>);
+    const kSectionBodyKey = 'gatt-sb';
+    return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
+  }
+
   complexitySectionBody = () => {
-    const activeGenome = this.state.viewParams.genome;
-    const activeComplexity = this.state.viewParams.complexity;
-    const activeSampleSet = this.state.viewParams.sampleSet;
-    const activeMode = this.state.viewParams.mode;
-    const activeGroup = this.state.viewParams.group;
+    let activeGenome = this.state.viewParams.genome;
+    let activeComplexity = this.state.viewParams.complexity;
+    let activeSampleSet = this.state.viewParams.sampleSet;
+    let activeMode = this.state.viewParams.mode;
+    let activeGroup = this.state.viewParams.group;
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'complexity-bg-btn-';
@@ -525,6 +501,7 @@ class DrawerContent extends Component {
     const kButtonLabelPrefix = 'complexity-bg-btn-label-';
     let kButtonIdx = 0;
     let activeObj = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome];
+    if (!activeObj) return;
     Object.keys(activeObj).forEach(k => {
       if (activeObj[k].visible) {
         const kLabel = activeObj[k].titleText;
@@ -560,7 +537,7 @@ class DrawerContent extends Component {
     const kButtonLabelPrefix = 'preferred-samples-bg-btn-label-';
     let kButtonIdx = 0;
     const preferredSamples = this.preferredSampleItems();
-    //console.log("preferredSamples", preferredSamples);
+    if (!preferredSamples) return <div />;
     function compareOnSortValue(a, b) { if ( a.sortValue < b.sortValue ) { return -1; } if (a.sortValue > b.sortValue) { return 1; } return 0; }
     preferredSamples.sort(compareOnSortValue);
     Object.keys(preferredSamples).forEach(k => {
@@ -584,17 +561,34 @@ class DrawerContent extends Component {
   }
   
   preferredSampleItems = () => {
-    const activeSampleSet = this.state.viewParams.sampleSet;
-    const activeModel = parseInt(this.state.viewParams.model);
-    const activeMode = this.state.viewParams.mode;
-    const activeGenome = this.state.viewParams.genome;
-    const activeComplexity = this.state.viewParams.complexity;
+    let activeSampleSet = this.state.viewParams.sampleSet;
+    let activeModel = parseInt(this.state.viewParams.model);
+    let activeMode = this.state.viewParams.mode;
+    let activeGenome = this.state.viewParams.genome;
+    let activeComplexity = this.state.viewParams.complexity;
+    // if (activeSampleSet === "vD") {
+    //   activeGenome = "mm10";
+    //   activeModel = 15;
+    //   activeComplexity = "KL";
+    // }
     let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
-        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18]  }
+        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18], availableForComplexities:["KL", "KLs"] }
       };
     }
+    
+    // console.log("------");
+    // console.log(`activeSampleSet ${JSON.stringify(activeSampleSet, null, 2)}`);
+    // console.log(`activeModel ${JSON.stringify(activeModel, null, 2)}`);
+    // console.log(`activeMode ${JSON.stringify(activeMode, null, 2)}`);
+    // console.log(`activeGenome ${JSON.stringify(activeGenome, null, 2)}`);
+    // console.log(`activeComplexity ${JSON.stringify(activeComplexity, null, 2)}`);
+    // console.log(`md ${JSON.stringify(md, null, 2)}`);
+    // console.log("------");
+
+    if (!md) return null;
+
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let preferredSamples = jp.query(samples, '$..[?(@.preferred==true)]');
     preferredSamples = preferredSamples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
@@ -616,6 +610,9 @@ class DrawerContent extends Component {
     const kButtonLabelPrefix = 'samples-bg-btn-label-';
     let kButtonIdx = 0;
     const samples = this.sampleItems();
+    if (!samples) return <div />;
+    function compareOnSortValue(a, b) { if ( a.sortValue < b.sortValue ) { return -1; } if (a.sortValue > b.sortValue) { return 1; } return 0; }
+    samples.sort(compareOnSortValue);
     Object.keys(samples).forEach(k => {
       let kSample = samples[k];
       let kLabel = kSample.label;
@@ -648,14 +645,29 @@ class DrawerContent extends Component {
         "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] }
       };
     }
+    if (!md) return null;
+
+    // console.log("------");
+    // console.log(`activeSampleSet ${JSON.stringify(activeSampleSet, null, 2)}`);
+    // console.log(`activeModel ${JSON.stringify(activeModel, null, 2)}`);
+    // console.log(`activeMode ${JSON.stringify(activeMode, null, 2)}`);
+    // console.log(`activeGenome ${JSON.stringify(activeGenome, null, 2)}`);
+    // console.log(`activeComplexity ${JSON.stringify(activeComplexity, null, 2)}`);
+    // console.log(`md ${JSON.stringify(md, null, 2)}`);
+    // console.log("------");
+
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     samples = samples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
+    // console.log(`samples ${JSON.stringify(samples)}`);
     let enabledSamples = jp.query(samples, '$..[?(@.enabled==true)]');
+    // console.log(`activeModel ${activeModel} enabledSamples ${JSON.stringify(enabledSamples)}`);
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledSampleItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..text"));
     let ks = Object.keys(enabledSampleItems);
     return ks.map((s) => {
-      return {'label' : enabledSampleItems[s], 'value' : s};
+      let sv = md[s].sortValue || s;
+      return {'label' : enabledSampleItems[s], 'value' : s, 'sortValue' : sv};
+      // return {'label' : enabledSampleItems[s], 'value' : s};
     });
   }
   
@@ -664,6 +676,8 @@ class DrawerContent extends Component {
     let self = this;
         
     function contentByType(type) {
+      // console.log(`[DrawerContent] > render > contentByType ${type}`);
+      
       switch (type) {
         
         case "roi": {
@@ -690,12 +704,14 @@ class DrawerContent extends Component {
             // eslint-disable-next-line no-unused-vars
           self.props.exemplarChromatinStates.forEach((val, idx) => {
             let exemplarId = "exemplar-chromatinState-" + val;
-            //console.log("val", val);
-            //console.log("idx", idx);
-            //console.log("self.props.viewParams.genome", self.props.viewParams.genome);
-            //console.log("self.props.viewParams.model", self.props.viewParams.model);
-            //console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]);
-            //console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]);
+            
+            // console.log("val", val);
+            // console.log("idx", idx);
+            // console.log("self.props.viewParams.genome", self.props.viewParams.genome);
+            // console.log("self.props.viewParams.model", self.props.viewParams.model);
+            // console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]);
+            // console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]);
+
             let exemplarChromatinStateName = ((Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val] && Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val][0]) || "Undefined");
             const kExemplarTooltipKey = kExemplarTooltipPrefix + kExemplarTooltipIdx;
             exemplarTooltips.push(<ReactTooltip key={kExemplarTooltipKey} id={exemplarId} aria-haspopup='true' place="right" type="dark" effect="float">{exemplarChromatinStateName}</ReactTooltip>);
@@ -711,7 +727,15 @@ class DrawerContent extends Component {
                              rowStyle={customExemplarRowStyle}
                              rowEvents={customExemplarRowEvents}
                              />
-          return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{exemplarResult}{exemplarTooltips}</div>;
+          return (self.props.exemplarTableData.length > 0) 
+            ? <div style={{"height": self.props.drawerHeight, "overflowY": "auto"}}>
+                {exemplarResult}{exemplarTooltips}
+              </div> 
+            : <div style={{"display": "flex", "position": "relative", "paddingLeft": "50px", "height": parseInt(parseInt(self.props.drawerHeight) / 2)}}>
+                <div style={{"display": "inline-block", "alignSelf": "flex-end"}} className="regions-not-found-message">
+                  {Constants.defaultApplicationNoExemplarsFoundMessage}
+                </div>
+              </div>;
         }
 
         case "settings": {
@@ -801,7 +825,7 @@ class DrawerContent extends Component {
           let preferredSamplesSection = (
             <div key="viewer-preferred-samples-section" className="drawer-settings-section drawer-settings-section-middle" style={{display:(self.props.advancedOptionsVisible)?"none":"block"}}>
               <div key="viewer-preferred-samples-section-header" className="drawer-settings-section-header">
-                <div key="viewer-preferred-samples-section-header-text" className="drawer-settings-section-header-text">{(self.state.viewParams.mode === "single") ? "Biosamples (selected groups)" : "Pairwise comparisons"}</div>
+                <div key="viewer-preferred-samples-section-header-text" className="drawer-settings-section-header-text">{(self.state.viewParams.mode === "single") ? "Biosamples" : "Pairwise comparisons"}</div>
                 <div key="viewer-preferred-samples-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("preferredSamples")}} style={{visibility:(self.state.hideshowWidgetIsVisible.preferredSamples)?"visible":"hidden"}}>{!self.state.hideshow.preferredSamples ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
               </div>
               <div key="viewer-preferred-samples-section-body" className="drawer-settings-section-body">
@@ -814,7 +838,39 @@ class DrawerContent extends Component {
           
           // advanced options (body)
           let advancedOptionsSectionBody = [];
-          
+
+          // biosamples (all)
+          let samplesSectionBody = self.samplesSectionBody();
+          let samplesSection = (
+            <div key="viewer-samples-section" className="drawer-settings-section drawer-settings-section-ao">
+              <div key="viewer-samples-section-header" className="drawer-settings-section-header">
+                <div key="viewer-samples-section-header-text" className="drawer-settings-section-header-text">{(self.state.viewParams.mode === "single") ? "Biosamples (all groups)" : "Pairwise comparisons (all)"}</div>
+                <div key="viewer-samples-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("samples")}} style={{visibility:(self.state.hideshowWidgetIsVisible.mode)?"visible":"hidden"}}>{!self.state.hideshow.samples ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
+              </div>
+              <div key="viewer-samples-section-body" className="drawer-settings-section-body">
+                <Collapse isOpen={self.state.hideshow.samples}>
+                  {samplesSectionBody}
+                </Collapse>
+              </div>
+            </div>);
+          advancedOptionsSectionBody.push(samplesSection);
+
+          // gene annotation mode (cv/ht)
+          let geneAnnotationSectionBody = self.geneAnnotationSectionBody();
+          let geneAnnotationSection = (
+            <div key="viewer-gatt-section" className="drawer-settings-section drawer-settings-section-top">
+              <div key="viewer-gatt-section-header" className="drawer-settings-section-header">
+                <div key="viewer-gatt-section-header-text" className="drawer-settings-section-header-text">Gene annotations</div>
+                <div key="viewer-gatt-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("gatt")}} style={{visibility:(self.state.hideshowWidgetIsVisible.gatt)?"visible":"hidden"}}>{!self.state.hideshow.gatt ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
+              </div>
+              <div key="viewer-gatt-section-body" className="drawer-settings-section-body">
+                <Collapse isOpen={self.state.hideshow.gatt}>
+                  {geneAnnotationSectionBody}
+                </Collapse>
+              </div>
+            </div>);
+          advancedOptionsSectionBody.push(geneAnnotationSection);
+
           // complexity (level 1/2/3/stacked)
           let complexitySectionBody = self.complexitySectionBody();
           let complexitySection = (
@@ -831,32 +887,16 @@ class DrawerContent extends Component {
             </div>);
           advancedOptionsSectionBody.push(complexitySection);
           
-          // biosamples (all)
-          let samplesSectionBody = self.samplesSectionBody();
-          let samplesSection = (
-            <div key="viewer-samples-section" className="drawer-settings-section drawer-settings-section-ao">
-              <div key="viewer-samples-section-header" className="drawer-settings-section-header">
-                <div key="viewer-samples-section-header-text" className="drawer-settings-section-header-text">Biosamples (all groups)</div>
-                <div key="viewer-samples-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("samples")}} style={{visibility:(self.state.hideshowWidgetIsVisible.mode)?"visible":"hidden"}}>{!self.state.hideshow.samples ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
-              </div>
-              <div key="viewer-samples-section-body" className="drawer-settings-section-body">
-                <Collapse isOpen={self.state.hideshow.samples}>
-                  {samplesSectionBody}
-                </Collapse>
-              </div>
-            </div>);
-          advancedOptionsSectionBody.push(samplesSection);
-          
           // advanced options (section)
           let advancedOptionsSection = (
             <div key="viewer-advanced-options-section" className="drawer-settings-section drawer-settings-section-middle drawer-settings-section-ao-switch">
-              <div key="viewer-advanced-options-section-header" className="drawer-settings-section-header drawer-settings-section-header-ao">
-                <div style={{display:"block", width:"100%", height:"24px", textAlign:"center"}} onClick={() => { self.props.toggleAdvancedOptionsVisible();}}>Advanced options {(!self.props.advancedOptionsVisible?<FaChevronCircleDown className="epilogos-content-hiw-divider-widget" size="1.25em" />:<FaChevronCircleUp className="epilogos-content-hiw-divider-widget" size="1.25em" />)}</div>
-              </div>
               <div key="viewer-advanced-options-section-body" className="drawer-settings-section-body">
                 <Collapse isOpen={self.props.advancedOptionsVisible}>
-                  {advancedOptionsSectionBody}
+                  <div style={{"paddingTop":"10px"}}>{advancedOptionsSectionBody}</div>
                 </Collapse>
+              </div>
+              <div key="viewer-advanced-options-section-header" className="drawer-settings-section-header drawer-settings-section-header-ao">
+                <div style={{display:"block", width:"100%", height:"24px", textAlign:"center"}} onClick={() => { self.props.toggleAdvancedOptionsVisible();}}>Advanced options {(!self.props.advancedOptionsVisible?<FaChevronCircleDown className="epilogos-content-hiw-divider-widget" size="1.25em" />:<FaChevronCircleUp className="epilogos-content-hiw-divider-widget" size="1.25em" />)}</div>
               </div>
             </div>);
           content.push(advancedOptionsSection);
@@ -1254,11 +1294,15 @@ class DrawerContent extends Component {
       if (row.idx === this.props.selectedRoiRowIdx) {
         style.backgroundColor = '#2631ad';
         style.color = '#fff';
+        style.fontWeight = 'bolder';
       }
-      else if (row.idx === this.state.currentRoiMouseoverRow) {
-        style.backgroundColor = '#173365';
-        style.color = '#fff';
+      else {
+        style.fontWeight = 'lighter';
       }
+      // else if (row.idx === this.state.currentRoiMouseoverRow) {
+      //   style.backgroundColor = '#173365';
+      //   style.color = '#fff';
+      // }
       return style;
     };
     
@@ -1268,60 +1312,68 @@ class DrawerContent extends Component {
       if (row.idx === this.props.selectedExemplarRowIdx) {
         style.backgroundColor = '#2631ad';
         style.color = '#fff';
+        style.fontWeight = 'bolder';
       }
-      else if (row.idx === this.state.currentExemplarMouseoverRow) {
-        style.backgroundColor = '#173365';
-        style.color = '#fff';
+      else {
+        style.fontWeight = 'lighter';
       }
+      // else if (row.idx === this.state.currentExemplarMouseoverRow) {
+      //   style.backgroundColor = '#173365';
+      //   style.color = '#fff';
+      // }
       return style;
     };
     
     const customRoiRowEvents = {
       // eslint-disable-next-line no-unused-vars
       onClick: (evt, row, rowIndex) => {
-        this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx, row.element.strand);
+        // this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx, row.element.strand);
+        this.props.jumpToRoi("skip", row.idx);
       },
-      // eslint-disable-next-line no-unused-vars
-      onMouseEnter: (evt, row, rowIndex) => {
-        this.setState({
-          currentRoiMouseoverRow: row.idx
-        });
-      },
-      // eslint-disable-next-line no-unused-vars
-      onMouseLeave: (evt, row, rowIndex) => {
-        this.setState({
-          currentRoiMouseoverRow: -1
-        });
-      }
+      // // eslint-disable-next-line no-unused-vars
+      // onMouseEnter: (evt, row, rowIndex) => {
+      //   this.setState({
+      //     currentRoiMouseoverRow: row.idx
+      //   });
+      // },
+      // // eslint-disable-next-line no-unused-vars
+      // onMouseLeave: (evt, row, rowIndex) => {
+      //   this.setState({
+      //     currentRoiMouseoverRow: -1
+      //   });
+      // }
     };
     
     const customExemplarRowEvents = {
       // eslint-disable-next-line no-unused-vars
       onClick: (evt, row, rowIndex) => {
-        // console.log(`row ${JSON.stringify(row)}`);
-        if (this.props.viewParams.mode === "query") {
-          let applyPadding = true;
-          let nonQueryModeSelected = true;
-          this.props.expandToRegion(row.position, applyPadding, nonQueryModeSelected);
-          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
-        }
-        else {
-          //console.log(`row ${JSON.stringify(row)}`);
-          this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
-        }
+        // console.log(`[DrawerContent] customExemplarRowEvents > onClick > row ${JSON.stringify(row)}`);
+        this.props.jumpToExemplar("skip", row.idx);
+        
+        // if (this.props.viewParams.mode === "query") {
+        //   // let applyPadding = true;
+        //   // let nonQueryModeSelected = true;
+        //   // this.props.expandToRegion(row.position, applyPadding, nonQueryModeSelected);
+        //   this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
+        // }
+        // else {
+        //   //console.log(`row ${JSON.stringify(row)}`);
+        //   // this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
+        //   this.props.jumpToExemplar("skip", row.idx);
+        // }
       },
       // eslint-disable-next-line no-unused-vars
-      onMouseEnter: (evt, row, rowIndex) => {
-        this.setState({
-          currentExemplarMouseoverRow: row.idx
-        });
-      },
-      // eslint-disable-next-line no-unused-vars
-      onMouseLeave: (evt, row, rowIndex) => {
-        this.setState({
-          currentExemplarMouseoverRow: -1
-        });
-      }
+      // onMouseEnter: (evt, row, rowIndex) => {
+      //   this.setState({
+      //     currentExemplarMouseoverRow: row.idx
+      //   });
+      // },
+      // // eslint-disable-next-line no-unused-vars
+      // onMouseLeave: (evt, row, rowIndex) => {
+      //   this.setState({
+      //     currentExemplarMouseoverRow: -1
+      //   });
+      // }
     };
     
     function tabContent() {
@@ -1344,7 +1396,7 @@ class DrawerContent extends Component {
                   onClick={() => { self.toggle('exemplars'); }}
                   disabled={!self.state.tabs.exemplars}
                 >
-                  exemplars
+                  suggestions
                 </NavLink>
               </NavItem> : ""}
             {(self.props && self.props.roiEnabled) ?
@@ -1391,6 +1443,8 @@ DrawerContent.propTypes = {
   expandToRegion: PropTypes.func,
   isProductionSite: PropTypes.bool,
   jumpToRegion: PropTypes.func,
+  jumpToExemplar: PropTypes.func,
+  jumpToRoi: PropTypes.func,
   onExemplarColumnSort: PropTypes.func,
   onRoiColumnSort: PropTypes.func,
   roiMaxColumns: PropTypes.number,

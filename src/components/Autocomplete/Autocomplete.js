@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { DebounceInput } from "react-debounce-input";
+import { Button } from "reactstrap";
 import axios from "axios";
 import * as Helpers from "../../Helpers.js";
 
@@ -36,8 +37,8 @@ class Autocomplete extends Component {
       borderWidth: 'thin',
       borderStyle: 'solid',
       boxSizing: 'border-box',
-      backgroundPosition: '9px 7px',
-      transition: 'all 0.5s ease-in, background-position 0s',
+      // backgroundPosition: '9px 7px',
+      // transition: 'all 0.5s ease-in, background-position 0s',
     };
 
     this.inBlurStyle = {
@@ -45,8 +46,8 @@ class Autocomplete extends Component {
       borderWidth: 'unset',
       borderStyle: 'unset',
       boxSizing: 'border-box',
-      backgroundPosition: '9px 8px',
-      transition: 'all 0.5s ease-in, background-position 0s',
+      // backgroundPosition: '9px 8px',
+      // transition: 'all 0.5s ease-in, background-position 0s',
     };
 
     this.applyFocusTimeoutMs = 250;
@@ -58,6 +59,7 @@ class Autocomplete extends Component {
   }
   
   clearUserInput = () => {
+    // console.log(`[Autocomplete] clearUserInput`);
     this.setState({
       userInput: '',
     }, () => {
@@ -67,6 +69,7 @@ class Autocomplete extends Component {
   }
 
   isValidChromosome = (chr) => {
+    // console.log(`[Autocomplete] isValidChromosome`);
     // console.log(`chr ${chr}`);
     switch (chr) {
       case 'chr1':
@@ -100,6 +103,7 @@ class Autocomplete extends Component {
   }
 
   applyFocus = () => {
+    // console.log(`[Autocomplete] applyFocus`);
     // console.log(`Autocomplete - applyFocus() - start - ${this.inputRef.value}`);
     let newUserInput = this.inputRef.value.replace(/\//g, '');
     this.setState({
@@ -115,18 +119,24 @@ class Autocomplete extends Component {
 
   // eslint-disable-next-line no-unused-vars
   onFocus = (e) => {
-    // console.log(`Autocomplete - onFocus() - start - ${this.inputRef.value} - ${this.state.userInput}`);
-    let newUserInput = this.inputRef.value.replace(/\//g, '');
-    this.setState({
-      userInput: newUserInput,
-      isInFocus: true,
-    }, () => {
-      this.inputRef.value = newUserInput;
-    });
+    // console.log(`[Autocomplete] onFocus`);
+    if (this.props.onFocus) {
+      this.props.onFocus(() => {
+        // console.log(`Autocomplete - onFocus() - start - ${this.inputRef.value} - ${this.state.userInput}`);
+        let newUserInput = this.inputRef.value.replace(/\//g, '');
+        this.setState({
+          userInput: newUserInput,
+          isInFocus: true,
+        }, () => {
+          this.inputRef.value = newUserInput;
+        });
+      });
+    }
   }
 
   // eslint-disable-next-line no-unused-vars
   onBlur = (e) => {
+    // console.log(`[Autocomplete] onBlur`);
     // console.log(`Autocomplete - onBlur() - start - ${this.inputRef.value} - ${this.state.userInput}`);
     setTimeout(() => {
       this.setState({
@@ -140,17 +150,27 @@ class Autocomplete extends Component {
 
   // eslint-disable-next-line no-unused-vars
   onPaste = (e) => {
+    // console.log(`[Autocomplete] onPaste`);
     setTimeout(() => {
+      // console.log(`Autocomplete - onPaste() - start - ${this.inputRef.value} - ${this.state.userInput}`);
       this.props.onChangeInput(this.inputRef.value);
-    }, 100);
+      this.setState({
+        filteredSuggestions: [],
+        userInput: this.inputRef.value,
+      });
+    }, 250);
   }
 
   onChange = (e) => {    
+    // console.log(`[Autocomplete] onChange`);
     if (!e.target) return;
     // console.log("onChange", e.target.value);
     if (e.target.value.length === 0) {
       this.setState({
         showSuggestions: false
+      }, () => {
+        // console.log(`B`);
+        // this.props.onChangeSuggestionListShown(this.state.showSuggestions);
       });
     }
     if ((e.target.value.startsWith("chr")) && ((e.target.value.indexOf(":") !== -1) || (e.target.value.indexOf('\t') !== -1) || (e.target.value.indexOf(" ") !== -1))) {  
@@ -163,6 +183,8 @@ class Autocomplete extends Component {
         if (range) {
           this.props.onChangeInput(this.state.userInput);
         }
+        // console.log(`C`);
+        // this.props.onChangeSuggestionListShown(this.state.showSuggestions)
       });
       return;
     }
@@ -188,6 +210,11 @@ class Autocomplete extends Component {
               activeSuggestion: -1,
               filteredSuggestions,
               showSuggestions: true
+            }, () => {
+              // console.log(`D ${this.state.showSuggestions}`);
+              if (this.props.onChangeSuggestionListShown) {
+                this.props.onChangeSuggestionListShown(this.state.showSuggestions);
+              }
             });
           }
         })
@@ -221,6 +248,7 @@ class Autocomplete extends Component {
   };
 
   onClick = (e) => {
+    // console.log(`[Autocomplete] onClick`);
     // document.activeElement.blur();
     let selectedSuggestionName = e.currentTarget.getElementsByClassName("suggestion-name")[0].innerText;
     let selectedSuggestionLocation = e.currentTarget.getElementsByClassName("suggestion-location")[0].innerText;
@@ -231,14 +259,16 @@ class Autocomplete extends Component {
       showSuggestions: false,
       userInput: selectedSuggestionName,
       selectedSuggestionLocation: selectedSuggestionLocation
-    }, 
-    () => { 
+    }, () => { 
       this.props.onChangeLocation(this.state.selectedSuggestionLocation, true);
       this.clearUserInput();
+      // console.log(`E`);
+      // this.props.onChangeSuggestionListShown(this.state.showSuggestions)
     });
   };
 
   onKeyDown = e => {
+    // console.log(`[Autocomplete] onKeyDown`);
     const { activeSuggestion } = this.state;
     
     // console.log("e.keyCode", e.keyCode);
@@ -296,6 +326,8 @@ class Autocomplete extends Component {
               // console.log(`Autocomplete > this.state.selectedSuggestionLocation ${this.state.selectedSuggestionLocation}`);
               this.props.onChangeLocation(this.state.selectedSuggestionLocation, false, this.state.userInput);
               this.clearUserInput();
+              // console.log(`F`);
+              // this.props.onChangeSuggestionListShown(this.state.showSuggestions)
             });
             return;
           }
@@ -320,6 +352,8 @@ class Autocomplete extends Component {
             this.props.onChangeLocation(this.state.selectedSuggestionLocation, true, this.state.userInput);
             this.clearUserInput();
             this.inputRef.blur();
+            // console.log(`A`);
+            // this.props.onChangeSuggestionListShown(this.state.showSuggestions)
           });
         }, this.state.debounceTimeout);
         break;
@@ -328,6 +362,7 @@ class Autocomplete extends Component {
       case RIGHT_ARROW_KEY:
         break;
       case UP_ARROW_KEY: {
+        // console.log(`[UP] hmm... ${this.state.activeSuggestion + 1} ${this.state.filteredSuggestions.length}`);
         if (this.state.activeSuggestion === 0) {
           return;
         }
@@ -338,6 +373,7 @@ class Autocomplete extends Component {
         break;
       }
       case DOWN_ARROW_KEY: {
+        // console.log(`[DOWN] hmm... ${this.state.activeSuggestion + 1} ${this.state.filteredSuggestions.length}`);
         if ((this.state.activeSuggestion + 1) === this.state.filteredSuggestions.length) {
           return;
         }
@@ -349,6 +385,8 @@ class Autocomplete extends Component {
         }
         break;
       }
+      default:
+        break;
     }
   };
 
@@ -361,8 +399,14 @@ class Autocomplete extends Component {
   onMouseLeave = (e) => {
     // console.log(`onMouseLeave`);
   }
+
+  onClickGo = (e) => {
+    // console.log(`[Autocomplete] onClickGo`);
+    this.props.onClickGo(e);
+  }
   
   scrollToActiveSuggestion = () => {
+    // console.log(`[Autocomplete] scrollToActiveSuggestion`);
     let element = document.getElementById("suggestion-" + this.state.activeSuggestion);
     if (element) {
       element.scrollIntoView({
@@ -374,6 +418,7 @@ class Autocomplete extends Component {
   }
 
   render() {
+    // console.log(`[Autocomplete] render`);
     const {
       onKeyDown,
       state: {
@@ -423,30 +468,80 @@ class Autocomplete extends Component {
       }
     }
 
-    return (
-      <Fragment>
-        <DebounceInput
-          id="autocomplete-input"
-          inputRef={(ref) => { this.inputRef = ref; }}
-          minLength={this.state.minimumLength}
-          debounceTimeout={this.state.debounceTimeout}
-          className={ `${ this.props.className }` }
-          type="text"
-          onChange={e => this.onChange(e)}
-          onPaste={e => this.onPaste(e)}
-          onKeyDown={onKeyDown}
-          onFocus={e => this.onFocus(e)}
-          onBlur={e => this.onBlur(e)}
-          value={this.state.userInput.replace('/', '')}
-          placeholder={ `${ this.props.placeholder }` }
-          autoComplete="off"
-          title={this.props.title}
-          style={(this.state.isInFocus) ? this.inFocusStyle : this.inBlurStyle}
-          disabled={this.props.isDisabled}
-        />
-        {suggestionsListComponent}
-      </Fragment>
-    );
+    if (this.props.showGoButton) {
+      return (
+        <Fragment>
+          <div
+            style={{
+              display: "flex",
+            }}
+            >
+            <DebounceInput
+              id="autocomplete-input"
+              inputRef={(ref) => { this.inputRef = ref; }}
+              minLength={this.state.minimumLength}
+              debounceTimeout={this.state.debounceTimeout}
+              className={this.props.className}
+              type="text"
+              onChange={e => this.onChange(e)}
+              onPaste={e => this.onPaste(e)}
+              onKeyDown={onKeyDown}
+              onFocus={e => this.onFocus(e)}
+              onBlur={e => this.onBlur(e)}
+              value={this.state.userInput.replace('/', '')}
+              placeholder={this.props.placeholder}
+              autoComplete="off"
+              title={this.props.title}
+              style={(this.state.isInFocus) ? this.inFocusStyle : this.inBlurStyle}
+              disabled={this.props.isDisabled}
+            />
+            <Button 
+              color="primary" 
+              style={{
+                position: "relative",
+                top: "0em",
+                marginLeft: "12px",
+              }}
+              className="btn-custom btn-sm" 
+              title="Jump to the specified gene or genomic interval"
+              onClick={this.onClickGo}
+              >
+              Go
+            </Button>
+          </div>
+          {suggestionsListComponent}
+        </Fragment>
+      );
+    }
+    else {
+            return (
+        <Fragment>
+          <div>
+            <DebounceInput
+              id="autocomplete-input"
+              inputRef={(ref) => { this.inputRef = ref; }}
+              minLength={this.state.minimumLength}
+              debounceTimeout={this.state.debounceTimeout}
+              className={this.props.className}
+              type="text"
+              onChange={e => this.onChange(e)}
+              onPaste={e => this.onPaste(e)}
+              onKeyDown={onKeyDown}
+              onFocus={e => this.onFocus(e)}
+              onBlur={e => this.onBlur(e)}
+              value={this.state.userInput.replace('/', '')}
+              placeholder={this.props.placeholder}
+              autoComplete="off"
+              title={this.props.title}
+              style={(this.state.isInFocus) ? this.inFocusStyle : this.inBlurStyle}
+              disabled={this.props.isDisabled}
+            />
+          </div>
+          {suggestionsListComponent}
+        </Fragment>
+      );
+    }
+    
   }
 }
 
@@ -461,9 +556,13 @@ Autocomplete.propTypes = {
   maxSuggestionHeight: PropTypes.number,
   onChangeLocation: PropTypes.func,
   onChangeInput: PropTypes.func,
+  onChangeSuggestionListShown: PropTypes.func,
+  onClickGo: PropTypes.func,
+  onFocus: PropTypes.func,
   placeholder: PropTypes.string, 
   suggestionsClassName: PropTypes.string,
   title: PropTypes.string,
   isMobile: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  showGoButton: PropTypes.bool,
 };

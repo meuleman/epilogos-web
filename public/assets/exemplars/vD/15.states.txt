@@ -1,0 +1,15 @@
+1	Pr-A
+2	Pr-W
+3	Pr-B
+4	Pr-F
+5	En-Sd
+6	En-Sp
+7	En-W
+8	En-Pd
+9	En-Pp
+10	Tx-S
+11	Tx-P
+12	Tx-I
+13	Hc-P
+14	Hc-H
+15	NS
