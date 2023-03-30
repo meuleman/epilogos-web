@@ -11,9 +11,9 @@ import ReactTooltip from 'react-tooltip';
 
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 
-import './QueryTargetRecommendationTable.css';
+import './RoiTable.css';
 
-class QueryTargetRecommendationTable extends Component {
+class RoiTable extends Component {
 
   constructor(props) {
     super(props);
@@ -22,12 +22,12 @@ class QueryTargetRecommendationTable extends Component {
       hitsPanelWidth: -1,
       hitsPanelHeight: -1,
       hitsTableKey: 0,
-      selectedIdx: this.props.selectedHitIdx || 1,
+      selectedIdx: this.props.selectedHitIdx || 0,
       targetEnabled: true,
       currentHitMouseoverRow: -1,
     }
     
-    this.hitsKeyPrefix = 'target_hits_table';
+    this.hitsKeyPrefix = 'roi_hits_table';
   }
 
   refresh = () => {
@@ -50,31 +50,27 @@ class QueryTargetRecommendationTable extends Component {
   }
 
   render() {
-    const self = this;
+
+    let self = this;
 
     const hitsTableStyle = {
       height: this.state.hitsPanelHeight - 2,
-      overflowY: 'auto',
+      overflowY: 'scroll',
       cursor: 'pointer',
+      display: 'flex',
     };
 
     // eslint-disable-next-line no-unused-vars
     const idxHitAttrs = function(cell, row, rowIndex, colIndex) {
-      return { id : `target_idx_${rowIndex}` };
+      const idPrefix = 'roi_hits_table';
+      return { id : `${idPrefix}_idx_${rowIndex}` };
     }
 
     const elementHitFormatter = function(cell, row) {
-      if (!self.props) return;
-      // elements come back from the proxy with position data corrected for midpoint selection criteria
-      const trueDelta = parseInt(self.props.qrid.hitFirstInterval[2]) - parseInt(self.props.qrid.hitFirstInterval[1]); 
-      const correctedStart = row.chromStart + self.props.qrid.hitStartDiff; // (self.props.qrid.hitStartDiff > 0) ? row.chromStart + self.props.qrid.hitStartDiff : row.chromStart - self.props.qrid.hitStartDiff;
-      const correctedEnd = correctedStart + trueDelta; // (self.props.qrid.hitEndDiff < 0) ? row.chromEnd + self.props.qrid.hitEndDiff : row.chromStart - self.props.qrid.hitEndDiff;
-      const correctedPosition = (self.props.qrid) ? `${row.chrom}:${correctedStart}-${correctedEnd}` : row.position;
-      // return <div><span>{ row.position }</span></div>
-      return <div><span>{ correctedPosition }</span></div>
+      return <div><span>{ row.position }</span></div>
     }
 
-    const hitsColumns = [
+    let hitsColumns = [
       {
         attrs: idxHitAttrs,
         dataField: 'idx',
@@ -99,7 +95,7 @@ class QueryTargetRecommendationTable extends Component {
           this.props.onColumnSort(field, order); 
           setTimeout(() => {
             const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
             this.setState({
               selectedIdx: jumpIdx + 1
             }, () => {
@@ -154,7 +150,7 @@ class QueryTargetRecommendationTable extends Component {
           this.props.onColumnSort(field, order);
           setTimeout(() => {
             const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
             this.setState({
               selectedIdx: jumpIdx + 1
             }, () => {
@@ -176,6 +172,151 @@ class QueryTargetRecommendationTable extends Component {
         }
       }
     ];
+
+    if (self.props.maxColumns > 3) {
+      hitsColumns.push({
+        dataField: 'name',
+        text: '',
+        formatter: nameRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: `${(((self.props.longestAllowedNameLength < self.props.longestNameLength) ? self.props.longestAllowedNameLength : self.props.longestNameLength) * 8)}px`,
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '3px',
+          color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
+        },
+        sort: true,
+        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-name-asc" id="roi-column-sort-name-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort names in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-name-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-name-desc" id="roi-column-sort-name-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort names in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-name-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-name-undefined" id="roi-column-sort-name-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by name</ReactTooltip><div data-tip data-for={"column-sort-name-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      })
+    }
+
+    // add 'score' column to ROI, if present
+    if (self.props.maxColumns > 4) {
+      hitsColumns.push({
+        dataField: 'score',
+        text: '',
+        formatter: scoreRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '45px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontFamily: 'Source Code Pro',
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '2px',
+          color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
+        },
+        sort: true,
+        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-score-asc" id="roi-column-sort-score-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort scores in ascending order</ReactTooltip><div data-tip data-for={"roi-column-sort-score-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-score-desc" id="roi-column-sort-score-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort scores in descending order</ReactTooltip><div data-tip data-for={"roi-column-sort-score-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-score-undefined" id="roi-column-sort-score-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by score</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        },
+        // eslint-disable-next-line no-unused-vars
+        sortFunc: (a, b, order, dataField, rowA, rowB) => {
+          if (order === 'asc') {
+            return b - a;
+          }
+          return a - b; // desc
+        }
+      })
+    }
+
+    // add 'strand' column to ROI, if present
+    if (self.props.maxColumns > 5) {
+      hitsColumns.push({
+        dataField: 'strand',
+        text: '',
+        formatter: strandRoiFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '24px',
+          borderBottom: '1px solid #b5b5b5',
+        },
+        style: {
+          fontFamily: 'Source Code Pro',
+          fontWeight: 'normal',
+          fontSize: '0.7em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingRight: '0px',
+          color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
+        },
+        sort: true,
+        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        // eslint-disable-next-line no-unused-vars
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="roi-column-sort-strand-asc" id="roi-column-sort-strand-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort strands in opposite order</ReactTooltip><div data-tip data-for={"roi-column-sort-strand-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="roi-column-sort-strand-desc" id="roi-column-sort-strand-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort strands in opposite order</ReactTooltip><div data-tip data-for={"roi-column-sort-strand-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="roi-column-sort-strand-undefined" id="roi-column-sort-strand-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort by strand</ReactTooltip><div data-tip data-for={"column-sort-score-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      })
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    function nameRoiFormatter(cell, row) {
+      const name = row.name;
+      return (name.length >= self.props.longestAllowedNameLength) ? (
+        <div>
+          <span title={name}>{name.substring(0, self.props.longestAllowedNameLength)}&#8230;</span>
+        </div>
+      ) : (
+        <div>
+          <span>{name}</span>
+        </div>
+      );
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    function scoreRoiFormatter(cell, row) {
+      //return <div><span style={{whiteSpace:"nowrap"}}>{ row.score }</span></div>
+      const formattedScore = (parseFloat(row.score) !== 0.0) ? Number.parseFloat(row.score).toPrecision(4) : 0;
+      return <div><span>{ formattedScore }</span></div>
+    }
+    
+    // eslint-disable-next-line no-unused-vars
+    function strandRoiFormatter(cell, row) {
+      return <div><span>{ row.strand }</span></div>
+    }
 
     // eslint-disable-next-line no-unused-vars
     const customHitRowStyle = (row, rowIndex) => {
@@ -201,10 +342,11 @@ class QueryTargetRecommendationTable extends Component {
         this.setState({
           selectedIdx: row.idx,
         }, () => {
+          // console.log(`customHitRowEvents ${row.position} ${this.state.selectedIdx}`);
           this.props.jumpToRow(row.position, this.state.selectedIdx);
-
           const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
+          // console.log(`jumpIdxBySort ${jumpIdxBySort}`);
           this.props.adjustTableParentOffset(jumpIdxBySort, true);
         });
       },
@@ -225,7 +367,7 @@ class QueryTargetRecommendationTable extends Component {
     };
 
     return (
-      <div style={hitsTableStyle} id='target_hits_table_wrapper'>
+      <div style={hitsTableStyle} id='roi_hits_table_content'>
         <BootstrapTable
           key={`${this.hitsKeyPrefix}-${this.state.hitsTableKey}`}
           id={`${this.hitsKeyPrefix}`}
@@ -234,7 +376,7 @@ class QueryTargetRecommendationTable extends Component {
           columns={hitsColumns}
           bootstrap4={true} 
           bordered={false}
-          classes="queryTargetElementTable"
+          classes="roiElementTable"
           rowStyle={customHitRowStyle}
           rowEvents={customHitRowEvents}
           />
@@ -243,9 +385,9 @@ class QueryTargetRecommendationTable extends Component {
   }
 }
 
-export default QueryTargetRecommendationTable;
+export default RoiTable;
 
-QueryTargetRecommendationTable.propTypes = {
+RoiTable.propTypes = {
   hits: PropTypes.array,
   onColumnSort: PropTypes.func,
   idxBySort: PropTypes.array,
@@ -253,5 +395,4 @@ QueryTargetRecommendationTable.propTypes = {
   selectedIdx: PropTypes.number,
   selectedHitIdx: PropTypes.number,
   adjustTableParentOffset: PropTypes.func,
-  qrid: PropTypes.object,
 }

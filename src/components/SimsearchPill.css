@@ -1,0 +1,10 @@
+.pillTextParent {
+    position: relative;
+    bottom: 1px;
+}
+
+.pillText {
+    font-weight: 500 !important;
+    position: relative;
+    top: 1px;
+}

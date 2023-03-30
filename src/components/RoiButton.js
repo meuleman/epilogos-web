@@ -2,22 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Spinner from "react-svg-spinner";
 
-import Gem from "./Gem/Gem";
+import Crown from "./Crown/Crown";
 
-export const RecommenderSearchButtonDefaultLabel = "Similar regions";
-export const RecommenderV1SearchButtonDefaultLabel = "V1";
-export const RecommenderV2SearchButtonDefaultLabel = "V2";
-export const RecommenderV3SearchButtonDefaultLabel = "Search";
-export const RecommenderSearchButtonInProgressLabel = "Searching...";
-
-class RecommenderSearchButton extends Component {
+class RoiButton extends Component {
 
   _isMounted = false;
 
   constructor(props) {
     super(props);
     this.state = {
-      gemKey: 0,
+      roiKey: 0,
       buttonBackground: "rgba(230,230,230,1)",
       elementColor: "rgba(230,230,230,1)",
       elementStartColor: "rgba(230,230,230,1)",
@@ -29,7 +23,7 @@ class RecommenderSearchButton extends Component {
       tooltipText: "Show other interesting epilogos like this",
       spinnerText: "Looking...",
       isAnimating: false,
-      gemAnimating: false,
+      roiAnimating: false,
     }
     this.buttonRef = React.createRef();
   }
@@ -84,19 +78,19 @@ class RecommenderSearchButton extends Component {
     });
   }
 
-  toggleGemJello = () => {
-    // console.log(`toggleGemJello()... canAnimate ${this.props.canAnimate} hasFinishedAnimating ${this.props.hasFinishedAnimating}`);
+  toggleRoiJello = () => {
+    // console.log(`toggleRoiJello()... canAnimate ${this.props.canAnimate} hasFinishedAnimating ${this.props.hasFinishedAnimating}`);
     if (this._ismounted) {
       if (this.props.canAnimate && !this.props.hasFinishedAnimating) {
-        // console.log(`A | turning off gem...`);
+        // console.log(`A | turning off roi...`);
         this.props.manageAnimation(false, true);
       }
       else if (this.props.canAnimate && this.props.hasFinishedAnimating) {
-        // console.log(`B | turning ON gem...`);
+        // console.log(`B | turning ON roi...`);
         this.props.manageAnimation(true, false);
       }
       else if (!this.props.canAnimate && !this.props.hasFinishedAnimating) {
-        // console.log(`C | setting up gem...`);
+        // console.log(`C | setting up roi...`);
         this.props.manageAnimation(true, false);
       }
     }
@@ -105,7 +99,7 @@ class RecommenderSearchButton extends Component {
   componentDidMount() {
     // console.log(`componentDidMount | loopAnimation ${this.props.loopAnimation}`);
     setTimeout(() => {
-      this.toggleGemJello();
+      this.toggleRoiJello();
     }, 3000);
     this._ismounted = true;
   }
@@ -150,37 +144,17 @@ class RecommenderSearchButton extends Component {
     buttonDisabledStyle.backgroundColor = "rgba(127,127,127,1)";
     buttonDisabledStyle.cursor = "not-allowed";
     
-    // let buttonIconStyle = {
-    //   position: "relative", 
-    //   color: this.props.forceStartColor,
-    //   cursor: this.state.elementCursor,
-    //   // top:"-1px", 
-    //   // paddingRight:"5px", 
-    //   // fontSize:"1.1rem"
-    // };
-
-    // let buttonIconDisabledStyle = {
-    //   position: "relative", 
-    //   color: "rgba(127,127,127,1)",
-    //   cursor: "not-allowed",
-    //   // top:"-1px", 
-    //   // paddingRight:"5px", 
-    //   // fontSize:"1.1rem"
-    // };
-    
     let buttonSpinnerStyle = {
-      position:"relative", 
-      // top:"-1px", 
-      // paddingRight:"5px"
+      position:"relative",
     };
 
     return (
       <div 
         ref={this.buttonRef} 
-        title={(this.props.searchCount > 0 && this.props.isEnabled) ? `View ${this.props.searchCount} similar regions` : (this.props.isEnabled && !this.props.suggestionTableIsVisible) ? 'View global suggestions' : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? 'Hide global suggestions' : ''}
-        style={(this.props.searchCount > 0 && this.props.isEnabled) ? {cursor: 'pointer'} : (this.props.isEnabled && !this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : {cursor: 'not-allowed'}}
+        title={(this.props.isEnabled && !this.props.roiTableIsVisible) ? 'View regions-of-interest' : (this.props.isEnabled && this.props.roiTableIsVisible) ? 'Hide regions-of-interest' : ''}
+        style={(this.props.isEnabled && !this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : {cursor: 'not-allowed'}}
         >
-        <div className={(!this.props.isVisible) ? "epilogos-recommender-element-hidden" : (this.props.isEnabled) ? (this.props.activeClass) : "epilogos-recommender-element-disabled"}>
+        <div className={(!this.props.isVisible) ? "epilogos-roi-button-hidden" : (this.props.isEnabled) ? (this.props.activeClass) : "epilogos-roi-button-disabled"}>
           {(this.props.inProgress && this.props.isEnabled) 
           ?
             <span style={buttonSpinnerStyle}>
@@ -194,13 +168,9 @@ class RecommenderSearchButton extends Component {
               <div 
                 style={{
                   cursor: "pointer",
-                  marginRight: (this.props.searchCount > 99) ? '40px' : (this.props.searchCount > 9) ? '35px' : (this.props.searchCount > 0) ? '30px' : (this.props.searchCountIsVisible) ? '25px' : 'inherit',
                 }}>
-                <Gem
+                <Crown
                   size={this.props.size}
-                  count={this.props.searchCount}
-                  countIsVisible={this.props.searchCountIsVisible}
-                  countIsEnabled={this.props.searchCountIsEnabled}
                   enabledColor={this.props.enabledColor}
                   disabledColor={this.props.disabledColor}
                   handleClick={(evt) => this.handleClick(evt)}
@@ -213,10 +183,8 @@ class RecommenderSearchButton extends Component {
                 style={{
                   cursor: "not-allowed",
                 }}>
-                <Gem
+                <Crown
                   size={this.props.size}
-                  count={this.props.searchCount}
-                  countIsVisible={this.props.searchCountIsVisible}
                   enabledColor={this.props.enabledColor}
                   disabledColor={this.props.disabledColor}
                   handleClick={() => {}}
@@ -231,9 +199,9 @@ class RecommenderSearchButton extends Component {
   }
 }
 
-export default RecommenderSearchButton;
+export default RoiButton;
 
-RecommenderSearchButton.propTypes = { 
+RoiButton.propTypes = { 
   visible: PropTypes.bool,
   enabled: PropTypes.bool,
   inProgress: PropTypes.bool,
@@ -249,7 +217,5 @@ RecommenderSearchButton.propTypes = {
   forceStartColor: PropTypes.string,
   enabledColor: PropTypes.string,
   disabledColor: PropTypes.string,
-  searchCount: PropTypes.number,
-  searchCountIsVisible: PropTypes.bool,
-  suggestionTableIsVisible: PropTypes.bool,
+  roiTableIsVisible: PropTypes.bool,
 };

@@ -1,0 +1,28 @@
+.roiElementTable {
+  overflow-y: scroll;
+  margin-bottom: 0px !important;
+  border-top: 0px !important;
+  scroll-behavior: smooth;
+}
+
+.roiElementTable::-webkit-scrollbar {
+  background-color: grey;
+}
+
+.roiElementTable::-webkit-scrollbar-track {
+  background-color: grey;
+}
+
+.roiElementTable > thead > tr > th {
+  border-top: 0px !important;
+  margin: 0 !important;
+}
+
+.roiElementTable > tbody > tr > td {
+  border-top: 1px dotted black !important;
+}
+
+.roiElementTable > tbody > tr:hover > td {
+  background-color: #747474 !important;
+  color: white !important;
+}

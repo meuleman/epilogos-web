@@ -573,7 +573,7 @@ class Portal extends Component {
           <div style={{
             position: "relative",
             bottom: "1px",
-            marginRight: "8px",
+            marginRight: "28px",
             fontSize: "larger",
           }}>
             <RecommenderSearchButton

@@ -11,9 +11,9 @@ import ReactTooltip from 'react-tooltip';
 
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 
-import './QueryTargetRecommendationTable.css';
+import './SuggestionTable.css';
 
-class QueryTargetRecommendationTable extends Component {
+class SuggestionTable extends Component {
 
   constructor(props) {
     super(props);
@@ -22,17 +22,18 @@ class QueryTargetRecommendationTable extends Component {
       hitsPanelWidth: -1,
       hitsPanelHeight: -1,
       hitsTableKey: 0,
-      selectedIdx: this.props.selectedHitIdx || 1,
+      selectedIdx: this.props.selectedIdx || 1,
       targetEnabled: true,
       currentHitMouseoverRow: -1,
     }
     
-    this.hitsKeyPrefix = 'target_hits_table';
+    this.hitsKeyPrefix = 'suggestion_hits_table';
   }
 
   refresh = () => {
+    const newHitsTableKey = this.state.hitsTableKey + 1;
     this.setState({
-      hitsTableKey: this.state.hitsTableKey + 1,
+      hitsTableKey: newHitsTableKey,
     });
   }
 
@@ -50,28 +51,21 @@ class QueryTargetRecommendationTable extends Component {
   }
 
   render() {
-    const self = this;
-
     const hitsTableStyle = {
       height: this.state.hitsPanelHeight - 2,
-      overflowY: 'auto',
+      overflowY: 'scroll',
       cursor: 'pointer',
+      display: 'flex',
     };
 
     // eslint-disable-next-line no-unused-vars
     const idxHitAttrs = function(cell, row, rowIndex, colIndex) {
-      return { id : `target_idx_${rowIndex}` };
+      const idPrefix = 'suggestion_hits_table';
+      return { id : `${idPrefix}_idx_${rowIndex}` };
     }
 
     const elementHitFormatter = function(cell, row) {
-      if (!self.props) return;
-      // elements come back from the proxy with position data corrected for midpoint selection criteria
-      const trueDelta = parseInt(self.props.qrid.hitFirstInterval[2]) - parseInt(self.props.qrid.hitFirstInterval[1]); 
-      const correctedStart = row.chromStart + self.props.qrid.hitStartDiff; // (self.props.qrid.hitStartDiff > 0) ? row.chromStart + self.props.qrid.hitStartDiff : row.chromStart - self.props.qrid.hitStartDiff;
-      const correctedEnd = correctedStart + trueDelta; // (self.props.qrid.hitEndDiff < 0) ? row.chromEnd + self.props.qrid.hitEndDiff : row.chromStart - self.props.qrid.hitEndDiff;
-      const correctedPosition = (self.props.qrid) ? `${row.chrom}:${correctedStart}-${correctedEnd}` : row.position;
-      // return <div><span>{ row.position }</span></div>
-      return <div><span>{ correctedPosition }</span></div>
+      return <div><span>{ row.position }</span></div>
     }
 
     const hitsColumns = [
@@ -99,7 +93,7 @@ class QueryTargetRecommendationTable extends Component {
           this.props.onColumnSort(field, order); 
           setTimeout(() => {
             const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
             this.setState({
               selectedIdx: jumpIdx + 1
             }, () => {
@@ -153,12 +147,14 @@ class QueryTargetRecommendationTable extends Component {
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order);
           setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+            // const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
+            const jumpIdx = (this.props.selectedIdx > 0) ? this.props.selectedIdx - 1 : 0;
+            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
             this.setState({
               selectedIdx: jumpIdx + 1
             }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
+              // this.props.adjustTableParentOffset(jumpIdxBySort);
+              this.props.adjustTableParentOffset(this.props.idxBySort.indexOf(this.props.selectedIdx));
             });
           }, 250);
         },
@@ -180,7 +176,8 @@ class QueryTargetRecommendationTable extends Component {
     // eslint-disable-next-line no-unused-vars
     const customHitRowStyle = (row, rowIndex) => {
       const style = {};
-      if (row.idx === this.state.selectedIdx) {
+      // if (row.idx === this.state.selectedIdx) {
+      if (row.idx === this.props.selectedIdx) {
         style.backgroundColor = '#2631ad';
         style.color = '#fff';
         style.fontWeight = 'bolder';
@@ -201,10 +198,11 @@ class QueryTargetRecommendationTable extends Component {
         this.setState({
           selectedIdx: row.idx,
         }, () => {
+          // console.log(`customHitRowEvents ${row.position} ${this.state.selectedIdx}`);
           this.props.jumpToRow(row.position, this.state.selectedIdx);
-
           const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
+          // console.log(`jumpIdxBySort ${jumpIdxBySort}`);
           this.props.adjustTableParentOffset(jumpIdxBySort, true);
         });
       },
@@ -225,7 +223,10 @@ class QueryTargetRecommendationTable extends Component {
     };
 
     return (
-      <div style={hitsTableStyle} id='target_hits_table_wrapper'>
+      <div 
+        style={hitsTableStyle} 
+        id='suggestion_hits_table_content'
+        >
         <BootstrapTable
           key={`${this.hitsKeyPrefix}-${this.state.hitsTableKey}`}
           id={`${this.hitsKeyPrefix}`}
@@ -234,7 +235,7 @@ class QueryTargetRecommendationTable extends Component {
           columns={hitsColumns}
           bootstrap4={true} 
           bordered={false}
-          classes="queryTargetElementTable"
+          classes="suggestionElementTable"
           rowStyle={customHitRowStyle}
           rowEvents={customHitRowEvents}
           />
@@ -243,15 +244,13 @@ class QueryTargetRecommendationTable extends Component {
   }
 }
 
-export default QueryTargetRecommendationTable;
+export default SuggestionTable;
 
-QueryTargetRecommendationTable.propTypes = {
+SuggestionTable.propTypes = {
   hits: PropTypes.array,
   onColumnSort: PropTypes.func,
   idxBySort: PropTypes.array,
   jumpToRow: PropTypes.func,
   selectedIdx: PropTypes.number,
-  selectedHitIdx: PropTypes.number,
   adjustTableParentOffset: PropTypes.func,
-  qrid: PropTypes.object,
 }

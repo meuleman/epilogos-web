@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { FaGem } from 'react-icons/fa';
-import { Badge } from 'reactstrap';
+import { FaCrown } from 'react-icons/fa';
 
-import './Gem.css';
+import './Crown.css';
 
-export default function Gem(props) {
+export default function Crown(props) {
 
   // eslint-disable-next-line no-unused-vars
-  const [gemClass, setGemClass] = useState("gem"); // ref: Gem.css
+  const [crownClass, setCrownClass] = useState("crown"); // ref: Crown.css
   // eslint-disable-next-line no-unused-vars
-  const [gemKey, setGemKey] = useState(0);
+  const [crownKey, setCrownKey] = useState(0);
   const [animation, setAnimation] = useState(0);
   const canAnimate = props.canAnimate;
 
@@ -24,15 +23,15 @@ export default function Gem(props) {
     return (props.hasFinishedAnimating) ? setAnimation(2) : (canAnimate && props.isEnabled) ? setAnimation(0) : setAnimation(1);
   }
 
-  const gemEnabledStyle = {
+  const crownEnabledStyle = {
     color: props.enabledColor,
   };
 
-  const gemDisabledStyle = {
+  const crownDisabledStyle = {
     color: props.disabledColor,
   };
 
-  const gemStyle = (props.isEnabled) ? gemEnabledStyle : gemDisabledStyle;
+  const crownStyle = (props.isEnabled) ? crownEnabledStyle : crownDisabledStyle;
 
   const badgeParentDefaultStyle = {
     position: "absolute", 
@@ -60,67 +59,24 @@ export default function Gem(props) {
     borderWidth: "thin",
   };
 
-  // console.log(`Gem | props.countIsVisible ${props.countIsVisible} | props.countIsEnabled ${props.countIsEnabled}`);
-
   return (
     <div>
       <div style={{position:"absolute", zIndex:1000}}>
-        <FaGem
-          key={gemKey}
+        <FaCrown
+          key={crownKey}
           size={props.size}
-          className={gemClass}
-          style={gemStyle}
+          className={crownClass}
+          style={crownStyle}
           onClick={() => props.handleClick()} 
           animation={animation}
-          alt="Gem"
+          alt="Crown"
           />
       </div>
-      {(props.countIsVisible) ? 
-        <div 
-          style={badgeParentDefaultStyle}
-          onClick={() => props.handleClick()}
-          >
-          <Badge 
-            color="primary" 
-            pill 
-            style={badgeDefaultStyle}
-            onClick={() => props.handleClick()} 
-            >
-              {props.count}
-          </Badge>
-        </div> 
-        : 
-        (props.countIsEnabled) ?
-          <div 
-            style={badgeParentDefaultStyle}
-            onClick={() => props.handleClick()}
-            >
-            <Badge 
-              color="primary" 
-              pill 
-              style={badgeDefaultStyle}
-              onClick={() => props.handleClick()} 
-              >
-              &nbsp;
-            </Badge>
-          </div>
-          : 
-          <div style={badgeParentHiddenStyle}>
-            <Badge 
-              color="primary" 
-              pill 
-              style={badgeDefaultStyle}
-              onClick={() => props.handleClick()} 
-              >
-              &nbsp;
-            </Badge>
-          </div>
-      }
     </div>
   )
 }
 
-Gem.propTypes = {
+Crown.propTypes = {
   canAnimate: PropTypes.bool,
   hasFinishedAnimating: PropTypes.bool,
   isEnabled: PropTypes.bool,

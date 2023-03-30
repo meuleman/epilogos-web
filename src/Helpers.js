@@ -139,18 +139,22 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
   if (showClipboard) {
     if (parseInt(self.state.width)>1150) {
       // console.log(`positionSummaryElement > ${positionSummary}`);
-      return <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}><span title={"Viewer genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard></div>
+      return (
+        <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}>
+          <span title={"Current genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary} onCopy={(e) => { self.onClickCopyRegionCommand(e) }}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard>
+        </div>
+      );
     }
     else {
       return <div />
     }
   }
   else {
-    return <div className="navigation-summary-position-mobile-landscape"><span title={"Viewer genomic position and assembly"}>{positionSummary} {(!showScale) ? scaleSummary : ""} • {self.state.hgViewParams.genome}</span></div>
+    return <div className="navigation-summary-position-mobile-landscape"><span title={"Current genomic position and assembly"}>{positionSummary} {(!showScale) ? scaleSummary : ""} • {self.state.hgViewParams.genome}</span></div>
   }
 }
 
-export const calculateScale = (leftChr, rightChr, start, stop, self) => {
+export const calculateScale = (leftChr, rightChr, start, stop, self, includeAssembly) => {
   //
   // get current scale difference
   //
@@ -197,7 +201,7 @@ export const calculateScale = (leftChr, rightChr, start, stop, self) => {
                (log10Diff < 8) ? `${Math.floor(diff/1000000)}Mb` :
                (log10Diff < 9) ? `${Math.floor(diff/1000000)}Mb` :
                                  `${Math.floor(diff/1000000000)}Gb`;
-  scaleAsStr = `(~${scaleAsStr})`;
+  scaleAsStr = (includeAssembly) ? `(~${scaleAsStr} | ${self.state.hgViewParams.genome})` : `(~${scaleAsStr})`;
   return { 
     diff: diff, 
     scaleAsStr: scaleAsStr,
@@ -361,6 +365,151 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   else {
     // tryExemplarV1URL(exemplarV1URL);
     handleNoExemplarsFound(self);
+  }
+}
+
+export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
+  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+}
+
+export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
+  /*
+    This function reads suggestion regions into memory:
+    
+    - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender pipeline results
+    - V1 URLs are derived from Eric R analyses, pre-higlass
+  */
+  const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
+  let suggestionURL = (newGroupV2) ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+
+  console.log(`Helpers > updateSuggestions > suggestionURL ${JSON.stringify(suggestionURL, null, 2)}`);
+  
+  function updateSuggestionRegionsWithResponse(res, cb) {
+    const newSuggestionRegions = res.data.split('\n');
+    // console.log(`updateExemplarRegionsWithResponse ${JSON.stringify(newExemplarRegions)}`);
+    self.setState({
+      suggestionRegions: newSuggestionRegions,
+    }, () => {
+      let data = [];
+      let dataCopy = [];
+      let dataIdxBySort = [];
+      let chromatinStates = {};
+      self.state.suggestionRegions.forEach((val, idx) => {
+        let elem = val.split('\t');
+        let chrom = elem[0];
+        let start = elem[1];
+        let stop = elem[2];
+        let state = elem[3];
+        if (!chrom) return;
+        // console.log("chrom, start, stop, state", chrom, start, stop, state);
+        let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
+        if (isNaN(chrom.replace(/chr/, ''))) {
+          paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
+        }
+        let paddedNumerical = zeroPad(parseInt(state), 3);
+        data.push({ 
+          'idx' : idx + 1,
+          'position' : chrom + ':' + start + '-' + stop,
+          'state' : {
+            'numerical' : state,
+            'paddedNumerical' : paddedNumerical
+          },
+          'element' : {
+            'paddedPosition' : paddedPosition,
+            'position' : chrom + ':' + start + '-' + stop,
+            'state' : state,
+            'chrom' : chrom,
+            'start' : parseInt(start),
+            'stop' : parseInt(stop)
+          }
+        });
+        dataCopy.push({
+          'idx' : idx + 1,
+          'element' : paddedPosition,
+          'state' : paddedNumerical
+        });
+        dataIdxBySort.push(idx + 1);
+        chromatinStates[state] = 0;
+      });
+      // console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
+      const newSelectedSuggestionChrLeft = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.chrom : data[0].element.chrom;
+      const newSelectedSuggestionStart = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.start : data[0].element.start;
+      const newSelectedSuggestionStop = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.stop : data[0].element.stop;
+      setTimeout(() => {
+        self.updateViewportDimensions();
+        self.setState({
+          suggestionButtonInProgress: false,
+          suggestionsAreLoaded: true,
+          // selectedSuggestionRowIdx: 1,
+          suggestionTableData: data,
+          suggestionTableDataCopy: dataCopy,
+          suggestionTableDataIdxBySort: dataIdxBySort,
+          suggestionChromatinStates: Object.keys(chromatinStates).map((v) => parseInt(v)),
+          selectedSuggestionChrLeft: newSelectedSuggestionChrLeft,
+          selectedSuggestionStart: newSelectedSuggestionStart,
+          selectedSuggestionStop: newSelectedSuggestionStop,
+        }, () => {
+          if (cb) cb();
+          self.setState({
+            suggestionTableKey: self.state.suggestionTableKey + 1,
+          })
+        });
+      }, 1000);
+    });
+  }
+
+  function handleNoSuggestionsFound(self) {
+    // console.log(`handleNoSuggestionsFound()`)
+    self.setState({
+      suggestionTableKey: self.state.suggestionTableKey + 1,
+      suggestionButtonInProgress: false,
+      suggestionsAreLoaded: false,
+      selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
+      suggestionTableData: [],
+      suggestionTableDataCopy: [],
+      suggestionTableDataIdxBySort: [],
+    }, () => {
+      self.updateViewerURLForCurrentState();
+    });
+  }
+  
+  if (suggestionURL) {
+    axios.head(suggestionURL)
+      // eslint-disable-next-line no-unused-vars
+      .then((res) => {
+        // handle V2 exemplar as normal
+        // console.log(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
+        axios.get(suggestionURL)
+          .then((res) => {
+            if (!res.data || res.data.startsWith("<!doctype html>")) {
+              // throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
+              // tryExemplarV1URL(exemplarV1URL);
+              handleNoSuggestionsFound(self);
+            }
+            else {
+              // console.log(`Helpers > updateExemplars > updating with exemplarV2URL`);
+              updateSuggestionRegionsWithResponse(res, cb);
+            }
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch((err) => {
+            // console.log(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
+            // tryExemplarV1URL(exemplarV1URL);
+            handleNoSuggestionsFound(self);
+          });
+      })
+      // eslint-disable-next-line no-unused-vars
+      .catch((err) => {
+        // console.log(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
+        // fall back to trying V1 exemplar URL
+        // tryExemplarV1URL(exemplarV1URL);
+        handleNoSuggestionsFound(self);
+      });
+  }
+  else {
+    // tryExemplarV1URL(exemplarV1URL);
+    handleNoSuggestionsFound(self);
   }
 }
 
@@ -741,7 +890,7 @@ export const splitPairedGroupString = (group) => {
 }
 
 export const constructViewerURL = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, state) => {
-  let viewerUrl = stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+  let viewerUrl = stripQueryStringAndHashFromPath(document.location.href) + `?application=${Constants.defaultApplication}`;
   viewerUrl += "&sampleSet=" + sampleSet;
   viewerUrl += "&mode=" + mode;
   viewerUrl += "&genome=" + genome;
@@ -755,9 +904,7 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   
   // console.log(`[constructViewerURL] selectedExemplarRowIdx ${state.selectedExemplarRowIdx} | selectedRoiRowIdx ${state.selectedRoiRowIdx}`);
 
-  if (parseInt(state.selectedExemplarRowIdx) >= 0) {
-    viewerUrl += "&serIdx=" + parseInt(state.selectedExemplarRowIdx);
-  }
+  
   if (state.roiEncodedURL.length > 0) {
     viewerUrl += `&roiURL=${state.roiEncodedURL}`;
   }
@@ -775,6 +922,15 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   if ((parseInt(state.selectedRoiRowIdx) >= 0) && (state.roiTableData.length > 0)) {
     viewerUrl += "&srrIdx=" + parseInt(state.selectedRoiRowIdx);
   }
+  if (parseInt(state.selectedExemplarRowIdx) >= 0) {
+    viewerUrl += "&serIdx=" + parseInt(state.selectedExemplarRowIdx);
+  }
+  if (parseInt(state.selectedSuggestionRowIdx) >= 0) {
+    viewerUrl += "&sugIdx=" + parseInt(state.selectedSuggestionRowIdx);
+  }
+  // if (parseInt(state.selectedSimSearchRowIdx) >= 0) {
+  //   viewerUrl += "&ssrIdx=" + parseInt(state.selectedSimSearchRowIdx);
+  // }
   //
   // row highlighting
   //
@@ -799,6 +955,12 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   viewerUrl += "&gatt=" + state.hgViewParams.gatt;
   if (state.hgViewParams.gac !== Constants.defaultApplicationGacCategory) {
     viewerUrl += "&gac=" + state.hgViewParams.gac;
+  }
+  //
+  //
+  //
+  if (state.suggestionStyle !== Constants.defaultApplicationSuggestionStyle) {
+    viewerUrl += `&sugStyle=${state.suggestionStyle}`;
   }
 
   // console.log(`viewerUrl ${viewerUrl}`);
@@ -896,67 +1058,99 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
 }
 
 export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self) => {
-    let params = self.state.tempHgViewParams;
-    let datasetAltname = params.sampleSet;
-    let assembly = params.genome;
-    let stateModel = params.model;
-    let groupEncoded = encodeURIComponent(Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][params.genome][params.group]);
-    let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[params.complexity];
-    let chromosome = qChr;
-    let start = qStart;
-    let end = qEnd;
-    let windowSizeKb = parseInt(qWindowSizeKb);
-    let windowSize = (windowSizeKb < 10 + 8) ? 5 :
-                     (windowSizeKb < 25 + 13) ? 10 :
-                     (windowSizeKb < 50 + 13) ? 25 :
-                     (windowSizeKb < 75 + 13) ? 50 :
-                     (windowSizeKb < 100 + 50) ? 75 : 100;
-    let scaleLevel = parseInt(windowSize / 5);
-    let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
-    let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
-    
-    let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
-    
-    // console.log(`[recommenderV3SearchOnClick] recommenderV3URL ${recommenderV3URL}`);
-    
-    return axios.get(recommenderV3URL).then((res) => {
-      if (res.data) {
-        // console.log(`[recommenderV3SearchOnClick] res.data ${JSON.stringify(res.data)}`);
-        if (res.data.hits && res.data.hits.length == 1) {
-          return res.data;
-        }
-        else
-          throw new Error("No recommendations found");
+  return simSearchQueryPromise(qChr, qStart, qEnd, qWindowSizeKb, self, false);
+}
+
+export const debounce = (fn, time) => {
+  let timeoutId
+  return wrapper
+  function wrapper (...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(() => {
+      timeoutId = null
+      fn(...args)
+    }, time)
+  }
+}
+
+export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
+  let params = self.state.tempHgViewParams;
+  let datasetAltname = params.sampleSet;
+  let assembly = params.genome;
+  let stateModel = params.model;
+  let groupEncoded = encodeURIComponent(Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][params.genome][params.group]);
+  let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[params.complexity];
+  let chromosome = qChr;
+  let start = qStart;
+  let end = qEnd;
+  let windowSizeKb = parseInt(qWindowSizeKb);
+  let windowSize = (windowSizeKb < 10 + 8) ? 5 :
+                   (windowSizeKb < 25 + 13) ? 10 :
+                   (windowSizeKb < 50 + 13) ? 25 :
+                   (windowSizeKb < 75 + 13) ? 50 :
+                   (windowSizeKb < 100 + 50) ? 75 : 
+                   (windowSizeKb < 150 + 50) ? 100 : null;
+  
+  if (!windowSize) {
+    self.setState({
+      simsearchQueryCount: -1,
+      simsearchQueryCountIsVisible: false,
+    });
+    return Promise.resolve(null);
+  }
+
+  let scaleLevel = parseInt(windowSize / 5);
+  let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
+  let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
+  
+  let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
+  
+  // console.log(`[simSearchQueryPromise] simSearchQueryPromiseURL ${JSON.stringify(recommenderV3URL)}`); 
+  
+  return axios.get(recommenderV3URL).then((res) => {
+    if (res.data) {
+      // console.log(`[recommenderV3SearchOnClick] res.data ${JSON.stringify(res.data)}`);
+      if (res.data.hits && res.data.hits.length > 0 && res.data.hits[0].length > 0) {
+        return res.data;
       }
       else {
-        throw new Error("No recommendations found");
+        // console.log(`res ${JSON.stringify(res)}`);
+        if (!ignoreNoHits) throw new Error("No recommendations found");
       }
-    })
-    .catch((err) => {
-      err.response = {};
-      err.response.title = "Please try again";
-      err.response.status = "404";
-      err.response.statusText = `Could not retrieve recommendations for region query. Please try another region.`;
-      // console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
-      let msg = self.errorMessage(err, err.response.statusText, null);
-      self.setState({
-        overlayMessage: msg,
-      }, () => {
-        self.fadeInOverlay(() => {
-          self.setState({
-            selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-            recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
-            recommenderV3SearchInProgress: false,
-            recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-            recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
-            recommenderV3ExpandIsEnabled: false,
-            recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
-            genomeSelectIsActive: true,
-            autocompleteInputDisabled: false,
-          })
-        });
+    }
+    else {
+      if (!ignoreNoHits) throw new Error("No recommendations found");
+    }
+  })
+  .catch((err) => {
+    err.response = {};
+    err.response.title = "Please try again";
+    err.response.status = "404";
+    err.response.statusText = `Could not retrieve recommendations for region query. Please try another region.`;
+    // console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
+    let msg = self.errorMessage(err, err.response.statusText, null);
+    self.setState({
+      overlayMessage: msg,
+    }, () => {
+      self.fadeInOverlay(() => {
+        self.setState({
+          selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+          recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
+          recommenderV3SearchInProgress: false,
+          recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+          recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+          recommenderV3ExpandIsEnabled: false,
+          recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+          genomeSelectIsActive: true,
+          autocompleteInputDisabled: false,
+          simsearchQueryCount: -1,
+          simsearchQueryCountIsVisible: false,
+        })
       });
-    })
+    });
+  })
 }
 
 //
@@ -964,7 +1158,7 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, sel
 //
 export const uuidQueryPromise = function(fn, self) {
   const hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
-  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+  console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
   return axios.get(hgUUIDQueryURL).then((res) => {
     if (res.data && res.data.results && res.data.results[0]) {
       return res.data.results[0].uuid;

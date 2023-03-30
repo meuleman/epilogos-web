@@ -17,7 +17,7 @@ import "higlass-multivec/dist/higlass-multivec.js";
 // cf. https://github.com/higlass/higlass-transcripts
 // import "higlass-transcripts/dist/higlass-transcripts.js";
 
-import { FaEllipsisH, FaExternalLinkAlt, FaClipboard, FaLink, FaUnlink, FaToggleOn } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaClipboard, FaLink, FaUnlink, FaToggleOn } from 'react-icons/fa';
 // import Spinner from "react-svg-spinner";
 
 // Tooltip (for state and other mouseover help)
@@ -66,7 +66,7 @@ class QueryTargetViewer extends Component {
       width: this.props.contentWidth,
       height: this.props.contentHeight - this.props.navbarHeight,
       panelHeight : parseInt((this.props.contentHeight - this.props.navbarHeight - 5) / 2),
-      panelWidth: this.props.contentWidth - 20 - this.props.drawerWidth,
+      panelWidth: this.props.contentWidth - 38 - this.props.drawerWidth,
       queryHeaderLabel: this.props.queryHeaderLabel,
       queryRegionLabel: this.props.queryRegionLabel,
       queryRegion: this.props.queryRegion,
@@ -107,11 +107,9 @@ class QueryTargetViewer extends Component {
       firstQLChange: true,
       firstTLChange: true,
       stripHeight: 22,
-      leftIndicatorPx: null,
-      rightIndicatorPx: null,
     };
 
-    this.state.hitsPanelWidth = parseInt(this.props.drawerWidth) - 68 + 26;
+    this.state.hitsPanelWidth = parseInt(this.state.drawerWidth) - 68 + 26;
     this.state.hitsPanelHeight = 2 * parseInt(this.state.panelHeight) - 35 + 2;
 
     this.queryTargetLockedHgView = React.createRef();
@@ -125,23 +123,19 @@ class QueryTargetViewer extends Component {
         const newHeight = parseInt(document.documentElement.clientHeight);
         const newWidth = parseInt(document.documentElement.clientWidth);
         const newPanelHeight = parseInt((newHeight - this.props.navbarHeight - 5) / 2);
-        const newPanelWidth = newWidth - 20 - this.props.drawerWidth;
-        const newQueryPanelHeight = newPanelHeight; // - 20;
+        const newPanelWidth = newWidth - 38 - this.props.drawerWidth;
+        const newQueryPanelHeight = newPanelHeight - 20;
         const newQueryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
         const newQueryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
-        const newQuerySpacerTrackHeight = 20;
-        const newQueryEpilogosTrackHeight = newQueryPanelHeight - newQueryChromosomeTrackHeight - newQueryGeneAnnotationTrackHeight - newQuerySpacerTrackHeight - 10;
-        console.log(`newQueryEpilogosTrackHeight ${newQueryEpilogosTrackHeight}`);
-        newQueryTargetLockedHgViewconf.views[0].tracks.top[1].height = parseInt(newQueryEpilogosTrackHeight);
-        const newTargetPanelHeight = newPanelHeight; // - 10;
+        const newQueryEpilogosTrackHeight = newQueryPanelHeight - newQueryChromosomeTrackHeight - newQueryGeneAnnotationTrackHeight - 10;
+        newQueryTargetLockedHgViewconf.views[0].tracks.top[0].height = parseInt(newQueryEpilogosTrackHeight);
+        const newTargetPanelHeight = newPanelHeight - 10;
         const newTargetChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
         const newTargetGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
-        const newTargetSpacerTrackHeight = 20;
-        const newTargetEpilogosTrackHeight = newTargetPanelHeight - newTargetChromosomeTrackHeight - newTargetGeneAnnotationTrackHeight - newTargetSpacerTrackHeight - 10;
-        console.log(`newTargetEpilogosTrackHeight ${newTargetEpilogosTrackHeight}`);
+        const newTargetEpilogosTrackHeight = newTargetPanelHeight - newTargetChromosomeTrackHeight - newTargetGeneAnnotationTrackHeight - 10;
         newQueryTargetLockedHgViewconf.views[1].tracks.top[1].height = parseInt(newTargetEpilogosTrackHeight);
         const newHitsPanelHeight = 2 * parseInt(newPanelHeight) - 35 + 2;
-        // console.log(`newQueryTargetLockedHgViewconf ${JSON.stringify(newQueryTargetLockedHgViewconf)}`);
+        console.log(`newQueryTargetLockedHgViewconf ${JSON.stringify(newQueryTargetLockedHgViewconf)}`);
         this.setState({
           queryTargetContentKey: this.state.queryTargetContentKey + 1,
           bottomPanelTop: parseInt((newHeight - this.props.navbarHeight - 18) / 2) + 8,
@@ -159,7 +153,7 @@ class QueryTargetViewer extends Component {
         const newHeight = parseInt(document.documentElement.clientHeight);
         const newWidth = parseInt(document.documentElement.clientWidth);
         const newPanelHeight = parseInt((newHeight - this.props.navbarHeight - 5) / 2);
-        const newPanelWidth = newWidth - 20 - this.props.drawerWidth;
+        const newPanelWidth = newWidth - 38 - this.props.drawerWidth;
         const newQueryPanelHeight = newPanelHeight - 20;
         const newQueryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
         const newQueryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
@@ -248,9 +242,6 @@ class QueryTargetViewer extends Component {
 
     this.updateQueryRegionLabel = this.debounce((newLeft, newRight) => {
       // console.log(`updateQueryRegionLabel ${newLeft} ${newRight}`);
-      // console.log(`updateQueryRegionLabel > this.props.queryRegionIndicatorData.hitFirstInterval ${JSON.stringify(this.props.queryRegionIndicatorData.hitFirstInterval)}`);
-      // newLeft = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[1]];
-      // newRight = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[2]];
       const newQueryRegion = {
         left: {
           chr: newLeft[0],
@@ -263,16 +254,8 @@ class QueryTargetViewer extends Component {
           stop: parseInt(newRight[1]),
         },
       };
-      // newLeft = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[1]];
-      // newRight = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[2]];
-      // const newQueryScale = Helpers.calculateScale(newLeft[0], newRight[0], newLeft[1], newRight[1], this);
-      // const newQueryRegionLabel = (newLeft[0] === newRight[0]) ? `${newLeft[0]}:${newLeft[1]}-${newRight[1]} ${newQueryScale.scaleAsStr}` : `${newLeft[0]}:${newLeft[1]}-${newRight[0]}:${newRight[1]} ${newQueryScale.scaleAsStr}`;
-      
-      const unadjustedLeft = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[1]];
-      const unadjustedRight = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[2]];
-      const newQueryScale = Helpers.calculateScale(unadjustedLeft[0], unadjustedRight[0], unadjustedLeft[1], unadjustedRight[1], this);
-      const newQueryRegionLabel = (unadjustedLeft[0] === unadjustedRight[0]) ? `${unadjustedLeft[0]}:${unadjustedLeft[1]}-${unadjustedRight[1]} ${newQueryScale.scaleAsStr}` : `${unadjustedLeft[0]}:${unadjustedLeft[1]}-${unadjustedRight[0]}:${unadjustedRight[1]} ${newQueryScale.scaleAsStr}`;
-      
+      const newQueryScale = Helpers.calculateScale(newLeft[0], newRight[0], newLeft[1], newRight[1], this);
+      const newQueryRegionLabel = (newLeft[0] === newRight[0]) ? `${newLeft[0]}:${newLeft[1]}-${newRight[1]} ${newQueryScale.scaleAsStr}` : `${newLeft[0]}:${newLeft[1]}-${newRight[0]}:${newRight[1]} ${newQueryScale.scaleAsStr}`;
       const searchQueryEnabledFlag = (this.state.viewAdjusted && (newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold));
       const searchTargetEnabledFlag = (newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold);
       // console.log(`this.state.viewAdjusted ${this.state.viewAdjusted} diffTest ${(newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold)}`);
@@ -300,21 +283,8 @@ class QueryTargetViewer extends Component {
           stop: parseInt(newRight[1]),
         },
       };
-      // const newTargetScale = Helpers.calculateScale(newLeft[0], newRight[0], newLeft[1], newRight[1], this);
-      // const newTargetRegionLabel = (newLeft[0] === newRight[0]) ? `${newLeft[0]}:${newLeft[1]}-${newRight[1]} ${newTargetScale.scaleAsStr}` : `${newLeft[0]}:${newLeft[1]}-${newRight[0]}:${newRight[1]} ${newTargetScale.scaleAsStr}`;
-
-      const qrid = this.props.queryRegionIndicatorData;
-      
-      // console.log(`qrid ${JSON.stringify(qrid)}`);
-      // console.log(`newLeft ${JSON.stringify(newLeft)}`);
-      // console.log(`newRight ${JSON.stringify(newRight)}`);
-
-      const trueDelta = parseInt(qrid.hitFirstInterval[2]) - parseInt(qrid.hitFirstInterval[1]);
-      const unadjustedLeft = [newLeft[0], newLeft[1] + qrid.hitStartDiff];
-      const unadjustedRight = [newRight[0], unadjustedLeft[1] + trueDelta];
-      const newTargetScale = Helpers.calculateScale(unadjustedLeft[0], unadjustedRight[0], unadjustedLeft[1], unadjustedRight[1], this);
-      const newTargetRegionLabel = (unadjustedLeft[0] === unadjustedRight[0]) ? `${unadjustedLeft[0]}:${unadjustedLeft[1]}-${unadjustedRight[1]} ${newTargetScale.scaleAsStr}` : `${unadjustedLeft[0]}:${unadjustedLeft[1]}-${unadjustedRight[0]}:${unadjustedRight[1]} ${newTargetScale.scaleAsStr}`;
-
+      const newTargetScale = Helpers.calculateScale(newLeft[0], newRight[0], newLeft[1], newRight[1], this);
+      const newTargetRegionLabel = (newLeft[0] === newRight[0]) ? `${newLeft[0]}:${newLeft[1]}-${newRight[1]} ${newTargetScale.scaleAsStr}` : `${newLeft[0]}:${newLeft[1]}-${newRight[0]}:${newRight[1]} ${newTargetScale.scaleAsStr}`;
       this.setState({
         targetRegionLabel: newTargetRegionLabel,
         targetRegion: newTargetRegion,
@@ -412,8 +382,8 @@ class QueryTargetViewer extends Component {
       if (rightIndicatorFraction > 1.0) {
         rightIndicatorFraction = 1.0;
       }
-      const leftIndicatorPx = Math.round(leftIndicatorFraction * self.state.panelWidth) + self.props.drawerWidth;
-      const rightIndicatorPx = Math.round(rightIndicatorFraction * self.state.panelWidth) + self.props.drawerWidth;
+      const leftIndicatorPx = Math.round(leftIndicatorFraction * self.state.panelWidth) + self.state.drawerWidth;
+      const rightIndicatorPx = Math.round(rightIndicatorFraction * self.state.panelWidth) + self.state.drawerWidth;
       // console.log(`leftIndicatorFraction ${leftIndicatorFraction}`);
       // console.log(`leftIndicatorPx ${leftIndicatorPx}`);
       // console.log(`rightIndicatorFraction ${rightIndicatorFraction}`);
@@ -423,7 +393,6 @@ class QueryTargetViewer extends Component {
     }
 
     function initializeQueryTargetLockedHgViewconf(chromInfo, self) {
-      // console.log(`QueryTargetViewer > initializeQueryTargetLockedHgViewconf`);
       // console.log(`${JSON.stringify(chromInfo, null, 2)}`);
       // skeleton
       const newHgViewconf = {
@@ -481,8 +450,7 @@ class QueryTargetViewer extends Component {
         initialYDomain: queryInitialDomain,
       };
       const queryPanelWidth = self.state.panelWidth;
-      // console.log(`queryPanelWidth ${queryPanelWidth}`);
-      const queryPanelHeight = self.state.panelHeight;
+      const queryPanelHeight = self.state.panelHeight - 10;
       const querySpacerTrackWidth = queryPanelWidth;
       const querySpacerTrackHeight = 20;
       const queryChromosomeTrackWidth = queryPanelWidth;
@@ -490,7 +458,7 @@ class QueryTargetViewer extends Component {
       const queryGeneAnnotationTrackWidth = queryPanelWidth;
       const queryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
       const queryEpilogosTrackWidth = queryPanelWidth;
-      const queryEpilogosTrackHeight = parseInt(queryPanelHeight - queryChromosomeTrackHeight - queryGeneAnnotationTrackHeight - querySpacerTrackHeight - 10);
+      const queryEpilogosTrackHeight = parseInt(queryPanelHeight - queryChromosomeTrackHeight - queryGeneAnnotationTrackHeight - querySpacerTrackHeight - querySpacerTrackHeight - 1);
       const queryEpilogosTrack = {
         name: 'epilogos-multires',
         server: 'https://explore.altius.org/api/v1',
@@ -525,14 +493,13 @@ class QueryTargetViewer extends Component {
           labelColor: 'white',
           labelTextOpacity: 0,
           labelBackgroundOpacity: 0,
-          valueScaling: 'linear',
+          valueScaling: 'exponential',
           trackBorderWidth: 0,
           trackBorderColor: 'black',
           backgroundColor: 'black',
           barBorder: false,
           sortLargestOnTop: true,
           colorScale: epilogosTrackColorScale,
-          globalMinMax: self.props.globalMinMax,
         },
       };
       const queryChromosomeTrack = {
@@ -663,8 +630,7 @@ class QueryTargetViewer extends Component {
       const targetGeneAnnotationTrackWidth = targetPanelWidth;
       const targetGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
       const targetEpilogosTrackWidth = targetPanelWidth;
-      const targetEpilogosTrackHeight = parseInt(targetPanelHeight - targetChromosomeTrackHeight - targetGeneAnnotationTrackHeight - targetSpacerTrackHeight - 10); 
-      // const targetEpilogosTrackHeight = queryEpilogosTrackHeight;
+      const targetEpilogosTrackHeight = parseInt(targetPanelHeight - targetChromosomeTrackHeight - targetGeneAnnotationTrackHeight - targetSpacerTrackHeight - 20);
       const targetSpacerTrack = {
         name: 'spacer',
         tilesetUid: '',
@@ -711,14 +677,13 @@ class QueryTargetViewer extends Component {
           labelColor: 'white',
           labelTextOpacity: 0,
           labelBackgroundOpacity: 0,
-          valueScaling: 'linear',
+          valueScaling: 'exponential',
           trackBorderWidth: 0,
           trackBorderColor: 'black',
           backgroundColor: 'black',
           barBorder: false,
           sortLargestOnTop: true,
           colorScale: epilogosTrackColorScale,
-          globalMinMax: self.props.globalMinMax,
         },
       };
       const targetChromosomeTrack = {
@@ -800,29 +765,28 @@ class QueryTargetViewer extends Component {
       targetView.tracks.top.push(targetChromosomeTrack);
       targetView.tracks.top.push(targetGeneAnnotationTrack);
       // populate zoom and location locks
+      const lockFactor = 10; // 17.780938863754272; -- still unsure how this is generated
       const valueScaleLockUid = uuid4();
-      // console.log(`queryEpilogosTrackHeight ${queryEpilogosTrackHeight} | targetEpilogosTrackHeight ${targetEpilogosTrackHeight}`)
-      newHgViewconf.valueScaleLocks = {
-        locksByViewUid: {
-          [`${queryViewUUID}.${queryEpilogosTrack.uid}`]: valueScaleLockUid,
-          [`${targetViewUUID}.${targetEpilogosTrack.uid}`]: valueScaleLockUid,
-        },
-        locksDict: {
-          [valueScaleLockUid]: {
-            [`${queryViewUUID}.${queryEpilogosTrack.uid}`]: {
-              view: queryViewUUID,
-              track: queryEpilogosTrack.uid,
-            },
-            [`${targetViewUUID}.${targetEpilogosTrack.uid}`]: {
-              view: targetViewUUID,
-              track: targetEpilogosTrack.uid,
-            },
-            uid: valueScaleLockUid,
-          }
-        },
-      };
+      // newHgViewconf.valueScaleLocks = {
+      //   locksByViewUid: {
+      //     [`${queryViewUUID}.${queryEpilogosTrack.uid}`]: valueScaleLockUid,
+      //     [`${targetViewUUID}.${targetEpilogosTrack.uid}`]: valueScaleLockUid,
+      //   },
+      //   locksDict: {
+      //     [valueScaleLockUid]: {
+      //       [`${queryViewUUID}.${queryEpilogosTrack.uid}`]: {
+      //         view: queryViewUUID,
+      //         track: queryEpilogosTrack.uid,
+      //       },
+      //       [`${targetViewUUID}.${targetEpilogosTrack.uid}`]: {
+      //         view: queryViewUUID,
+      //         track: targetEpilogosTrack.uid,
+      //       },
+      //       uid: valueScaleLockUid,
+      //     }
+      //   },
+      // };
       const zoomLockUUID = uuid4();
-      const zoomLockFactor = 10; // 17.780938863754272; -- still unsure how this is generated
       newHgViewconf.zoomLocks = {
         locksByViewUid: {
           [queryViewUUID]: zoomLockUUID,
@@ -833,12 +797,12 @@ class QueryTargetViewer extends Component {
             [queryViewUUID]: [
               queryAbsMidpoint, 
               queryAbsMidpoint,
-              zoomLockFactor
+              lockFactor
             ],
             [targetViewUUID]: [
               targetAbsMidpoint,
               targetAbsMidpoint,
-              zoomLockFactor
+              lockFactor
             ],
             uid: zoomLockUUID,
           }
@@ -855,12 +819,12 @@ class QueryTargetViewer extends Component {
             [queryViewUUID]: [
               queryAbsMidpoint, 
               queryAbsMidpoint,
-              zoomLockFactor
+              lockFactor
             ],
             [targetViewUUID]: [
               targetAbsMidpoint,
               targetAbsMidpoint,
-              zoomLockFactor
+              lockFactor
             ],
             uid: locationLockUUID,
           }
@@ -869,7 +833,7 @@ class QueryTargetViewer extends Component {
       // populate skeleton with views
       newHgViewconf.views.push(queryView);
       newHgViewconf.views.push(targetView);
-      // console.log(`newHgViewconf ${JSON.stringify(newHgViewconf, null, 2)}`);
+      console.log(`newHgViewconf ${JSON.stringify(newHgViewconf, null, 2)}`);
       self.state.queryTargetLockedHgViewconf = {...newHgViewconf};
       // self.state.queryTargetLockedHgViewconfValueScaleLockUUID = valueScaleLockUid;
       self.state.queryTargetLockedHgViewconfZoomLockUUID = zoomLockUUID;
@@ -885,7 +849,6 @@ class QueryTargetViewer extends Component {
     }
 
     function initializeQueryTargetUnlockedHgViewconf(chromInfo, self) {
-      // onsole.log(`QueryTargetViewer > initializeQueryTargetUnlockedHgViewconf`);
       // console.log(`${JSON.stringify(chromInfo, null, 2)}`);
       // skeleton
       const newHgViewconf = {
@@ -1347,7 +1310,7 @@ class QueryTargetViewer extends Component {
     window.addEventListener('resize', this.resize);
     setTimeout(() => {
       if (this.state.panelViewsLocked) {
-        if (this.queryTargetLockedHgView && this.state.queryTargetLockedHgViewconf && this.state.queryTargetLockedHgViewconf.views) {
+        if (this.queryTargetLockedHgView) {
           this.queryTargetLockedHgView.api.on('location', (event) => { 
             this.onQueryLocationChange(event);
           }, this.state.queryTargetLockedHgViewconf.views[0].uid);
@@ -1357,7 +1320,7 @@ class QueryTargetViewer extends Component {
         }
       }
       else {
-        if (this.queryTargetUnlockedHgView && this.state.queryTargetUnlockedHgViewconf && this.state.queryTargetUnlockedHgViewconf.views) {
+        if (this.queryTargetUnlockedHgView) {
           this.queryTargetUnlockedHgView.api.on('location', (event) => { 
             this.onQueryLocationChange(event);
           }, this.state.queryTargetUnlockedHgViewconf.views[0].uid);
@@ -1593,8 +1556,8 @@ class QueryTargetViewer extends Component {
         // update recommendation hits
         // set current region
         // redraw hits table
-        self.props.updateParentViewerRegions(res.hits[0], () => {
-          // console.log(`queryRegion ${JSON.stringify(queryRegion)}`);
+        self.props.updateParentViewerRois(res.hits[0], () => {
+          console.log(`queryRegion ${JSON.stringify(queryRegion)}`);
           self.props.updateParentViewerState("queryRegionIndicatorData", qriData);
           const firstHit = self.props.hits[0];
           const targetRegion = {
@@ -1628,14 +1591,14 @@ class QueryTargetViewer extends Component {
             originalAbsLeft: queryAbsLeft,
             originalAbsRight: queryAbsRight,
           }, () => {
-            // console.log(`viewAdjusted set to false`);
+            console.log(`viewAdjusted set to false`);
             self.setState({
               hitsTableKey: self.state.hitsTableKey + 1,
               targetRegion: targetRegion,
               targetRegionLabel: targetRegionLabel,
               viewAdjusted: false,
             }, () => {
-              // console.log(`updateParentViewerRegions - ${self.state.selectedHitIdx}`);
+              // console.log(`updateParentViewerRois - ${self.state.selectedHitIdx}`);
               // console.log(`queryRegion ${JSON.stringify(self.state.queryRegion)}`);
               // redraw higlass view with updated query and target regions
               // self.jumpToQueryRegion([
@@ -1680,7 +1643,7 @@ class QueryTargetViewer extends Component {
         searchTargetInProgress: false,
         hitsTableKey: this.state.hitsTableKey + 1,
       }, () => {
-        // console.log(`queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
+        console.log(`queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
         this.jumpToQueryRegion([
           this.state.queryRegion.left.chr, 
           this.state.queryRegion.right.chr,
@@ -1767,11 +1730,11 @@ class QueryTargetViewer extends Component {
         break;
       }
       case 'copyQuery': {
-        title = 'Copy query region to clipboard';
+        title = 'Copy region to clipboard';
         break;
       }
       case 'copyTarget': {
-        title = 'Copy suggestion region to clipboard';
+        title = 'Copy region to clipboard';
         break;
       }
       default: {
@@ -1868,8 +1831,6 @@ class QueryTargetViewer extends Component {
   }
 
   hitsTable = () => {
-    const qrid = this.props.queryRegionIndicatorData;
-    // console.log(`qrid ${JSON.stringify(qrid)}`);
     return (
       <QueryTargetRecommendationTable
         key={`query-target-recommendation-table-${this.state.queryTargetRecommendationTableKey}`}
@@ -1880,7 +1841,6 @@ class QueryTargetViewer extends Component {
         idxBySort={this.props.hitsIdxBySort}
         jumpToRow={this.jumpToTargetRegion}
         adjustTableParentOffset={this.adjustTargetRegionTableOffset}
-        qrid={qrid}
       />
     )
   }
@@ -1967,8 +1927,6 @@ class QueryTargetViewer extends Component {
       // console.log(`jumpToTargetRegion > old ${this.state.selectedHitIdx}`);
       this.setState({
         selectedHitIdx: rowIndex,
-      }, () => {
-        this.props.onHitSelect(this.state.selectedHitIdx);
       });
       this.queryTargetRecommendationTableRef.updateSelectedIdx(rowIndex);
     }
@@ -2043,24 +2001,24 @@ class QueryTargetViewer extends Component {
       targetView.initialYDomain = targetInitialDomain;
       const targetViewUUID = targetView.uid;
       // locks
-      // const valueScaleLockUid = self.state.queryTargetLockedHgViewconfValueScaleLockUUID;
-      // if (newHgViewconf.valueScaleLocks && newHgViewconf.valueScaleLocks.locksDict && newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid] && newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][queryViewUUID]) {
-      //   newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][queryViewUUID] = {
-      //     view: queryViewUUID,
-      //     track: queryView.tracks.top[1].uid,
-      //   };
-      //   newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][targetViewUUID] = {
-      //     view: targetViewUUID,
-      //     track: targetView.tracks.top[1].uid,
-      //   };
-      // }
+      const lockFactor = 10; // 17.780938863754272; -- still unsure how this is generated
+      const valueScaleLockUid = self.state.queryTargetLockedHgViewconfValueScaleLockUUID;
+      if (newHgViewconf.valueScaleLocks && newHgViewconf.valueScaleLocks.locksDict && newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid] && newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][queryViewUUID]) {
+        newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][queryViewUUID] = {
+          view: queryViewUUID,
+          track: queryView.tracks.top[1].uid,
+        };
+        newHgViewconf.valueScaleLocks.locksDict[valueScaleLockUid][targetViewUUID] = {
+          view: targetViewUUID,
+          track: targetView.tracks.top[1].uid,
+        };
+      }
       const zoomLockUUID = self.state.queryTargetLockedHgViewconfZoomLockUUID;
-      const zoomLockFactor = 10; // 17.780938863754272; -- still unsure how this is generated
-      newHgViewconf.zoomLocks.locksDict[zoomLockUUID][queryViewUUID] = [queryAbsMidpoint, queryAbsMidpoint, zoomLockFactor];
-      newHgViewconf.zoomLocks.locksDict[zoomLockUUID][targetViewUUID] = [targetAbsMidpoint, targetAbsMidpoint, zoomLockFactor];
+      newHgViewconf.zoomLocks.locksDict[zoomLockUUID][queryViewUUID] = [queryAbsMidpoint, queryAbsMidpoint, lockFactor];
+      newHgViewconf.zoomLocks.locksDict[zoomLockUUID][targetViewUUID] = [targetAbsMidpoint, targetAbsMidpoint, lockFactor];
       const locationLockUUID = self.state.queryTargetLockedHgViewconfLocationLockUUID;
-      newHgViewconf.locationLocks.locksDict[locationLockUUID][queryViewUUID] = [queryAbsMidpoint, queryAbsMidpoint, zoomLockFactor];
-      newHgViewconf.locationLocks.locksDict[locationLockUUID][targetViewUUID] = [targetAbsMidpoint, targetAbsMidpoint, zoomLockFactor];
+      newHgViewconf.locationLocks.locksDict[locationLockUUID][queryViewUUID] = [queryAbsMidpoint, queryAbsMidpoint, lockFactor];
+      newHgViewconf.locationLocks.locksDict[locationLockUUID][targetViewUUID] = [targetAbsMidpoint, targetAbsMidpoint, lockFactor];
       
       self.setState({
         queryTargetLockedHgViewconf: newHgViewconf,
@@ -2174,10 +2132,6 @@ class QueryTargetViewer extends Component {
   }
 
   render() {
-    if (!this.state.leftIndicatorPx || !this.state.rightIndicatorPx) return <div />;
-
-    const self = this;
-
     const queryTargetContentStyle = {
       position: 'absolute',
       touchAction: 'none',
@@ -2215,7 +2169,7 @@ class QueryTargetViewer extends Component {
     const topPanelStyle = {
       ...panelStyle,
       top: this.state.topPanelTop,
-      left: this.props.drawerWidth,
+      left: this.state.drawerWidth,
       height: this.state.panelHeight - 20,
       marginTop: 0,
       marginBottom: 10,
@@ -2225,7 +2179,7 @@ class QueryTargetViewer extends Component {
 
     const bottomPanelStyle = {
       top: this.state.bottomPanelTop,
-      left: this.props.drawerWidth,
+      left: this.state.drawerWidth,
       marginTop: 0,
       marginBottom: 10,
       marginLeft: 0,
@@ -2348,19 +2302,19 @@ class QueryTargetViewer extends Component {
     const genericHgStyle = {
       position: 'absolute',
       zIndex: 0,
-      top: 0,
-      left: this.props.drawerWidth,
-      height: this.state.height,
-      width: this.state.width - this.props.drawerWidth - 20,
+      top: 10,
+      left: this.state.drawerWidth,
+      height: this.state.height - 15,
+      width: this.state.width - 20 - this.state.drawerWidth,
     }
 
     const nullHgStyle = {
       position: 'absolute',
       zIndex: 0,
       top: 0,
-      left: this.props.drawerWidth,
+      left: this.state.drawerWidth,
       height: this.state.height - 15,
-      width: this.state.width - this.props.drawerWidth - 20,
+      width: this.state.width - 20 - this.state.drawerWidth,
       backgroundColor: 'none',
     }
 
@@ -2400,7 +2354,7 @@ class QueryTargetViewer extends Component {
       top: this.state.topPanelTop,
       left: 20,
       backgroundColor: 'black',
-      width: `calc(${parseInt(this.props.drawerWidth) - 40}px)`,
+      width: `calc(${parseInt(this.state.drawerWidth) - 40}px)`,
       height: `calc(${parseInt(this.state.height) - 22}px)`,
       borderColor: 'rgb(80,80,80)',
       borderStyle: 'solid',
@@ -2433,7 +2387,7 @@ class QueryTargetViewer extends Component {
       borderColor: 'rgb(80,80,80)',
       borderStyle: 'solid',
       borderWidth: 'thin',
-      width: `calc(${this.props.drawerWidth - 40}px)`,
+      minWidth: `calc(${this.state.drawerWidth - 68 + 26}px)`,
       textAlign: 'left',
     };
 
@@ -2523,8 +2477,8 @@ class QueryTargetViewer extends Component {
       color: "white",
       backgroundColor: "black",
       top: this.state.topPanelTop + this.state.panelHeight - 20,
-      left: this.props.drawerWidth - 1,
-      width: this.state.panelWidth + 2,
+      left: this.state.drawerWidth - 1,
+      width: this.state.panelWidth + 1,
       height: '21px',
       cursor: 'pointer',
     };
@@ -2535,7 +2489,7 @@ class QueryTargetViewer extends Component {
       color: "white",
       backgroundColor: "black",
       top: this.state.topPanelTop + this.state.panelHeight - 18,
-      left: this.props.drawerWidth + this.state.panelWidth / 2 - 14,
+      left: this.state.drawerWidth + this.state.panelWidth / 2 - 14,
       cursor: 'default',
     };
 
@@ -2564,75 +2518,9 @@ class QueryTargetViewer extends Component {
     function showRegionIndicatorLabels(l, r, w) {
       const lo = l / w;
       const ro = r / w;
-      // console.log(`${self.state.queryRegion.left.chr}:${self.state.queryRegion.left.start}-${self.state.queryRegion.right.stop}`);
-      // console.log(`${self.props.queryRegionIndicatorData.chromosome}:${self.props.queryRegionIndicatorData.start}-${self.props.queryRegionIndicatorData.stop}`);
       // console.log(`l ${l} | r ${r} | w ${w} | lo ${lo} | ro ${ro}`);
-      return ((lo > 0) && (ro < 1)) || ((lo <= 0) && (ro >= 0.2)) || ((lo <= 0.8) && (ro >= 1.0));
+      return (lo > 0.01) && (ro < 0.99);
     }
-
-    function showEllipsisIfLeftOrRightAligned(l, r, w, qrTop, trTop, rLeft, rRight, iWidth) {
-      const lo = l / w;
-      const ro = r / w;
-      const queryLeftTitle = "Query pattern extends upstream";
-      const queryRightTitle = "Query pattern extends downstream";
-      const targetLeftTitle = "Suggestion pattern extends upstream";
-      const targetRightTitle = "Suggestion pattern extends downstream";
-      const leftEllipsis = 
-        <div>
-          <div 
-            title={queryLeftTitle} 
-            style={{position: "absolute", top: qrTop, left: rLeft, width: iWidth, textAlign: "left", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-          <div 
-            title={targetLeftTitle} 
-            style={{position: "absolute", top: trTop, left: rLeft, width: iWidth, textAlign: "left", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-        </div>;
-      const rightEllipsis = 
-        <div>
-          <div 
-            title={queryRightTitle} 
-            style={{position: "absolute", top: qrTop, right: rRight, width: iWidth, textAlign: "right", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-          <div 
-            title={targetRightTitle} 
-            style={{position: "absolute", top: trTop, right: rRight, width: iWidth, textAlign: "right", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-        </div>;
-      const bothEllipses = 
-        <div>
-          <div 
-            title={queryLeftTitle} 
-            style={{position: "absolute", top: qrTop, left: rLeft, width: iWidth, textAlign: "left", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-          <div 
-            title={targetLeftTitle} 
-            style={{position: "absolute", top: trTop, left: rLeft, width: iWidth, textAlign: "left", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-          <div 
-            title={queryRightTitle} 
-            style={{position: "absolute", top: qrTop, right: rRight, width: iWidth, textAlign: "right", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-          <div 
-            title={targetRightTitle} 
-            style={{position: "absolute", top: trTop, right: rRight, width: iWidth, textAlign: "right", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-            <span>{'\u2022'} {'\u2022'} {'\u2022'}</span>
-          </div>
-        </div>;
-      return (lo === 0 && ro < 1) ? leftEllipsis : (lo > 0 && ro === 1) ? rightEllipsis : (lo === 0 && ro === 1) ? bothEllipses : <div />;
-    }
-
-    // console.log(`this.state.queryRegion ${JSON.stringify(this.state.queryRegion)}`);
-    // console.log(`this.props.queryRegionIndicatorData ${JSON.stringify(this.props.queryRegionIndicatorData)}`);
-
-    // console.log(`leftIndicatorPx ${this.state.leftIndicatorPx} | rightIndicatorPx ${this.state.rightIndicatorPx}`);
 
     return (
       <Fragment>
@@ -2672,36 +2560,22 @@ class QueryTargetViewer extends Component {
             ) && 
             <div className="region-interval-indicator-content query-region-interval-indicator-content" style={genericRegionIndicatorStyle}>
               
-              <div 
-                title={formatRegionIndicatorText(this.props.queryRegionIndicatorData.hitFirstInterval, this)}
-                style={{position: "absolute", top: "1px", left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
+              <div style={{position: "absolute", top: "1px", left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)" }}>
                 {formatRegionIndicatorText(this.props.queryRegionIndicatorData.hitFirstInterval, this)}
               </div>
-
-              <div 
-                title={formatRegionIndicatorText([this.state.targetRegion.left.chr, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff + parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[2]) - parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[1])], this)} 
-                style={{position: "absolute", top: `${targetRegionIndicatorLabelOffset + this.state.panelHeight}px`, left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
+              <div style={{position: "absolute", top: `${targetRegionIndicatorLabelOffset + this.state.panelHeight}px`, left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)" }}>
                 {formatRegionIndicatorText([this.state.targetRegion.left.chr, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff + parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[2]) - parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[1])], this)}
               </div>
-
-              {showEllipsisIfLeftOrRightAligned(this.state.leftIndicatorPx - this.props.drawerWidth,
-                                                this.state.rightIndicatorPx - this.props.drawerWidth, 
-                                                this.state.panelWidth,
-                                                "0.5px",
-                                                `${targetRegionIndicatorLabelOffset + this.state.panelHeight - 0.5}px`,
-                                                `${this.state.leftIndicatorPx + 14}px`,
-                                                `${-this.state.panelWidth - this.props.drawerWidth + 14}px`,
-                                                "20px")}
 
               <svg 
                 width={this.state.width} 
                 height={this.state.height}
-                style={{zIndex: 100001, position: "absolute"}}
+                style={{zIndex: 1, position: "absolute"}}
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink">
                 <style type="text/css">
-                  { `.dashed-line { stroke:rgb(120,120,120); stroke-opacity:0.75; stroke-width:1; stroke-dasharray:"2"; } ` }
-                  { `.pointer { fill:white; fill-opacity:0.75; } ` }
+                  { `.dashed-line { stroke:rgb("40,40,40"); stroke-opacity:0.75; stroke-width:1; stroke-dasharray:"2"; } ` }
+                  { `.pointer { fill:white; fill-opacity:0.75;} ` }
                 </style>
                 <line x1={this.state.leftIndicatorPx} y1={0} x2={this.state.leftIndicatorPx} y2={this.state.panelHeight * 2} className="dashed-line" />
                 <line x1={this.state.rightIndicatorPx} y1={0} x2={this.state.rightIndicatorPx} y2={this.state.panelHeight * 2} className="dashed-line" />
@@ -2726,27 +2600,14 @@ class QueryTargetViewer extends Component {
             ) && 
             <div className="region-interval-indicator-content target-region-interval-indicator-content" style={genericRegionIndicatorStyle}>
 
-              <div 
-                title={formatRegionIndicatorText(this.props.queryRegionIndicatorData.hitFirstInterval, this)} 
-                style={{position: "absolute", top: "1px", left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-                <FaEllipsisH size={'0.8em'} title={formatRegionIndicatorText(this.props.queryRegionIndicatorData.hitFirstInterval, this)} />
-              </div>
-
-              <div
-                title={formatRegionIndicatorText([this.state.targetRegion.left.chr, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff + parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[2]) - parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[1])], this)} 
-                style={{position: "absolute", top: `${targetRegionIndicatorLabelOffset + this.state.panelHeight}px`, left: `${this.state.leftIndicatorPx + 1}px`, width: `${this.state.rightIndicatorPx - this.state.leftIndicatorPx - 2}px`, textAlign: "center", fontSize: "0.6em", color: "rgb(255,255,255,0.75)", textShadow: "1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000", backgroundColor: "rgb(42,42,42)", zIndex: 10000, pointerEvents: "all", cursor: "default" }}>
-                <FaEllipsisH size={'0.8em'} title={formatRegionIndicatorText([this.state.targetRegion.left.chr, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff, this.state.targetRegion.left.start + this.props.queryRegionIndicatorData.hitStartDiff + parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[2]) - parseInt(this.props.queryRegionIndicatorData.hitFirstInterval[1])], this)} />
-              </div>
-
               <svg 
                 width={this.state.width} 
                 height={this.state.height}
-                style={{zIndex: 100001, position: "absolute"}}
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink">
                 <style type="text/css">
-                  { `.dashed-line { stroke:rgb(120,120,120); stroke-opacity:0.75; stroke-width:1; stroke-dasharray:"2"; } ` }
-                  { `.pointer { fill:white; fill-opacity:0.75; } ` }
+                  { `.dashed-line { stroke:rgb("40,40,40"); stroke-opacity:0.75; stroke-width:1; stroke-dasharray:"2"; } ` }
+                  { `.pointer { fill:white; fill-opacity:0.75;} ` }
                 </style>
                 <line x1={this.state.leftIndicatorPx} y1={0} x2={this.state.leftIndicatorPx} y2={this.state.panelHeight * 2} className="dashed-line" />
                 <line x1={this.state.rightIndicatorPx} y1={0} x2={this.state.rightIndicatorPx} y2={this.state.panelHeight * 2} className="dashed-line" />
@@ -2773,7 +2634,7 @@ class QueryTargetViewer extends Component {
                     onClick={()=>{this.handleClick('searchQuery')}}>
                     {(this.state.searchQueryInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
                   </div> */ }
-                  <CopyToClipboard text={this.readableRegion(this.state.queryRegion)} onCopy={(e) => { this.props.copyClipboardText(e) }} >
+                  <CopyToClipboard text={this.readableRegion(this.state.queryRegion)}>
                     <div
                       title={this.titleForControl('copyQuery')} 
                       style={(!this.state.copyQueryEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.copyQueryHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}
@@ -2813,7 +2674,7 @@ class QueryTargetViewer extends Component {
                     onClick={()=>{this.handleClick('searchTarget')}}>
                     {(this.state.searchTargetInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
                   </div> */ }
-                  <CopyToClipboard text={this.readableRegion(this.state.targetRegion)} onCopy={(e) => { this.props.copyClipboardText(e) }}>
+                  <CopyToClipboard text={this.readableRegion(this.state.targetRegion)}>
                     <div
                       title={this.titleForControl('copyTarget')} 
                       style={(!this.state.copyTargetEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.copyTargetHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}
@@ -2917,6 +2778,4 @@ QueryTargetViewer.propTypes = {
   isQueryTargetViewLocked: PropTypes.bool,
   toggleQueryTargetViewLock: PropTypes.func,
   queryRegionIndicatorData: PropTypes.object,
-  globalMinMax: PropTypes.object,
-  copyClipboardText: PropTypes.func,
 };

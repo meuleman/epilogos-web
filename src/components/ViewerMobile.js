@@ -419,12 +419,12 @@ class ViewerMobile extends Component {
     // If the roiURL parameter is defined, we fire a callback once the URL is loaded 
     // to get the first row, to set position before the HiGlass container is rendered
     //
-    else if (queryObj.roiURL) {
-      setTimeout(() => {
-        // console.log("[constructor] queryObj.roiURL", queryObj.roiURL);
-        this.updateRois(queryObj.roiURL, updateWithRoisInMemory);
-      }, 0);
-    }
+    // else if (queryObj.roiURL) {
+    //   setTimeout(() => {
+    //     // console.log("[constructor] queryObj.roiURL", queryObj.roiURL);
+    //     this.updateRois(queryObj.roiURL, updateWithRoisInMemory);
+    //   }, 0);
+    // }
     else {
       // console.log(`[constructor] queryObj.serIdx ${queryObj.serIdx} queryObj.spcIdx ${queryObj.spcIdx}`);
       if ((typeof queryObj.serIdx !== "undefined") && (queryObj.spcIdx !== Constants.defaultApplicationSerIdx)) {

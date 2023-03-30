@@ -5,7 +5,8 @@ import * as Constants from "./Constants.js";
 
 // Application components
 import Portal from "./components/Portal.js";
-import Viewer from "./components/Viewer.js";
+// import Viewer from "./components/Viewer.js";
+import Viewer from "./components/Viewer032123.js";
 import ViewerMobile from "./components/ViewerMobile.js";
 
 // Mobile device detection
