@@ -141,7 +141,7 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
       // console.log(`positionSummaryElement > ${positionSummary}`);
       return (
         <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}>
-          <span title={"Current genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary} onCopy={(e) => { self.onClickCopyRegionCommand(e) }}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard>
+          <span title={"Current genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary} onMouseDown={(e) => {self.onClickCopyRegionCommand(e) }}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard>
         </div>
       );
     }
@@ -383,13 +383,15 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let suggestionURL = (newGroupV2) ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
 
-  console.log(`Helpers > updateSuggestions > suggestionURL ${JSON.stringify(suggestionURL, null, 2)}`);
+  // console.log(`Helpers > updateSuggestions > suggestionURL ${JSON.stringify(suggestionURL, null, 2)}`);
   
   function updateSuggestionRegionsWithResponse(res, cb) {
     const newSuggestionRegions = res.data.split('\n');
     // console.log(`updateExemplarRegionsWithResponse ${JSON.stringify(newExemplarRegions)}`);
+    const newSelectedSuggestionRowIdx = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? ((newSuggestionRegions.length > self.state.selectedSuggestionRowIdx) ? self.state.selectedSuggestionRowIdx : Constants.defaultApplicationSugIdx) : Constants.defaultApplicationSugIdx;
     self.setState({
       suggestionRegions: newSuggestionRegions,
+      selectedSuggestionRowIdx: newSelectedSuggestionRowIdx,
     }, () => {
       let data = [];
       let dataCopy = [];
@@ -453,7 +455,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
           if (cb) cb();
           self.setState({
             suggestionTableKey: self.state.suggestionTableKey + 1,
-          })
+          });
         });
       }, 1000);
     });
@@ -578,6 +580,11 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
           errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`;
           break;
       }
+      break;
+    case "vG":
+      result.A = `${sampleSet}.${genome}.${model}.${groupA}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+      result.B = `${sampleSet}.${genome}.${model}.${groupB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+      result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
       break;
     default:
       break;
@@ -722,6 +729,10 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
     case "vF":
       result = `833sample.vE.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
       break;
+    case "vG":
+      const newComplexity = Constants.complexitiesForDataExport[complexity];
+      result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+      break;
     default:
       errorRaised = true;
       errorMessage = `Not a valid sample set identifier ${sampleSet}`;
@@ -861,6 +872,9 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
     }
     case "vF":
       result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+      break;
+    case "vG":
+      result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
       break;
     default: {
       errorRaised = true;

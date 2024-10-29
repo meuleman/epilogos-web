@@ -35,6 +35,7 @@ export const defaultRecommenderGemRefreshTimer = 4000;
 export const defaultRecommenderGemRefreshInViewerApplicationTimer = 60000; // every minute
 export const defaultQueryTargetLockFlag = true;
 export const defaultApplicationRowRefreshInitTimer = 5000;
+export const applicationMinMaxScaleFactor = 1.05;
 
 export const queryTargetViewerHitLabel = "Suggestion";
 export const queryTargetViewerHitsHeaderLabel = "Suggestions";
@@ -69,6 +70,7 @@ export const sampleSets = {
   "vC": "2019 October 6 (833-sample human)",
   "vE": "2021 January 20 (833-sample human)",
   "vF": "2021 January 29 (833-sample human)",
+  "vG": "2024 February 26 (1698-sample human)",
 };
 
 export const sampleSetsForSettingsDrawer = {
@@ -78,6 +80,7 @@ export const sampleSetsForSettingsDrawer = {
   "vD": { "visible": true, "value": "vD", "enabled": true, "titleText": "Gorkin <em>et al.</em> (65-sample mouse)" },
   "vE": { "visible": false, "value": "vE", "enabled": false, "titleText": "Boix <em>et al.</em> (maxvecsum vs colsum agg test)" },
   "vF": { "visible": false, "value": "vF", "enabled": false, "titleText": "Boix <em>et al.</em> (maxvecsum w/chromatin state)" },
+  "vG": { "visible": true, "value": "vG", "enabled": true, "titleText": "IHEC (1698-sample human)" },
 };
 
 export const sampleSetsForNavbar = {
@@ -87,6 +90,7 @@ export const sampleSetsForNavbar = {
   "vD": "Gorkin <em>et al.</em>",
   "vE": "Boix <em>et al.</em>",
   "vF": "Boix <em>et al.</em>",
+  "vG": "IHEC",
 };
 
 export const sampleSetsForRecommenderV1OptionDataset = {
@@ -96,6 +100,7 @@ export const sampleSetsForRecommenderV1OptionDataset = {
   "vD": "GORKIN",
   "vE": "ADSERA",
   "vF": "ADSERA",
+  "vG": "IHEC",
 };
 
 export const sampleSetsForSettingsDrawerOrderedKeys = [
@@ -105,6 +110,7 @@ export const sampleSetsForSettingsDrawerOrderedKeys = [
   "vF",
   "vB",
   "vD",
+  "vG",
 ];
 
 export const annotations = {
@@ -182,6 +188,11 @@ export const genomesForSettingsDrawer = {
     },
     'paired': {
       "Human": ["hg19"]
+    },
+  },
+  'vG': {
+    'single': {
+      "Human": ["hg38"]
     },
   },
 };
@@ -302,7 +313,17 @@ export const modelsForSettingsDrawer = {
       'single': {
         '18': { type: 'stateModel', value: '18', text: '18-state (observed, aux.)', titleText: '18-state', enabled: true, visible: true, availableForProduction: false },
       }
-    }
+    },
+  },
+  'vG': {
+    'hg38': {
+      'single': {
+        '18': { type: 'stateModel', value: '18', text: '18-state (observed, aux.)', titleText: '18-state', enabled: true, visible: true, availableForProduction: false },
+      },
+      'paired': {
+        '18': { type: 'stateModel', value: '18', text: '18-state (observed, aux.)', titleText: '18-state', enabled: true, visible: true, availableForProduction: true },
+      },
+    },
   },
 }
 
@@ -391,6 +412,12 @@ export const complexitiesForSettingsDrawer = {
   'vF': {
     'hg19': {
       'KL': { value: 'KL', text: 'KL', titleText: 'S<sub>1</sub>', enabled: true, visible: true },
+    },
+  },
+  'vG': {
+    'hg38': {
+      'KL': { value: 'KL', text: 'KL', titleText: 'S<sub>1</sub>', enabled: true, visible: true },
+      'KLs': { value: 'KLs', text: 'KL*', titleText: 'S<sub>2</sub>', enabled: true, visible: true },
     }
   },
 };
@@ -667,6 +694,30 @@ export const groupsByGenome = {
       "Non-neural": { type: "group", subtype: "single", value: "Non-neural", text: "Non-neural", enabled: true, preferred: true, sortValue: "006", availableForModels: [18], },
     },
   },
+  "vG": {
+    "hg38": {
+      "All_1698_biosamples": { type: "group", subtype: "single", value: "All_1698_biosamples", sortValue: "000", text: "All 1698 biosamples", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Cancer": { type: "group", subtype: "single", value: "Cancer", sortValue: "001", text: "Cancer", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Not_Cancer": { type: "group", subtype: "single", value: "Not_Cancer", text: "Non-cancer", enabled: false, preferred: false, visibleInDev: false, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Female": { type: "group", subtype: "single", value: "Female", sortValue: "002", text: "Female", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Immune": { type: "group", subtype: "single", value: "Immune", sortValue: "003", text: "Immune", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Not_Immune": { type: "group", subtype: "single", value: "Not_Immune", text: "Non-immune", enabled: false, preferred: false, visibleInDev: false, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Male": { type: "group", subtype: "single", value: "Male", sortValue: "004", text: "Male", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Neural": { type: "group", subtype: "single", value: "Neural", sortValue: "005", text: "Neural", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Not_Neural": { type: "group", subtype: "single", value: "Not_Neural", text: "Non-neural", enabled: false, preferred: false, visibleInDev: false, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "partImpOne": { type: "group", subtype: "single", value: "partImpOne", text: "5 imputed marks", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Not_partImpOne": { type: "group", subtype: "single", value: "Not_partImpOne", text: "1-4 imputed + observed marks", enabled: false, preferred: false, visibleInDev: false, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "partImpOneThroughFive": { type: "group", subtype: "single", value: "partImpOneThroughFive", text: "1-5 imputed marks", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "partImpSix": { type: "group", subtype: "single", value: "partImpSix", text: "Observed marks only", enabled: true, preferred: true, visibleInDev: true, visibleInProd: true, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Not_partImpSix": { type: "group", subtype: "single", value: "Not_partImpSix", text: "1-5 imputed marks", enabled: false, preferred: false, visibleInDev: false, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Male_vs_Female": { type: "group", subtype: "paired", value: "Male_vs_Female", sortValue: "000", text: "Male donors vs. Female donors", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Cancer_vs_Not_Cancer": { type: "group", subtype: "paired", value: "Cancer_vs_Not_Cancer", sortValue: "001", text: "Cancer vs. Non-cancer", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Immune_vs_Not_Immune": { type: "group", subtype: "paired", value: "Immune_vs_Not_Immune", sortValue: "002", text: "Immune vs. Non-immune", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "Neural_vs_Not_Neural": { type: "group", subtype: "paired", value: "Neural_vs_Not_Neural", sortValue: "003", text: "Neural vs. Non-neural", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "partImpOne_vs_Not_partImpOne": { type: "group", subtype: "paired", value: "partImpOne_vs_Not_partImpOne", sortValue: "004", text: "5 vs. 1-4 imputed + observed marks", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+      "partImpSix_vs_Not_partImpSix": { type: "group", subtype: "paired", value: "partImpSix_vs_Not_partImpSix", sortValue: "005", text: "Observed vs. 1-5 imputed marks", enabled: true, preferred: true, visibleInDev: true, visibleInProd: false, availableForModels: [18], availableForComplexities: ["KL", "KLs"] },
+    }
+  }
 };
 
 export const groupsForRecommenderV1OptionGroup = {
@@ -830,6 +881,19 @@ export const groupsForRecommenderV1OptionGroup = {
       "all": "All_833_biosamples",
     },
   },
+  "vG": {
+    "hg38": {
+      "All_1698_biosamples": "All_1698_biosamples",
+      "Cancer": "Cancer",
+      "Female": "Female",
+      "Immune": "Immune",
+      "Male": "Male",
+      "Neural": "Neural",
+      "partImpOne": "partImpOne",
+      "partImpOneThroughFive": "partImpOneThroughFive",
+      "partImpSix": "partImpSix",
+    },
+  },
 };
 
 export const groupsForRecommenderV3OptionGroup = {
@@ -970,6 +1034,16 @@ export const groupsForRecommenderV3OptionGroup = {
   "vF": {
     "hg19": {
       "all": "All_833_biosamples",
+    },
+  },
+  "vG": {
+    "hg38": {
+      "All_1698_biosamples": "All_1698_biosamples",
+      "Cancer": "Cancer",
+      "Female": "Female",
+      "Immune": "Immune",
+      "Male": "Male",
+      "Neural": "Neural",
     },
   },
 };
@@ -1113,6 +1187,19 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
       "all": "10k",
     },
   },
+  "vG": {
+    "hg38": {
+      "All_1698_biosamples": "10k",
+      "Cancer": "10k",
+      "Female": "10k",
+      "Immune": "10k",
+      "Male": "10k",
+      "Neural": "10k",
+      "partImpOne": "10k",
+      "partImpOneThroughFive": "10k",
+      "partImpSix": "10k",
+    },
+  },
 };
 
 export const defaultSingleGroupKeys = {
@@ -1136,6 +1223,9 @@ export const defaultSingleGroupKeys = {
   "vF": {
     "hg19": "Female",
   },
+  "vG": {
+    "hg38": "All_1698_biosamples",
+  },
 };
 
 export const defaultPairedGroupKeys = {
@@ -1157,6 +1247,9 @@ export const defaultPairedGroupKeys = {
   "vF": {
     "hg19": "Male_vs_Female",
   },
+  "vG": {
+    "hg38": "Male_vs_Female",
+  }
 };
 
 export const defaultSingleModelKeys = {
@@ -2218,15 +2311,75 @@ export const defaultApplicationSampleSet = "vA";
 export const applicationGroups = groupsByGenome;
 export const applicationGroupKeys = Object.keys(applicationGroups[defaultApplicationSampleSet][defaultApplicationGenome]);
 export const defaultApplicationGroup = "all";
+export const defaultApplicationGroupVC = "all";
+export const defaultApplicationGroupVD = "all";
+export const defaultApplicationGroupVG = "All_1698_biosamples";
 
 // ?chr=xyz
 export const defaultApplicationChr = "chr19";
+export const defaultApplicationChrVC = "chr17";
+export const defaultApplicationChrVD = "chr10";
+export const defaultApplicationChrVG = "chr8";
 
 // ?start=xyz
 export const defaultApplicationStart = 54635800;
+export const defaultApplicationStartVC = 41678310;
+export const defaultApplicationStartVD = 79841962;
+export const defaultApplicationStartVG = 1724086;
 
 // ?stop=xyz
 export const defaultApplicationStop = 54674200;
+export const defaultApplicationStopVC = 41702748;
+export const defaultApplicationStopVD = 79866400;
+export const defaultApplicationStopVG = 1797400;
+
+// defaults
+export const applicationDefaultQueryParameters = {
+  'vA': {
+    'mode': defaultApplicationMode,
+    'genome': defaultApplicationGenome,
+    'model': defaultApplicationModel,
+    'complexity': defaultApplicationComplexity,
+    'group': defaultApplicationGroup,
+    'chrLeft': defaultApplicationChr,
+    'chrRight': defaultApplicationChr,
+    'start': defaultApplicationStart,
+    'stop': defaultApplicationStop,
+  },
+  'vC': {
+    'mode': defaultApplicationMode,
+    'genome': applicationGenomeHg38,
+    'model': applicationModel18,
+    'complexity': defaultApplicationComplexity,
+    'group': defaultApplicationGroupVC,
+    'chrLeft': defaultApplicationChrVC,
+    'chrRight': defaultApplicationChrVC,
+    'start': defaultApplicationStartVC,
+    'stop': defaultApplicationStopVC,
+  },
+  'vD': {
+    'mode': defaultApplicationMode,
+    'genome': applicationGenomeMm10,
+    'model': defaultApplicationModel,
+    'complexity': defaultApplicationComplexity,
+    'group': defaultApplicationGroupVD,
+    'chrLeft': defaultApplicationChrVD,
+    'chrRight': defaultApplicationChrVD,
+    'start': defaultApplicationStartVD,
+    'stop': defaultApplicationStopVD,
+  },
+  'vG': {
+    'mode': defaultApplicationMode,
+    'genome': applicationGenomeHg38,
+    'model': applicationModel18,
+    'complexity': defaultApplicationComplexity,
+    'group': defaultApplicationGroupVG,
+    'chrLeft': defaultApplicationChrVG,
+    'chrRight': defaultApplicationChrVG,
+    'start': defaultApplicationStartVG,
+    'stop': defaultApplicationStopVG,
+  },
+}
 
 // ?highlightBehavior=xyz
 export const defaultApplicationHighlightBehavior = "applyAlphaToNonHighlightedRows";
@@ -2253,21 +2406,44 @@ export const defaultApplicationGacCategories = {
 };
 
 export const defaultApplicationPositions = {
-  'hg19': {
-    'chr': 'chr19',
-    'start': 54635800,
-    'stop': 54674200,
+  'vA': {
+    'hg19': {
+      'chr': defaultApplicationChr,
+      'start': defaultApplicationStart,
+      'stop': defaultApplicationStop,
+    },
+    'hg38': {
+      'chr': 'chr7',
+      'start': 27132932,
+      'stop': 27135531,
+    },
   },
-  'hg38': {
-    'chr': 'chr7',
-    'start': 27132932,
-    'stop': 27135531,
+  'vC': {
+    'hg19': {
+      'chr': 'chr19',
+      'start': 54635800,
+      'stop': 54674200,
+    },
+    'hg38': {
+      'chr': defaultApplicationChrVC,
+      'start': defaultApplicationStartVC,
+      'stop': defaultApplicationStopVC,
+    },
   },
-  'mm10': {
-    'chr': 'chr6',
-    'start': 52155367,
-    'stop': 52158317,
+  'vD': {
+    'mm10': {
+      'chr': defaultApplicationChrVD,
+      'start': defaultApplicationStartVD,
+      'stop': defaultApplicationStopVD,
+    },
   },
+  'vG': {
+    'hg38': {
+      'chr': defaultApplicationChrVG,
+      'start': defaultApplicationStartVG,
+      'stop': defaultApplicationStopVG,
+    },
+  }
 }
 
 export const defaultApplicationRoiLineLimit = 100;
@@ -2305,7 +2481,7 @@ export const defaultDrawerTabOnOpen = "settings";
 export const defaultDrawerActiveRegionTab = null;
 
 export const defaultRoiTableDataLongestNameLength = 4;
-export const defaultRoiTableDataLongestAllowedNameLength = 8;
+export const defaultRoiTableDataLongestAllowedNameLength = 9;
 
 export const defaultSimSearchTableDataLongestNameLength = 4;
 export const defaultSimSearchTableDataLongestAllowedNameLength = 20;

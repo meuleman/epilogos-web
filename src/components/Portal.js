@@ -37,7 +37,8 @@ import * as Constants from "../Constants.js";
 import * as Helpers from "../Helpers.js";
 
 // Application autocomplete
-import Autocomplete from "./Autocomplete/Autocomplete";
+import GeneSearch from './GeneSearch/GeneSearch';
+// import Autocomplete from "./Autocomplete/Autocomplete";
 
 // Icons
 import { FaChevronCircleDown } from "react-icons/fa";
@@ -792,6 +793,7 @@ class Portal extends Component {
   stripQueryStringAndHashFromPath = (url) => { return url.split("?")[0].split("#")[0]; }
   
   openViewerAtChrRange = (range) => {
+    console.log(`openViewerAtChrRange`);
     let chrLeft = range[0];
     let chrRight = range[0];
     let start = parseInt(range[1]);
@@ -817,6 +819,7 @@ class Portal extends Component {
   }
   
   openViewerAtChrPosition = (pos, padding) => {
+    console.log(`openViewerAtChrPosition`);
     let chrLeft = pos[0];
     let chrRight = pos[0];
     let start = parseInt(pos[1]) - padding;
@@ -876,6 +879,7 @@ class Portal extends Component {
   }
 
   openQueryTargetViewerAtChrRange = (range) => {
+    console.log(`openQueryTargetViewerAtChrRange`)
     let chrLeft = range[0];
     let chrRight = range[0];
     let start = parseInt(range[1]);
@@ -906,7 +910,7 @@ class Portal extends Component {
   getRandomRangeFromExemplarRegions = () => {
     let randomRegion = this.state.exemplarRegions[this.state.exemplarRegions.length * Math.random() | 0];
     if (!randomRegion) {
-      randomRegion = `${Constants.defaultApplicationPositions['hg19']['chr']}\t${Constants.defaultApplicationPositions['hg19']['start']}\t${Constants.defaultApplicationPositions['hg19']['stop']}`;
+      randomRegion = `${Constants.defaultApplicationPositions['vA']['hg19']['chr']}\t${Constants.defaultApplicationPositions['vA']['hg19']['start']}\t${Constants.defaultApplicationPositions['vA']['hg19']['stop']}`;
     }
     let regionFields = randomRegion.split('\t');
     let chrLeft = regionFields[0];
@@ -954,15 +958,47 @@ class Portal extends Component {
   }
 
   onChangePortalInput = (value) => {
-    console.log("onChangePortalInput", value);
+    // console.log("onChangePortalInput", value);
     this.setState({
       singleGroupSearchInputValue: value
     });
   }
+
+  onChangeSearchInputLocationViaGeneSearch = (selected) => {
+    console.log("[epilogos] selected", selected);
+    if (!selected) return;
+    console.log(`this.state.hgViewParams.genome ${this.state.hgViewParams.genome}`);
+    console.log("[epilogos] selected", selected);
+    const location = (selected.gene && selected.gene.chromosome && selected.gene.start && selected.gene.end) ? {
+      chrom: selected.gene.chromosome,
+      start: selected.gene.start,
+      stop: selected.gene.end,
+    } : (selected.chromosome && selected.start && selected.end) ? {
+      chrom: selected.chromosome,
+      start: selected.start,
+      stop: selected.end,
+    } : null;
+    if (!location) return;
+    if (location.start > location.stop) {
+      const tempStart = location.start;
+      location.start = location.stop;
+      location.stop = tempStart;
+    }
+    console.log("[epilogos] location", location);
+    this.onChangePortalLocation(location, true);
+  }
   
   onChangePortalLocation = (location, applyPadding) => {
     // let range = this.getRangeFromString(location);
-    const range = Helpers.getRangeFromString(location, applyPadding, false, this.state.hgViewParams.genome);
+    // const range = Helpers.getRangeFromString(location, applyPadding, false, this.state.hgViewParams.genome);
+    const locationComponents = {
+      chromosome: location.chrom, 
+      start: location.start, 
+      end: location.stop 
+      // order: ...
+    };
+    const locationAsInterval = `${locationComponents.chromosome}:${locationComponents.start}-${locationComponents.end}`;
+    let range = Helpers.getRangeFromString(locationAsInterval, applyPadding, null, this.state.hgViewParams.genome);
     if (range) {
       this.openViewerAtChrRange(range);
     }
@@ -1011,7 +1047,12 @@ class Portal extends Component {
       
       <div ref={(ref) => this.epilogosPortal = ref} id="epilogos-portal-container" className={(isMobile) ? "epilogos-portal-container-mobiledevice" : "epilogos-portal-container"}>
       
-        <div id="epilogos-portal-container-overlay" className="epilogos-portal-container-overlay" ref={(component) => this.epilogosPortalContainerOverlay = component} onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!"); this.setState({ overlayVisible: false });*/ })}}>
+        <div 
+          id="epilogos-portal-container-overlay" 
+          className="epilogos-portal-container-overlay" 
+          ref={(component) => this.epilogosPortalContainerOverlay = component} 
+          onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!"); this.setState({ overlayVisible: false });*/ })}}
+          >
         
           <div ref={(component) => this.epilogosPortalOverlayNotice = component} id="epilogos-portal-overlay-notice" className="epilogos-portal-overlay-notice-parent" style={{position: 'absolute', top: '35%', zIndex:10001, textAlign:'center', width: '100%', backfaceVisibility: 'visible', transform: 'translateZ(0) scale(1.0, 1.0)'}} onClick={(e)=>{ e.stopPropagation() }}>
             <Collapse isOpen={this.state.showOverlayNotice}>
@@ -1028,6 +1069,7 @@ class Portal extends Component {
         
         <div id="epilogos-content-query-parent" className="epilogos-content-query">
           <div id="epilogos-content-query-child" className="epilogos-content-query-child">
+
             <Container fluid id="epilogos-content-query-container-child" className="epilogos-content-query-container-child" style={{"height":this.state.epilogosContentHeight, "paddingTop":this.state.epilogosContentPadding, "paddingLeft":"0px", "paddingRight":"0px"}}>
               <Row nogutter id="epilogos-content-query-container-autocomplete-row" className="epilogos-content-query-container-autocomplete-row">
               
@@ -1040,10 +1082,16 @@ class Portal extends Component {
                   <div className="epilogos-content-header text-center" style={{"userSelect":"text"}} onClick={() => { this.reinitHgViewRefresh() }}>
                     epilogos
                   </div>
-                  <div className="epilogos-content-query-autocomplete" style={{"userSelect":"text"}}>              
+                  <div className="epilogos-content-query-autocomplete" style={{"userSelect":"text"}}>
                     <div className="epilogos-content-placeholder-text epilogos-content-ero-search">
+                      <GeneSearch
+                        // onFocus={this.onFocusSearchInput}
+                        // placeholder={this.state.singleGroupSearchInputPlaceholder}
+                        assembly={this.state.hgViewParams.genome}
+                        onSelect={this.onChangeSearchInputLocationViaGeneSearch}
+                      />
                       <div className="epilogos-content-ero-search">
-                        <Autocomplete
+                        {/* <Autocomplete
                           title="Search for a gene of interest or jump to a genomic interval"
                           className="epilogos-content-search-input"
                           placeholder={this.state.singleGroupSearchInputPlaceholder}
@@ -1056,7 +1104,7 @@ class Portal extends Component {
                           suggestionsClassName="portal-suggestions suggestions"
                           showGoButton={true}
                           onClickGo={this.onClickPortalGo}
-                        />
+                        /> */}
                         <p />
                         {/* this.singleGroupJump() */}
                         <div className="epilogos-content-ero-search epilogos-content-ero-search-text">

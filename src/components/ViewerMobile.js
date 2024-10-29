@@ -27,7 +27,8 @@ import {
 import "higlass-multivec/dist/higlass-multivec.js";
 
 // Application autocomplete
-import Autocomplete from "./Autocomplete/Autocomplete";
+import GeneSearch from './GeneSearch/GeneSearch';
+// import Autocomplete from "./Autocomplete/Autocomplete";
 
 // Icons
 import { FaBars, FaTimes } from 'react-icons/fa';
@@ -245,10 +246,10 @@ class ViewerMobile extends Component {
     }
     if ((newTempHgViewParams.chrLeft === newTempHgViewParams.chrRight) && (newTempHgViewParams.start === newTempHgViewParams.stop)) {
       //console.log("Coordinates are identical!")
-      newTempHgViewParams.chrLeft = Constants.defaultApplicationPositions[newTempHgViewParams.genome].chr;
-      newTempHgViewParams.chrRight = Constants.defaultApplicationPositions[newTempHgViewParams.genome].chr;
-      newTempHgViewParams.start = Constants.defaultApplicationPositions[newTempHgViewParams.genome].start;
-      newTempHgViewParams.stop = Constants.defaultApplicationPositions[newTempHgViewParams.genome].stop;
+      newTempHgViewParams.chrLeft = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].chr;
+      newTempHgViewParams.chrRight = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].chr;
+      newTempHgViewParams.start = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].start;
+      newTempHgViewParams.stop = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].stop;
       this.state.currentPosition = {
         chrLeft : newTempHgViewParams.chrLeft,
         chrRight : newTempHgViewParams.chrRight,
@@ -912,9 +913,39 @@ class ViewerMobile extends Component {
       });
     }
   }
+
+  onChangeSearchInputLocationViaGeneSearch = (selected) => {
+    if (!selected) return;
+    // console.log("[epilogos] selected", selected);
+    const location = (selected.gene && selected.gene.chromosome && selected.gene.start && selected.gene.end) ? {
+      chrom: selected.gene.chromosome,
+      start: selected.gene.start,
+      stop: selected.gene.end,
+    } : (selected.chromosome && selected.start && selected.end) ? {
+      chrom: selected.chromosome,
+      start: selected.start,
+      stop: selected.end,
+    } : null;
+    if (!location) return;
+    if (location.start > location.stop) {
+      const tempStart = location.start;
+      location.start = location.stop;
+      location.stop = tempStart;
+    }
+    // console.log("[epilogos] location", location);
+    this.onChangeSearchInputLocation(location, true, '');
+  }
   
   onChangeSearchInputLocation = (location, applyPadding, userInput) => {
-    let range = Helpers.getRangeFromString(location, applyPadding, null, this.state.hgViewParams.genome);
+    const locationComponents = {
+      chromosome: location.chrom, 
+      start: location.start, 
+      end: location.stop 
+      // order: ...
+    };
+    const locationAsInterval = `${locationComponents.chromosome}:${locationComponents.start}-${locationComponents.end}`;
+    let range = Helpers.getRangeFromString(locationAsInterval, applyPadding, null, this.state.hgViewParams.genome);
+    // let range = Helpers.getRangeFromString(location, applyPadding, null, this.state.hgViewParams.genome);
     if (range) {
       this.setState({
         searchInputText: userInput,
@@ -1717,10 +1748,10 @@ class ViewerMobile extends Component {
                 // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
                 //
                 if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-                  chrLeft = Constants.defaultApplicationPositions[newGenome].chr;
-                  chrRight = Constants.defaultApplicationPositions[newGenome].chr;
-                  start = Constants.defaultApplicationPositions[newGenome].start;
-                  stop = Constants.defaultApplicationPositions[newGenome].stop;
+                  chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
+                  chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
+                  start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
+                  stop = Constants.defaultApplicationPositions[newSampleSet][newGenome].stop;
                 }
                 if (start > chromInfo.chromLengths[chrLeft]) {
                   start = chromInfo.chromLengths[chrLeft] - 10000;
@@ -2153,10 +2184,10 @@ class ViewerMobile extends Component {
                 // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
                 //
                 if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-                  chrLeft = Constants.defaultApplicationPositions[newGenome].chr;
-                  chrRight = Constants.defaultApplicationPositions[newGenome].chr;
-                  start = Constants.defaultApplicationPositions[newGenome].start;
-                  stop = Constants.defaultApplicationPositions[newGenome].stop;
+                  chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
+                  chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
+                  start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
+                  stop = Constants.defaultApplicationPositions[newSampleSet][newGenome].stop;
                 }
                 if (start > chromInfo.chromLengths[chrLeft]) {
                   start = chromInfo.chromLengths[chrLeft] - 10000;
@@ -3121,7 +3152,12 @@ class ViewerMobile extends Component {
             </NavbarBrand>
             
             <NavItem className="epilogos-viewer-search-input-parent" style={(this.state.autocompleteIsVisible)?{display:"block"}:{display:"none"}}>
-              <Autocomplete
+              <GeneSearch
+                // onFocus={this.onFocusSearchInput}
+                assembly={this.state.hgViewParams.genome}
+                onSelect={this.onChangeSearchInputLocationViaGeneSearch}
+              />
+              {/* <Autocomplete
                 ref={(ref) => { this.autocompleteInputRef = ref; }}
                 className={"epilogos-viewer-search-input epilogos-viewer-search-input-viewermobile"}
                 placeholder={Constants.defaultSingleGroupSearchInputPlaceholder}
@@ -3136,7 +3172,7 @@ class ViewerMobile extends Component {
                 maxSuggestionHeight={this.state.maxAutocompleteSuggestionHeight}
                 isMobile={true}
                 showGoButton={false}
-              />
+              /> */}
             </NavItem>
             
             <Nav className="ml-auto" navbar>

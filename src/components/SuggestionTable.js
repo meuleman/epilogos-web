@@ -6,10 +6,17 @@ import PropTypes from 'prop-types';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import BootstrapTable from 'react-bootstrap-table-next';
 
+import {
+  Badge,
+} from "reactstrap";
+
 // Tooltip (for state and other mouseover help)
 import ReactTooltip from 'react-tooltip';
 
 import { FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
+
+// Application constants
+import * as Constants from '../Constants.js'; 
 
 import './SuggestionTable.css';
 
@@ -25,9 +32,16 @@ class SuggestionTable extends Component {
       selectedIdx: this.props.selectedIdx || 1,
       targetEnabled: true,
       currentHitMouseoverRow: -1,
+      showStateTooltip: false,
+      stateTooltipText: "",
+      mousePosition: {x: -1000, y: -1000},
     }
     
     this.hitsKeyPrefix = 'suggestion_hits_table';
+  }
+
+  componentDidUpdate(prevProps) {
+    ReactTooltip.rebuild();
   }
 
   refresh = () => {
@@ -50,7 +64,40 @@ class SuggestionTable extends Component {
     }
   }
 
+  stateToColorBox = (state) => {
+    const stateColor = ((Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state] && Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state][1]) || "white");
+    const stateText = ((Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state] && Constants.stateColorPalettes[this.props.viewParams.genome][this.props.viewParams.model][state][0]) || "Undefined");
+    return (
+      <span 
+        className="state-color-box" 
+        style={{"backgroundColor": stateColor, "display": "inline-block", "borderWidth": "thin", "borderColor": "grey"}} 
+        onMouseEnter={(e) => this.handleOnMouseEnterState(e, stateText)}
+        onMouseOut={(e) => this.handleOnMouseOutState(e)} />
+    );
+  }
+
+  handleOnMouseEnterState = (evt, stateText) => {
+    // console.log(`handleOnMouseEnterState`);
+    const newMousePosition = {x: evt.clientX, y: evt.clientY};
+    // console.log(`newMousePosition ${JSON.stringify(newMousePosition)}`);
+    this.setState({
+      mousePosition: newMousePosition,
+      showStateTooltip: true,
+      stateTooltipText: stateText,
+    });
+  }
+
+  handleOnMouseOutState = (evt) => {
+    // console.log(`handleOnMouseOutState`);
+    this.setState({
+      // mousePosition: {x: -1000, y: -1000},
+      showStateTooltip: false,
+    });
+  }  
+
   render() {
+    const self = this;
+
     const hitsTableStyle = {
       height: this.state.hitsPanelHeight - 2,
       overflowY: 'scroll',
@@ -68,6 +115,18 @@ class SuggestionTable extends Component {
       return <div><span>{ row.position }</span></div>
     }
 
+    // eslint-disable-next-line no-unused-vars
+    const stateHitFormatter = function(cell, row) {
+      return (
+        <div 
+          data-tip 
+          data-for={`chromatinState-${row.state.numerical}`} 
+          >
+          { self.stateToColorBox(row.state.numerical) }
+        </div>
+      );
+    }
+
     const hitsColumns = [
       {
         attrs: idxHitAttrs,
@@ -78,6 +137,7 @@ class SuggestionTable extends Component {
           width: '24px',
           borderBottom: '1px solid #b5b5b5',
           textAlign: 'center',
+          paddingRight: '0px',
         },
         style: {
           fontSize: '0.8em',
@@ -86,20 +146,12 @@ class SuggestionTable extends Component {
           paddingTop: '4px',
           paddingBottom: '2px',
           textAlign: 'center',
+          paddingRight: '0px',
           color: (this.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
         },
         sort: true,
         onSort: (field, order) => { 
-          this.props.onColumnSort(field, order); 
-          setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
-            });
-          }, 250);
+          this.props.onColumnSort(field, order);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -115,6 +167,54 @@ class SuggestionTable extends Component {
         }
       },
       {
+        dataField: 'state',
+        text: '',
+        formatter: stateHitFormatter,
+        headerStyle: {
+          fontSize: '0.7em',
+          width: '24px',
+          borderBottom: '1px solid #b5b5b5',
+          textAlign: 'center',
+          paddingLeft: '5px',
+          paddingRight: '0px',
+        },
+        style: {
+          fontSize: '0.8em',
+          outlineWidth: '0px',
+          paddingTop: '4px',
+          paddingBottom: '2px',
+          paddingLeft: '5px',
+          paddingRight: '0px',
+          textAlign: 'center',
+          minWidth: '24px',
+        },
+        sort: true,
+        // eslint-disable-next-line no-unused-vars
+        sortFunc: (a, b, order, dataField) => {
+          if (order === 'asc') {
+            return b.paddedNumerical.localeCompare(a.paddedNumerical);
+          }
+          else {
+            return a.paddedNumerical.localeCompare(b.paddedNumerical); // desc
+          }          
+        },
+        onSort: (field, order) => { 
+          this.props.onColumnSort(field, order);
+        },
+        // eslint-disable-next-line no-unused-vars
+        sortCaret: (order, column) => {
+          switch (order) {
+            case "asc":
+              return <div><ReactTooltip key="column-sort-state-asc" id="column-sort-state-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort states in descending order</ReactTooltip><div data-tip data-for={"column-sort-state-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
+            case "desc":
+              return <div><ReactTooltip key="column-sort-state-desc" id="column-sort-state-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort states in ascending order</ReactTooltip><div data-tip data-for={"column-sort-state-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
+            case "undefined":
+            default:
+              return <div><ReactTooltip key="column-sort-state-undefined" id="column-sort-state-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort states</ReactTooltip><div data-tip data-for={"column-sort-state-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
+          }
+        }
+      },
+      {
         dataField: 'element',
         text: '',
         formatter: elementHitFormatter,
@@ -122,6 +222,7 @@ class SuggestionTable extends Component {
           fontSize: '0.7em',
           width: '175px',
           borderBottom: '1px solid #b5b5b5',
+          paddingLeft: '5px',
         },
         style: {
           fontFamily: 'Source Code Pro',
@@ -130,6 +231,7 @@ class SuggestionTable extends Component {
           outlineWidth: '0px',
           paddingTop: '4px',
           paddingBottom: '3px',
+          paddingLeft: '5px',
           paddingRight: '2px',
           color: (this.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
         },
@@ -146,17 +248,6 @@ class SuggestionTable extends Component {
         },
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order);
-          setTimeout(() => {
-            // const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdx = (this.props.selectedIdx > 0) ? this.props.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              // this.props.adjustTableParentOffset(jumpIdxBySort);
-              this.props.adjustTableParentOffset(this.props.idxBySort.indexOf(this.props.selectedIdx));
-            });
-          }, 250);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -170,7 +261,7 @@ class SuggestionTable extends Component {
               return <div><ReactTooltip key={`${this.hitsKeyPrefix}-column-sort-element-undefined`} id={`${this.hitsKeyPrefix}-column-sort-element-undefined`} aria-haspopup="true" place="right" type="dark" effect="float">Sort by interval</ReactTooltip><div data-tip data-for={`${this.hitsKeyPrefix}-column-sort-element-undefined`}><FaChevronCircleDown className="column-sort-undefined" style={(this.state.targetEnabled) ? {color:'rgba(232, 232, 232, 1)'} : {color:'rgba(232, 232, 232, 0.33)'}} /></div></div>
           }
         }
-      }
+      },
     ];
 
     // eslint-disable-next-line no-unused-vars
@@ -185,10 +276,6 @@ class SuggestionTable extends Component {
       else {
         style.fontWeight = 'lighter';
       }
-      // else if (row.idx === this.state.currentHitMouseoverRow) {
-      //   style.backgroundColor = '#173365';
-      //   style.color = '#fff';
-      // }
       return style;
     };
 
@@ -198,47 +285,49 @@ class SuggestionTable extends Component {
         this.setState({
           selectedIdx: row.idx,
         }, () => {
-          // console.log(`customHitRowEvents ${row.position} ${this.state.selectedIdx}`);
           this.props.jumpToRow(row.position, this.state.selectedIdx);
-          const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-          // console.log(`jumpIdxBySort ${jumpIdxBySort}`);
-          this.props.adjustTableParentOffset(jumpIdxBySort, true);
         });
       },
-      // // eslint-disable-next-line no-unused-vars
-      // onMouseEnter: (evt, row, rowIndex) => {
-      //   // this.debouncedMouseEnterRow(row.idx);
-      //   this.setState({
-      //     currentHitMouseoverRow: rowIndex + 1,
-      //   });
-      // },
-      // // eslint-disable-next-line no-unused-vars
-      // onMouseLeave: (evt, row, rowIndex) => {
-      //   // this.debouncedMouseLeaveRow();
-      //   this.setState({
-      //     currentHitMouseoverRow: -1
-      //   });
-      // }
     };
 
+    const suggestionTooltip = () => {
+      return (
+        <div 
+          style={{top:`${(this.state.mousePosition.y) - 70}px`,left:`${(this.state.mousePosition.x) - 10}px`}} 
+          className={`stateTooltip ${this.state.showStateTooltip ? 'stateTooltipShown' : 'stateTooltipHidden'}`}
+          >
+          <Badge color="light" pill>{this.state.stateTooltipText}</Badge>
+        </div>
+      );
+    } 
+
+    const suggestionTable = <BootstrapTable
+      key={`${this.hitsKeyPrefix}-${this.state.hitsTableKey}`}
+      id={`${this.hitsKeyPrefix}`}
+      keyField={'idx'}
+      data={this.props.hits}
+      columns={hitsColumns}
+      bootstrap4={true} 
+      bordered={false}
+      classes="suggestionElementTable"
+      rowStyle={customHitRowStyle}
+      rowEvents={customHitRowEvents}
+    />;
+
     return (
+      (this.props.hits.length > 0) ?
       <div 
         style={hitsTableStyle} 
         id='suggestion_hits_table_content'
         >
-        <BootstrapTable
-          key={`${this.hitsKeyPrefix}-${this.state.hitsTableKey}`}
-          id={`${this.hitsKeyPrefix}`}
-          keyField={'idx'}
-          data={this.props.hits}
-          columns={hitsColumns}
-          bootstrap4={true} 
-          bordered={false}
-          classes="suggestionElementTable"
-          rowStyle={customHitRowStyle}
-          rowEvents={customHitRowEvents}
-          />
+        {suggestionTable}{suggestionTooltip()}
+      </div>
+      :
+      <div 
+        style={hitsTableStyle} 
+        className="regions-not-found-message"
+        >
+        {Constants.defaultApplicationNoExemplarsFoundMessage}
       </div>
     );
   }

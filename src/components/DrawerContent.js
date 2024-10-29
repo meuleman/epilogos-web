@@ -144,6 +144,7 @@ class DrawerContent extends Component {
   }
   
   onClickSettingsButton = (event) => {
+    console.log(`DrawerContent > onClickSettingsButton`);
     let newViewParams = {...this.state.viewParams};
     newViewParams[event.target.name] = event.target.value;
     let targetName = (event.target && event.target.name) ? event.target.name : null
@@ -211,7 +212,7 @@ class DrawerContent extends Component {
         }
       }
       else if (event.target.value === "paired") {
-        newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
+        // newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
         newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         newViewParams.complexity = ( ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) || (newViewParams.complexity === "KLss") ) ? "KL" : newViewParams.complexity;
       }
@@ -287,6 +288,8 @@ class DrawerContent extends Component {
       tabs: newTabs
     }, () => {
       let viewParamsAreDifferent = !this.state.viewParamsAreEqual;
+      console.log(`viewParamsAreDifferent ${viewParamsAreDifferent}`);
+      console.log(`newViewParams ${JSON.stringify(newViewParams)}`);
       this.props.changeViewParams(viewParamsAreDifferent, newViewParams);
     })
   }

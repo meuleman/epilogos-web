@@ -151,7 +151,7 @@ class RoiButton extends Component {
     return (
       <div 
         ref={this.buttonRef} 
-        title={(this.props.isEnabled && !this.props.roiTableIsVisible) ? 'View regions-of-interest' : (this.props.isEnabled && this.props.roiTableIsVisible) ? 'Hide regions-of-interest' : ''}
+        title={(this.props.isEnabled && !this.props.isActivated) ? 'View regions-of-interest' : (this.props.isEnabled && this.props.isActivated) ? 'Hide regions-of-interest' : ''}
         style={(this.props.isEnabled && !this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : {cursor: 'not-allowed'}}
         >
         <div className={(!this.props.isVisible) ? "epilogos-roi-button-hidden" : (this.props.isEnabled) ? (this.props.activeClass) : "epilogos-roi-button-disabled"}>
@@ -175,6 +175,7 @@ class RoiButton extends Component {
                   disabledColor={this.props.disabledColor}
                   handleClick={(evt) => this.handleClick(evt)}
                   isEnabled={true}
+                  isActivated={this.props.isActivated}
                   canAnimate={this.props.canAnimate}
                   hasFinishedAnimating={this.props.hasFinishedAnimating} />
               </div>
@@ -189,6 +190,7 @@ class RoiButton extends Component {
                   disabledColor={this.props.disabledColor}
                   handleClick={() => {}}
                   isEnabled={false}
+                  isActivated={this.props.isActivated}
                   canAnimate={false}
                   hasFinishedAnimating={true} />
               </div>
@@ -217,5 +219,5 @@ RoiButton.propTypes = {
   forceStartColor: PropTypes.string,
   enabledColor: PropTypes.string,
   disabledColor: PropTypes.string,
-  roiTableIsVisible: PropTypes.bool,
+  isActivated: PropTypes.bool,
 };

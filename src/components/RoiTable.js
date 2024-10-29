@@ -93,15 +93,6 @@ class RoiTable extends Component {
         sort: true,
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order); 
-          setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
-            });
-          }, 250);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -148,15 +139,6 @@ class RoiTable extends Component {
         },
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order);
-          setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
-            });
-          }, 250);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -180,7 +162,7 @@ class RoiTable extends Component {
         formatter: nameRoiFormatter,
         headerStyle: {
           fontSize: '0.7em',
-          width: `${(((self.props.longestAllowedNameLength < self.props.longestNameLength) ? self.props.longestAllowedNameLength : self.props.longestNameLength) * 8)}px`,
+          width: `${(((self.props.longestAllowedNameLength < self.props.longestNameLength) ? self.props.longestAllowedNameLength : self.props.longestNameLength) * 10)}px`,
           borderBottom: '1px solid #b5b5b5',
         },
         style: {
@@ -193,7 +175,9 @@ class RoiTable extends Component {
           color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
         },
         sort: true,
-        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        onSort: (field, order) => { 
+          self.props.onColumnSort(field, order); 
+        },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
@@ -231,7 +215,9 @@ class RoiTable extends Component {
           color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
         },
         sort: true,
-        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        onSort: (field, order) => { 
+          self.props.onColumnSort(field, order); 
+        },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
@@ -245,12 +231,12 @@ class RoiTable extends Component {
           }
         },
         // eslint-disable-next-line no-unused-vars
-        sortFunc: (a, b, order, dataField, rowA, rowB) => {
-          if (order === 'asc') {
-            return b - a;
-          }
-          return a - b; // desc
-        }
+        // sortFunc: (a, b, order, dataField, rowA, rowB) => {
+        //   if (order === 'asc') {
+        //     return b - a;
+        //   }
+        //   return a - b; // desc
+        // }
       })
     }
 
@@ -276,7 +262,9 @@ class RoiTable extends Component {
           color: (self.state.targetEnabled) ? 'rgb(232, 232, 232)' : 'rgba(232, 232, 232, 0.33)',
         },
         sort: true,
-        onSort: (field, order) => { self.props.onColumnSort(field, order); },
+        onSort: (field, order) => { 
+          self.props.onColumnSort(field, order); 
+        },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
           switch (order) {
@@ -295,7 +283,7 @@ class RoiTable extends Component {
     // eslint-disable-next-line no-unused-vars
     function nameRoiFormatter(cell, row) {
       const name = row.name;
-      return (name.length >= self.props.longestAllowedNameLength) ? (
+      return (name.length > self.props.longestAllowedNameLength) ? (
         <div>
           <span title={name}>{name.substring(0, self.props.longestAllowedNameLength)}&#8230;</span>
         </div>
@@ -321,7 +309,7 @@ class RoiTable extends Component {
     // eslint-disable-next-line no-unused-vars
     const customHitRowStyle = (row, rowIndex) => {
       const style = {};
-      if (row.idx === this.state.selectedIdx) {
+      if (row.idx === this.props.selectedIdx) {
         style.backgroundColor = '#2631ad';
         style.color = '#fff';
         style.fontWeight = 'bolder';
@@ -329,10 +317,6 @@ class RoiTable extends Component {
       else {
         style.fontWeight = 'lighter';
       }
-      // else if (row.idx === this.state.currentHitMouseoverRow) {
-      //   style.backgroundColor = '#173365';
-      //   style.color = '#fff';
-      // }
       return style;
     };
 
@@ -342,28 +326,9 @@ class RoiTable extends Component {
         this.setState({
           selectedIdx: row.idx,
         }, () => {
-          // console.log(`customHitRowEvents ${row.position} ${this.state.selectedIdx}`);
-          this.props.jumpToRow(row.position, this.state.selectedIdx);
-          const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1) + 1;
-          // console.log(`jumpIdxBySort ${jumpIdxBySort}`);
-          this.props.adjustTableParentOffset(jumpIdxBySort, true);
+          this.props.jumpToRow(row.position, row.idx);
         });
       },
-      // // eslint-disable-next-line no-unused-vars
-      // onMouseEnter: (evt, row, rowIndex) => {
-      //   // this.debouncedMouseEnterRow(row.idx);
-      //   this.setState({
-      //     currentHitMouseoverRow: rowIndex + 1,
-      //   });
-      // },
-      // // eslint-disable-next-line no-unused-vars
-      // onMouseLeave: (evt, row, rowIndex) => {
-      //   // this.debouncedMouseLeaveRow();
-      //   this.setState({
-      //     currentHitMouseoverRow: -1
-      //   });
-      // }
     };
 
     return (

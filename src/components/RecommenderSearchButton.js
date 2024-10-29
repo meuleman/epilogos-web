@@ -177,8 +177,8 @@ class RecommenderSearchButton extends Component {
     return (
       <div 
         ref={this.buttonRef} 
-        title={(this.props.searchCount > 0 && this.props.isEnabled) ? `View ${this.props.searchCount} similar regions` : (this.props.isEnabled && !this.props.suggestionTableIsVisible) ? 'View global suggestions' : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? 'Hide global suggestions' : ''}
-        style={(this.props.searchCount > 0 && this.props.isEnabled) ? {cursor: 'pointer'} : (this.props.isEnabled && !this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : (this.props.isEnabled && this.props.suggestionTableIsVisible) ? {cursor: 'pointer'} : {cursor: 'not-allowed'}}
+        title={(this.props.searchCount > 0 && this.props.isEnabled) ? `View ${this.props.searchCount} similar regions` : (this.props.isEnabled && !this.props.isActivated) ? 'View global suggestions' : (this.props.isEnabled && this.props.isActivated) ? 'Hide global suggestions' : ''}
+        style={(this.props.searchCount > 0 && this.props.isEnabled) ? {cursor: 'pointer'} : (this.props.isEnabled && !this.props.isActivated) ? {cursor: 'pointer'} : (this.props.isEnabled && this.props.isActivated) ? {cursor: 'pointer'} : {cursor: 'not-allowed'}}
         >
         <div className={(!this.props.isVisible) ? "epilogos-recommender-element-hidden" : (this.props.isEnabled) ? (this.props.activeClass) : "epilogos-recommender-element-disabled"}>
           {(this.props.inProgress && this.props.isEnabled) 
@@ -204,6 +204,7 @@ class RecommenderSearchButton extends Component {
                   enabledColor={this.props.enabledColor}
                   disabledColor={this.props.disabledColor}
                   handleClick={(evt) => this.handleClick(evt)}
+                  isActivated={this.props.isActivated}
                   isEnabled={true}
                   canAnimate={this.props.canAnimate}
                   hasFinishedAnimating={this.props.hasFinishedAnimating} />
@@ -220,6 +221,7 @@ class RecommenderSearchButton extends Component {
                   enabledColor={this.props.enabledColor}
                   disabledColor={this.props.disabledColor}
                   handleClick={() => {}}
+                  isActivated={this.props.isActivated}
                   isEnabled={false}
                   canAnimate={false}
                   hasFinishedAnimating={true} />
@@ -251,5 +253,5 @@ RecommenderSearchButton.propTypes = {
   disabledColor: PropTypes.string,
   searchCount: PropTypes.number,
   searchCountIsVisible: PropTypes.bool,
-  suggestionTableIsVisible: PropTypes.bool,
+  isActivated: PropTypes.bool,
 };

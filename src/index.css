@@ -1363,10 +1363,10 @@ input.epilogos-viewer-search-input:disabled {
 
 .state-color-box {
   position: relative;
-  top: 2px;
-  min-height: 15px;
-  min-width: 15px;
-  outline: 1px dotted grey;
+  top: 1px;
+  min-height: 10px;
+  min-width: 10px;
+  outline: thin solid rgb(80,80,80);
 }
 
 /* Autocomplete */
@@ -2147,21 +2147,30 @@ div.track-mouseover-menu-table>div:nth-of-type(even) {
 
 .clipboard-alert {
   position: absolute;
+  cursor: pointer;
   z-index: 20000;
 }
 
 .clipboard-alert-shown {
   opacity: 1;
-  transition: all 250ms linear;
+  visibility: visible;
+  transition: opacity 250ms linear;
 }
 
 .clipboard-alert-hidden {
   opacity: 0;
-  transition: all 250ms linear 2s;
+  visibility: hidden;
+  transition: all 250ms linear 750ms;
 }
 
 .badge-pill {
   -webkit-box-shadow: 0px 0px 28px 0px rgba(0,0,0,0.75) !important;
   -moz-box-shadow: 0px 0px 28px 0px rgba(0,0,0,0.75) !important;
   box-shadow: 0px 0px 28px 0px rgba(0,0,0,0.75) !important;
+}
+
+.ant-select-selector {
+  border-radius: 1px !important;
+  position: relative;
+  bottom: 2px;
 }

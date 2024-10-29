@@ -2,7 +2,7 @@
   overflow-y: scroll;
   margin-bottom: 0px !important;
   border-top: 0px !important;
-  scroll-behavior: smooth;
+  scroll-behavior: unset !important;
 }
 
 .roiElementTable::-webkit-scrollbar {

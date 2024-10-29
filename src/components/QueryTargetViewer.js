@@ -184,62 +184,155 @@ class QueryTargetViewer extends Component {
       }
     }, 1000);
 
-    this.updateCurrentRecommendationIdx = (direction) => {
+    this.updateCurrentRecommendationIdx = (direction, overrideNewRowIdx) => {
       // console.log(`-----------`);
       // console.log(`this.updateCurrentRecommendationIdx | direction ${direction} | this.state.selectedHitIdx ${this.state.selectedHitIdx}`);
-      let selectedHitIdx = this.queryTargetRecommendationTableRef.selectedIdx();
+      const currentIdx = this.queryTargetRecommendationTableRef.selectedIdx();
       // let newHitIdx = this.props.hitsIdxBySort.indexOf(this.state.selectedHitIdx); // this.state.selectedHitIdx;
-      let newHitIdx = this.props.hitsIdxBySort.indexOf(selectedHitIdx);
+      let indexOfCurrentIdx = parseInt(this.props.hitsIdxBySort.indexOf(currentIdx));
+      let newRowIdx = currentIdx; 
+      const minIdx = Math.min(...this.props.hitsIdxBySort) - 1;
+      const maxIdx = Math.max(...this.props.hitsIdxBySort) - 1;
+      // console.log(`minIdx ${minIdx} | maxIdx ${maxIdx}`);
+      const behavior = "auto";
+      const targetRegionHitsWrapper = document.getElementById(`target_hits_table_content`);
+      const targetRegionRowEl = document.getElementById(`target_idx_0`);
+      const skipOffset = parseFloat(targetRegionRowEl.offsetHeight) * this.props.hitsIdxBySort.length;
       switch (direction) {
         case "previous":
-          newHitIdx = (newHitIdx > 0) ? newHitIdx - 1 : this.props.hits.length - 1;
+          // newHitIdx = (newHitIdx > 0) ? newHitIdx - 1 : this.props.hits.length - 1;
+          if (indexOfCurrentIdx > minIdx) {
+            const previousRowIdx = this.props.hitsIdxBySort[indexOfCurrentIdx - 1];
+            newRowIdx = previousRowIdx;
+          }
+          else {
+            targetRegionHitsWrapper.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: behavior,
+            });
+          }
           break;
         case "next":
-          newHitIdx = (newHitIdx < this.props.hits.length - 1) ? newHitIdx + 1 : 0;
+          // newHitIdx = (newHitIdx < this.props.hits.length - 1) ? newHitIdx + 1 : 0;
+          if (indexOfCurrentIdx < maxIdx) {
+            const nextRowIdx = this.props.hitsIdxBySort[indexOfCurrentIdx + 1];
+            newRowIdx = nextRowIdx;
+          }
+          else {
+            targetRegionHitsWrapper.scrollTo({
+              top: skipOffset,
+              left: 0, 
+              behavior: behavior,
+            });
+          }
+          break;
+        case "skip":
+        case "skipNoScroll":
+          newRowIdx = parseInt(overrideNewRowIdx);
           break;
         default:
           // error
           break;
       }
-      newHitIdx = this.props.hitsIdxBySort[newHitIdx];
+      // newHitIdx = this.props.hitsIdxBySort[newHitIdx];
       // console.log(`updateCurrentRecommendationIdx ${direction} : ${this.state.selectedHitIdx} -> ${newHitIdx}`);
       // console.log(`updateCurrentRecommendationIdx ${direction} : ${selectedHitIdx} -> ${newHitIdx}`);
       this.setState({
-        selectedHitIdx: newHitIdx,
+        selectedHitIdx: newRowIdx,
       }, () => {
         this.queryTargetRecommendationTableRef.updateSelectedIdx(this.state.selectedHitIdx);
         const jumpIdx = (this.state.selectedHitIdx > 0) ? this.state.selectedHitIdx - 1 : 0;
-        const jumpIdxBySort = this.props.hitsIdxBySort.indexOf(jumpIdx + 1);
+        // const jumpIdxBySort = this.props.hitsIdxBySort.indexOf(jumpIdx + 1);
         this.jumpToTargetRegionByIdx(jumpIdx);
-        this.adjustTargetRegionTableOffset(jumpIdxBySort, true);
+        // this.adjustTargetRegionTableOffset(jumpIdxBySort, true);
+        this.shiftTargetRegionTableOffset(jumpIdx, direction);
       });
     }
 
-    this.adjustTargetRegionTableOffset = (newHitIdx, smooth) => {
-      // console.log(`this.adjustTargetRegionTableOffset | newHitIdx ${newHitIdx}`);
-      const targetHitsWrapper = document.getElementById(`target_hits_table_content`);
-      const targetHitsTable = document.getElementById(`target_hits_table`);
-      const targetHitsThead =  (targetHitsTable) ? targetHitsTable.tHead : null;
-      // const targetHitsTbody =  (targetHitsTable) ? targetHitsTable.tBodies[0] : null;
-      const targetEl = document.getElementById(`target_idx_${newHitIdx}`);
-      if (targetEl) {
-        // console.log(`targetEl ${targetEl} | target_idx_${newHitIdx}`);
-        const theadOffsetHeight = targetHitsThead.offsetHeight;
-        // console.log(`theadOffsetHeight ${theadOffsetHeight}`);
-        const newTopOffset = (((parseFloat(targetEl.offsetHeight)) * (newHitIdx - 1)) > 0) ? targetEl.offsetHeight * (newHitIdx - 1) : 0;
-        // console.log(`newTopOffset ${newTopOffset}`);
-        if (!smooth) {
-          targetHitsWrapper.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
+    this.shiftTargetRegionTableOffset = (newHitIdx, direction) => {
+      // console.log(`[QueryTargetViewer] shiftTargetRegionTableOffset | newHitIdx ${newHitIdx} | direction ${direction}`);
+      const targetRegionHitsWrapper = document.getElementById(`target_hits_table_content`);
+      const targetRegionHitsTable = document.getElementById(`target_hits_table`);
+      const targetRegionHitsThead =  (targetRegionHitsTable) ? targetRegionHitsTable.tHead : null;
+      const targetRegionPanelHeight = parseInt(this.props.epilogosContentHeight) - parseInt(Constants.defaultApplicationNavbarHeight) - 20 - 20 - parseInt(targetRegionHitsThead.offsetHeight);
+      const targetRegionRowEl = document.getElementById(`target_idx_${(newHitIdx - 1)}`);
+      const targetRegionScrollTop = targetRegionHitsWrapper.scrollTop;
+      const behavior = "auto";
+      if (targetRegionRowEl) {
+        const idxOfHitBySort = this.props.hitsIdxBySort.indexOf(newHitIdx);
+        // console.log(`idxOfHitBySort ${idxOfHitBySort}`);
+        if (idxOfHitBySort < 0) return;
+        const targetRegionRowElHeight = parseFloat(targetRegionRowEl.offsetHeight);
+        const newTopOffset = (((parseFloat(targetRegionRowEl.offsetHeight)) * (idxOfHitBySort + 1)) > 0) ? targetRegionRowEl.offsetHeight * (idxOfHitBySort + 1) : 0;
+        switch (direction) {
+          case "previous": {
+            // console.log(`newTopOffset ${newTopOffset} | targetRegionPanelHeight ${targetRegionPanelHeight} | targetRegionScrollTop ${targetRegionScrollTop} | targetRegionRowElHeight ${targetRegionRowElHeight}`);
+            if ((newTopOffset - targetRegionScrollTop) < -targetRegionRowElHeight) {
+              targetRegionHitsWrapper.scrollBy({
+                top: -targetRegionRowElHeight,
+                left: 0,
+                behavior: behavior,
+              });
+            }
+            break;
+          }
+          case "next": {
+            // console.log(`newTopOffset ${newTopOffset} | targetRegionPanelHeight ${targetRegionPanelHeight} | targetRegionScrollTop ${targetRegionScrollTop} | targetRegionRowElHeight ${targetRegionRowElHeight}`);
+            if ((targetRegionPanelHeight - newTopOffset) < targetRegionRowElHeight) {
+              targetRegionHitsWrapper.scrollBy({
+                top: targetRegionRowElHeight,
+                left: 0, 
+                behavior: behavior,
+              });
+            }
+            break;
+          }
+          case "skip": {
+            const skipOffset = parseFloat(targetRegionRowEl.offsetHeight) * idxOfHitBySort;
+            // console.log(`idxOfHitBySort ${idxOfHitBySort} | skipOffset ${skipOffset}`);
+            targetRegionHitsWrapper.scrollBy({
+              top: skipOffset,
+              left: 0, 
+              behavior: behavior,
+            });
+            break;
+          }
+          case "skipNoScroll": {
+            break;
+          }
+          default: {
+            break;
+          }
         }
-        else {
-          targetHitsWrapper.scroll({
-            top: newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight,
-            behavior: 'smooth'
-          });
-        }
-        // targetHitsTable.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
       }
     }
+
+    // this.adjustTargetRegionTableOffset = (newHitIdx, smooth) => {
+    //   // console.log(`this.adjustTargetRegionTableOffset | newHitIdx ${newHitIdx}`);
+    //   const targetHitsWrapper = document.getElementById(`target_hits_table_content`);
+    //   const targetHitsTable = document.getElementById(`target_hits_table`);
+    //   const targetHitsThead =  (targetHitsTable) ? targetHitsTable.tHead : null;
+    //   // const targetHitsTbody =  (targetHitsTable) ? targetHitsTable.tBodies[0] : null;
+    //   const targetEl = document.getElementById(`target_idx_${newHitIdx}`);
+    //   if (targetEl) {
+    //     // console.log(`targetEl ${targetEl} | target_idx_${newHitIdx}`);
+    //     const theadOffsetHeight = targetHitsThead.offsetHeight;
+    //     // console.log(`theadOffsetHeight ${theadOffsetHeight}`);
+    //     const newTopOffset = (((parseFloat(targetEl.offsetHeight)) * (newHitIdx - 1)) > 0) ? targetEl.offsetHeight * (newHitIdx - 1) : 0;
+    //     // console.log(`newTopOffset ${newTopOffset}`);
+    //     if (!smooth) {
+    //       targetHitsWrapper.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
+    //     }
+    //     else {
+    //       targetHitsWrapper.scroll({
+    //         top: newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight,
+    //         behavior: 'smooth'
+    //       });
+    //     }
+    //     // targetHitsTable.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
+    //   }
+    // }
 
     this.jumpToTargetRegionByIdx = this.debounce((hitIdx) => {
       const position = this.props.hits[hitIdx].position;
@@ -1533,7 +1626,7 @@ class QueryTargetViewer extends Component {
 
       return axios.get(recommenderURL).then((res) => {
         if (res.data) {
-          if (res.data.hits && res.data.hits.length == 1) {
+          if (res.data.hits && res.data.hits.length === 1) {
             return res.data;
           }
           else
@@ -1879,7 +1972,6 @@ class QueryTargetViewer extends Component {
         onColumnSort={this.props.onHitsColumnSort}
         idxBySort={this.props.hitsIdxBySort}
         jumpToRow={this.jumpToTargetRegion}
-        adjustTableParentOffset={this.adjustTargetRegionTableOffset}
         qrid={qrid}
       />
     )
@@ -1968,7 +2060,7 @@ class QueryTargetViewer extends Component {
       this.setState({
         selectedHitIdx: rowIndex,
       }, () => {
-        this.props.onHitSelect(this.state.selectedHitIdx);
+        this.props.onHitSelect(this.state.selectedHitIdx, "[QueryTargetViewer] jumpToTargetRegion");
       });
       this.queryTargetRecommendationTableRef.updateSelectedIdx(rowIndex);
     }
@@ -2176,7 +2268,7 @@ class QueryTargetViewer extends Component {
   render() {
     if (!this.state.leftIndicatorPx || !this.state.rightIndicatorPx) return <div />;
 
-    const self = this;
+    // const self = this;
 
     const queryTargetContentStyle = {
       position: 'absolute',
@@ -2773,7 +2865,7 @@ class QueryTargetViewer extends Component {
                     onClick={()=>{this.handleClick('searchQuery')}}>
                     {(this.state.searchQueryInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
                   </div> */ }
-                  <CopyToClipboard text={this.readableRegion(this.state.queryRegion)} onCopy={(e) => { this.props.copyClipboardText(e) }} >
+                  <CopyToClipboard text={this.readableRegion(this.state.queryRegion)} onMouseDown={(e) => { this.props.copyClipboardText(e) }} >
                     <div
                       title={this.titleForControl('copyQuery')} 
                       style={(!this.state.copyQueryEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.copyQueryHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}
@@ -2813,7 +2905,7 @@ class QueryTargetViewer extends Component {
                     onClick={()=>{this.handleClick('searchTarget')}}>
                     {(this.state.searchTargetInProgress) ? <span style={buttonSpinnerParentStyle}><Spinner size={buttonSpinnerSize} style={buttonSpinnerStyle} color={buttonSpinnerIconColor} /></span> : <FaGem size={genericPanelLabelHeaderButtonIconSize} style={genericPanelLabelHeaderButtonIconStyle} />}
                   </div> */ }
-                  <CopyToClipboard text={this.readableRegion(this.state.targetRegion)} onCopy={(e) => { this.props.copyClipboardText(e) }}>
+                  <CopyToClipboard text={this.readableRegion(this.state.targetRegion)} onMouseDown={(e) => { this.props.copyClipboardText(e) }}>
                     <div
                       title={this.titleForControl('copyTarget')} 
                       style={(!this.state.copyTargetEnabled) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonDisabledStyle} : (!this.state.copyTargetHover) ? {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonEnabledStyle} : {...genericPanelLabelHeaderButtonBaseStyle, ...genericPanelLabelHeaderButtonHoverStyle}}

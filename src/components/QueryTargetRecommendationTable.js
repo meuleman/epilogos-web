@@ -97,15 +97,15 @@ class QueryTargetRecommendationTable extends Component {
         sort: true,
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order); 
-          setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
-            });
-          }, 250);
+          // setTimeout(() => {
+          //   const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
+          //   const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+          //   this.setState({
+          //     selectedIdx: jumpIdx + 1
+          //   }, () => {
+          //     this.props.adjustTableParentOffset(jumpIdxBySort);
+          //   });
+          // }, 250);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -152,15 +152,15 @@ class QueryTargetRecommendationTable extends Component {
         },
         onSort: (field, order) => { 
           this.props.onColumnSort(field, order);
-          setTimeout(() => {
-            const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-            const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
-            this.setState({
-              selectedIdx: jumpIdx + 1
-            }, () => {
-              this.props.adjustTableParentOffset(jumpIdxBySort);
-            });
-          }, 250);
+          // setTimeout(() => {
+          //   const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
+          //   const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+          //   this.setState({
+          //     selectedIdx: jumpIdx + 1
+          //   }, () => {
+          //     this.props.adjustTableParentOffset(jumpIdxBySort);
+          //   });
+          // }, 250);
         },
         // eslint-disable-next-line no-unused-vars
         sortCaret: (order, column) => {
@@ -202,10 +202,9 @@ class QueryTargetRecommendationTable extends Component {
           selectedIdx: row.idx,
         }, () => {
           this.props.jumpToRow(row.position, this.state.selectedIdx);
-
-          const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
-          const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
-          this.props.adjustTableParentOffset(jumpIdxBySort, true);
+          // const jumpIdx = (this.state.selectedIdx > 0) ? this.state.selectedIdx - 1 : 0;
+          // const jumpIdxBySort = this.props.idxBySort.indexOf(jumpIdx + 1);
+          // this.props.adjustTableParentOffset(jumpIdxBySort, true);
         });
       },
       // // eslint-disable-next-line no-unused-vars

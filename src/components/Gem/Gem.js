@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { FaGem } from 'react-icons/fa';
+import { FaGem, FaSortUp } from 'react-icons/fa';
 import { Badge } from 'reactstrap';
 
 import './Gem.css';
@@ -33,6 +33,14 @@ export default function Gem(props) {
   };
 
   const gemStyle = (props.isEnabled) ? gemEnabledStyle : gemDisabledStyle;
+
+  const activatedMarkerStyle = {
+    position: "absolute",
+    top: "1.5rem",
+    left: "0.24rem",
+    fontSize: "0.6rem",
+    color: props.enabledColor,
+  };
 
   const badgeParentDefaultStyle = {
     position: "absolute", 
@@ -75,6 +83,7 @@ export default function Gem(props) {
           alt="Gem"
           />
       </div>
+      {(props.isActivated) ? <FaSortUp style={activatedMarkerStyle} /> : <div />}
       {(props.countIsVisible) ? 
         <div 
           style={badgeParentDefaultStyle}
@@ -128,4 +137,5 @@ Gem.propTypes = {
   disabledColor: PropTypes.string,
   size: PropTypes.number,
   handleClick: PropTypes.func,
+  isActivated: PropTypes.bool,
 }
