@@ -1,6 +1,6 @@
 {
-  "name": "epilogos-web-v2",
-  "version": "0.1.0",
+  "name": "epilogos-web",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
     "@musicstory/react-bootstrap-table-next": "^1.0.5",
