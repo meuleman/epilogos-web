@@ -166,8 +166,13 @@ em {
   border-left: rgba(183, 183, 183, 0.75) 1px dashed;
 }
 
+.container-fluid {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
 .navbar-top-custom {
-  padding-right: 15px !important;
+  /* padding-right: 15px !important; */
   cursor: default !important;
   justify-content: safe !important;
   max-height: 56px;
@@ -414,7 +419,7 @@ button.recommender-button, input[type="submit"].recommender-button, input[type="
 .navigation-summary-download {
   position: relative;
   top: -3px;
-  right: -4px;
+  right: -5px;
   font-size: 1.25em;
   padding-bottom: 10px;
   padding-top: 2px;

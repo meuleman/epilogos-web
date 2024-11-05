@@ -15,13 +15,12 @@ export default function Crown(props) {
   const canAnimate = props.canAnimate;
 
   useEffect(() => {
+    const renderAnimations = () => {
+      // console.log(`renderAnimations | canAnimate ${props.canAnimate} | hasFinishedAnimating ${props.hasFinishedAnimating} | isEnabled ${props.isEnabled}`);
+      return (props.hasFinishedAnimating) ? setAnimation(2) : (canAnimate && props.isEnabled) ? setAnimation(0) : setAnimation(1);
+    }
     renderAnimations()
-  }, [canAnimate]);
-
-  const renderAnimations = () => {
-    // console.log(`renderAnimations | canAnimate ${props.canAnimate} | hasFinishedAnimating ${props.hasFinishedAnimating} | isEnabled ${props.isEnabled}`);
-    return (props.hasFinishedAnimating) ? setAnimation(2) : (canAnimate && props.isEnabled) ? setAnimation(0) : setAnimation(1);
-  }
+  }, [canAnimate, props.hasFinishedAnimating, props.isEnabled]);
 
   const crownEnabledStyle = {
     color: props.enabledColor,

@@ -54,7 +54,7 @@ class SimsearchPill extends Component {
       border: "solid",
       borderColor: "black",
       borderWidth: "thin",
-      backgroundColor: "rgb(255,215,0)",
+      // backgroundColor: "rgb(255,215,0) !important",
       color: "rgb(0,0,0)",
     };
 
@@ -82,10 +82,10 @@ class SimsearchPill extends Component {
               title={this.pillLabelText(this.props.count)}
               >
               <Badge 
-                color="primary" 
-                pill 
-                style={badgeDefaultStyle}
                 className='pillText'
+                style={badgeDefaultStyle}
+                color="rgb(255,215,0)" 
+                pill 
                 onClick={() => this.props.onClick()} 
                 >
                   {this.props.count}

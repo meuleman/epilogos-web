@@ -370,7 +370,9 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
   let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
-  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  const downloadURLPrefix = (document.location.href.startsWith("http://localhost:3000/")) ? `https://${Constants.applicationHost}` : stripQueryStringAndHashFromPath(document.location.href);
+  // console.log(`Helpers.suggestionDownloadURL | downloadURLPrefix ${downloadURLPrefix}`);
+  return downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
 }
 
 export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {

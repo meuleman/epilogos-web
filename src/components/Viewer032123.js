@@ -1045,12 +1045,12 @@ class Viewer extends Component {
                   minMax: JSON.parse(res.query.minmax),
                 };
                 
-                // console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
+                console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
                 // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
       
                 // console.log(`mainHgViewconf before qt ${JSON.stringify(self.state.mainHgViewconf)}`);
 
-                const newMinMax = { 'min': -queryRegionIndicatorData.minMax.['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax.['abs_val_sum'].max };
+                const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
 
                 self.state.queryTargetModeWillRequireFullExpand = true;
                 self.state.queryRegionIndicatorData = queryRegionIndicatorData;
@@ -2016,9 +2016,12 @@ class Viewer extends Component {
       chromSizesURL = chromSizesURL.replace(/^https/, "http");
     }
     else {
-      let port = parseInt(this.currentURL.port);
-      if (isNaN(port)) { port = Constants.applicationProductionPort; }
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
+      // console.log(`Viewer.getChromSizesURL | this.currentURL.host ${this.currentURL.host}`);
+      if (this.currentURL.host !== "localhost:3000") {
+        let port = parseInt(this.currentURL.port);
+        if (isNaN(port)) { port = Constants.applicationProductionPort; }
+        chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
+      }
     }
     return chromSizesURL;
   }
@@ -5899,7 +5902,7 @@ class Viewer extends Component {
         // console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
 
         console.log(`this.state.queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
-        const newQueryTargetGlobalMinMax = { 'min': -this.state.queryRegionIndicatorData.minMax.['abs_val_sum'].min, 'max': this.state.queryRegionIndicatorData.minMax.['abs_val_sum'].max };
+        const newQueryTargetGlobalMinMax = { 'min': -this.state.queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': this.state.queryRegionIndicatorData.minMax['abs_val_sum'].max };
         console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
 
         this.setState({
@@ -5929,7 +5932,7 @@ class Viewer extends Component {
     // eslint-disable-next-line no-unused-vars
     let unpaddedStart = start;
     // eslint-disable-next-line no-unused-vars
-    let unpaddedStop = stop;
+    // let unpaddedStop = stop;
     let upstreamRoiDrawerPadding = 0;
     let downstreamRoiDrawerPadding = 0;
     let drawerWidthPxUnits = parseInt(this.state.drawerWidth);
@@ -5941,7 +5944,7 @@ class Viewer extends Component {
       
       case Constants.applicationRegionTypes.exemplars:
         stop = parseInt(pos[2]);
-        unpaddedStop = stop;
+        // unpaddedStop = stop;
 
         // if (strand === "+") {
         //   start -= upstreamPadding;
@@ -5982,7 +5985,7 @@ class Viewer extends Component {
             const intervalPaddingFraction = (queryObj.roiPaddingFractional) ? parseFloat(queryObj.roiPaddingFractional) : Constants.defaultApplicationRoiPaddingFraction;
             const intervalPaddingAbsolute = (queryObj.roiPaddingAbsolute) ? parseInt(queryObj.roiPaddingAbsolute) : Constants.defaultApplicationRoiPaddingAbsolute;
             stop = parseInt(pos[2]);
-            unpaddedStop = stop;
+            // unpaddedStop = stop;
             let roiPadding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (stop - start)) : intervalPaddingAbsolute;
             start -= roiPadding;
             stop += roiPadding;
@@ -5990,7 +5993,7 @@ class Viewer extends Component {
           }
           case Constants.applicationRoiModes.midpoint: {
             stop = parseInt(pos[2]);
-            unpaddedStop = stop;
+            // unpaddedStop = stop;
             let roiMidpoint = parseInt(start + ((stop - start) / 2));
             start = roiMidpoint - parseInt(this.state.roiPaddingAbsolute);
             stop = roiMidpoint + parseInt(this.state.roiPaddingAbsolute);
@@ -5998,7 +6001,7 @@ class Viewer extends Component {
           }
           case Constants.applicationRoiModes.drawer: {
             stop = parseInt(pos[2]);
-            unpaddedStop = stop;
+            // unpaddedStop = stop;
             fractionOfWindowWidthUsedByDrawerBaseUnits = parseInt(fractionOfWindowWidthUsedByDrawer * parseFloat(stop - start)) * 1.5;
             fractionOfWindowWidthUsedForDrawerPaddingBaseUnits = parseInt(0.075 * parseFloat(stop - start));
             upstreamRoiDrawerPadding = fractionOfWindowWidthUsedByDrawerBaseUnits + fractionOfWindowWidthUsedForDrawerPaddingBaseUnits;
@@ -7729,7 +7732,7 @@ class Viewer extends Component {
               minMax: JSON.parse(res.query.minmax),
             };
             console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
-            const newMinMax = { 'min': -queryRegionIndicatorData.minMax.['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax.['abs_val_sum'].max };
+            const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
             console.log(`newMinMax ${JSON.stringify(newMinMax)}`);
             // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
             self.setState({

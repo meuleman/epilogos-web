@@ -16,13 +16,12 @@ export default function Gem(props) {
   const canAnimate = props.canAnimate;
 
   useEffect(() => {
-    renderAnimations()
-  }, [canAnimate]);
-
-  const renderAnimations = () => {
-    // console.log(`renderAnimations | canAnimate ${props.canAnimate} | hasFinishedAnimating ${props.hasFinishedAnimating} | isEnabled ${props.isEnabled}`);
-    return (props.hasFinishedAnimating) ? setAnimation(2) : (canAnimate && props.isEnabled) ? setAnimation(0) : setAnimation(1);
-  }
+    const renderAnimations = () => {
+      // console.log(`renderAnimations | canAnimate ${props.canAnimate} | hasFinishedAnimating ${props.hasFinishedAnimating} | isEnabled ${props.isEnabled}`);
+      return (props.hasFinishedAnimating) ? setAnimation(2) : (canAnimate && props.isEnabled) ? setAnimation(0) : setAnimation(1);
+    }
+    renderAnimations();
+  }, [canAnimate, props.hasFinishedAnimating, props.isEnabled]);
 
   const gemEnabledStyle = {
     color: props.enabledColor,

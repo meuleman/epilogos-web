@@ -12,6 +12,8 @@ import ViewerMobile from "./components/ViewerMobile.js";
 // Mobile device detection
 import { isMobile } from 'react-device-detect';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 // -------------------------------------------------------------------------------------------------------------------
 
 class App extends Component {
@@ -80,9 +82,9 @@ class App extends Component {
   render() {    
     return (
       <div ref={(ref) => this.epilogos = ref} id="epilogos-container">
-        { this.state.application === "portal" && <Portal /> }
-        { (this.state.application === "viewer" && !isMobile) && <Viewer /> }
-        { (this.state.application === "viewer" && isMobile) && <ViewerMobile /> }
+        {this.state.application === "portal" && <Portal />}
+        {(this.state.application === "viewer" && !isMobile) && <Viewer />}
+        {(this.state.application === "viewer" && isMobile) && <ViewerMobile /> }
       </div>
     );
   }

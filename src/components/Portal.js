@@ -41,8 +41,7 @@ import GeneSearch from './GeneSearch/GeneSearch';
 // import Autocomplete from "./Autocomplete/Autocomplete";
 
 // Icons
-import { FaChevronCircleDown } from "react-icons/fa";
-import { GoMarkGithub } from "react-icons/go";
+import { FaChevronCircleDown, FaGithub } from "react-icons/fa";
 
 // Mobile device detection
 import { isMobile } from 'react-device-detect';
@@ -134,10 +133,12 @@ class Portal extends Component {
           }
           else if (typeof data === "string") {
             let regions = data.split('\n');
-            this.setState({
-              exemplarJumpActive: true,
-              exemplarRegions: regions
-            });
+            setTimeout(() => {
+              this.setState({
+                exemplarJumpActive: true,
+                exemplarRegions: regions
+              });
+            }, 1000);
           } 
           else {
             throw Error("Exemplar data invalid");
@@ -222,7 +223,7 @@ class Portal extends Component {
   componentDidUpdate(prevProps, prevState) {}
   
   componentWillUnmount() {
-    window.removeEventListener("resize");
+    window.removeEventListener("resize", this.updateViewportDimensions);
     this._gemRefreshTimer = null;
   }
 
@@ -441,7 +442,9 @@ class Portal extends Component {
   }
   
   exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
-    let downloadURL = this.stripQueryStringAndHashFromPath(document.location.href) 
+    // console.log(`document.location.href ${document.location.href}`);
+    const downloadURLPrefix = (document.location.href === "http://localhost:3000/") ? `https://${Constants.applicationHost}` : this.stripQueryStringAndHashFromPath(document.location.href)
+    let downloadURL = this.stripQueryStringAndHashFromPath(downloadURLPrefix) 
       + "/assets/epilogos/" 
       + sampleSet 
       + "/" 
@@ -453,6 +456,7 @@ class Portal extends Component {
       + "/" 
       + complexity 
       + "/exemplar/top100.txt";
+    // console.log(`downloadURL ${downloadURL}`);
     return downloadURL;
   }
   
@@ -793,7 +797,7 @@ class Portal extends Component {
   stripQueryStringAndHashFromPath = (url) => { return url.split("?")[0].split("#")[0]; }
   
   openViewerAtChrRange = (range) => {
-    console.log(`openViewerAtChrRange`);
+    console.log(`Portal.openViewerAtChrRange | range ${JSON.stringify(range)}`);
     let chrLeft = range[0];
     let chrRight = range[0];
     let start = parseInt(range[1]);
@@ -815,6 +819,7 @@ class Portal extends Component {
     viewerUrl += "&chrRight=" + chrRight;
     viewerUrl += "&start=" + start;
     viewerUrl += "&stop=" + stop;
+    console.log(`Portal.openViewerAtChrRange | viewerUrl ${JSON.stringify(viewerUrl)}`);
     window.location.href = viewerUrl;
   }
   
@@ -1343,7 +1348,7 @@ class Portal extends Component {
                     </div>
                     <div className="">
                       <div>Code is available from GitHub:</div>
-                      <div><GoMarkGithub /> <span style={{fontSize:"0.85em"}}>Core: <a href="https://github.com/meuleman/epilogos" onClick={this.onClick} data-id="https://github.com/meuleman/epilogos" data-target="_blank">https://github.com/meuleman/epilogos</a></span></div>
+                      <div><FaGithub /> <span style={{fontSize:"0.85em"}}>Core: <a href="https://github.com/meuleman/epilogos" onClick={this.onClick} data-id="https://github.com/meuleman/epilogos" data-target="_blank">https://github.com/meuleman/epilogos</a></span></div>
                     </div>
                   </div>
                 </div>

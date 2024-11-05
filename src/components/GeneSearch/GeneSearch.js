@@ -25,9 +25,8 @@ const GeneSearch = memo(({
   const [inputValue, setInputValue] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  const gencode = (assembly === 'hg38') ? gencodeHg38Raw : ((assembly === 'hg19') ? gencodeHg19Raw : ((assembly === 'mm10') ? gencodeMm10Raw : []));
-
   const filteredOptions = useMemo(() => {
+    const gencode = (assembly === 'hg38') ? gencodeHg38Raw : ((assembly === 'hg19') ? gencodeHg19Raw : ((assembly === 'mm10') ? gencodeMm10Raw : []));
     const geneOptions = gencode.filter(g =>
       g.hgnc.toLowerCase().includes(searchValue.toLowerCase())
     ).map(g => ({
@@ -56,7 +55,7 @@ const GeneSearch = memo(({
     }
 
     return geneOptions;
-  }, [searchValue]);
+  }, [assembly, searchValue]);
 
   const handleSearch = (value) => {
     console.log(`handleSearch ${value}`);

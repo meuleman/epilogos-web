@@ -7,4 +7,9 @@
     font-weight: 500 !important;
     position: relative;
     top: 1px;
+    background-color: rgb(255,215,0) !important;
+}
+
+.bg-primary {
+    background-color: rgb(255,215,0) !important;
 }

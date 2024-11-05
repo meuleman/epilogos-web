@@ -2178,7 +2178,7 @@ class QueryTargetViewer extends Component {
             },
           };
           self.setState({
-            queryTargetLockedHgViewKey: `qt-locked-${self.state.queryTargetLockedHgViewKey + 1}`,
+            queryTargetLockedHgViewKey: self.state.queryTargetLockedHgViewKey + 1, // `qt-locked-${self.state.queryTargetLockedHgViewKey + 1}`,
             queryRegion: newQueryRegion,
           }, () => {
             setTimeout(() => {
@@ -2728,7 +2728,7 @@ class QueryTargetViewer extends Component {
 
     return (
       <Fragment>
-        <div key={this.state.queryTargetContentKey} style={queryTargetContentStyle}>
+        <div key={`qtv-${this.state.queryTargetContentKey}`} style={queryTargetContentStyle}>
           
           <div className="target-hg-content" style={genericHgStyle}>
             {(this.state.panelViewsLocked && this.state.queryTargetLockedHgViewconf) 
