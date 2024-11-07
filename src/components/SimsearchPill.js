@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Badge } from 'reactstrap';
 
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import Spinner from "react-svg-spinner";
 
 import './SimsearchPill.css';
@@ -117,5 +117,10 @@ class SimsearchPill extends Component {
 
 export default SimsearchPill;
 
-// SimsearchPill.propTypes = { 
-// }
+SimsearchPill.propTypes = { 
+  inProgress: PropTypes.bool,
+  isEnabled: PropTypes.bool,
+  isVisible: PropTypes.bool,
+  onClick: PropTypes.func,
+  count: PropTypes.number,
+}

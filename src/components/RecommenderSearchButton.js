@@ -254,4 +254,5 @@ RecommenderSearchButton.propTypes = {
   searchCount: PropTypes.number,
   searchCountIsVisible: PropTypes.bool,
   isActivated: PropTypes.bool,
+  searchCountIsEnabled: PropTypes.bool,
 };

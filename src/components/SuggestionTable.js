@@ -342,4 +342,5 @@ SuggestionTable.propTypes = {
   jumpToRow: PropTypes.func,
   selectedIdx: PropTypes.number,
   adjustTableParentOffset: PropTypes.func,
+  viewParams: PropTypes.object,
 }

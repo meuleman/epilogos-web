@@ -190,4 +190,6 @@ SuggestionIndicator.propTypes = {
   region: PropTypes.array,
   onCopyClipboardText: PropTypes.func,
   chromatinState: PropTypes.object,
+  viewer: PropTypes.object,
+  widthPx: PropTypes.number,
 }

@@ -1947,13 +1947,13 @@ class QueryTargetViewer extends Component {
     }
   }
 
-  debounce = (callback, wait, immediate = false) => {
+  debounce = (callback, waitTime, immediate = false) => {
     let timeout = null;
     return function() {
       const callNow = immediate && !timeout;
       const next = () => callback.apply(this, arguments);
       clearTimeout(timeout)
-      timeout = setTimeout(next, wait);
+      timeout = setTimeout(next, waitTime);
       if (callNow) {
         next();
       }
@@ -3011,4 +3011,6 @@ QueryTargetViewer.propTypes = {
   queryRegionIndicatorData: PropTypes.object,
   globalMinMax: PropTypes.object,
   copyClipboardText: PropTypes.func,
+  epilogosContentHeight: PropTypes.number,
+  onHitSelect: PropTypes.func,
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, memo, useMemo, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 import { AutoComplete } from 'antd';
 
@@ -133,3 +134,8 @@ const GeneSearch = memo(({
 })
 GeneSearch.displayName = 'GeneSearch';
 export default GeneSearch
+
+GeneSearch.propTypes = {
+  assembly: PropTypes.string,
+  onSelect: PropTypes.func,
+}

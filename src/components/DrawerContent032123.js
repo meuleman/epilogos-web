@@ -1477,4 +1477,5 @@ DrawerContent.propTypes = {
   selectedRoiRowIdx: PropTypes.number,
   updateActiveTab: PropTypes.func,
   viewParams: PropTypes.object,
+  isInternalProductionSite: PropTypes.bool,
 }

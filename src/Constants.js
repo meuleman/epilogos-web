@@ -1,7 +1,7 @@
-export const applicationHost = "epilogos.altius.org";
-export const applicationProductionPort = 443;
-export const applicationProductionProxyPort = 8443;
-export const applicationDevelopmentPort = 3001;
+export const applicationHost = `${process.env.REACT_APP_APPLICATION_HOSTNAME}`;
+export const applicationProductionPort = `${process.env.REACT_APP_APPLICATION_PRODUCTION_PORT}`;
+export const applicationProductionProxyPort = `${process.env.REACT_APP_APPLICATION_PRODUCTION_PROXY_PORT}`;
+export const applicationDevelopmentPort = `${process.env.REACT_APP_APPLICATION_DEVELOPMENT_PORT}`;
 
 export const applicationContactEmail = "areynolds@altius.org";
 
@@ -12,14 +12,14 @@ export const annotationScheme = "https";
 export const annotationHost = "annotations.altius.org";
 export const annotationPort = "8443"; // SSL over 8443
 
-export const applicationEndpointRootURL = "meuleman-higlass-us-west-2.altius.org";
+export const applicationEndpointRootURL = `${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}`;
 
-export const applicationHiGlassServerEndpointRootURL = `https://${applicationEndpointRootURL}/api/v1`;
-export const applicationTabixRootURL = `http://${applicationEndpointRootURL}/tabix`;
+export const applicationHiGlassServerEndpointRootURL = `${process.env.REACT_APP_HIGLASS_SERVICE_PROTOCOL}://${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}/api/v1`;
+export const applicationTabixRootURL = `${process.env.REACT_APP_TABIX_SERVICE_PROTOCOL}://${process.env.REACT_APP_TABIX_SERVICE_HOSTNAME}/tabix`;
 export const applicationRecommenderV1DatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
 
-export const urlProxyURL = "https://epilogos.altius.org:9001";
-export const recommenderProxyURL = "https://epilogos.altius.org:9002";
+export const urlProxyURL = `${process.env.REACT_APP_URL_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_URL_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_URL_PROXY_SERVICE_PORT}`;
+export const recommenderProxyURL = `${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PORT}`;
 
 export const defaultHgViewClickPageX = -1;
 export const defaultHgViewClickTimePrevious = -1;
@@ -1689,34 +1689,6 @@ export const stateColorPalettes = {
 
 export const portalGenes = ["SNRPB", "SNRPD1", "SNRPD2", "SNRPD3", "SNRPE", "SNRPF", "SNRPG", "RNU1-1", "SNRPA", "SNRNP70", "SNRPC", "LUC7L", "ZRSR2", "SNRNP35", "SNRNP25", "SNRNP48", "RNPC3", "RNU2-1", "SNRPA1", "SNRPB2", "SF3B1", "SF3B2", "SF3B3", "SF3B4", "SF3B5", "PHF5A", "SF3B14", "SF3A1", "SF3A2", "SF3A3", "DDX42", "DDX46", "HTATSF1", "DHX15", "U2AF1", "U2AF2", "PUF60", "SMNDC1", "RBM17", "U2SURP", "CHERP", "RNU5A-1", "SNRNP200", "PRPF8", "EFTUD2", "PRPF6", "DDX23", "CD2BP2", "SNRNP40", "TXNL4A", "LSM2", "LSM3", "LSM4", "LSM5", "LSM6", "LSM7", "NAA38", "LSM1", "RNU4-1", "PRPF4", "PRPF3", "PPIH", "PRPF31", "NHP2L1", "SART3", "SART1", "USP39", "SF1", "PRPF40A", "THRAP3", "RBM25", "CCAR1", "SUGP1", "RBM5", "RBM10", "PRPF19", "CDC5L", "PLRG1", "CWC15", "BCAS2", "CTNNBL1", "WBP11", "PQBP1", "HSPA8", "PPIE", "CRNKL1", "SNW1", "ISY1", "XAB2", "RBM22", "PPIL1", "BUD31", "AQR", "SMU1", "MFAP1", "IK", "WBP4", "TFIP11", "ZMAT2", "PRPF38A", "PRPF4B", "CWC27", "DHX16", "CWC22", "ZNF830", "CCDC12", "PPIL2", "GPKOW", "RNF113A", "PRCC", "CWC25", "GPATCH1", "CCDC94", "CDC40", "PRPF18", "SLU7", "DHX8", "DHX38", "SYF2", "DDX41", "CXorf56", "DGCR14", "C9orf78", "PPIL3", "PPWD1", "DHX35", "CACTIN", "NOSIP", "WDR83", "FAM50A", "PPIG", "C1orf55", "CDK10", "LENG1", "FAM32A", "FRA10AC1", "BUD13", "RBMX2", "SNIP1", "EIF4A3", "MAGOH", "RBM8A", "RNPS1", "ALYREF", "NXT1", "NXF1", "SAP18", "CASC3", "ACIN1", "UPF1", "PNN", "DHX9", "PRPF38B", "TCERG1", "SKIV2L2", "DEK", "KIN", "RUVBL1", "SNRNP27", "UBL5", "ERH", "NRIP2", "PRPF39", "FUBP3", "FRG1", "MOV10", "C16orf80", "KIAA1967", "NCOR1", "CCDC75", "TRIM24", "DDX50", "NKAP", "FAM50B", "MATR3", "BCAS1", "JUP", "WDR70", "CCDC130", "TOE1", "ZCCHC10", "TTC14", "RBM4B", "SRRT", "EWSR1", "RBM15", "IGF2BP3", "DDX3X", "GCFC1", "XRN2", "RBM7", "PABPC1", "PABPN1", "NCBP2", "NCBP1", "DDX17", "RBM39", "NUMA1", "YBX1", "DDX19A", "DDX5", "KHDRBS1", "PABPC4", "DHX34", "HNRNPUL1", "FUS", "HNRNPA0", "PCBP2", "PCBP1", "HNRNPA1", "HNRNPA2B1", "HNRNPA3", "HNRNPAB", "HNRNPC", "HNRNPD", "HNRNPF", "RBMX", "HNRNPH1", "HNRNPH3", "HNRNPK", "HNRNPL", "HNRNPM", "HNRNPR", "HNRNPU", "RALY", "SYNCRIP", "HNRPLL", "RALYL", "HNRNPH2", "HNRNPUL2", "HNRPDL", "RBMXL2", "HNRNPCL1", "SRSF1", "SRSF2", "SRSF4", "SRSF5", "SRSF6", "SRSF7", "SRSF11", "SRSF9", "SREK1", "TRA2B", "SRSF3", "SFSWAP", "SRSF12", "TRA2A", "SRSF10", "SRRM1", "SRRM2", "NONO", "SRPK1", "SFPQ", "DBR1", "RBFOX2", "RAVER1", "KHSRP", "FUBP1", "MBNL1", "PTBP1", "PTBP2", "ELAVL1", "MBNL2", "CELF1", "CELF2", "RAVER2", "MBNL3", "QKI", "DDX39A", "DDX1", "DDX21", "RBM26", "RBM47", "ZCCHC8", "ZNF207", "RBM42", "ZFR", "ZC3H18", "RNF34", "RBM3", "ZC3H13", "RBM45", "DDX6", "RBMXL1", "ZMAT5", "RNF213", "RBM4", "DDX39B", "DDX3Y", "ZMYM3", "RNF20", "RBM14", "ZC3H11A", "DDX18", "RNF40", "ZNF346", "DDX27", "DHX36", "RBM15B", "ZC3HAV1", "ZCRB1", "ZNF326", "GPATCH3", "DHX30", "ZNF131", "CHAMP1", "RBM27", "GPATCH8", "DHX40", "DDX19B", "DHX57", "ZC3H4", "AGGF1", "EXOSC7", "EXOSC2", "EXOSC8", "EXOSC9", "EXOSC4", "EXOSC10", "DIS3", "EXOSC3", "THOC1", "THOC6", "THOC3", "THOC2", "THOC5", "THOC7", "CSTF3", "CSTF1", "CPSF6", "NUDT21", "CPSF1", "CPSF2", "CPSF3", "CPSF4", "CPSF7", "GEMIN2", "DDX20", "GEMIN5", "RPS16", "UBA52", "RPS9", "RPS18", "EIF4A1", "EIF3L", "EEF1A2", "EIF4A2", "EIF2C1", "EIF3E", "EIF3H", "EIF3B", "EIF3A", "EIF2B5", "SRP19", "KARS", "EEF1E1", "QARS", "FARSA", "IARS", "VARS", "EIF2B4", "SRP68", "TRMT1L", "EEF1D", "EEF1G", "RARS", "EEF1A1", "EIF2S3", "MARS", "EIF4G1", "EEF2", "EPRS", "EIF3C", "DYNC1H1", "ALDOA", "ALDOC", "PFKM", "TUBA4A", "TUBB6", "TJP1", "ARPC4", "DYNC1LI1", "DYNC1I2", "DSP", "ACTN4", "ACTL6A", "MYH9", "ACTG1", "TUBB", "TUBA1B", "DCD", "CSNK2A1", "ACTB", "TUBB4B", "RAE1", "KPNB1", "NUP88", "KPNA2", "NUP107", "RANBP9", "NUP160", "NUP133", "NUP214", "NUP93", "NUP210", "NUP54", "NUP205", "NUP35", "KPNA1", "NUP153", "RANBP2", "RANGAP1", "COPA", "COPB1", "COPB2", "COPG1", "GTF2I", "TOP2A", "H2AFX", "MCM3", "MCM2", "MCM6", "MED23", "MCM7", "GTF3C4", "HP1BP3", "ORC3", "NCAPH2", "NCAPG2", "PBRM1", "BRPF3", "MED1", "GTF3C1", "RAD50", "GTF3C2", "XRCC5", "MCM4", "NCAPG", "BRD8", "GTF3C3", "CBX3", "GTF3C5", "NCAPD3", "TRRAP", "BAZ1A", "CHAF1B", "WDHD1", "CREBBP", "CHD4", "MED12", "HDAC2", "H1F0", "HIST1H1E", "HIST1H2AD", "EIF2AK4", "SMARCA2", "SMARCB1", "SMARCC2", "SMARCD1", "SMARCD2", "SMARCE1", "SMARCA4", "SMARCA5", "SMARCC1", "PSMB1", "PSMA3", "PSMC1", "PSMA6", "PSMD7", "PSMD3", "PSMD11", "PSMB2", "PSME3", "PSMC3", "PSMD1", "PSMD2", "PSMD12", "PSMC4", "PSMD14", "PSMA7", "ANAPC1", "ANAPC2", "ANAPC7", "ANAPC4", "ANAPC5", "EXOC2", "EXOC5", "EXOC4", "EXOC6B", "INTS1", "INTS3", "INTS6", "INTS7", "INTS5", "INTS4", "DNAJC6", "HSPA2", "HSPA4", "HSPA5", "DNAJC17", "DNAJC8", "DNAJC13", "DNAJB1", "HSPB1", "HSPD1", "CCT6A", "HSP90B1", "CCT4", "CCT7", "CCT8", "CCT3", "CCT2", "CCT5", "HSPH1", "DNAJA1", "HSP90AA1", "HSP90AB1", "HSPA6", "HSPA1B", "HSPA1A"];
 
-// export const portalHgViewParameters = {
-//   "sampleSet": "vA",
-//   "genome": "hg19",
-//   "model": "15",
-//   "complexity": "KL",
-//   "group": "all",
-//   "mode": "single",
-//   "paddingMidpoint": 33000,
-//   "epilogosHeaderNavbarHeight": 56,
-//   "hgViewconfEndpointURL": `https://${applicationEndpointRootURL}/`,
-//   //"hgViewconfId": "EzopAF3-TROeCX0g9dhX8g", (used for non-SSL site)
-//   "hgViewconfId": "aU8PPUyCQ0y5h7AjNSVicw",
-//   "hgViewconfEndpointURLSuffix": "api/v1/viewconfs/?d=",
-//   "hgViewconfAutocompleteURLSuffix": "/suggest/?d=",
-//   "hgViewAnimationTime": 0,
-//   "hgViewGeneSelectionTime": 7000,
-//   "hgViewTrackEpilogosHeight": 200,
-//   "hgViewTrackChromosomeHeight": 25,
-//   "hgViewTrackGeneAnnotationsHeight": 120,
-//   "hgGenomeURLs": {
-//     "hg19": "https://epilogos.altius.org:3001/assets/chromsizes/hg19.chrom.sizes.fixedBin",
-//     "hg38": "https://epilogos.altius.org:3001/assets/chromsizes/hg38.chrom.sizes.fixedBin",
-//     "mm10": "https://epilogos.altius.org:3001/assets/chromsizes/mm10.chrom.sizes.fixedBin"
-//   },
-//   "gatt": "cv",
-//   "gac": "off",
-// };
-
 export const portalHgViewParameters = {
   "sampleSet": "vC",
   "genome": "hg38",
@@ -1726,7 +1698,7 @@ export const portalHgViewParameters = {
   "mode": "single",
   "paddingMidpoint": 33000,
   "epilogosHeaderNavbarHeight": 56,
-  "hgViewconfEndpointURL": `https://${applicationEndpointRootURL}/`,
+  "hgViewconfEndpointURL": `${process.env.REACT_APP_HIGLASS_SERVICE_PROTOCOL}://${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}/`,
   //"hgViewconfId": "EzopAF3-TROeCX0g9dhX8g", (used for non-SSL site)
   "hgViewconfId": "aU8PPUyCQ0y5h7AjNSVicw",
   "hgViewconfEndpointURLSuffix": "api/v1/viewconfs/?d=",
@@ -1759,7 +1731,7 @@ export const viewerHgViewParameters = {
   "mode": "single",
   "paddingMidpoint": 0,
   "epilogosHeaderNavbarHeight": 56,
-  "hgViewconfEndpointURL": `https://${applicationEndpointRootURL}/`,
+  "hgViewconfEndpointURL": `${process.env.REACT_APP_HIGLASS_SERVICE_PROTOCOL}://${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}/`,
   "hgViewconfId": {
     "bkfq_2binWide_allSample": "MhAt7hTcS-ykH1MpMiRfhg"
   },

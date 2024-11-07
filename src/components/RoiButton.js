@@ -220,4 +220,5 @@ RoiButton.propTypes = {
   enabledColor: PropTypes.string,
   disabledColor: PropTypes.string,
   isActivated: PropTypes.bool,
+  suggestionTableIsVisible: PropTypes.bool,
 };

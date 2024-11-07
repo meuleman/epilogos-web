@@ -137,4 +137,7 @@ Gem.propTypes = {
   size: PropTypes.number,
   handleClick: PropTypes.func,
   isActivated: PropTypes.bool,
+  countIsVisible: PropTypes.bool,
+  countIsEnabled: PropTypes.bool,
+  count: PropTypes.number,
 }

@@ -1247,13 +1247,13 @@ class Viewer extends Component {
     }
   }
 
-  debounce = (callback, wait, immediate = false) => {
+  debounce = (callback, waitTime, immediate = false) => {
     let timeout = null;
     return function() {
       const callNow = immediate && !timeout;
       const next = () => callback.apply(this, arguments);
       clearTimeout(timeout)
-      timeout = setTimeout(next, wait);
+      timeout = setTimeout(next, waitTime);
       if (callNow) {
         next();
       }
@@ -5901,9 +5901,9 @@ class Viewer extends Component {
         // console.log(`trueQueryTargetGlobalMinMax ${JSON.stringify(trueQueryTargetGlobalMinMax)}`);
         // console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
 
-        console.log(`this.state.queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
+        // console.log(`this.state.queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
         const newQueryTargetGlobalMinMax = { 'min': -this.state.queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': this.state.queryRegionIndicatorData.minMax['abs_val_sum'].max };
-        console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
+        // console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
 
         this.setState({
           // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
@@ -5916,7 +5916,9 @@ class Viewer extends Component {
         });
       }
       else {
-        throw new Error(`[triggerUpdate] Error - Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
+        // throw new Error(`[triggerUpdate] Error - Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
+        console.error(`[triggerUpdate] Error - Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
+        window.open(Helpers.stripQueryStringAndHashFromPath(window.location.href), "_self")
       }
     }
   }
@@ -7731,9 +7733,9 @@ class Viewer extends Component {
               hitEndDiff: res.query.hitEndDiff,
               minMax: JSON.parse(res.query.minmax),
             };
-            console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
+            // console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
             const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
-            console.log(`newMinMax ${JSON.stringify(newMinMax)}`);
+            // console.log(`newMinMax ${JSON.stringify(newMinMax)}`);
             // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
             self.setState({
               queryRegionIndicatorData: queryRegionIndicatorData,
@@ -8332,6 +8334,12 @@ class Viewer extends Component {
   }
   
   render() {
+
+    if (!this.state.mainHgViewconf 
+      || (this.state.mainHgViewconf && !this.state.mainHgViewconf.views)
+      || (this.state.mainHgViewconf && this.state.mainHgViewconf.views && !this.state.mainHgViewconf.views[0]) 
+      || (this.state.mainHgViewconf && this.state.mainHgViewconf.views && this.state.mainHgViewconf.views[0] && !this.state.mainHgViewconf.views[0].tracks)
+      ) return <div>...</div>;
 
     // const epilogosViewerHeaderNavbarHeight = Constants.defaultApplicationNavbarHeight;
     
