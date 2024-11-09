@@ -1179,8 +1179,25 @@ class ViewerMobile extends Component {
   //   }, 2000);
   // }
 
-  updateViewerURL = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop) => {
-    // console.log(`updateViewerURL`);
+  updateViewerURLForCurrentState = (cb, keepSuggestionInterval) => {
+    this.updateViewerURL(this.state.hgViewParams.mode,
+                         this.state.hgViewParams.genome,
+                         this.state.hgViewParams.model,
+                         this.state.hgViewParams.complexity,
+                         this.state.hgViewParams.group,
+                         this.state.hgViewParams.sampleSet,
+                         this.state.currentPosition.chrLeft,
+                         this.state.currentPosition.chrRight,
+                         this.state.currentPosition.startLeft,
+                         this.state.currentPosition.stopRight,
+                         keepSuggestionInterval,
+                         "updateViewerURLForCurrentState",
+                        );
+    if (cb) cb();
+  }
+
+  updateViewerURL = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, keepSuggestionInterval, cf) => {
+    // console.log(`[updateViewerURL] <- ${cf}`);
     // console.log(mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop);
     const viewerUrl = Helpers.constructViewerURL(mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, this.state);
     setTimeout(() => {
@@ -1192,19 +1209,19 @@ class ViewerMobile extends Component {
   }
   
   updateViewerLocation = (event) => {
-    //this.updateViewerURLWithLocation(event);
+    // this.updateViewerURLWithLocation(event);
     if (!this.viewerLocationChangeEventTimer) {
       clearTimeout(this.viewerLocationChangeEventTimer);
-      //console.log("this.viewerLocationChangeEventTimer *unset*");
+      // console.log("this.viewerLocationChangeEventTimer *unset*");
       this.viewerLocationChangeEventTimer = setTimeout(() => {
         if (!this.state.searchInputLocationBeingChanged) {
-          //console.log("calling [updateViewerURLWithLocation] from [updateViewerLocation]");
+          // console.log("calling [updateViewerURLWithLocation] from [updateViewerLocation]");
           this.updateViewerURLWithLocation(event);
         }
         setTimeout(() => { 
           this.viewerLocationChangeEventTimer = null;
         }, 0);
-        //console.log("this.viewerLocationChangeEventTimer set");
+        // console.log("this.viewerLocationChangeEventTimer set");
       }, 500);
     }
   }
@@ -2224,6 +2241,7 @@ class ViewerMobile extends Component {
                 res.data.views[0].tracks.top[1].options.valueScaling = null;
                 res.data.views[0].tracks.top[1].options.heatmapValueScaling = "categorical";
                 res.data.views[0].tracks.top[1].options.colorRange = Constants.stateColorPalettesAsRgb[newGenome][newModel];
+                res.data.views[0].tracks.top[1].options.colorLabels = Constants.stateColorPalettes[newGenome][newModel];
                 res.data.views[0].tracks.top[1].options.colorScale = [];
                 res.data.views[0].tracks.top[1].options.valueScaleMin = 1;
                 res.data.views[0].tracks.top[1].options.valueScaleMax = parseInt(newModel, 10);

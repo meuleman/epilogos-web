@@ -109,13 +109,13 @@ class Viewer extends Component {
       higlassHref: "http://higlass.io",
       navigationBarKey: 0,
       queryHgViewKey: 0,
-      queryHgViewHeight: 0,
+      queryHgViewHeight: '0px',
       queryHgViewconf: {},
       mainHgViewKey: 0,
       hgViewLoopEnabled: true,
       mainHgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight - Constants.applicationViewerHgViewPaddingTop - Constants.applicationViewerHgViewPaddingBottom,
-      epilogosContentHeight: 0,
-      epilogosContentPsHeight: 0,
+      epilogosContentHeight: '0px',
+      epilogosContentPsHeight: '0px',
       mainHgViewconf: {},
       hgViewParams: Constants.viewerHgViewParameters,
       hgViewRefreshTimerActive: true,
@@ -131,7 +131,7 @@ class Viewer extends Component {
       drawerIsOpen: false,
       drawerSelection: null,
       drawerTitle: "Title",
-      drawerHeight: 0,
+      drawerHeight: '0px',
       drawerContentKey: 0,
       drawerActiveTabOnOpen: Constants.defaultDrawerTabOnOpen,
       drawerActiveRegionTab: Constants.defaultDrawerActiveRegionTab, 
@@ -264,7 +264,7 @@ class Viewer extends Component {
       recommenderV3CanAnimate: true,
       recommenderV3AnimationHasFinished: true,
       protectElementSelection: false,
-      transcriptsTrackHeight: 0,
+      transcriptsTrackHeight: '0px',
       parameterSummaryKey: 0,
       queryTargetHgViewKey: 0,
       queryTargetQueryRegionLabel: '',
@@ -1045,7 +1045,7 @@ class Viewer extends Component {
                   minMax: JSON.parse(res.query.minmax),
                 };
                 
-                console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
+                // console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
                 // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
       
                 // console.log(`mainHgViewconf before qt ${JSON.stringify(self.state.mainHgViewconf)}`);
@@ -5419,10 +5419,12 @@ class Viewer extends Component {
                             transcriptsTrackHeight: parseInt(transcriptsTrackObj.trackHeight),
                           }, () => {
                             //console.log(`trackDimensionsModified event sent ${self.state.transcriptsTrackHeight}px`);
-                            self.updateViewportDimensions();
-                            transcriptsTrackObj.pubSub.unsubscribe("trackDimensionsModified");
-                            //chromatinStateTrackObj.scheduleRerender();
-                            self.epilogosViewerTrackLabelPairedGeneAnnotation.style.bottom = (self.state.transcriptsTrackHeight/2 - 11) + 'px';
+                            setTimeout(() => {
+                              self.updateViewportDimensions();
+                              transcriptsTrackObj.pubSub.unsubscribe("trackDimensionsModified");
+                              //chromatinStateTrackObj.scheduleRerender();
+                              self.epilogosViewerTrackLabelPairedGeneAnnotation.style.bottom = (self.state.transcriptsTrackHeight/2 - 11) + 'px';
+                            }, 250);
                           });
                         });
                       }, 250);

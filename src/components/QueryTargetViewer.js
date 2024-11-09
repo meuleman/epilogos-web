@@ -1440,7 +1440,7 @@ class QueryTargetViewer extends Component {
     window.addEventListener('resize', this.resize);
     setTimeout(() => {
       if (this.state.panelViewsLocked) {
-        if (this.queryTargetLockedHgView && this.state.queryTargetLockedHgViewconf && this.state.queryTargetLockedHgViewconf.views) {
+        if (this.queryTargetLockedHgView && this.state.queryTargetLockedHgViewconf && this.state.queryTargetLockedHgViewconf.views && this.queryTargetLockedHgView.api) {
           this.queryTargetLockedHgView.api.on('location', (event) => { 
             this.onQueryLocationChange(event);
           }, this.state.queryTargetLockedHgViewconf.views[0].uid);
@@ -1450,7 +1450,7 @@ class QueryTargetViewer extends Component {
         }
       }
       else {
-        if (this.queryTargetUnlockedHgView && this.state.queryTargetUnlockedHgViewconf && this.state.queryTargetUnlockedHgViewconf.views) {
+        if (this.queryTargetUnlockedHgView && this.state.queryTargetUnlockedHgViewconf && this.state.queryTargetUnlockedHgViewconf.views && this.queryTargetUnlockedHgView.api) {
           this.queryTargetUnlockedHgView.api.on('location', (event) => { 
             this.onQueryLocationChange(event);
           }, this.state.queryTargetUnlockedHgViewconf.views[0].uid);
@@ -3011,6 +3011,6 @@ QueryTargetViewer.propTypes = {
   queryRegionIndicatorData: PropTypes.object,
   globalMinMax: PropTypes.object,
   copyClipboardText: PropTypes.func,
-  epilogosContentHeight: PropTypes.number,
+  epilogosContentHeight: PropTypes.string,
   onHitSelect: PropTypes.func,
 };

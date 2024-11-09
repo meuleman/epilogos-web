@@ -1174,7 +1174,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 //
 export const uuidQueryPromise = function(fn, self) {
   const hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
-  console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
   return axios.get(hgUUIDQueryURL).then((res) => {
     if (res.data && res.data.results && res.data.results[0]) {
       return res.data.results[0].uuid;
