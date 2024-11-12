@@ -2,6 +2,8 @@ import React from "react";
 
 import axios from "axios";
 
+import { bisector } from 'd3-array';
+
 // Copy data to clipboard
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
@@ -49,6 +51,49 @@ export const getJsonFromUrl = () => {
 export const stripQueryStringAndHashFromPath = (url) => { 
   return url.split("?")[0].split("#")[0];
 }
+
+export const chrToAbs = (chrom, chromPos, chromInfo) => chromInfo.chrPositions[chrom].pos + chromPos;
+
+export const chromInfoBisector = bisector((d) => d.pos).left;
+
+export const absToChr = (absPosition, chromInfo) => {
+  if (!chromInfo || !chromInfo.cumPositions || !chromInfo.cumPositions.length) {
+    return null;
+  }
+
+  let insertPoint = chromInfoBisector(chromInfo.cumPositions, absPosition);
+  const lastChr = chromInfo.cumPositions[chromInfo.cumPositions.length - 1].chr;
+  const lastLength = chromInfo.chromLengths[lastChr];
+
+  insertPoint -= insertPoint > 0 && 1;
+
+  let chrPosition = Math.floor(
+    absPosition - chromInfo.cumPositions[insertPoint].pos,
+  );
+  let offset = 0;
+
+  if (chrPosition < 0) {
+    // before the start of the genome
+    offset = chrPosition - 1;
+    chrPosition = 1;
+  }
+
+  if (
+    insertPoint === chromInfo.cumPositions.length - 1 &&
+    chrPosition > lastLength
+  ) {
+    // beyond the last chromosome
+    offset = chrPosition - lastLength;
+    chrPosition = lastLength;
+  }
+
+  return [
+    chromInfo.cumPositions[insertPoint].chr,
+    chrPosition,
+    offset,
+    insertPoint,
+  ];
+};
 
 export const isValidChromosome = (assembly, chromosomeName) => {
   let chromosomeBounds = Constants.assemblyBounds[assembly];

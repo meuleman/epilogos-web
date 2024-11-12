@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
 
 #root {
-  height: calc(100vh);
+  height: calc(100vh - 56px);
   width: calc(100vw);
   overflow: hidden;
 }
@@ -95,6 +95,10 @@ em {
 .epilogos-portal-container {}
 
 .epilogos-portal-container-mobiledevice {}
+
+.epilogos-viewer-container {
+  position: fixed;
+}
 
 .epilogos-viewer-container-overlay, .epilogos-portal-container-overlay {
   position: absolute;
@@ -657,6 +661,7 @@ li {
 
 .higlass-content-mobiledevice {
   z-index: 499 !important;
+  /* position: fixed; */
 }
 
 .higlass-query-content {
@@ -988,6 +993,10 @@ li {
 
 .epilogos-viewer-container-parent {
   overflow: hidden;
+}
+
+.epilogos-viewer-container-mobile {
+  /* padding-top: 55px; */
 }
 
 .epilogos-viewer-search-input {

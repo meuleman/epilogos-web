@@ -335,8 +335,17 @@ class QueryTargetViewer extends Component {
     // }
 
     this.jumpToTargetRegionByIdx = this.debounce((hitIdx) => {
-      const position = this.props.hits[hitIdx].position;
-      this.jumpToTargetRegion(position, null);
+      try {
+        const position = this.props.hits[hitIdx].position;
+        this.jumpToTargetRegion(position, null);
+      } catch (error) {
+        console.log(`[QueryTargetViewer] jumpToTargetRegionByIdx error ${error}`);
+        console.log(`[QueryTargetViewer] jumpToTargetRegionByIdx hitIdx ${hitIdx}`);
+        // console.log(`[QueryTargetViewer] jumpToTargetRegionByIdx hits ${JSON.stringify(this.props.hits)}`);
+        // console.log(`[QueryTargetViewer] jumpToTargetRegionByIdx this.state.selectedHitIdx ${JSON.stringify(this.state.selectedHitIdx)}`);
+        // const fallbackPosition = this.props.hits[0].position;
+        // this.jumpToTargetRegion(fallbackPosition, 1);
+      }
     }, 50);
 
     this.updateQueryRegionLabel = this.debounce((newLeft, newRight) => {
@@ -1448,6 +1457,9 @@ class QueryTargetViewer extends Component {
             this.onTargetLocationChange(event);
           }, this.state.queryTargetLockedHgViewconf.views[1].uid);
         }
+        // setTimeout(() => {
+        //   this.jumpToTargetRegionByIdx(this.state.selectedHitIdx - 1);
+        // }, 5000);
       }
       else {
         if (this.queryTargetUnlockedHgView && this.state.queryTargetUnlockedHgViewconf && this.state.queryTargetUnlockedHgViewconf.views && this.queryTargetUnlockedHgView.api) {
@@ -2054,6 +2066,7 @@ class QueryTargetViewer extends Component {
   }
 
   jumpToTargetRegion = (position, rowIndex) => {
+    console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
     if (rowIndex && rowIndex !== this.state.selectedHitIdx) {
       // console.log(`jumpToTargetRegion > rowIndex ${rowIndex}`);
       // console.log(`jumpToTargetRegion > old ${this.state.selectedHitIdx}`);
@@ -2097,6 +2110,7 @@ class QueryTargetViewer extends Component {
     }
 
     function updateQueryTargetLockedHgViewconf(chromInfo, self) {
+      console.log(`updateQueryTargetLockedHgViewconf`);
       // recover query range
       // console.log(`self.props.queryRegion ${JSON.stringify(self.props.queryRegion)}`);
       // console.log(`self.state.queryRegion ${JSON.stringify(self.state.queryRegion)}`);
@@ -2198,6 +2212,7 @@ class QueryTargetViewer extends Component {
     }
 
     function updateQueryTargetUnlockedHgViewconf(chromInfo, self) {
+      // console.log(`updateQueryTargetUnlockedHgViewconf`);
       // recover query range
       const queryChromosome = self.props.queryRegion.left.chr;
       const queryStart = parseInt(self.props.queryRegion.left.start);
@@ -2751,12 +2766,14 @@ class QueryTargetViewer extends Component {
                   <div className="target-hg-content" style={nullHgStyle} />}
           </div>
 
+          { /* Note: queryRegion coordinates may be off by 200 bases on initial load, so this check is temporarily disabled to allow region labels to be displayed */ }
+
           { (
               this.state.queryRegion.left.chr === this.props.queryRegionIndicatorData.chromosome 
-              && 
-              this.state.queryRegion.left.start === this.props.queryRegionIndicatorData.start 
-              && 
-              this.state.queryRegion.right.stop === this.props.queryRegionIndicatorData.stop
+              // && 
+              // this.state.queryRegion.left.start === this.props.queryRegionIndicatorData.start 
+              // && 
+              // this.state.queryRegion.right.stop === this.props.queryRegionIndicatorData.stop
               &&
               showRegionIndicatorLabels(this.state.leftIndicatorPx - this.props.drawerWidth,
                                         this.state.rightIndicatorPx - this.props.drawerWidth, 

@@ -197,10 +197,319 @@ export const genomesForSettingsDrawer = {
   },
 };
 
+//
+// Chromosomes
+//
+
+export const chromInfo = {
+  'hg19': {"cumPositions":[{"id":0,"chr":"chr1","pos":0},{"id":1,"chr":"chr2","pos":249250800},{"id":2,"chr":"chr3","pos":492450200},{"id":3,"chr":"chr4","pos":690472800},{"id":4,"chr":"chr5","pos":881627200},{"id":5,"chr":"chr6","pos":1062542600},{"id":6,"chr":"chr7","pos":1233657800},{"id":7,"chr":"chr8","pos":1392796600},{"id":8,"chr":"chr9","pos":1539160800},{"id":9,"chr":"chr10","pos":1680374400},{"id":10,"chr":"chr11","pos":1815909200},{"id":11,"chr":"chr12","pos":1950915800},{"id":12,"chr":"chr13","pos":2084767800},{"id":13,"chr":"chr14","pos":2199937800},{"id":14,"chr":"chr15","pos":2307287400},{"id":15,"chr":"chr16","pos":2409818800},{"id":16,"chr":"chr17","pos":2500173600},{"id":17,"chr":"chr18","pos":2581369000},{"id":18,"chr":"chr19","pos":2659446400},{"id":19,"chr":"chr20","pos":2718575400},{"id":20,"chr":"chr21","pos":2781601000},{"id":21,"chr":"chr22","pos":2829731000},{"id":22,"chr":"chrX","pos":2881035600},{"id":23,"chr":"chrY","pos":3036306200}],"chrPositions":{"chr1":{"id":0,"chr":"chr1","pos":0},"chr2":{"id":1,"chr":"chr2","pos":249250800},"chr3":{"id":2,"chr":"chr3","pos":492450200},"chr4":{"id":3,"chr":"chr4","pos":690472800},"chr5":{"id":4,"chr":"chr5","pos":881627200},"chr6":{"id":5,"chr":"chr6","pos":1062542600},"chr7":{"id":6,"chr":"chr7","pos":1233657800},"chr8":{"id":7,"chr":"chr8","pos":1392796600},"chr9":{"id":8,"chr":"chr9","pos":1539160800},"chr10":{"id":9,"chr":"chr10","pos":1680374400},"chr11":{"id":10,"chr":"chr11","pos":1815909200},"chr12":{"id":11,"chr":"chr12","pos":1950915800},"chr13":{"id":12,"chr":"chr13","pos":2084767800},"chr14":{"id":13,"chr":"chr14","pos":2199937800},"chr15":{"id":14,"chr":"chr15","pos":2307287400},"chr16":{"id":15,"chr":"chr16","pos":2409818800},"chr17":{"id":16,"chr":"chr17","pos":2500173600},"chr18":{"id":17,"chr":"chr18","pos":2581369000},"chr19":{"id":18,"chr":"chr19","pos":2659446400},"chr20":{"id":19,"chr":"chr20","pos":2718575400},"chr21":{"id":20,"chr":"chr21","pos":2781601000},"chr22":{"id":21,"chr":"chr22","pos":2829731000},"chrX":{"id":22,"chr":"chrX","pos":2881035600},"chrY":{"id":23,"chr":"chrY","pos":3036306200}},"totalLength":3095679800,"chromLengths":{"chr1":249250800,"chr2":243199400,"chr3":198022600,"chr4":191154400,"chr5":180915400,"chr6":171115200,"chr7":159138800,"chr8":146364200,"chr9":141213600,"chr10":135534800,"chr11":135006600,"chr12":133852000,"chr13":115170000,"chr14":107349600,"chr15":102531400,"chr16":90354800,"chr17":81195400,"chr18":78077400,"chr19":59129000,"chr20":63025600,"chr21":48130000,"chr22":51304600,"chrX":155270600,"chrY":59373600}},
+  'hg38': {
+    "cumPositions" : [
+      {
+        "id" : 0,
+        "chr" : "chr1",
+        "pos" : 0
+      },
+      {
+        "id" : 1,
+        "chr" : "chr2",
+        "pos" : 248956422
+      },
+      {
+        "id" : 2,
+        "chr" : "chr3",
+        "pos" : 491149951
+      },
+      {
+        "id" : 3,
+        "chr" : "chr4",
+        "pos" : 689445510
+      },
+      {
+        "id" : 4,
+        "chr" : "chr5",
+        "pos" : 879660065
+      },
+      {
+        "id" : 5,
+        "chr" : "chr6",
+        "pos" : 1061198324
+      },
+      {
+        "id" : 6,
+        "chr" : "chr7",
+        "pos" : 1232004303
+      },
+      {
+        "id" : 7,
+        "chr" : "chr8",
+        "pos" : 1391350276
+      },
+      {
+        "id" : 8,
+        "chr" : "chr9",
+        "pos" : 1536488912
+      },
+      {
+        "id" : 9,
+        "chr" : "chr10",
+        "pos" : 1674883629
+      },
+      {
+        "id" : 10,
+        "chr" : "chr11",
+        "pos" : 1808681051
+      },
+      {
+        "id" : 11,
+        "chr" : "chr12",
+        "pos" : 1943767673
+      },
+      {
+        "id" : 12,
+        "chr" : "chr13",
+        "pos" : 2077042982
+      },
+      {
+        "id" : 13,
+        "chr" : "chr14",
+        "pos" : 2191407310
+      },
+      {
+        "id" : 14,
+        "chr" : "chr15",
+        "pos" : 2298451028
+      },
+      {
+        "id" : 15,
+        "chr" : "chr16",
+        "pos" : 2400442217
+      },
+      {
+        "id" : 16,
+        "chr" : "chr17",
+        "pos" : 2490780562
+      },
+      {
+        "id" : 17,
+        "chr" : "chr18",
+        "pos" : 2574038003
+      },
+      {
+        "id" : 18,
+        "chr" : "chr19",
+        "pos" : 2654411288
+      },
+      {
+        "id" : 19,
+        "chr" : "chr20",
+        "pos" : 2713028904
+      },
+      {
+        "id" : 20,
+        "chr" : "chr21",
+        "pos" : 2777473071
+      },
+      {
+        "id" : 21,
+        "chr" : "chr22",
+        "pos" : 2824183054
+      },
+      {
+        "id" : 22,
+        "chr" : "chrX",
+        "pos" : 2875001522
+      },
+      {
+        "id" : 23,
+        "chr" : "chrY",
+        "pos" : 3031042417
+      }
+    ],
+    "chrPositions" : {
+      "chr1" : {
+        "id" : 0,
+        "chr" : "chr1",
+        "pos" : 0
+      },
+      "chr2" : {
+        "id" : 1,
+        "chr" : "chr2",
+        "pos" : 248956422
+      },
+      "chr3" : {
+        "id" : 2,
+        "chr" : "chr3",
+        "pos" : 491149951
+      },
+      "chr4" : {
+        "id" : 3,
+        "chr" : "chr4",
+        "pos" : 689445510
+      },
+      "chr5" : {
+        "id" : 4,
+        "chr" : "chr5",
+        "pos" : 879660065
+      },
+      "chr6" : {
+        "id" : 5,
+        "chr" : "chr6",
+        "pos" : 1061198324
+      },
+      "chr7" : {
+        "id" : 6,
+        "chr" : "chr7",
+        "pos" : 1232004303
+      },
+      "chr8" : {
+        "id" : 7,
+        "chr" : "chr8",
+        "pos" : 1391350276
+      },
+      "chr9" : {
+        "id" : 8,
+        "chr" : "chr9",
+        "pos" : 1536488912
+      },
+      "chr10" : {
+        "id" : 9,
+        "chr" : "chr10",
+        "pos" : 1674883629
+      },
+      "chr11" : {
+        "id" : 10,
+        "chr" : "chr11",
+        "pos" : 1808681051
+      },
+      "chr12" : {
+        "id" : 11,
+        "chr" : "chr12",
+        "pos" : 1943767673
+      },
+      "chr13" : {
+        "id" : 12,
+        "chr" : "chr13",
+        "pos" : 2077042982
+      },
+      "chr14" : {
+        "id" : 13,
+        "chr" : "chr14",
+        "pos" : 2191407310
+      },
+      "chr15" : {
+        "id" : 14,
+        "chr" : "chr15",
+        "pos" : 2298451028
+      },
+      "chr16" : {
+        "id" : 15,
+        "chr" : "chr16",
+        "pos" : 2400442217
+      },
+      "chr17" : {
+        "id" : 16,
+        "chr" : "chr17",
+        "pos" : 2490780562
+      },
+      "chr18" : {
+        "id" : 17,
+        "chr" : "chr18",
+        "pos" : 2574038003
+      },
+      "chr19" : {
+        "id" : 18,
+        "chr" : "chr19",
+        "pos" : 2654411288
+      },
+      "chr20" : {
+        "id" : 19,
+        "chr" : "chr20",
+        "pos" : 2713028904
+      },
+      "chr21" : {
+        "id" : 20,
+        "chr" : "chr21",
+        "pos" : 2777473071
+      },
+      "chr22" : {
+        "id" : 21,
+        "chr" : "chr22",
+        "pos" : 2824183054
+      },
+      "chrX" : {
+        "id" : 22,
+        "chr" : "chrX",
+        "pos" : 2875001522
+      },
+      "chrY" : {
+        "id" : 23,
+        "chr" : "chrY",
+        "pos" : 3031042417
+      }
+    },
+    "totalLength" : 3088269832,
+    "chromLengths" : {
+      "chr1" : 248956422,
+      "chr2" : 242193529,
+      "chr3" : 198295559,
+      "chr4" : 190214555,
+      "chr5" : 181538259,
+      "chr6" : 170805979,
+      "chr7" : 159345973,
+      "chr8" : 145138636,
+      "chr9" : 138394717,
+      "chr10" : 133797422,
+      "chr11" : 135086622,
+      "chr12" : 133275309,
+      "chr13" : 114364328,
+      "chr14" : 107043718,
+      "chr15" : 101991189,
+      "chr16" : 90338345,
+      "chr17" : 83257441,
+      "chr18" : 80373285,
+      "chr19" : 58617616,
+      "chr20" : 64444167,
+      "chr21" : 46709983,
+      "chr22" : 50818468,
+      "chrX" : 156040895,
+      "chrY" : 57227415
+    }
+  },
+  'mm10': {"cumPositions":[{"id":0,"chr":"chr1","pos":0},{"id":1,"chr":"chr2","pos":195472000},{"id":2,"chr":"chr3","pos":377585400},{"id":3,"chr":"chr4","pos":537625200},{"id":4,"chr":"chr5","pos":694133400},{"id":5,"chr":"chr6","pos":845968200},{"id":6,"chr":"chr7","pos":995704800},{"id":7,"chr":"chr8","pos":1141146400},{"id":8,"chr":"chr9","pos":1270547800},{"id":9,"chr":"chr10","pos":1395143000},{"id":10,"chr":"chr11","pos":1525838000},{"id":11,"chr":"chr12","pos":1647920600},{"id":12,"chr":"chr13","pos":1768049800},{"id":13,"chr":"chr14","pos":1888471600},{"id":14,"chr":"chr15","pos":2013374000},{"id":15,"chr":"chr16","pos":2117417800},{"id":16,"chr":"chr17","pos":2215625600},{"id":17,"chr":"chr18","pos":2310613000},{"id":18,"chr":"chr19","pos":2401315800},{"id":19,"chr":"chrX","pos":2462747400},{"id":20,"chr":"chrY","pos":2633778800}],"chrPositions":{"chr1":{"id":0,"chr":"chr1","pos":0},"chr2":{"id":1,"chr":"chr2","pos":195472000},"chr3":{"id":2,"chr":"chr3","pos":377585400},"chr4":{"id":3,"chr":"chr4","pos":537625200},"chr5":{"id":4,"chr":"chr5","pos":694133400},"chr6":{"id":5,"chr":"chr6","pos":845968200},"chr7":{"id":6,"chr":"chr7","pos":995704800},"chr8":{"id":7,"chr":"chr8","pos":1141146400},"chr9":{"id":8,"chr":"chr9","pos":1270547800},"chr10":{"id":9,"chr":"chr10","pos":1395143000},"chr11":{"id":10,"chr":"chr11","pos":1525838000},"chr12":{"id":11,"chr":"chr12","pos":1647920600},"chr13":{"id":12,"chr":"chr13","pos":1768049800},"chr14":{"id":13,"chr":"chr14","pos":1888471600},"chr15":{"id":14,"chr":"chr15","pos":2013374000},"chr16":{"id":15,"chr":"chr16","pos":2117417800},"chr17":{"id":16,"chr":"chr17","pos":2215625600},"chr18":{"id":17,"chr":"chr18","pos":2310613000},"chr19":{"id":18,"chr":"chr19","pos":2401315800},"chrX":{"id":19,"chr":"chrX","pos":2462747400},"chrY":{"id":20,"chr":"chrY","pos":2633778800}},"totalLength":2725523600,"chromLengths":{"chr1":195472000,"chr2":182113400,"chr3":160039800,"chr4":156508200,"chr5":151834800,"chr6":149736600,"chr7":145441600,"chr8":129401400,"chr9":124595200,"chr10":130695000,"chr11":122082600,"chr12":120129200,"chr13":120421800,"chr14":124902400,"chr15":104043800,"chr16":98207800,"chr17":94987400,"chr18":90702800,"chr19":61431600,"chrX":171031400,"chrY":91744800}},
+};
+
 export const genomeNotices = {
   'hg19': 'Chromatin state calls and 0-order background models are specific to the February 2009 human reference sequence (<em>GRCh37</em>/<em>hg19</em>), which was produced by the <a class="drawer-settings-section-body-link" href="https://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/" target="_blank">Genome Reference Consortium</a>. For more information about this assembly, see <a class="drawer-settings-section-body-link" href="https://www.ncbi.nlm.nih.gov/assembly/2758/" target="_blank">GRCh37</a> in the NCBI Assembly database.',
   'hg38': 'Chromatin state calls and 0-order background models are specific to the December 2013 human reference sequence (<em>GRCh38</em>/<em>hg38</em>), which was produced by the <a class="drawer-settings-section-body-link" href="https://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/" target="_blank">Genome Reference Consortium</a>. State calls are derived from a liftover of hg19 calls into hg38 space (non-reciprocally-mapped regions are discarded).',
   'mm10': 'Chromatin state calls and 0-order background models are specific to the December 2011 mouse reference sequence (<em>GRCm38</em>/<em>mm10</em>), which was produced by the <a class="drawer-settings-section-body-link" href="https://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/" target="_blank">Genome Reference Consortium</a>. Mouse state calls are obtained from the <a class="drawer-settings-section-body-link" href="http://chromosome.sdsc.edu/mouse/" target="_blank">Ren lab</a> and processed to remove call differences between sample replicates.'
+};
+
+export const higlassTranscriptsURLsByGenome = {
+  "hg19": {
+    "data": {
+      "type": "tabix",
+      "url": "https://d1y3bo4esmnv83.cloudfront.net/tabix/gencode.v19.annotation.hg19.gz",
+      "chromSizesUrl": "https://d1y3bo4esmnv83.cloudfront.net/hg19.meuleman.fixedBin.chrom.sizes",
+    },
+    "trackLabel": "GENCODE v19",
+  },
+  'hg38': {
+    "data": {
+      "type": "tabix",
+      "url": "https://d1y3bo4esmnv83.cloudfront.net/tabix/gencode.v38.annotation.gtf.higlass-transcripts.hgnc.090721.forceHGNC.gz",
+      "chromSizesUrl": "https://d1y3bo4esmnv83.cloudfront.net/hg38.meuleman.fixedBin.chrom.sizes",
+    },
+    "trackLabel": "GENCODE v38",
+  },
+  'mm10': {
+    "data": {
+      "type": "tabix",
+      "url": "https://d1y3bo4esmnv83.cloudfront.net/tabix/gencode.vM25.annotation.mm10.gz",
+      "chromSizesUrl": "https://d1y3bo4esmnv83.cloudfront.net/mm10.meuleman.fixedBin.chrom.sizes",
+    },
+    "trackLabel": "GENCODE vM25",
+  },
 };
 
 export const defaultSingleGroupGenomeKey = "hg19";

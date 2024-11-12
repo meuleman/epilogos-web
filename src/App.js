@@ -7,7 +7,7 @@ import * as Constants from "./Constants.js";
 import Portal from "./components/Portal.js";
 // import Viewer from "./components/Viewer.js";
 import Viewer from "./components/Viewer032123.js";
-import ViewerMobile from "./components/ViewerMobile.js";
+import ViewerMobile from "./components/ViewerMobile032123.js";
 
 // Mobile device detection
 import { isMobile } from 'react-device-detect';

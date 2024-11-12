@@ -879,20 +879,22 @@ class DrawerContent extends Component {
           advancedOptionsSectionBody.push(samplesSection);
 
           // gene annotation mode (cv/ht)
-          let geneAnnotationSectionBody = self.geneAnnotationSectionBody();
-          let geneAnnotationSection = (
-            <div key="viewer-gatt-section" className="drawer-settings-section drawer-settings-section-top">
-              <div key="viewer-gatt-section-header" className="drawer-settings-section-header">
-                <div key="viewer-gatt-section-header-text" className="drawer-settings-section-header-text">Gene annotations</div>
-                <div key="viewer-gatt-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("gatt")}} style={{visibility:(self.state.hideshowWidgetIsVisible.gatt)?"visible":"hidden"}}>{!self.state.hideshow.gatt ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
-              </div>
-              <div key="viewer-gatt-section-body" className="drawer-settings-section-body">
-                <Collapse isOpen={self.state.hideshow.gatt}>
-                  {geneAnnotationSectionBody}
-                </Collapse>
-              </div>
-            </div>);
-          advancedOptionsSectionBody.push(geneAnnotationSection);
+          if (!self.props.isMobile) {
+            let geneAnnotationSectionBody = self.geneAnnotationSectionBody();
+            let geneAnnotationSection = (
+              <div key="viewer-gatt-section" className="drawer-settings-section drawer-settings-section-top">
+                <div key="viewer-gatt-section-header" className="drawer-settings-section-header">
+                  <div key="viewer-gatt-section-header-text" className="drawer-settings-section-header-text">Gene annotations</div>
+                  <div key="viewer-gatt-section-header-hideshow" className="drawer-settings-section-header-hideshow box-button box-button-small" onClick={() => {self.toggleSettings("gatt")}} style={{visibility:(self.state.hideshowWidgetIsVisible.gatt)?"visible":"hidden"}}>{!self.state.hideshow.gatt ? <FaPlus size="0.9em" /> : <FaMinus size="0.9em" />}</div>
+                </div>
+                <div key="viewer-gatt-section-body" className="drawer-settings-section-body">
+                  <Collapse isOpen={self.state.hideshow.gatt}>
+                    {geneAnnotationSectionBody}
+                  </Collapse>
+                </div>
+              </div>);
+            advancedOptionsSectionBody.push(geneAnnotationSection);
+          }
 
           // complexity (level 1/2/3/stacked)
           let complexitySectionBody = self.complexitySectionBody();
@@ -1478,4 +1480,5 @@ DrawerContent.propTypes = {
   updateActiveTab: PropTypes.func,
   viewParams: PropTypes.object,
   isInternalProductionSite: PropTypes.bool,
+  isMobile: PropTypes.bool,
 }

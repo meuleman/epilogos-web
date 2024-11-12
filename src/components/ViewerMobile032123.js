@@ -34,7 +34,8 @@ import GeneSearch from './GeneSearch/GeneSearch';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
 // Drawer content
-import DrawerContent from "./DrawerContent";
+// import DrawerContent from "./DrawerContent";
+import DrawerContent from "./DrawerContent032123";
 import { slide as Drawer } from 'react-burger-menu';
 
 // Validate strings (URLs etc.)
@@ -64,7 +65,7 @@ class ViewerMobile extends Component {
       advancedOptionsVisible: false,
       hgViewKey: 0,
       hgViewconf: {},
-      hgViewParams: Constants.viewerHgViewParameters,
+      hgViewParams: {...Constants.viewerHgViewParameters},
       tempHgViewParams: {...Constants.viewerHgViewParameters},
       searchInputLocationBeingChanged: false,
       autocompleteIsVisible: false,
@@ -574,14 +575,24 @@ class ViewerMobile extends Component {
       }
     }
     //console.log(`orientationIsPortrait ${orientationIsPortrait} (W ${windowInnerWidth} H ${windowInnerHeight})`);
-    
-    let epilogosViewerHeaderNavbarHamburgerFullWidth = (parseInt(document.getElementById("epilogos-viewer-hamburger-button").offsetWidth) + 15) + "px";
-    let epilogosViewerHeaderNavbarBrandFullWidth = (parseInt(document.getElementById("epilogos-viewer-brand").offsetWidth) + 15) + "px";
+   
+    const hamburgerButton = document.getElementById("epilogos-viewer-hamburger-button");
+    if (!hamburgerButton) return;
+
+    const viewerBrand = document.getElementById("epilogos-viewer-brand");
+    if (!viewerBrand) return;
+
+    let epilogosViewerHeaderNavbarHamburgerFullWidth = (parseInt(hamburgerButton.offsetWidth) + 15) + "px";
+    let epilogosViewerHeaderNavbarBrandFullWidth = (parseInt(viewerBrand.offsetWidth) + 15) + "px";
     let epilogosViewerHeaderNavbarAvailableSpace = parseInt(windowInnerWidth) - parseInt(epilogosViewerHeaderNavbarHamburgerFullWidth) - parseInt(epilogosViewerHeaderNavbarBrandFullWidth);
-    //console.log(`epilogosViewerHeaderNavbarAvailableSpace ${epilogosViewerHeaderNavbarAvailableSpace} => ${windowInnerWidth} - ${epilogosViewerHeaderNavbarHamburgerFullWidth} - ${epilogosViewerHeaderNavbarBrandFullWidth}`);
+    // eslint-disable-next-line no-console
+    // console.log(`epilogosViewerHeaderNavbarAvailableSpace ${epilogosViewerHeaderNavbarAvailableSpace} => ${windowInnerWidth} - ${epilogosViewerHeaderNavbarHamburgerFullWidth} - ${epilogosViewerHeaderNavbarBrandFullWidth}`);
     let autocompleteIsVisible = (epilogosViewerHeaderNavbarAvailableSpace > 320);
-    
-    let epilogosViewerHeaderNavbarHeight = (parseInt(document.getElementById("epilogos-viewer-container-navbar").offsetHeight)) + "px";
+   
+    const navbar = document.getElementById("epilogos-viewer-container-navbar");
+    if (!navbar) return;
+
+    let epilogosViewerHeaderNavbarHeight = (parseInt(navbar.offsetHeight)) + "px";
     let epilogosViewerDataAvailableSpace = (parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) + 8) + "px";
     //console.log(`epilogosViewerDataAvailableSpace ${epilogosViewerDataAvailableSpace} => ${windowInnerHeight} - ${epilogosViewerHeaderNavbarHeight}`);
     
@@ -1055,7 +1066,11 @@ class ViewerMobile extends Component {
           hgViewUpdatePositionForChromInfo(chromInfo, this);
         })
         .catch((err) => {
-          throw new Error(`Error - [hgViewUpdatePosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
+          const newChromInfo = Object.assign({}, Constants.chromInfo[params.genome]);
+          newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
+          newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
+          this.chromInfoCache[params.genome] = newChromInfo;
+          // throw new Error(`Error - [hgViewUpdatePosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
     
@@ -1295,7 +1310,11 @@ class ViewerMobile extends Component {
           updateViewerURLWithLocationForChromInfo(chromInfo, this);
         })
         .catch((err) => {
-          throw new Error(`Error - [updateViewerURLWithLocation] could not retrieve chromosome information -  ${JSON.stringify(err)}`);
+          const newChromInfo = Object.assign({}, Constants.chromInfo[genome]);
+          newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
+          newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
+          this.chromInfoCache[genome] = newChromInfo;
+          // throw new Error(`Error - [updateViewerURLWithLocation] could not retrieve chromosome information -  ${JSON.stringify(err)}`);
         });
     }
 
@@ -1428,31 +1447,20 @@ class ViewerMobile extends Component {
               handleZoomPastExtentForChromInfo(chromInfo, this);
             })
             .catch((err) => {
-              throw new Error(`Error - [handleZoomPastExtentForChromInfo] could not retrieve chromosome information -  ${JSON.stringify(err)}`);
+              const newChromInfo = Object.assign({}, Constants.chromInfo[genome]);
+              newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
+              newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
+              this.chromInfoCache[genome] = newChromInfo;
+              // throw new Error(`Error - [handleZoomPastExtentForChromInfo] could not retrieve chromosome information -  ${JSON.stringify(err)}`);
             });
         }
-
-        // let chromSizesURL = this.getChromSizesURL(genome);
-        // ChromosomeInfo(chromSizesURL)
-        //   .then((chromInfo) => {
-        //     setTimeout(() => {
-        //       this.hgView.zoomTo(
-        //         this.state.hgViewconf.views[0].uid,
-        //         chromInfo.chrToAbs(["chr1", boundsLeft]),
-        //         chromInfo.chrToAbs(["chrY", boundsRight]),
-        //         chromInfo.chrToAbs(["chr1", boundsLeft]),
-        //         chromInfo.chrToAbs(["chrY", boundsRight]),
-        //         100
-        //       );
-        //     }, 0);
-        //   });
           
-        //console.log("this.viewerZoomPastExtentTimer set");
+        // console.log("this.viewerZoomPastExtentTimer set");
 
         setTimeout(() => { 
           this.viewerZoomPastExtentTimer = null; 
-          //console.log("this.viewerZoomPastExtentTimer *unset*"); 
-          //console.log("calling [updateViewerURL] from [handleZoomPastExtent]");
+          // console.log("this.viewerZoomPastExtentTimer *unset*"); 
+          // console.log("calling [updateViewerURL] from [handleZoomPastExtent]");
           this.updateViewerURL(this.state.tempHgViewParams.mode,
                                this.state.tempHgViewParams.genome,
                                this.state.tempHgViewParams.model,
@@ -1546,41 +1554,13 @@ class ViewerMobile extends Component {
       else {
         updateExemplarPosition();
       }
-      
-      //console.log("new settings", newGenome, newModel, newGroup, newComplexity, newMode);
-      // setTimeout(() => Helpers.updateExemplars(newGenome, newModel, newComplexity, newGroup, newSampleSet, this), 0);
-      
-      // //
-      // // when we load the browser, if the selected exemplar row URL parameter is 
-      // // set to a non-default value, then we delay opening the drawer to that item
-      // //
-      // if (this.state.selectedExemplarRowIdxOnLoad !== -1) {
-      //   setTimeout(() => {
-      //     this.setState({
-      //       drawerIsOpen: true,
-      //       drawerActiveTabOnOpen: this.state.activeTab,
-      //       drawerContentKey: this.state.drawerContentKey + 1,
-      //     }, () => {
-      //       const exemplarRowIndex = this.state.selectedExemplarRowIdxOnLoad;
-      //       const exemplarRegion = this.state.exemplarTableData[exemplarRowIndex - 1];
-      //       const exemplarRegionType = Constants.applicationRegionTypes.exemplars;
-      //       setTimeout(() => {
-      //         //console.log(`${exemplarRegion.position}, ${exemplarRegionType}, ${exemplarRowIndex}, ${exemplarRegion.strand}`);
-      //         this.jumpToRegion(exemplarRegion.position, exemplarRegionType, exemplarRowIndex, exemplarRegion.strand);
-      //         this.setState({
-      //           selectedExemplarRowIdxOnLoad: -1
-      //         });
-      //       }, 0);
-      //     });
-      //   }, 2000);
-      // }
-      
+
       //
       // return a Promise to request a UUID from a filename pattern
       //
       const uuidQueryPromise = function(fn, self) {
         let hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
-        //console.log(`uuidQueryPromise ${hgUUIDQueryURL}`);
+        // console.log(`uuidQueryPromise ${hgUUIDQueryURL}`);
         return axios.get(hgUUIDQueryURL).then((res) => {
           if (res.data && res.data.results && res.data.results[0]) {
             return res.data.results[0].uuid;
@@ -1590,12 +1570,12 @@ class ViewerMobile extends Component {
             err.response = {};
             err.response.status = "404";
             err.response.statusText = "No tileset data found for specified UUID";
-            //throw {response:{status:"404", statusText:"No tileset data found for specified UUID"}};
+            // throw {response:{status:"404", statusText:"No tileset data found for specified UUID"}};
             throw err;
           }
         })
         .catch((err) => {
-          //console.log(JSON.stringify(err));
+          // console.log(JSON.stringify(err));
           let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
           self.setState({
             overlayMessage: msg,
@@ -1700,21 +1680,6 @@ class ViewerMobile extends Component {
         const newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
         const newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
         const newEpilogosTrackAvsBFilename = pairedEpilogosTrackFilenames.AvsB;
-
-        // let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
-        // let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
-        // let newEpilogosTrackAvsBFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-        // if (newSampleSet === "vC") {
-        //   newEpilogosTrackAFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
-        // else if (newSampleSet === "vF") {
-        //   const modSampleSet = "vE";
-        //   newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
         
         //
         // query for UUIDs
@@ -1784,7 +1749,10 @@ class ViewerMobile extends Component {
                 res.data.views[0].initialYDomain = [absLeft, absRight];
                 // update track heights -- requires preknowledge of track order from template
                 let windowInnerHeight = document.documentElement.clientHeight + "px";
-                let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                let allEpilogosTracksHeight = parseInt(windowInnerHeight) 
+                  - parseInt(newHgViewTrackChromosomeHeight) 
+                  - parseInt(newHgViewTrackGeneAnnotationsHeight) 
+                  - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                 let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
                 let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
                 res.data.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
@@ -1838,12 +1806,6 @@ class ViewerMobile extends Component {
                   case "ht": {
                     res.data.views[0].tracks.top[4].options.startCollapsed = false;
                     res.data.views[0].tracks.top[4].options.showToggleTranscriptsButton = false;
-                    // res.data.views[0].tracks.top[4].options.backgroundColor = "white";
-                    // res.data.views[0].tracks.top[4].options.labelStrokePlusStrandColor = "#0000ff";
-                    // res.data.views[0].tracks.top[4].options.labelStrokeMinusStrandColor = "#ff0000";
-                    // res.data.views[0].tracks.top[4].options.labelBackgroundPlusStrandColor = "#0000ff";
-                    // res.data.views[0].tracks.top[4].options.labelBackgroundMinusStrandColor = "#ff0000";
-                    // res.data.views[0].tracks.top[4].options.labelFontColor = "#ffffff";
                     res.data.views[0].tracks.top[4].tilesetUid = newTranscriptsUUID;
                     res.data.views[0].tracks.top[4].name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[4].options.name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
@@ -1854,12 +1816,32 @@ class ViewerMobile extends Component {
                     res.data.views[0].tracks.top[4].options.utrColor = "#aFaFaF";
                     res.data.views[0].tracks.top[4].options.plusStrandColor = "#111111";
                     res.data.views[0].tracks.top[4].options.minusStrandColor = "#111111";
-                    allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(self.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                    allEpilogosTracksHeight = parseInt(windowInnerHeight) 
+                      - parseInt(newHgViewTrackChromosomeHeight) 
+                      - parseInt(self.state.transcriptsTrackHeight) 
+                      - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                     singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
                     pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
                     res.data.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
                     res.data.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
                     res.data.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
+                    switch (newGenome) {
+                      case "hg19":
+                      case "hg38":
+                      case "mm10":
+                        res.data.views[0].tracks.top[4].data = JSON.parse(JSON.stringify(Constants.higlassTranscriptsURLsByGenome[newGenome].data));
+                        delete res.data.views[0].tracks.top[4].tilesetUid;
+                        delete res.data.views[0].tracks.top[4].server;
+                        delete res.data.views[0].tracks.top[4].created;
+                        delete res.data.views[0].tracks.top[4].project;
+                        delete res.data.views[0].tracks.top[4].project_name;
+                        delete res.data.views[0].tracks.top[4].description;
+                        delete res.data.views[0].tracks.top[4].header;
+                        delete res.data.views[0].tracks.top[4].position;
+                        break;
+                      default:
+                        break;
+                    }
                     break;
                   }
                   default: {
@@ -1957,136 +1939,13 @@ class ViewerMobile extends Component {
                     updateViewerStateForPairedModeAndChromInfo(chromInfo, this);
                   })
                   .catch((err) => {
-                    throw new Error(`Error - [triggerUpdate] could not retrieve chromosome information (paired mode) -  ${JSON.stringify(err)}`);
+                    const newChromInfo = Object.assign({}, Constants.chromInfo[newGenome]);
+                    newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
+                    newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
+                    this.chromInfoCache[newGenome] = newChromInfo;
+                    // throw new Error(`Error - [triggerUpdate] could not retrieve chromosome information (paired mode) -  ${JSON.stringify(err)}`);
                   });
               }
-
-              // let chromSizesURL = this.getChromSizesURL(newGenome);
-              // //console.log("chromSizesURL", chromSizesURL);
-              // ChromosomeInfo(chromSizesURL)
-              //   .then((chromInfo) => {
-              //     //console.log("chromInfo", chromInfo);
-              //     //
-              //     // update viewconf views[0] initialXDomain and initialYDomain 
-              //     //
-              //     // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
-              //     //
-              //     if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-              //       chrLeft = Constants.defaultApplicationPositions[newGenome].chr;
-              //       chrRight = Constants.defaultApplicationPositions[newGenome].chr;
-              //       start = Constants.defaultApplicationPositions[newGenome].start;
-              //       stop = Constants.defaultApplicationPositions[newGenome].stop;
-              //     }
-              //     if (start > chromInfo.chromLengths[chrLeft]) {
-              //       start = chromInfo.chromLengths[chrLeft] - 10000;
-              //     }
-              //     if (stop > chromInfo.chromLengths[chrRight]) {
-              //       stop = chromInfo.chromLengths[chrRight] - 1000;
-              //     }
-              //     let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
-              //     let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
-              //     //console.log(chrLeft, start, absLeft);
-              //     //console.log(chrRight, stop, absRight);
-              //     res.data.views[0].initialXDomain = [absLeft, absRight];
-              //     res.data.views[0].initialYDomain = [absLeft, absRight];
-              //     // update track heights -- requires preknowledge of track order from template
-              //     //let windowInnerHeight = document.documentElement.clientHeight + "px";
-              //     let allEpilogosTracksHeight = (!this.state.orientationIsPortrait) ? parseInt(windowInnerHeight) - 36 : parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - 36; // 36 is the navbar height
-              //     let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
-              //     let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
-              //     res.data.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
-              //     res.data.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
-              //     res.data.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
-              //     res.data.views[0].tracks.top[3].height = newHgViewTrackChromosomeHeight;
-              //     res.data.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
-              //     // update track display options to fix label bug
-              //     res.data.views[0].tracks.top[0].options.labelPosition = "topLeft";
-              //     res.data.views[0].tracks.top[0].options.labelTextOpacity = 0.0;
-              //     res.data.views[0].tracks.top[0].options.labelBackgroundOpacity = 0.0;
-              //     res.data.views[0].tracks.top[0].options.labelColor = "white";
-              //     // update track names
-              //     res.data.views[0].tracks.top[0].name = newEpilogosTrackAFilename;
-              //     res.data.views[0].tracks.top[0].options.name = newEpilogosTrackAFilename;
-              //     res.data.views[0].tracks.top[1].name = newEpilogosTrackBFilename;
-              //     res.data.views[0].tracks.top[1].options.name = newEpilogosTrackBFilename;
-              //     res.data.views[0].tracks.top[2].name = newEpilogosTrackAvsBFilename;
-              //     res.data.views[0].tracks.top[2].options.name = newEpilogosTrackAvsBFilename;
-              //     // update track UUIDs
-              //     res.data.views[0].tracks.top[0].tilesetUid = newEpilogosTrackAUUID;
-              //     res.data.views[0].tracks.top[1].tilesetUid = newEpilogosTrackBUUID;
-              //     res.data.views[0].tracks.top[2].tilesetUid = newEpilogosTrackAvsBUUID;
-              //     res.data.views[0].tracks.top[3].tilesetUid = newChromsizesUUID;
-              //     res.data.views[0].tracks.top[4].tilesetUid = newGenesUUID;
-              //     // update track colormaps
-              //     res.data.views[0].tracks.top[0].options.colorScale = newColormap;
-              //     res.data.views[0].tracks.top[1].options.colorScale = newColormap;
-              //     res.data.views[0].tracks.top[2].options.colorScale = newColormap;
-              //     // update track background colors
-              //     res.data.views[0].tracks.top[3].options.backgroundColor = "white";
-              //     res.data.views[0].tracks.top[4].options.backgroundColor = "white";
-              //     // get child view heights
-              //     const childViews = res.data.views[0].tracks.top;
-              //     let childViewHeightTotal = 0;
-              //     childViews.forEach((cv) => { childViewHeightTotal += cv.height });
-              //     childViewHeightTotal += 10;
-              //     let childViewHeightTotalPx = childViewHeightTotal + "px";
-              //     //
-              //     // set value-scale locks
-              //     //
-              //     res.data.views[0].tracks.top[2].options.symmetricRange = true;
-              //     //
-              //     // update Viewer application state and exemplars (in drawer)
-              //     //
-              //     this.setState({
-              //       hgViewParams: newHgViewParams,
-              //       hgViewHeight: childViewHeightTotalPx,
-              //       hgViewconf: res.data,
-              //       currentPositionKey: Math.random(),
-              //       currentPosition : {
-              //         chrLeft : chrLeft,
-              //         chrRight : chrRight,
-              //         startLeft : parseInt(start),
-              //         stopLeft : parseInt(stop),
-              //         startRight : parseInt(start),
-              //         stopRight : parseInt(stop)
-              //       },
-              //       selectedExemplarRowIdx: newSerIdx,
-              //       selectedRoiRowIdx: newSrrIdx,
-              //     }, () => {
-              //       // update browser history (address bar URL)
-              //       //console.log("calling [updateViewerURL] from [triggerUpdate]", this.state.hgViewParams.mode);
-              //       this.updateViewerURL(this.state.hgViewParams.mode,
-              //                            this.state.hgViewParams.genome,
-              //                            this.state.hgViewParams.model,
-              //                            this.state.hgViewParams.complexity,
-              //                            this.state.hgViewParams.group,
-              //                            this.state.hgViewParams.sampleSet,
-              //                            this.state.currentPosition.chrLeft,
-              //                            this.state.currentPosition.chrRight,
-              //                            this.state.currentPosition.startLeft,
-              //                            this.state.currentPosition.stopRight);
-              //       this.setState({
-              //         hgViewKey: this.state.hgViewKey + 1,
-              //         drawerContentKey: this.state.drawerContentKey + 1,
-              //       }, () => {
-              //         //console.log("new viewconf:", JSON.stringify(this.state.hgViewconf,null,2));                      
-              //         // add location event handler
-              //         this.hgView.api.on("location", (event) => { 
-              //           this.updateViewerLocation(event);
-              //         });
-              //       })
-              //     })
-              //   })
-              //   .catch((err) => {
-              //     //console.log(err);
-              //     let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
-              //     this.setState({
-              //       overlayMessage: msg,
-              //       hgViewconf: {}
-              //     }, () => {
-              //       this.fadeInOverlay();
-              //     });
-              //   });
             })
             .catch((err) => {
               //console.log(err);
@@ -2108,46 +1967,6 @@ class ViewerMobile extends Component {
         //
         let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
         let newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup);
-
-        // let newEpilogosTrackFilename = null;
-        // let newMarksTrackFilename = null;
-        
-        // switch (newSampleSet) {
-        //   case "vA":
-        //     // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-        //     // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-        //     newEpilogosTrackFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-        //     newMarksTrackFilename = `${newGenome}.${newModel}.${newGroup}.marks.multires.mv5`;
-        //     break;
-        //   case "vB":
-        //     // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-        //     // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
-        //     newEpilogosTrackFilename = `833sample.${newGroup}.${newGenome}.${newModel}.${newComplexity}.gz.bed.reorder.multires.mv5`;
-        //     newMarksTrackFilename = `833sample.${newGroup}.${newGenome}.${newModel}.marks.multires.mv5`;
-        //     break;
-        //   case "vC":
-        //     // epilogos example: "833sample.vC.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-        //     // marks example:    "833sample.vC.all.hg19.15.marks.multires.mv5"
-        //     newEpilogosTrackFilename = `833sample.vC.${newGroup}.${newGenome}.${newModel}.${newComplexity}.gz.bed.reorder.multires.mv5`;
-        //     newMarksTrackFilename = `833sample.vC.${newGroup}.${newGenome}.${newModel}.marks.multires.mv5`;
-        //     break;
-        //   case "vD":
-        //     // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-        //     // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-        //     newEpilogosTrackFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-        //     newMarksTrackFilename = `${newGenome}.${newModel}.${newGroup}.marks.multires.mv5`;
-        //     break;
-        //   default:
-        //     throw new Error('Not a valid sample set identifier', newSampleSet);
-        //     //break;
-        // }
-
-        // if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
-        //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
-        
-        //console.log("newEpilogosTrackFilename", newEpilogosTrackFilename);
-        //console.log("newMarksTrackFilename", newMarksTrackFilename);
         
         //
         // query for UUIDs
@@ -2161,14 +1980,7 @@ class ViewerMobile extends Component {
           return uuidQueryPromise(newMarksTrackFilename, this);
         }).then((res) => {
           newMarksTrackUUID = res;
-        }).then(() => {
-          //console.log("newEpilogosTrackUUID", newEpilogosTrackUUID);
-          //console.log("newMarksTrackUUID", newMarksTrackUUID);
-          //console.log("newChromsizesUUID", newChromsizesUUID);
-          //console.log("newGenesUUID", newGenesUUID);
-          //console.log("newColormap", newColormap);
-          //console.log("newViewconfUUID", newViewconfUUID);
-          
+        }).then(() => {          
           axios.get(newHgViewconfURL)
             .then((res) => {
               if (!res.data) {
@@ -2225,7 +2037,11 @@ class ViewerMobile extends Component {
                 if (res.data.views[0].tracks.top[0].height > parseInt(windowInnerHeight)/2) {
                   res.data.views[0].tracks.top[0].height = parseInt(windowInnerHeight)/2 - 50;
                 }
-                res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) + 20;
+                res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) 
+                  - res.data.views[0].tracks.top[0].height 
+                  - parseInt(newHgViewTrackChromosomeHeight) 
+                  - parseInt(newHgViewTrackGeneAnnotationsHeight) 
+                  - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) + 20;
                 res.data.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
 
                 // update track names
@@ -2285,7 +2101,11 @@ class ViewerMobile extends Component {
                   case "ht": {
                     res.data.views[0].tracks.top[3].tilesetUid = (newGenome !== "hg38") ? newTranscriptsUUID : newMasterlistUUID;
                     res.data.views[0].tracks.top[3].name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
-                    res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(self.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                    res.data.views[0].tracks.top[1].height = parseInt(windowInnerHeight) 
+                      - res.data.views[0].tracks.top[0].height 
+                      - parseInt(newHgViewTrackChromosomeHeight) 
+                      - parseInt(self.state.transcriptsTrackHeight) 
+                      - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                     // options
                     res.data.views[0].tracks.top[3].options.name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     if (newGenome !== "hg38") {
@@ -2328,6 +2148,23 @@ class ViewerMobile extends Component {
                     // res.data.views[0].tracks.top[3].options.labelBackgroundPlusStrandColor = "#0000ff";
                     // res.data.views[0].tracks.top[3].options.labelBackgroundMinusStrandColor = "#ff0000";
                     // res.data.views[0].tracks.top[3].options.labelFontColor = "#ffffff";
+                    switch (newGenome) {
+                      case "hg19":
+                      case "hg38":
+                      case "mm10":
+                        res.data.views[0].tracks.top[3].data = JSON.parse(JSON.stringify(Constants.higlassTranscriptsURLsByGenome[newGenome].data));
+                        delete res.data.views[0].tracks.top[3].tilesetUid;
+                        delete res.data.views[0].tracks.top[3].server;
+                        delete res.data.views[0].tracks.top[3].created;
+                        delete res.data.views[0].tracks.top[3].project;
+                        delete res.data.views[0].tracks.top[3].project_name;
+                        delete res.data.views[0].tracks.top[3].description;
+                        delete res.data.views[0].tracks.top[3].header;
+                        delete res.data.views[0].tracks.top[3].position;
+                        break;
+                      default:
+                        break;
+                    }
                     break;
                   }
                   default: {
@@ -2335,7 +2172,10 @@ class ViewerMobile extends Component {
                   }
                 }
                 if (newSampleSet === "vE") {
-                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) 
+                    - parseInt(newHgViewTrackChromosomeHeight) 
+                    - parseInt(newHgViewTrackGeneAnnotationsHeight) 
+                    - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                   let sampleSetVEHeightPerEpilogos = parseInt(sampleSetVEHeightAllEpilogos / 2);
                   res.data.views[0].tracks.top[0].height = sampleSetVEHeightPerEpilogos;
                   res.data.views[0].tracks.top[1].height = sampleSetVEHeightPerEpilogos;
@@ -2345,7 +2185,10 @@ class ViewerMobile extends Component {
                   //console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
                 }
                 else if (newSampleSet === "vF") {
-                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
+                  let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) 
+                    - parseInt(newHgViewTrackChromosomeHeight) 
+                    - parseInt(newHgViewTrackGeneAnnotationsHeight) 
+                    - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                   let sampleSetVEHeightPerEpilogos = parseInt(sampleSetVEHeightAllEpilogos / 2);
                   res.data.views[0].tracks.top[0].height = sampleSetVEHeightPerEpilogos;
                   res.data.views[0].tracks.top[1].height = sampleSetVEHeightPerEpilogos;
@@ -2436,146 +2279,19 @@ class ViewerMobile extends Component {
                     updateViewerStateForSingleModeAndChromInfo(chromInfo, this);
                   })
                   .catch((err) => {
-                    let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
-                    this.setState({
-                      overlayMessage: msg,
-                      hgViewconf: {}
-                    }, () => {
-                      this.fadeInOverlay();
-                    });
+                    const newChromInfo = Object.assign({}, Constants.chromInfo[newGenome]);
+                    newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
+                    newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
+                    this.chromInfoCache[newGenome] = newChromInfo;
+                    // let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
+                    // this.setState({
+                    //   overlayMessage: msg,
+                    //   hgViewconf: {}
+                    // }, () => {
+                    //   this.fadeInOverlay();
+                    // });
                   });
               }
-
-              // let chromSizesURL = this.getChromSizesURL(newGenome);
-              // //console.log("chromSizesURL", chromSizesURL);
-              // ChromosomeInfo(chromSizesURL)
-              //   .then((chromInfo) => {
-              //     //console.log("chromInfo", chromInfo);
-              //     //
-              //     // update viewconf views[0] initialXDomain and initialYDomain 
-              //     //
-              //     // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
-              //     //
-              //     if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-              //       chrLeft = Constants.defaultApplicationPositions[newGenome].chr;
-              //       chrRight = Constants.defaultApplicationPositions[newGenome].chr;
-              //       start = Constants.defaultApplicationPositions[newGenome].start;
-              //       stop = Constants.defaultApplicationPositions[newGenome].stop;
-              //     }
-              //     if (start > chromInfo.chromLengths[chrLeft]) {
-              //       start = chromInfo.chromLengths[chrLeft] - 10000;
-              //     }
-              //     if (stop > chromInfo.chromLengths[chrRight]) {
-              //       stop = chromInfo.chromLengths[chrRight] - 1000;
-              //     }
-              //     let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
-              //     let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
-              //     //console.log(chrLeft, start, absLeft);
-              //     //console.log(chrRight, stop, absRight);
-              //     res.data.views[0].initialXDomain = [absLeft, absRight];
-              //     res.data.views[0].initialYDomain = [absLeft, absRight];
-              //     // update track heights -- requires preknowledge of track order from template
-              //     //let windowInnerHeight = document.documentElement.clientHeight + "px";
-              //     res.data.views[0].tracks.top[0].height = newHgViewTrackEpilogosHeight;
-              //     //console.log("res.data.views[0].tracks.top[0].height", res.data.views[0].tracks.top[0].height);
-              //     res.data.views[0].tracks.top[1].height = newHgViewTrackChromatinStatesHeight;
-              //     res.data.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
-              //     res.data.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
-              //     // update track names
-              //     res.data.views[0].tracks.top[0].name = newEpilogosTrackFilename;
-              //     res.data.views[0].tracks.top[0].options.name = newEpilogosTrackFilename;
-              //     res.data.views[0].tracks.top[1].name = newMarksTrackFilename;
-              //     res.data.views[0].tracks.top[1].options.name = newMarksTrackFilename;
-              //     // update track type and styling
-              //     res.data.views[0].tracks.top[1].type = "horizontal-multivec";
-              //     res.data.views[0].tracks.top[1].options.colorbarPosition = null;
-              //     res.data.views[0].tracks.top[1].options.valueScaling = null;
-              //     res.data.views[0].tracks.top[1].options.heatmapValueScaling = "categorical";
-              //     res.data.views[0].tracks.top[1].options.colorRange = Constants.stateColorPalettesAsRgb[newGenome][newModel];
-              //     res.data.views[0].tracks.top[1].options.colorScale = [];
-              //     res.data.views[0].tracks.top[1].options.valueScaleMin = 1;
-              //     res.data.views[0].tracks.top[1].options.valueScaleMax = parseInt(newModel, 10);
-              //     if ((this.state.highlightRawRows.length > 0) && (Constants.sampleSetRowMetadataByGroup[newSampleSet][newGenome][newModel][newGroup])) {
-              //       res.data.views[0].tracks.top[1].options.highlightRows = this.state.highlightRawRows;
-              //       res.data.views[0].tracks.top[1].options.highlightBehavior = this.state.highlightBehavior;
-              //       res.data.views[0].tracks.top[1].options.highlightBehaviorAlpha = this.state.highlightBehaviorAlpha;
-              //     }
-              //     // update track UUIDs
-              //     res.data.views[0].tracks.top[0].tilesetUid = newEpilogosTrackUUID;
-              //     res.data.views[0].tracks.top[1].tilesetUid = newMarksTrackUUID;
-              //     res.data.views[0].tracks.top[2].tilesetUid = newChromsizesUUID;
-              //     res.data.views[0].tracks.top[3].tilesetUid = newGenesUUID;
-              //     // update track colormaps
-              //     res.data.views[0].tracks.top[0].options.colorScale = newColormap;
-              //     //res.data.views[0].tracks.top[1].options.colorScale = newColormap;
-              //     // update track background colors
-              //     res.data.views[0].tracks.top[1].options.backgroundColor = "transparent";
-              //     res.data.views[0].tracks.top[2].options.backgroundColor = "white";
-              //     res.data.views[0].tracks.top[3].options.backgroundColor = "white";
-              //     // update track display options to fix label bug
-              //     res.data.views[0].tracks.top[0].options.labelPosition = "topLeft";
-              //     res.data.views[0].tracks.top[0].options.labelTextOpacity = 0.0;
-              //     res.data.views[0].tracks.top[0].options.labelBackgroundOpacity = 0.0;
-              //     res.data.views[0].tracks.top[0].options.labelColor = "white";
-              //     // get child view heights
-              //     const childViews = res.data.views[0].tracks.top;
-              //     let childViewHeightTotal = 0;
-              //     childViews.forEach((cv) => { childViewHeightTotal += cv.height });
-              //     childViewHeightTotal += 10;
-              //     let childViewHeightTotalPx = childViewHeightTotal + "px";
-              //     //
-              //     //console.log("res.data", JSON.stringify(res.data));
-              //     // update Viewer application state and exemplars (in drawer)
-              //     this.setState({
-              //       hgViewParams: newHgViewParams,
-              //       hgViewHeight: childViewHeightTotalPx,
-              //       hgViewconf: res.data,
-              //       currentPositionKey: Math.random(),
-              //       currentPosition : {
-              //         chrLeft : chrLeft,
-              //         chrRight : chrRight,
-              //         startLeft : parseInt(start),
-              //         stopLeft : parseInt(stop),
-              //         startRight : parseInt(start),
-              //         stopRight : parseInt(stop)
-              //       },
-              //       selectedExemplarRowIdx: newSerIdx,
-              //       selectedRoiRowIdx: newSrrIdx,
-              //     }, () => {
-              //       this.setState({
-              //         hgViewKey: this.state.hgViewKey + 1,
-              //         drawerContentKey: this.state.drawerContentKey + 1,
-              //       }, () => {
-              //         // update browser history (address bar URL)
-              //         //console.log("calling [updateViewerURL] from [triggerUpdate]", this.state.hgViewParams.mode);
-              //         this.updateViewerURL(this.state.hgViewParams.mode,
-              //                              this.state.hgViewParams.genome,
-              //                              this.state.hgViewParams.model,
-              //                              this.state.hgViewParams.complexity,
-              //                              this.state.hgViewParams.group,
-              //                              this.state.hgViewParams.sampleSet,
-              //                              this.state.currentPosition.chrLeft,
-              //                              this.state.currentPosition.chrRight,
-              //                              this.state.currentPosition.startLeft,
-              //                              this.state.currentPosition.stopRight);
-              //         // add location event handler
-              //         this.hgView.api.on("location", (event) => { 
-              //           this.updateViewerLocation(event);
-              //         });
-              //       })
-              //     })
-              //   })
-              //   .catch((err) => {
-              //     //console.log(err.response);
-              //     //console.log("chromSizesURL", chromSizesURL);
-              //     let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
-              //     this.setState({
-              //       overlayMessage: msg,
-              //       hgViewconf: {}
-              //     }, () => {
-              //       this.fadeInOverlay();
-              //     });
-              //   });
             })
             .catch((err) => {
               //console.log(err.response);
@@ -3062,7 +2778,35 @@ class ViewerMobile extends Component {
           });
         }
         // add gene annotation track label (e.g. "GENCODE vXYZ")
-        results.push(<div key="single-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
+        // results.push(
+        //   <div 
+        //     key="single-track-label-annotation" 
+        //     className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" 
+        //     style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}
+        //     >
+        //     {annotationText}
+        //   </div>
+        // );
+        switch (genome) {
+          case "hg19":
+          case "hg38":
+          case "mm10":
+            if (this.state.hgViewParams.gatt === "ht") {
+              annotationText = Constants.higlassTranscriptsURLsByGenome[genome].trackLabel;
+            }
+            results.push(
+              <div 
+                ref={(component) => this.epilogosViewerTrackLabelSingleGeneAnnotation = component} 
+                key="single-track-label-annotation" 
+                className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" 
+                style={{bottom:`${35 + Constants.applicationViewerHgViewPaddingBottom}px`, right:rightShift}}>
+                {annotationText}
+              </div>
+            );
+            break;
+          default:
+            break;
+        }
         break;
       }
       case "paired": {
@@ -3086,7 +2830,27 @@ class ViewerMobile extends Component {
         // if (this.state.orientationIsPortrait) {
         //   results.push(<div key="paired-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
         // }
-        results.push(<div key="paired-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
+        // results.push(<div key="paired-track-label-annotation" className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:rightShift}}>{annotationText}</div>);
+        switch (genome) {
+          case "hg19":
+          case "hg38":
+          case "mm10":
+            if (this.state.hgViewParams.gatt === "ht") {
+              annotationText = Constants.higlassTranscriptsURLsByGenome[genome].trackLabel;
+            }
+            results.push(
+              <div 
+                ref={(component) => this.epilogosViewerTrackLabelSingleGeneAnnotation = component} 
+                key="paired-track-label-annotation" 
+                className="epilogos-viewer-container-track-label-small epilogos-viewer-container-track-label-small-inverse" 
+                style={{bottom:`${35 + Constants.applicationViewerHgViewPaddingBottom}px`, right:rightShift}}>
+                {annotationText}
+              </div>
+            );
+            break;
+          default:
+            break;
+        }
         break;
       }
       default:
@@ -3142,18 +2906,49 @@ class ViewerMobile extends Component {
                 onRoiColumnSort={this.updateSortOrderOfRoiTableDataIndices}
                 jumpToRegion={this.jumpToRegion}
                 isProductionSite={this.isProductionSite}
+                isMobile={true}
                 />
             </div>
           </Drawer>
         </div>
       
-        <div ref={(ref) => this.epilogosViewer = ref} id="epilogos-viewer-container" className="epilogos-viewer-container">
+        <div 
+          ref={(ref) => this.epilogosViewer = ref} 
+          id="epilogos-viewer-container" 
+          className="epilogos-viewer-container-mobile">
         
-          <Navbar id="epilogos-viewer-container-navbar" color="#000000" expand="md" className="navbar-top navbar-top-custom justify-content-start" style={{"zIndex":10001, backgroundColor:"#000000", cursor:"pointer", maxHeight:"38px", paddingLeft:"10px", paddingRight:"10px", paddingTop:"5px", paddingBottom:"6px"}}>
+          <Navbar 
+            id="epilogos-viewer-container-navbar" 
+            color="#000000" 
+            expand="md" 
+            className="navbar-top navbar-top-custom justify-content-start" 
+            style={
+              {
+                zIndex: 10001, 
+                backgroundColor: "#000000", 
+                cursor: "pointer", 
+                minHeight: "38px", 
+                maxHeight: "38px", 
+                paddingLeft: "10px", 
+                paddingRight: "10px", 
+                paddingTop: "5px", 
+                paddingBottom: "6px",
+                // position: "fixed",
+              }
+            }>
           
             <NavItem>
-              <div title={(this.state.drawerIsOpen)?"Close drawer":"Settings and exemplar regions"} id="epilogos-viewer-hamburger-button" ref={(component) => this.epilogosViewerHamburgerButtonParent = component} className="epilogos-viewer-hamburger-button" style={{paddingRight:"8px", lineHeight:"20px"}}>
-                <div className="hamburger-button" ref={(component) => this.epilogosViewerHamburgerButton = component} onClick={() => this.toggleDrawer("settings")} style={{}}>
+              <div 
+                title={(this.state.drawerIsOpen)?"Close drawer":"Settings and exemplar regions"} 
+                id="epilogos-viewer-hamburger-button" 
+                ref={(component) => this.epilogosViewerHamburgerButtonParent = component} 
+                className="epilogos-viewer-hamburger-button" 
+                style={{paddingRight:"8px", lineHeight:"20px"}}>
+                <div 
+                  className="hamburger-button" 
+                  ref={(component) => this.epilogosViewerHamburgerButton = component} 
+                  onClick={() => this.toggleDrawer("settings")} 
+                  style={{}}>
                   {!this.state.drawerIsOpen ? <FaBars size="1.2em" /> : <FaTimes size="1.2em" />}
                 </div>
               </div>
@@ -3175,22 +2970,6 @@ class ViewerMobile extends Component {
                 assembly={this.state.hgViewParams.genome}
                 onSelect={this.onChangeSearchInputLocationViaGeneSearch}
               />
-              {/* <Autocomplete
-                ref={(ref) => { this.autocompleteInputRef = ref; }}
-                className={"epilogos-viewer-search-input epilogos-viewer-search-input-viewermobile"}
-                placeholder={Constants.defaultSingleGroupSearchInputPlaceholder}
-                annotationScheme={Constants.annotationScheme}
-                annotationHost={Constants.annotationHost}
-                annotationPort={Constants.annotationPort}
-                annotationAssembly={this.state.hgViewParams.genome}
-                onChangeLocation={this.onChangeSearchInputLocation}
-                onChangeInput={this.onChangeSearchInput}
-                title={"Search for a gene of interest or jump to a genomic interval"}
-                suggestionsClassName={"suggestions viewer-suggestions"}
-                maxSuggestionHeight={this.state.maxAutocompleteSuggestionHeight}
-                isMobile={true}
-                showGoButton={false}
-              /> */}
             </NavItem>
             
             <Nav className="ml-auto" navbar>
@@ -3201,7 +2980,15 @@ class ViewerMobile extends Component {
             
           </Navbar>
           
-          <div className="higlass-content-mobiledevice" style={{"zIndex":10000, "height":this.state.epilogosViewerDataAvailableSpace, backgroundColor:"#000000"}}>
+          <div 
+            className="higlass-content-mobiledevice" 
+            style={
+              {
+                zIndex: 10000, 
+                height: this.state.epilogosViewerDataAvailableSpace, 
+                backgroundColor: "#000000",
+              }
+            }>
             <HiGlassComponent
               key={this.state.hgViewKey}
               ref={(component) => this.hgView = component}
