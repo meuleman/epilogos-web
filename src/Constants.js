@@ -760,13 +760,15 @@ export const switchModes = {
 export const modes = {
   "single": "Single",
   "paired": "Paired",
-  "query": "Query"
+  "query": "Query",
+  "qt": "Query-Target",
 };
 
 export const modeNotices = {
   'single': 'The <em>single-group</em> viewer renders the chromatin state logo of subsets of 127 genome-wide epigenomic biosamples, along with the state calls for each sample.',
   'paired': 'The <em>paired-group</em> viewer renders the chromatin state logos of two individual biosample groupings and their regional differences in one track, permitting simultaneous exploration and comparison of two sets.',
   'query': 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
+  'qt': 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
 };
 
 export const samplesNotices = {
@@ -2539,11 +2541,11 @@ export const applications = {
   "viewerTest": "data viewer (test)",
 };
 export const applicationKeys = Object.keys(applications);
-export const defaultApplication = "viewer";
 export const applicationBlank = "blank";
 export const applicationPortal = "portal";
 export const applicationViewer = "viewer";
 export const applicationViewerTest = "viewerTest";
+export const defaultApplication = applicationViewer;
 
 // drawer width
 export const defaultMinimumDrawerWidth = 362;

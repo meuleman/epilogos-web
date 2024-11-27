@@ -719,14 +719,18 @@ li {
 .epilogos-content-hiw-divider-text-parent {
   cursor: pointer;
   position: relative;
-  top: 10px;
+  /* top: 10px; */
   height: 40px;
+  background-color: white;
 }
 
 .epilogos-content-hiw-divider-text {
   text-align: center;
   width: 100vw;
   font-size: 0.8em;
+  position: relative;
+  bottom: 42px;
+  z-index: 10;
 }
 
 .epilogos-content-hiw-divider-widget {

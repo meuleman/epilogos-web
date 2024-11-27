@@ -105,6 +105,8 @@ class Portal extends Component {
       recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
       recommenderV3CanAnimate: true,
       recommenderV3AnimationHasFinished: false,
+      currentRange: {},
+      hgViewClickInProgress: false,
     };
     
     this.hgView = React.createRef();
@@ -145,7 +147,7 @@ class Portal extends Component {
           }         
         })
         .catch((err) => {
-          //console.log(err.response);
+          // console.log(err.response);
           let msg = <div className="portal-overlay-notice"><div className="portal-overlay-notice-header">{err.response.status} Error</div><div className="portal-overlay-notice-body"><div>Error retrieving exemplar data!</div><div>{err.response.statusText}: {exemplarURL}</div><div className="portal-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
           this.setState({
             overlayMessage: msg
@@ -203,6 +205,7 @@ class Portal extends Component {
   
   componentDidMount() {
     document.getElementById("root").style.overflowY = "scroll";
+    document.getElementById("root").style.backgroundColor = "black";
     this.updateHgViewWithRandomExemplar();
     setTimeout(() => { 
       this.updateViewportDimensions();
@@ -257,16 +260,17 @@ class Portal extends Component {
 
   updateHgViewWithRandomExemplar = () => {
     const randomExemplar = this.hgRandomExemplar();
-    const chromosome = randomExemplar["chromosome"];
-    const start = randomExemplar["start"];
-    const end = randomExemplar["stop"];
+    if (!randomExemplar) return;
+    const chromosome = randomExemplar.chromosome;
+    const start = randomExemplar.start;
+    const end = randomExemplar.stop;
     const assembly = this.state.hgViewParams.genome;
     const exemplarLength = parseInt(end) - parseInt(start);
     const padding = parseInt(Constants.defaultHgViewGenePaddingFraction * exemplarLength);
     const chrLimit = parseInt(Constants.assemblyBounds[assembly][chromosome].ub);
     const txStart = ((start - padding) > 0) ? (start - padding) : 0;
     const txEnd = ((end + padding) < chrLimit) ? (end + padding) : end;
-    this.hgViewUpdatePosition(assembly, chromosome, txStart, txEnd, chromosome, txStart, txEnd, 0);
+    this.hgViewUpdatePosition(assembly, chromosome, txStart, txEnd, chromosome, txStart, txEnd, 0, "Portal.updateHgViewWithRandomExemplar");
     // this.hgViewUpdatePosition(assembly, chromosome, start, end, chromosome, start, end, 0);
     clearInterval(window.ref);
     this.initHgViewRefresh();
@@ -277,24 +281,24 @@ class Portal extends Component {
     axios.get(randomGene.url)
       .then((res) => {
         if (res.data.hits) {
-          //console.log("(portal) res.data.hits", res.data.hits);
-          //console.log("(portal) randomGene.name", randomGene.name);
+          // console.log("(portal) res.data.hits", res.data.hits);
+          // console.log("(portal) randomGene.name", randomGene.name);
           let match = res.data.hits[randomGene.name][0];
           if (!match) {
             return;
           }
-          //console.log("(portal) match", res.data.hits[randomGene.name][0]);
+          // console.log("(portal) match", res.data.hits[randomGene.name][0]);
           let chr = match["chrom"];
           let txStart = match["start"];
           let txEnd = match["stop"];
           let assembly = this.state.hgViewParams.genome;
           let chrLimit = parseInt(Constants.assemblyBounds[assembly][chr].ub);
           let geneLength = parseInt(txEnd) - parseInt(txStart);
-          //console.log("updateHgViewWithRandomGene - ", assembly, chr, txStart, txEnd, chrLimit, geneLength);
+          // console.log("updateHgViewWithRandomGene - ", assembly, chr, txStart, txEnd, chrLimit, geneLength);
           let padding = parseInt(Constants.defaultHgViewGenePaddingFraction * geneLength);
           txStart = ((txStart - padding) > 0) ? (txStart - padding) : 0;
           txEnd = ((txEnd + padding) < chrLimit) ? (txEnd + padding) : txEnd;
-          this.hgViewUpdatePosition(assembly, chr, txStart, txEnd, chr, txStart, txEnd, 0);
+          this.hgViewUpdatePosition(assembly, chr, txStart, txEnd, chr, txStart, txEnd, 0, "Portal.updateHgViewWithRandomGene");
           clearInterval(window.ref);
           this.initHgViewRefresh();
           //setTimeout(() => { this.updateViewportDimensions(); }, 1000);
@@ -306,10 +310,10 @@ class Portal extends Component {
   }
   
   updateViewportDimensions = () => {
-    //console.log("updateViewportDimensions()");
+    // console.log("updateViewportDimensions()");
     
-    //let windowInnerHeight = window.innerHeight + "px";
-    //let windowInnerWidth = window.innerWidth + "px";
+    // let windowInnerHeight = window.innerHeight + "px";
+    // let windowInnerWidth = window.innerWidth + "px";
     
     let windowInnerHeight = document.documentElement.clientHeight + "px";
     let windowInnerWidth = document.documentElement.clientWidth + "px";
@@ -334,22 +338,22 @@ class Portal extends Component {
     
     let epilogosContentQueryHeight = epilogosContentQuery ? Math.min(epilogosContentQueryClientHeight, parseInt(windowInnerHeight) - this.state.hgViewParams.hgViewTrackEpilogosHeight - parseInt(epilogosPortalHeaderNavbarHeight) - parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) - parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - parseInt(epilogosContentHiwDividerHeight) - parseInt(epilogosContentHiwPeekHeight)) + "px" : 0;
     
-    //console.log("epilogosContentQueryHeight", epilogosContentQueryHeight);
+    // console.log("epilogosContentQueryHeight", epilogosContentQueryHeight);
     
     let epilogosContentQueryPaddingTop = parseInt((parseInt(epilogosContentQueryHeight))/8) + "px";
     
-    //console.log("epilogosContentQueryPaddingTop", epilogosContentQueryPaddingTop);
+    // console.log("epilogosContentQueryPaddingTop", epilogosContentQueryPaddingTop);
     
     let newHgViewEpilogosTrackHeight = Math.min(this.state.hgViewParams.hgViewTrackEpilogosHeight, parseInt(windowInnerHeight) - parseInt(epilogosPortalHeaderNavbarHeight) - parseInt(epilogosContentQueryHeight) - parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight) - parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight) - parseInt(epilogosContentHiwDividerHeight) - parseInt(epilogosContentHiwPeekHeight)) + "px";
     
     if (parseInt(windowInnerHeight) < parseInt(Constants.mobileThresholds.maxHeight)) {
-      //console.log("epilogosContentQueryPaddingTop (reduced)");
+      // console.log("epilogosContentQueryPaddingTop (reduced)");
       epilogosContentQueryPaddingTop = "0px";
       epilogosContentQueryHeight = "0px";
       newHgViewEpilogosTrackHeight = (parseInt(windowInnerHeight)/2 - 30) + "px";
     }
     
-    //console.log("newHgViewEpilogosTrackHeight", newHgViewEpilogosTrackHeight);
+    // console.log("newHgViewEpilogosTrackHeight", newHgViewEpilogosTrackHeight);
     
     // adjust height of epilogos track, if the browser is resized, to account for new vertical viewport size
     let deepCopyHgViewconf = JSON.parse(JSON.stringify(this.state.hgViewconf));
@@ -375,8 +379,8 @@ class Portal extends Component {
         hgViewHeight: childViewHeightTotalPx,
         hgViewconf: deepCopyHgViewconf
       }, () => { 
-        //console.log("(previous) W x H", this.state.previousWidth, this.state.previousHeight);
-        //console.log("(current) W x H", this.state.width, this.state.height);
+        // console.log("(previous) W x H", this.state.previousWidth, this.state.previousHeight);
+        // console.log("(current) W x H", this.state.width, this.state.height);
       })
     });
   }
@@ -399,7 +403,9 @@ class Portal extends Component {
     };
   }
   
-  hgViewUpdatePosition = (genome, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding) => {
+  hgViewUpdatePosition = (genome, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding, cf) => {
+    if (!cf || cf.length === 0) return;
+    // console.log(`Portal.hgViewUpdatePosition | genome ${genome} | chrLeft ${chrLeft} | startLeft ${startLeft} | stopLeft ${stopLeft} | chrRight ${chrRight} | startRight ${startRight} | stopRight ${stopRight} | padding ${padding} | cf ${cf}`);
     let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[genome];
     if (this.currentURL.port === "" || parseInt(this.currentURL.port) !== Constants.applicationDevelopmentPort) {
       // chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
@@ -408,9 +414,10 @@ class Portal extends Component {
     // console.log(`chromSizesURL ${chromSizesURL}`);
     ChromosomeInfo(chromSizesURL)
       .then((chromInfo) => {
+        let newCurrentRange = {};
         if (padding === 0) {
-          //console.log("hgViewUpdatePosition - ", build, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding);
-          this.hgView.zoomTo(
+          // console.log("hgViewUpdatePosition - ", genome, chrLeft, startLeft, stopLeft, chrRight, startRight, stopRight, padding);
+          this.hgView.current.zoomTo(
             this.state.hgViewconf.views[0].uid,
             chromInfo.chrToAbs([chrLeft, startLeft]),
             chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -418,11 +425,19 @@ class Portal extends Component {
             chromInfo.chrToAbs([chrRight, stopRight]),
             this.state.hgViewParams.hgViewAnimationTime
           );
+          newCurrentRange = {
+            chrLeft: chrLeft,
+            startLeft: startLeft,
+            stopLeft: stopLeft,
+            chrRight: chrRight,
+            startRight: startRight,
+            stopRight: stopRight,
+          };
         }
         else {
           var midpointLeft = startLeft + parseInt((stopLeft - startLeft)/2);
           var midpointRight = startRight + parseInt((stopRight - startRight)/2);
-          this.hgView.zoomTo(
+          this.hgView.current.zoomTo(
             this.state.hgViewconf.views[0].uid,
             chromInfo.chrToAbs([chrLeft, parseInt(midpointLeft - padding)]),
             chromInfo.chrToAbs([chrLeft, parseInt(midpointLeft + padding)]),
@@ -430,10 +445,21 @@ class Portal extends Component {
             chromInfo.chrToAbs([chrRight, parseInt(midpointRight + padding)]),
             this.state.hgViewParams.hgViewAnimationTime
           );
+          newCurrentRange = {
+            chrLeft: chrLeft,
+            startLeft: parseInt(midpointLeft - padding),
+            stopLeft: parseInt(midpointLeft + padding),
+            chrRight: chrRight,
+            startRight: parseInt(midpointRight - padding),
+            stopRight: parseInt(midpointRight + padding),
+          };
         }
+        this.setState({
+          currentRange: newCurrentRange,
+        });
       })
       .catch((err) => {
-        throw String(`Error: ${err}`);
+        // throw new Error(`Error: ${JSON.stringify(err)}`);
       });
   }
   
@@ -484,7 +510,7 @@ class Portal extends Component {
     let self = this;
     return ks.map((s) => {
       return <DropdownItem key={s} value={s} onClick={(e)=>{ 
-        //console.log("singleGroupGenomeMenuItems e.target.value", e.target.value);
+        // console.log("singleGroupGenomeMenuItems e.target.value", e.target.value);
         self.setState({
           singleGroupGenomeDropdownSelection: e.target.value,
           singleGroupDropdownSelection: Constants.defaultSingleGroupKeys[e.target.value]
@@ -516,7 +542,7 @@ class Portal extends Component {
     let self = this;
     return ks.map((s) => {
       return <DropdownItem key={s} value={s} onClick={(e)=>{ 
-        //console.log("singleGroupMenuItems e.target.value", e.target.value);
+        // console.log("singleGroupMenuItems e.target.value", e.target.value);
         self.setState({
           singleGroupDropdownSelection: e.target.value
         })
@@ -748,34 +774,48 @@ class Portal extends Component {
   }
   
   onClickHgViewParentClickImmediate = () => {
-    let uid = this.state.hgViewconf.views[0].uid;
-    let absLocation = this.hgView.api.getLocation(uid);
-    let absLocationXDomain = absLocation.xDomain;
-    let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
-    if (this.currentURL.port === "" || parseInt(this.currentURL.port !== Constants.applicationDevelopmentPort)) {
-      chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
+    // console.log("Portal.onClickHgViewParentClickImmediate");
+    let chrRange = [this.state.currentRange.chrLeft, this.state.currentRange.chrRight, this.state.currentRange.startLeft, this.state.currentRange.stopRight];
+    if (!this.state.hgViewClickInProgress) {
+      this.openViewerAtChrRange(chrRange);
     }
-    ChromosomeInfo(chromSizesURL)
-      .then((chromInfo) => {
-        let chrStartPos = chromInfo.absToChr(absLocationXDomain[0]);
-        let chrStopPos = chromInfo.absToChr(absLocationXDomain[1]);
-        let chrLeft = chrStartPos[0];
-        let chrRight = chrStopPos[0];
-        let start = chrStartPos[1];
-        let stop = chrStopPos[1];
-        let chrRange = [chrLeft, chrRight, start, stop];
-        this.openViewerAtChrRange(chrRange);
-      })
-      .catch((err) => {
-        throw new Error(`Error - onClickHgViewParentClickImmediate failed to translate absolute coordinates to chromosomal coordinates - ${JSON.stringify(err)}`)
-      });
+    this.setState({
+      hgViewClickInProgress: true,
+    });
+    // let uid = this.state.hgViewconf.views[0].uid;
+    // let absLocation = this.hgView.current.api.getLocation(uid);
+    // let absLocationXDomain = absLocation.xDomain;
+    // let chromSizesURL = this.state.hgViewParams.hgGenomeURLs[this.state.hgViewParams.genome];
+    // if (this.currentURL.port === "" || parseInt(this.currentURL.port !== Constants.applicationDevelopmentPort)) {
+    //   chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, "");
+    // }
+    // ChromosomeInfo(chromSizesURL)
+    //   .then((chromInfo) => {
+        // let chrStartPos = chromInfo.absToChr(absLocationXDomain[0]);
+        // let chrStopPos = chromInfo.absToChr(absLocationXDomain[1]);
+        // let chrLeft = chrStartPos[0];
+        // let chrRight = chrStopPos[0];
+        // let start = chrStartPos[1];
+        // let stop = chrStopPos[1];
+        // let chrRange = [chrLeft, chrRight, start, stop];
+        // let chrRange = [this.state.currentRange.chrLeft, this.state.currentRange.chrRight, this.state.currentRange.startLeft, this.state.currentRange.stopRight];
+        // if (!this.state.hgViewClickInProgress) {
+        //   this.openViewerAtChrRange(chrRange);
+        // }
+        // this.setState({
+        //   hgViewClickInProgress: true,
+        // });
+      // })
+      // .catch((err) => {
+      //   throw new Error(`Error - onClickHgViewParentClickImmediate failed to translate absolute coordinates to chromosomal coordinates - ${JSON.stringify(err)}`)
+      // });
   }
   
   onClickHgViewParentClickDeltaTest = () => {
     let hgViewClickTimeDelta = this.state.hgViewClickTimeCurrent - this.state.hgViewClickTimePrevious;
     if ((this.state.hgViewClickTimePrevious === Constants.defaultHgViewClickTimePrevious) || (hgViewClickTimeDelta >= Constants.applicationPortalClickDeltaThreshold)) {
       let uid = this.state.hgViewconf.views[0].uid;
-      let absLocation = this.hgView.api.getLocation(uid);
+      let absLocation = this.hgView.current.api.getLocation(uid);
       let absLocationXDomain = absLocation.xDomain;
       let windowWidthFraction = this.state.hgViewClickPageX / window.innerWidth;
       let absLocationXDomainByWindowWidthFraction = absLocationXDomain[0] + (absLocationXDomain[1] - absLocationXDomain[0]) * windowWidthFraction;
@@ -797,7 +837,8 @@ class Portal extends Component {
   stripQueryStringAndHashFromPath = (url) => { return url.split("?")[0].split("#")[0]; }
   
   openViewerAtChrRange = (range) => {
-    console.log(`Portal.openViewerAtChrRange | range ${JSON.stringify(range)}`);
+    // console.log(`Portal.openViewerAtChrRange | range ${JSON.stringify(range)}`);
+    // return;
     let chrLeft = range[0];
     let chrRight = range[0];
     let start = parseInt(range[1]);
@@ -819,12 +860,13 @@ class Portal extends Component {
     viewerUrl += "&chrRight=" + chrRight;
     viewerUrl += "&start=" + start;
     viewerUrl += "&stop=" + stop;
-    console.log(`Portal.openViewerAtChrRange | viewerUrl ${JSON.stringify(viewerUrl)}`);
+    // console.log(`Portal.openViewerAtChrRange | viewerUrl ${JSON.stringify(viewerUrl)}`);
     window.location.href = viewerUrl;
   }
   
   openViewerAtChrPosition = (pos, padding) => {
-    console.log(`openViewerAtChrPosition`);
+    // console.log(`Portal.openViewerAtChrPosition | pos ${JSON.stringify(pos)} padding ${padding}`);
+    return;
     let chrLeft = pos[0];
     let chrRight = pos[0];
     let start = parseInt(pos[1]) - padding;
@@ -884,7 +926,7 @@ class Portal extends Component {
   }
 
   openQueryTargetViewerAtChrRange = (range) => {
-    console.log(`openQueryTargetViewerAtChrRange`)
+    // console.log(`openQueryTargetViewerAtChrRange`);
     let chrLeft = range[0];
     let chrRight = range[0];
     let start = parseInt(range[1]);
@@ -941,14 +983,14 @@ class Portal extends Component {
     */
     let matches = str.replace(/,/g, '').split(/[:-\s\t]/g).filter( i => i );
     if (matches.length !== 3) {
-      //console.log("matches failed", matches);
+      // console.log("matches failed", matches);
       return;
     }
-    //console.log("matches", matches);
+    // console.log("matches", matches);
     let chrom = matches[0];
     let start = parseInt(matches[1].replace(',',''));
     let stop = parseInt(matches[2].replace(',',''));
-    //console.log("chrom, start, stop", chrom, start, stop);
+    // console.log("chrom, start, stop", chrom, start, stop);
     if (!this.isValidChromosome(this.state.hgViewParams.genome, chrom)) {
       return null;
     }
@@ -958,7 +1000,7 @@ class Portal extends Component {
     start = ((start - padding) > 0) ? (start - padding) : 0;
     stop = ((stop + padding) < chrLimit) ? (stop + padding) : stop;
     let range = [chrom, chrom, start, stop];
-    //console.log("range", range);
+    // console.log("range", range);
     return range;
   }
 
@@ -970,10 +1012,10 @@ class Portal extends Component {
   }
 
   onChangeSearchInputLocationViaGeneSearch = (selected) => {
-    console.log("[epilogos] selected", selected);
+    // console.log("[epilogos] selected", selected);
     if (!selected) return;
-    console.log(`this.state.hgViewParams.genome ${this.state.hgViewParams.genome}`);
-    console.log("[epilogos] selected", selected);
+    // console.log(`this.state.hgViewParams.genome ${this.state.hgViewParams.genome}`);
+    // console.log("[epilogos] selected", selected);
     const location = (selected.gene && selected.gene.chromosome && selected.gene.start && selected.gene.end) ? {
       chrom: selected.gene.chromosome,
       start: selected.gene.start,
@@ -989,11 +1031,12 @@ class Portal extends Component {
       location.start = location.stop;
       location.stop = tempStart;
     }
-    console.log("[epilogos] location", location);
+    // console.log("[epilogos] location", location);
     this.onChangePortalLocation(location, true);
   }
   
   onChangePortalLocation = (location, applyPadding) => {
+    // console.log(`Portal.onChangePortalLocation | location ${JSON.stringify(location)} applyPadding ${applyPadding}`);
     // let range = this.getRangeFromString(location);
     // const range = Helpers.getRangeFromString(location, applyPadding, false, this.state.hgViewParams.genome);
     const locationComponents = {
@@ -1139,10 +1182,21 @@ class Portal extends Component {
         }
         
         <VisibilitySensor delayedCall={true} active={this.state.hgViewParentVisibilitySensorIsActive} onChange={this.onChangeHgViewParentVisibility}>
-          <div className="higlass-content" style={{"height": this.state.hgViewHeight, zIndex: "1"}} onClick={this.onClickHgViewParent} onMouseEnter={this.onMouseEnterHgViewParent} onMouseLeave={this.onMouseLeaveHgViewParent} onMouseUp={this.onMouseUpHgViewParent}>
+          <div 
+            className="higlass-content higlass-content-portal" 
+            style={{
+              "height": this.state.hgViewHeight, 
+              zIndex: "1",
+              backgroundColor: "rgba(255, 255, 255, 1)",
+              }}
+            onClick={this.onClickHgViewParent} 
+            onMouseEnter={this.onMouseEnterHgViewParent} 
+            onMouseLeave={this.onMouseLeaveHgViewParent} 
+            onMouseUp={this.onMouseUpHgViewParent}
+            >
             <HiGlassComponent
               key={this.state.hgViewKey}
-              ref={(component) => this.hgView = component}
+              ref={this.hgView}
               options={{ 
                 bounded: true,
                 pixelPreciseMarginPadding: false,

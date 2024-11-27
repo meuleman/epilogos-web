@@ -1137,6 +1137,10 @@ export const debounce = (fn, time) => {
 }
 
 export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
+  if (qWindowSizeKb === 0) return Promise.reject(new Error('Invalid window size')).then(
+    (result) => { return {'resolved': true} }, (result) => { return {'rejected': true} }
+  );
+  // console.log(`[Helpers.simSearchQueryPromise] ${qChr}:${qStart}-${qEnd}`);
   let params = self.state.tempHgViewParams;
   let datasetAltname = params.sampleSet;
   let assembly = params.genome;
@@ -1168,21 +1172,22 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   
   let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
   
-  // console.log(`[simSearchQueryPromise] simSearchQueryPromiseURL ${JSON.stringify(recommenderV3URL)}`); 
+  // console.log(`[Helpers.simSearchQueryPromise] simSearchQueryPromiseURL ${JSON.stringify(recommenderV3URL)}`); 
   
   return axios.get(recommenderV3URL).then((res) => {
+    // console.log(`[Helpers.simSearchQueryPromise] res ${JSON.stringify(res)}`);
     if (res.data) {
-      // console.log(`[recommenderV3SearchOnClick] res.data ${JSON.stringify(res.data)}`);
+      // console.log(`[Helpers.simSearchQueryPromise] res.data ${JSON.stringify(res.data)}`);
       if (res.data.hits && res.data.hits.length > 0 && res.data.hits[0].length > 0) {
         return res.data;
       }
       else {
         // console.log(`res ${JSON.stringify(res)}`);
-        if (!ignoreNoHits) throw new Error("No recommendations found");
+        if (!ignoreNoHits) throw new Error("[Helpers.simSearchQueryPromise] No recommendations found");
       }
     }
     else {
-      if (!ignoreNoHits) throw new Error("No recommendations found");
+      if (!ignoreNoHits) throw new Error("[Helpers.simSearchQueryPromise] No recommendations found");
     }
   })
   .catch((err) => {
@@ -1211,6 +1216,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
         })
       });
     });
+    return err;
   })
 }
 

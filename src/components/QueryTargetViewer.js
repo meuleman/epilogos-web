@@ -2066,7 +2066,7 @@ class QueryTargetViewer extends Component {
   }
 
   jumpToTargetRegion = (position, rowIndex) => {
-    console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
+    // console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
     if (rowIndex && rowIndex !== this.state.selectedHitIdx) {
       // console.log(`jumpToTargetRegion > rowIndex ${rowIndex}`);
       // console.log(`jumpToTargetRegion > old ${this.state.selectedHitIdx}`);
@@ -2110,7 +2110,7 @@ class QueryTargetViewer extends Component {
     }
 
     function updateQueryTargetLockedHgViewconf(chromInfo, self) {
-      console.log(`updateQueryTargetLockedHgViewconf`);
+      // console.log(`updateQueryTargetLockedHgViewconf`);
       // recover query range
       // console.log(`self.props.queryRegion ${JSON.stringify(self.props.queryRegion)}`);
       // console.log(`self.state.queryRegion ${JSON.stringify(self.state.queryRegion)}`);
@@ -2192,7 +2192,7 @@ class QueryTargetViewer extends Component {
             },
           };
           self.setState({
-            queryTargetLockedHgViewKey: self.state.queryTargetLockedHgViewKey + 1, // `qt-locked-${self.state.queryTargetLockedHgViewKey + 1}`,
+            // queryTargetLockedHgViewKey: self.state.queryTargetLockedHgViewKey + 1, // `qt-locked-${self.state.queryTargetLockedHgViewKey + 1}`,
             queryRegion: newQueryRegion,
           }, () => {
             setTimeout(() => {
@@ -2260,7 +2260,7 @@ class QueryTargetViewer extends Component {
             },
           };
           self.setState({
-            queryTargetUnlockedHgViewKey: `qt-unlocked-${self.state.queryTargetUnlockedHgViewKey + 1}`,
+            // queryTargetUnlockedHgViewKey: `qt-unlocked-${self.state.queryTargetUnlockedHgViewKey + 1}`,
             queryRegion: newQueryRegion,
           }, () => {
             setTimeout(() => {

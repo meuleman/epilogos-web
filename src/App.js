@@ -22,32 +22,64 @@ class App extends Component {
     this.state = {
       application: Constants.defaultApplication
     };
+    let obj = this.getJsonFromUrl();
+    let passed = true;
+    if (obj) {
+      let qKeys = Object.keys(obj);
+      if (qKeys.length > 0) {
+        let qSet = new Set(qKeys);
+        let allowedParameterSet = new Set(Constants.allowedQueryParameterKeys);
+        let qDifferenceSet = new Set([...qSet].filter(x => !allowedParameterSet.has(x)));
+        let qDifference = Array.from(qDifferenceSet);
+        // console.log(qSet, allowedParameterSet, qDifferenceSet, qDifference.length);
+        if (qDifference.length > 0) {
+          window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
+          passed = false;
+        }
+      }
+      if (obj.application && obj.application.length > 0) {
+        if (Constants.applicationKeys.includes(obj.application)) {
+          this.state.application = obj.application;
+        }
+        else {
+          window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
+        }
+      }
+      else {
+        this.state.application = Constants.applicationPortal;
+      }
+      // if (passed) {
+      //   this.setState(newState);
+      // }
+    }
   }
   
   componentDidMount() {
-    this.parseQueryParameters();
+    // this.parseQueryParameters();
   }
   
   componentWillUnmount() {}
+
+  getJsonFromUrl = () => {
+    let query = window.location.search.substr(1);
+    let result = {};
+    query.split("&").forEach(function(part) {
+        var item = part.split("=");
+        if (item[0].length > 0)
+          result[item[0]] = decodeURIComponent(item[1]);
+    });
+    return result;
+  }
+
+  stripQueryStringAndHashFromPath = (url) => {
+    return url.split("?")[0].split("#")[0];
+  }
   
   parseQueryParameters = () => {
-    function getJsonFromUrl() {
-      let query = window.location.search.substr(1);
-      let result = {};
-      query.split("&").forEach(function(part) {
-          var item = part.split("=");
-          if (item[0].length > 0)
-            result[item[0]] = decodeURIComponent(item[1]);
-      });
-      return result;
-    }
-    function stripQueryStringAndHashFromPath(url) {
-      return url.split("?")[0].split("#")[0];
-    }
     //
     // parse query parameters and handle them, if present
     //
-    let obj = getJsonFromUrl();
+    let obj = this.getJsonFromUrl();
     let newState = JSON.parse(JSON.stringify(this.state));
     let passed = true;
     if (obj) {
@@ -57,9 +89,9 @@ class App extends Component {
         let allowedParameterSet = new Set(Constants.allowedQueryParameterKeys);
         let qDifferenceSet = new Set([...qSet].filter(x => !allowedParameterSet.has(x)));
         let qDifference = Array.from(qDifferenceSet);
-        //console.log(qSet, allowedParameterSet, qDifferenceSet, qDifference.length);
+        // console.log(qSet, allowedParameterSet, qDifferenceSet, qDifference.length);
         if (qDifference.length > 0) {
-          window.location.href = stripQueryStringAndHashFromPath(document.location.href);
+          window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
           passed = false;
         }
       }
@@ -68,7 +100,7 @@ class App extends Component {
           newState.application = obj.application;
         }
         else {
-          window.location.href = stripQueryStringAndHashFromPath(document.location.href);
+          window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
         }
       }
       else {
