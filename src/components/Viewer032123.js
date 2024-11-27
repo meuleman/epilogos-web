@@ -1710,7 +1710,7 @@ class Viewer extends Component {
 
         function handleZoomPastExtentForChromInfo(chromInfo, self) {
           setTimeout(() => {
-            self.mainHgView.zoomTo(
+            self.mainHgView.current.zoomTo(
               self.state.mainHgViewconf.views[0].uid,
               chromInfo.chrToAbs(["chr1", boundsLeft]),
               chromInfo.chrToAbs(["chrY", boundsRight]),
@@ -2547,7 +2547,7 @@ class Viewer extends Component {
       return;
     }
     // let chromSizesURL = this.getChromSizesURL(params.genome);
-    let viewRef = (!queryViewNeedsUpdate) ? this.mainHgView.current : this.queryHgView.current;
+    let viewRef = (!queryViewNeedsUpdate) ? this.mainHgView : this.queryHgView;
     let viewconfRef = (!queryViewNeedsUpdate) ? this.state.mainHgViewconf : this.state.queryHgViewconf;
 
     // console.log(`[hgViewUpdatePosition] viewconfRef ${JSON.stringify(viewconfRef, null, 2)}`);
@@ -2628,7 +2628,7 @@ class Viewer extends Component {
       if (viewRef && params.paddingMidpoint === 0) {
         try {
           setTimeout(() => {
-            viewRef.zoomTo(
+            viewRef.current.zoomTo(
               viewconfRef.views[0].uid,
               chromInfo.chrToAbs([chrLeft, startLeft]),
               chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -2652,7 +2652,7 @@ class Viewer extends Component {
         startRight = parseInt(midpointRight - params.paddingMidpoint);
         stopRight = parseInt(midpointRight + params.paddingMidpoint);
         
-        viewRef.zoomTo(
+        viewRef.current.zoomTo(
           viewconfRef.views[0].uid,
           chromInfo.chrToAbs([chrLeft, startLeft]),
           chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -2774,7 +2774,7 @@ class Viewer extends Component {
         // console.log(`unpaddedChromosome ${unpaddedChromosome} | paddedStart ${paddedStart}`);
         // console.log(`unpaddedChromosome ${unpaddedChromosome} | paddedStop  ${paddedStop}`);
         // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
-        viewRef.zoomTo(
+        viewRef.current.zoomTo(
           viewconfRef.views[0].uid,
           chromInfo.chrToAbs([unpaddedChromosome, paddedStart]),
           chromInfo.chrToAbs([unpaddedChromosome, paddedStop]),
@@ -2865,7 +2865,7 @@ class Viewer extends Component {
         },
         selectedExemplarBeingUpdated: false,
       }, () => {
-        viewRef.zoomTo(
+        viewRef.current.zoomTo(
           viewconfRef.views[0].uid,
           chromInfo.chrToAbs([unpaddedChromosome, paddedStart]),
           chromInfo.chrToAbs([unpaddedChromosome, paddedStop]),
@@ -2988,7 +2988,7 @@ class Viewer extends Component {
       }, () => {
         // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
         if (self.state.roiTableIsVisible) {
-          viewRef.zoomTo(
+          viewRef.current.zoomTo(
             viewconfRef.views[0].uid,
             chromInfo.chrToAbs([unpaddedChromosome, paddedStart]),
             chromInfo.chrToAbs([unpaddedChromosome, paddedStop]),
@@ -3116,7 +3116,7 @@ class Viewer extends Component {
       }, () => {
         // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
         if (self.state.simSearchTableIsVisible) {
-          viewRef.zoomTo(
+          viewRef.current.zoomTo(
             viewconfRef.views[0].uid,
             chromInfo.chrToAbs([unpaddedChromosome, paddedStart]),
             chromInfo.chrToAbs([unpaddedChromosome, paddedStop]),

@@ -2031,7 +2031,7 @@ class QueryTargetViewer extends Component {
       const animationTime = 10;
       // self.queryTargetLockedHgView.api.off('location', this.onQueryLocationChange);
       // self.queryTargetLockedHgView.api.off('location', this.onTargetLocationChange);
-      self.queryTargetLockedHgView.zoomTo(
+      self.queryTargetLockedHgView.current.zoomTo(
         self.state.queryTargetLockedHgViewconf.views[0].uid,
         chromInfo.chrToAbs([chrLeft, startLeft]),
         chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -2050,7 +2050,7 @@ class QueryTargetViewer extends Component {
       const animationTime = 10;
       // self.queryTargetUnlockedHgView.api.off('location', this.onQueryLocationChange);
       // self.queryTargetUnlockedHgView.api.off('location', this.onTargetLocationChange);
-      self.queryTargetUnlockedHgView.zoomTo(
+      self.queryTargetUnlockedHgView.current.zoomTo(
         self.state.queryTargetUnlockedHgViewconf.views[0].uid,
         chromInfo.chrToAbs([chrLeft, startLeft]),
         chromInfo.chrToAbs([chrLeft, stopLeft]),
