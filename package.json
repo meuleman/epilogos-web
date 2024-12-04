@@ -48,8 +48,8 @@
     "autoprefixer": "10.4.5"
   },
   "scripts": {
-    "start": "bash -c ./prebuild-fix.sh && react-scripts start",
-    "build": "bash -c ./prebuild-fix.sh && react-scripts build",
+    "start": "bash -c \"${PWD}/prebuild/run.sh ${PWD}\" && react-scripts start",
+    "build": "bash -c \"${PWD}/prebuild/run.sh ${PWD}\" && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "clean": "rm -rf node_modules && rm -f package-lock.json && rm -rf dist && rm -rf build",

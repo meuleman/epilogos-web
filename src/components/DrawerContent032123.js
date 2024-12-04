@@ -17,6 +17,8 @@ import {
 // Application constants
 import * as Constants from '../Constants.js'; 
 
+import * as Manifest from '../Manifest.js';
+
 import { FaCogs, FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 
 // Pretty-checkbox (pure CSS radio buttons)
@@ -205,14 +207,16 @@ class DrawerContent extends Component {
       //console.log(`viewParams ${JSON.stringify(this.props.viewParams, null, 2)}`);
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
-        newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        // newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        newViewParams.group = Manifest.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         if ((newViewParams.sampleSet === "vC") && (newViewParams.model === "15")) {
           newViewParams.model = "18";
         }
       }
       else if (event.target.value === "paired") {
         // newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
-        newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+        newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         newViewParams.complexity = ( ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) || (newViewParams.complexity === "KLss") ) ? "KL" : newViewParams.complexity;
       }
     }
@@ -226,19 +230,22 @@ class DrawerContent extends Component {
     if (targetName === "model") {
       if ((newViewParams.sampleSet === "vA") && (newViewParams.mode === "paired")) {
         // is the group available for the selected model? if not, we need to revert to a useful default
-        let vAGroupAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+        // let vAGroupAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+        let vAGroupAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
         if (vAGroupAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
           newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         }
       }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "15")) {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
-          const vCKeysToInspect15State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          // const vCKeysToInspect15State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          const vCKeysToInspect15State = Object.keys(Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect15State.indexOf(newViewParams.group) === -1) {
             newViewParams.group = "Adult_versus_Embryonic";
           }
           else {
-            const vCKeysToInspect15StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+            // const vCKeysToInspect15StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
+            const vCKeysToInspect15StateModelAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
             // console.log(`newViewParams.sampleSet ${newViewParams.sampleSet}`);
             // console.log(`newViewParams.genome ${newViewParams.genome}`);
             // console.log(`Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome] ${JSON.stringify(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome])}`);
@@ -250,12 +257,14 @@ class DrawerContent extends Component {
       }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "18")) {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
-          const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          // const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
+          const vCKeysToInspect18State = Object.keys(Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect18State.indexOf(newViewParams.group) === -1) {
             newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
           }
           else {
-            const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
+            // const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
+            const vCKeysToInspect18StateModelAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
             if (!vCKeysToInspect18StateModelAvailability) {
               newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
@@ -379,7 +388,8 @@ class DrawerContent extends Component {
     const activeGroup = this.state.viewParams.group;
     // const activeGroupAvailabilityForModels = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup].availableForModels;
     // const activeGroupAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup];
-    const activeGenomeAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    // const activeGenomeAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    const activeGenomeAvailability = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'model-bg-btn-';
@@ -579,7 +589,8 @@ class DrawerContent extends Component {
     //   activeModel = 15;
     //   activeComplexity = "KL";
     // }
-    let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    // let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    let md = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
         "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18], availableForComplexities:["KL", "KLs"] }
@@ -650,7 +661,8 @@ class DrawerContent extends Component {
     const activeMode = this.state.viewParams.mode;
     const activeGenome = this.state.viewParams.genome;
     const activeComplexity = this.state.viewParams.complexity;
-    let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    // let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
+    let md = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
         "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] }
@@ -759,7 +771,8 @@ class DrawerContent extends Component {
           let genome = self.props.viewParams.genome;
           let genomeText = Constants.genomes[genome];
           let group = self.props.viewParams.group;
-          let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+          // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+          let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
           let model = self.props.viewParams.model;
           let modelText = Constants.models[model];
           let complexity = self.props.viewParams.complexity;

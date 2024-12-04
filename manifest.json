@@ -1,0 +1,95 @@
+{
+  "local": {},
+  "core": {
+    "version": "120224v1",
+    "data": {
+      "orderedSets": ["vA", "vC", "vD", "vG"],
+      "defaultSet": "vA",
+      "defaultGenome": "hg19",
+      "sets": [
+        {
+          "sampleSet": "vA",
+          "formattedDescription": "Roadmap consortium (127-sample human)",
+          "navbarDescription": "Roadmap",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like", "hg38": "ESC_vs_NonES-like"},
+          "setMetadataByGenome": {
+            "hg19": {
+              "all": { "type": "group", "subtype": "single", "value": "all", "sortValue": "001", "text": "All 127 biosamples", "enabled": true, "preferred": true, "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs", "KLss"] },
+              "Immune_versus_Non-immune": { "type": "group", "subtype": "paired", "value": "Immune_versus_Non-immune", "text": "Immune vs. Non-immune", "enabled": true, "preferred": true, "sortValue": "001", "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs"] },
+              "Male_vs_Female": { "type": "group", "subtype": "paired", "value": "Male_vs_Female", "text": "Male donors vs. Female donors", "enabled": true, "preferred": true, "sortValue": "002", "availableForModels": [15, 18], "availableForComplexities": ["KL", "KLs"] },
+              "ESC_vs_NonES-like": { "type": "group", "subtype": "paired", "value": "ESC_vs_NonES-like", "sortValue": "000", "text": "ESC vs. non-ESC", "enabled": false, "preferred": true, "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs"] }
+            },
+            "hg38": {
+              "all": { "type": "group", "subtype": "single", "value": "all", "sortValue": "001", "text": "All 127 biosamples", "enabled": true, "preferred": true, "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs", "KLss"] },
+              "Immune_versus_Non-immune": { "type": "group", "subtype": "paired", "value": "Immune_versus_Non-immune", "text": "Immune vs. Non-immune", "enabled": true, "preferred": true, "sortValue": "001", "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs"] },
+              "ESC_vs_NonES-like": { "type": "group", "subtype": "paired", "value": "ESC_vs_NonES-like", "sortValue": "000", "text": "ESC vs. non-ESC", "enabled": false, "preferred": true, "availableForModels": [15, 18, 25], "availableForComplexities": ["KL", "KLs"] }
+            }
+          }
+        },
+        {
+          "sampleSet": "vC",
+          "formattedDescription": "Boix <em>et al.</em> (833-sample human)",
+          "navbarDescription": "Boix <em>et al.</em>",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "defaultGenome": "hg38",
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"},
+          "setMetadataByGenome": {
+            "hg19": {
+              "all": { "type": "group", "subtype": "single", "value": "all", "sortValue": "000", "text": "All 833 biosamples", "enabled": true, "preferred": true, "availableForModels": [18], "availableForComplexities": ["KL", "KLs"] },
+              "Male_vs_Female": { "type": "group", "subtype": "paired", "value": "Male_vs_Female", "sortValue": "000", "text": "Male donors vs. Female donors", "enabled": true, "preferred": true, "availableForModels": [18], "availableForComplexities": ["KL"] }
+            },
+            "hg38": {
+              "all": { "type": "group", "subtype": "single", "value": "all", "sortValue": "001", "text": "All 833 biosamples", "enabled": true, "preferred": true, "availableForModels": [18], "availableForComplexities": ["KL"] },
+              "Male_donors_versus_Female_donors": { "type": "group", "subtype": "paired", "value": "Male_donors_versus_Female_donors", "sortValue": "000", "text": "Male donors vs. Female donors", "enabled": true, "preferred": true, "availableForModels": [15, 18], "availableForComplexities": ["KL"] }
+            }
+          }
+        },
+        {
+          "sampleSet": "vD",
+          "formattedDescription": "Gorkin <em>et al.</em> (65-sample mouse)",
+          "navbarDescription": "Gorkin <em>et al.</em>",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "defaultGenome": "mm10",
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"mm10": "all"},
+          "defaultPairedGroup": {"mm10": "P0_vs_e11.5"},
+          "setMetadataByGenome": {
+            "mm10": {
+              "all": { "type": "group", "subtype": "single", "value": "all", "sortValue": "001", "text": "All 65 biosamples", "enabled": true, "preferred": true, "availableForModels": [15], "availableForComplexities": ["KL", "KLs", "KLss"] },
+              "P0_vs_e11.5": { "type": "group", "subtype": "paired", "value": "P0_vs_e11.5", "text": "Day-of-birth vs. Embryonic day 11.5", "enabled": true, "preferred": true, "availableForModels": [15], "availableForComplexities": ["KL", "KLs"] }
+            }
+          }
+        },
+        {
+          "sampleSet": "vG",
+          "formattedDescription": "IHEC (1698-sample human)",
+          "navbarDescription": "IHEC",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "defaultGenome": "hg38",
+          "defaultGroup": "All_1698_biosamples",
+          "defaultSingleGroup": {"hg38": "All_1698_biosamples"},
+          "defaultPairedGroup": {"hg38": "Male_vs_Female"},
+          "setMetadataByGenome": {
+            "hg38": {
+              "All_1698_biosamples": { "type": "group", "subtype": "single", "value": "All_1698_biosamples", "sortValue": "000", "text": "All 1698 biosamples", "enabled": true, "preferred": true, "availableForModels": [18], "availableForComplexities": ["KL", "KLs"] },
+              "Male_vs_Female": { "type": "group", "subtype": "paired", "value": "Male_vs_Female", "sortValue": "000", "text": "Male donors vs. Female donors", "enabled": true, "preferred": true, "availableForModels": [18], "availableForComplexities": ["KL", "KLs"] }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

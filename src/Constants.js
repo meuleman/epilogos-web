@@ -144,9 +144,9 @@ export const genomesForSettingsDrawer = {
     'paired': {
       "Human": ["hg19", "hg38"]
     },
-    'query': {
-      "Human": ["hg19", "hg38"]
-    },
+    // 'query': {
+    //   "Human": ["hg19", "hg38"]
+    // },
   },
   'vB': {
     'single': {
@@ -161,9 +161,9 @@ export const genomesForSettingsDrawer = {
     'paired': {
       "Human": ["hg19", "hg38"]
     },
-    'query': {
-      "Human": ["hg19", "hg38"]
-    },
+    // 'query': {
+    //   "Human": ["hg19", "hg38"]
+    // },
   },
   'vD': {
     'single': {
@@ -172,9 +172,9 @@ export const genomesForSettingsDrawer = {
     'paired': {
       "Mouse": ["mm10"]
     },
-    'query': {
-      "Mouse": ["mm10"]
-    },
+    // 'query': {
+    //   "Mouse": ["mm10"]
+    // },
   },
   'vE': {
     'single': {
@@ -760,14 +760,14 @@ export const switchModes = {
 export const modes = {
   "single": "Single",
   "paired": "Paired",
-  "query": "Query",
+  // "query": "Query",
   "qt": "Query-Target",
 };
 
 export const modeNotices = {
   'single': 'The <em>single-group</em> viewer renders the chromatin state logo of subsets of 127 genome-wide epigenomic biosamples, along with the state calls for each sample.',
   'paired': 'The <em>paired-group</em> viewer renders the chromatin state logos of two individual biosample groupings and their regional differences in one track, permitting simultaneous exploration and comparison of two sets.',
-  'query': 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
+  // 'query': 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
   'qt': 'The <em>query</em> viewer renders query and target logos, enabling direct comparison of a query epilogo against a target logo.',
 };
 

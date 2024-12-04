@@ -10,6 +10,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaClipboard } from 'react-icons/fa';
 
 import * as Constants from "./Constants.js";
+import * as Manifest from './Manifest.js';
 import { RecommenderV3SearchButtonDefaultLabel } from "./components/RecommenderSearchButton";
 import { RecommenderSearchLinkDefaultLabel } from "./components/RecommenderSearchLink";
 import { RecommenderExpandLinkDefaultLabel } from "./components/RecommenderExpandLink";

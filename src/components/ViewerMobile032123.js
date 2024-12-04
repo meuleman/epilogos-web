@@ -3,6 +3,7 @@ import React, { Component } from "react";
 // Application constants and helpers
 import * as Constants from "../Constants.js";
 import * as Helpers from "../Helpers.js";
+import * as Manifest from '../Manifest.js';
 
 import {
   Navbar,
@@ -199,7 +200,8 @@ class ViewerMobile extends Component {
     newTempHgViewParams.genome = queryObj.genome || Constants.defaultApplicationGenome;
     newTempHgViewParams.model = queryObj.model || Constants.defaultApplicationModel;
     newTempHgViewParams.complexity = queryObj.complexity || Constants.defaultApplicationComplexity;
-    newTempHgViewParams.group = queryObj.group || Constants.defaultApplicationGroup;
+    // newTempHgViewParams.group = queryObj.group || Constants.defaultApplicationGroup;
+    newTempHgViewParams.group = queryObj.group || Manifest.defaultApplicationGroup;
     newTempHgViewParams.chrLeft = queryObj.chrLeft || Constants.defaultApplicationChr;
     newTempHgViewParams.chrRight = queryObj.chrRight || Constants.defaultApplicationChr;
     newTempHgViewParams.start = parseInt(queryObj.start || Constants.defaultApplicationStart);
@@ -363,7 +365,6 @@ class ViewerMobile extends Component {
       const complexity = self.state.hgViewParams.complexity;
       const group = self.state.hgViewParams.group;
       const sampleSet = self.state.hgViewParams.sampleSet;
-      // const isGroupPreferredSample = Constants.groupsByGenome[sampleSet][genome][group].preferred;
       self.triggerUpdate("update");
       self.updateViewerURL(
         mode,
@@ -2341,17 +2342,20 @@ class ViewerMobile extends Component {
     //
     // adjust group
     //
-    let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+    // let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+    let availableGroupsForNewSampleSet = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
     if (availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group) === -1) {
       if (this.state.hgViewParams.mode === "single") {
-        tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        // tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        tempHgViewParams.group = Manifest.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
       }
       else if (this.state.hgViewParams.mode === "paired") {
         // console.log(`availableGroupsForNewSampleSet | (${this.state.hgViewParams.group}) ${availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group)} | ${JSON.stringify(availableGroupsForNewSampleSet)}`);
         //
         // it can be possible for an A_vs_B group name to have an according A_versus_B name (and vice versa)
         //
-        tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        // tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
         const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
         const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
         if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
@@ -2372,7 +2376,8 @@ class ViewerMobile extends Component {
     // adjust complexity
     //
     try {
-      let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
+      // let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
+      let availableComplexitiesForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
       // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
       // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
       // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
@@ -2392,7 +2397,8 @@ class ViewerMobile extends Component {
     // adjust model
     //
     try {
-      let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
+      // let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
+      let availableModelsForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
       // console.log(`availableModelsForNewGroup | (${tempHgViewParams.model}) ${availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model))} | ${JSON.stringify(availableModelsForNewGroup)}`);
       if (availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model)) === -1) {
         tempHgViewParams.model = this.state.hgViewParams.model; // this might be available
@@ -2740,7 +2746,8 @@ class ViewerMobile extends Component {
     let sampleSet = this.state.hgViewParams.sampleSet;  
     let genome = this.state.hgViewParams.genome;
     let group = this.state.hgViewParams.group;
-    let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+    // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
+    let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
     let annotationText = Constants.annotations[genome];
     let mode = this.state.hgViewParams.mode;
     let model = this.state.hgViewParams.model;
@@ -2822,8 +2829,10 @@ class ViewerMobile extends Component {
         const groupA = groupSplit.groupA;
         const groupB = groupSplit.groupB;
         //console.log(`groups A ${groupA} | B ${groupB}`);
-        let groupAText = Constants.groupsByGenome[sampleSet][genome][groupA].text;
-        let groupBText = Constants.groupsByGenome[sampleSet][genome][groupB].text;
+        // let groupAText = Constants.groupsByGenome[sampleSet][genome][groupA].text;
+        // let groupBText = Constants.groupsByGenome[sampleSet][genome][groupB].text;
+        let groupAText = Manifest.groupsByGenome[sampleSet][genome][groupA].text;
+        let groupBText = Manifest.groupsByGenome[sampleSet][genome][groupB].text;
         results.push(<div key="paired-track-label-A" className="epilogos-viewer-container-track-label-small" style={{top:parseInt(epilogosHeaderNavbarHeight + 15)+'px',right:rightShift}}>{groupAText}</div>);
         results.push(<div key="paired-track-label-B" className="epilogos-viewer-container-track-label-small" style={{top:parseInt(epilogosHeaderNavbarHeight + childViewHeights[0] + 15)+'px',right:rightShift}}>{groupBText}</div>);
         results.push(<div key="paired-track-label-AB" className="epilogos-viewer-container-track-label-small" style={{top:parseInt(epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 15)+'px',right:rightShift}}>{groupText}</div>);
