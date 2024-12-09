@@ -276,38 +276,38 @@ class Portal extends Component {
     this.initHgViewRefresh();
   }
   
-  updateHgViewWithRandomGene = () => {
-    let randomGene = this.hgRandomGene();
-    axios.get(randomGene.url)
-      .then((res) => {
-        if (res.data.hits) {
-          // console.log("(portal) res.data.hits", res.data.hits);
-          // console.log("(portal) randomGene.name", randomGene.name);
-          let match = res.data.hits[randomGene.name][0];
-          if (!match) {
-            return;
-          }
-          // console.log("(portal) match", res.data.hits[randomGene.name][0]);
-          let chr = match["chrom"];
-          let txStart = match["start"];
-          let txEnd = match["stop"];
-          let assembly = this.state.hgViewParams.genome;
-          let chrLimit = parseInt(Constants.assemblyBounds[assembly][chr].ub);
-          let geneLength = parseInt(txEnd) - parseInt(txStart);
-          // console.log("updateHgViewWithRandomGene - ", assembly, chr, txStart, txEnd, chrLimit, geneLength);
-          let padding = parseInt(Constants.defaultHgViewGenePaddingFraction * geneLength);
-          txStart = ((txStart - padding) > 0) ? (txStart - padding) : 0;
-          txEnd = ((txEnd + padding) < chrLimit) ? (txEnd + padding) : txEnd;
-          this.hgViewUpdatePosition(assembly, chr, txStart, txEnd, chr, txStart, txEnd, 0, "Portal.updateHgViewWithRandomGene");
-          clearInterval(window.ref);
-          this.initHgViewRefresh();
-          //setTimeout(() => { this.updateViewportDimensions(); }, 1000);
-        }
-      })
-      .catch((err) => {
-        throw String(`Error: ${err}`);
-      });
-  }
+  // updateHgViewWithRandomGene = () => {
+  //   let randomGene = this.hgRandomGene();
+  //   axios.get(randomGene.url)
+  //     .then((res) => {
+  //       if (res.data.hits) {
+  //         // console.log("(portal) res.data.hits", res.data.hits);
+  //         // console.log("(portal) randomGene.name", randomGene.name);
+  //         let match = res.data.hits[randomGene.name][0];
+  //         if (!match) {
+  //           return;
+  //         }
+  //         // console.log("(portal) match", res.data.hits[randomGene.name][0]);
+  //         let chr = match["chrom"];
+  //         let txStart = match["start"];
+  //         let txEnd = match["stop"];
+  //         let assembly = this.state.hgViewParams.genome;
+  //         let chrLimit = parseInt(Constants.assemblyBounds[assembly][chr].ub);
+  //         let geneLength = parseInt(txEnd) - parseInt(txStart);
+  //         // console.log("updateHgViewWithRandomGene - ", assembly, chr, txStart, txEnd, chrLimit, geneLength);
+  //         let padding = parseInt(Constants.defaultHgViewGenePaddingFraction * geneLength);
+  //         txStart = ((txStart - padding) > 0) ? (txStart - padding) : 0;
+  //         txEnd = ((txEnd + padding) < chrLimit) ? (txEnd + padding) : txEnd;
+  //         this.hgViewUpdatePosition(assembly, chr, txStart, txEnd, chr, txStart, txEnd, 0, "Portal.updateHgViewWithRandomGene");
+  //         clearInterval(window.ref);
+  //         this.initHgViewRefresh();
+  //         //setTimeout(() => { this.updateViewportDimensions(); }, 1000);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       throw String(`Error: ${err}`);
+  //     });
+  // }
   
   updateViewportDimensions = () => {
     // console.log("updateViewportDimensions()");
@@ -385,14 +385,14 @@ class Portal extends Component {
     });
   }
 
-  hgRandomGene = () => {
-    const gene = this.state.genes[Math.floor(Math.random() * this.state.genes.length)];
-    const annotationUrl = Constants.annotationScheme + "://" + Constants.annotationHost + ":" + Constants.annotationPort + "/sets?q=" + gene + "&assembly=" + this.state.hgViewParams.genome;
-    return {
-      'name': gene, 
-      'url': annotationUrl
-    };
-  }
+  // hgRandomGene = () => {
+  //   const gene = this.state.genes[Math.floor(Math.random() * this.state.genes.length)];
+  //   const annotationUrl = Constants.annotationScheme + "://" + Constants.annotationHost + ":" + Constants.annotationPort + "/sets?q=" + gene + "&assembly=" + this.state.hgViewParams.genome;
+  //   return {
+  //     'name': gene, 
+  //     'url': annotationUrl
+  //   };
+  // }
 
   hgRandomExemplar = () => {
     const exemplar = Constants.portalExemplars[Math.floor(Math.random() * Constants.portalExemplars.length)];

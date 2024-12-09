@@ -1003,7 +1003,7 @@ li {
   /* padding-top: 55px; */
 }
 
-.epilogos-viewer-search-input {
+/* .epilogos-viewer-search-input {
   display: flex;
   border-radius: 3px;
   border: none;
@@ -1011,23 +1011,18 @@ li {
   margin: 0 auto;
   height: 25px !important;
   width: 215px !important;
-  /* font-size: 0.7em; */
   font-size: 0.9rem;
   position: relative;
   top: 1px;
-  /* background-image: url(./components/Autocomplete/search.dddddd.png); */
   background-image: url(./components/Autocomplete/search.png);
   background-repeat: no-repeat;
   background-size: 10px 10px;
   background-position: 9px 7px;
   background-origin: border-box;
-  /* background-color: #525252; */
   background-color: rgb(230, 230, 230);
-  /* color: white; */
   color: black;
   padding-left: 28px;
-  /* margin-right: 16px; */
-}
+} */
 
 .epilogos-viewer-search-input-viewermobile {
   height: 22px !important;
@@ -1075,15 +1070,12 @@ input.epilogos-viewer-search-input:disabled::placeholder {
   cursor: not-allowed;
 }
 
-input.epilogos-viewer-search-input:disabled {
-  /* background-color: #343434; */
+/* input.epilogos-viewer-search-input:disabled {
   background-color: rgb(120, 120, 120);
-  /* color: #666; */
   color: black;
   cursor: not-allowed;
-  /* background-image: url(./components/Autocomplete/search.525252.png); */
   background-image: url(./components/Autocomplete/search.png);
-}
+} */
 
 .epilogos-viewer-container-track-label-parent {
   z-index: 1;

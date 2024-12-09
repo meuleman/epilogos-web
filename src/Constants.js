@@ -5,12 +5,12 @@ export const applicationDevelopmentPort = `${process.env.REACT_APP_APPLICATION_D
 
 export const applicationContactEmail = "areynolds@altius.org";
 
-//export const annotationHost = "18.191.132.31";
-//export const annotationPort = "8000";
+// export const annotationHost = "18.191.132.31";
+// export const annotationPort = "8000";
 
-export const annotationScheme = "https";
-export const annotationHost = "annotations.altius.org";
-export const annotationPort = "8443"; // SSL over 8443
+// export const annotationScheme = "https";
+// export const annotationHost = "annotations.altius.org";
+// export const annotationPort = "8443"; // SSL over 8443
 
 export const applicationEndpointRootURL = `${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}`;
 
@@ -658,6 +658,9 @@ export const complexities = {
   "KL": "S<sub>1</sub>",
   "KLs": "S<sub>2</sub>",
   "KLss": "S<sub>3</sub>",
+  "S1": "S<sub>1</sub>",
+  "S2": "S<sub>2</sub>",
+  "S3": "S<sub>3</sub>",
   "stacked": "S<sub>1,2,3</sub>"
 };
 
@@ -665,6 +668,9 @@ export const complexitiesForDataExport = {
   "KL": "S1",
   "KLs": "S2",
   "KLss": "S3",
+  "S1": "S1",
+  "S2": "S2",
+  "S3": "S3",
   "stacked": "S1_2_3"
 };
 
@@ -672,6 +678,9 @@ export const complexitiesForRecommenderV1OptionSaliencyLevel = {
   "KL": "S1",
   "KLs": "S2",
   "KLss": "S3",
+  "S1": "S1",
+  "S2": "S2",
+  "S3": "S3",
 };
 
 export const complexitiesForSettingsDrawer = {
@@ -736,18 +745,27 @@ export const complexityNotices = {
     'KL': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
     'KLs': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
     'KLss': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
+    'S1': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
+    'S2': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
+    'S3': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
     'stacked': "This selection displays complexity measurements for <em>levels 1, 2, and 3</em>."
   },
   'hg38': {
     'KL': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
     'KLs': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
     'KLss': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
+    'S1': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
+    'S2': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
+    'S3': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
     'stacked': "This selection displays complexity measurements for <em>levels 1, 2, and 3</em>."
   },
   'mm10': {
     'KL': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
     'KLs': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
     'KLss': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
+    'S1': "<em>Level 1</em> complexity measures the saliency of a chromatin state label as relative entropy, or the information gain over a random expectation of label occurances over all biosamples.",
+    'S2': "<em>Level 2</em> complexity measures label saliency based on co-occurance with other labels.",
+    'S3': "<em>Level 3</em> complexity measures label saliency based on co-occurance with other labels, specific to pairs of samples.",
     'stacked': "This selection displays complexity measurements for <em>levels 1, 2, and 3</em>."
   }
 };

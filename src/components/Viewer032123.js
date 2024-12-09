@@ -4011,7 +4011,7 @@ class Viewer extends Component {
     }
     catch (err) {
       // throw new Error(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group} | data ${JSON.stringify(Constants.groupsByGenome[sampleSet][genome][group])}`);
-      throw new Error(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group} | data ${JSON.stringify(Manifest.groupsByGenome[sampleSet][genome][group])}`);
+      throw new Error(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group} | data ${JSON.stringify(Manifest.groupsByGenome[sampleSet][genome], null, 2)}`);
     }
     let model = this.state.tempHgViewParams.model;
     let modelText = Constants.models[model];
@@ -6906,7 +6906,8 @@ class Viewer extends Component {
   
   parameterSummaryAsElement = () => {
     let sampleSet = this.state.hgViewParams.sampleSet;
-    let sampleSetText = Constants.sampleSetsForNavbar[sampleSet];
+    // let sampleSetText = Constants.sampleSetsForNavbar[sampleSet];
+    let sampleSetText = Manifest.navbarDescriptionsBySampleSet[sampleSet];
     let genome = this.state.hgViewParams.genome;
     // eslint-disable-next-line no-unused-vars
     let genomeText = Constants.genomes[genome];

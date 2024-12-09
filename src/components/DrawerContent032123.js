@@ -203,8 +203,8 @@ class DrawerContent extends Component {
     if (targetName === "mode") {
       // get toggle value from event.target.checked
       event.target.value = (!event.target.checked) ? "single" : "paired";
-      //console.log(`event.target.value ${event.target.value}`);
-      //console.log(`viewParams ${JSON.stringify(this.props.viewParams, null, 2)}`);
+      // console.log(`event.target.value ${event.target.value}`);
+      // console.log(`viewParams ${JSON.stringify(this.props.viewParams, null, 2)}`);
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
         // newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
@@ -353,12 +353,14 @@ class DrawerContent extends Component {
     let kButtonGroupIdx = 0;
     let kButtons = [];
     let kButtonIdx = 0;
-    const genomes = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode];
+    // const genomes = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode];
+    const genomes = Manifest.assembliesByMode[activeSampleSet][activeMode];
     if (!genomes) {
       return <div></div>;
     }
     Object.keys(genomes).forEach(k => {
-      let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode][k];
+      // let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode][k];
+      let kButtonLabels = Manifest.assembliesByMode[activeSampleSet][activeMode][k];
       const kButtonPrefix = 'genome-bg-btn-';
       const kButtonParentPrefix = 'genome-bg-parent-btn-';
       const kButtonLabelPrefix = 'genome-bg-btn-label-';
@@ -396,7 +398,8 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
-    let activeObj = (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]) ? Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode] : null;
+    // let activeObj = (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]) ? Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode] : null;
+    let activeObj = (Manifest.modelsByGenome[activeSampleSet][activeGenome]) ? Manifest.modelsByGenome[activeSampleSet][activeGenome][activeMode] : null;
     if (!activeObj) {
       // console.log(`activeSampleSet ${activeSampleSet}`);
       // console.log(`activeGenome ${activeGenome}`);
@@ -444,7 +447,9 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'sampleSet-bg-parent-btn-';
     const kButtonLabelPrefix = 'sampleSet-bg-btn-label-';
     let kButtonIdx = 0;
-    Constants.sampleSetsForSettingsDrawerOrderedKeys.forEach(k => {
+    // const orderedSampleSetKeys = Constants.sampleSetsForSettingsDrawerOrderedKeys;
+    const orderedSampleSetKeys = Manifest.orderedSampleSetKeys;
+    orderedSampleSetKeys.forEach(k => {
       if (((k === "vB") || (k === "vE") || (k === "vF")) && (this.props.isProductionSite)) return;
       if (Constants.sampleSetsForSettingsDrawer[k].visible) {
         const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
@@ -518,7 +523,8 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'complexity-bg-parent-btn-';
     const kButtonLabelPrefix = 'complexity-bg-btn-label-';
     let kButtonIdx = 0;
-    let activeObj = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome];
+    // let activeObj = Constants.complexitiesForSettingsDrawer[activeSampleSet][activeGenome];
+    let activeObj = Manifest.complexitiesByGenome[activeSampleSet][activeGenome];
     if (!activeObj) return;
     Object.keys(activeObj).forEach(k => {
       if (activeObj[k].visible) {
