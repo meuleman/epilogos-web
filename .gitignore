@@ -29,3 +29,9 @@ yarn-error.log*
 
 *~
 report.*
+
+*.cool
+
+hg-data
+hg-tmp
+epilogos-hgManage

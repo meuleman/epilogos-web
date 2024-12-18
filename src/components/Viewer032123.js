@@ -1122,6 +1122,7 @@ class Viewer extends Component {
     const RIGHT_ARROW_KEY = 39;
     const DOWN_ARROW_KEY = 40;
     const FORWARD_SLASH_KEY = 191;
+    const J_KEY = 74;
     const R_KEY = 82;
     const S_KEY = 83;
     // console.log(`Viewer - event.keyCode ${event.keyCode}`);
@@ -1178,6 +1179,11 @@ class Viewer extends Component {
         else if (this.state.hgViewParams.mode === 'qt') {
           event.preventDefault();
           this.queryTargetHgView.updateCurrentRecommendationIdx("next");
+        }
+        break;
+      case J_KEY:
+        if (event.altKey) {
+          console.log(`${JSON.stringify(this.state.mainHgViewconf, null, 2)}`);
         }
         break;
       case R_KEY:
@@ -3715,7 +3721,7 @@ class Viewer extends Component {
         tempHgViewParams.group = "Male_vs_Female";
       }
       if (tempHgViewParams.sampleSet === "vD") {
-        tempHgViewParams.group = "e11.5_vs_P0";
+        tempHgViewParams.group = "P0_vs_e11.5";
       }
       if (tempHgViewParams.sampleSet === "vG") {
         tempHgViewParams.group = "Male_vs_Female";
@@ -4070,6 +4076,7 @@ class Viewer extends Component {
       let newSerIdx = this.state.selectedExemplarRowIdx;
       let newSrrIdx = this.state.selectedRoiRowIdx;
       let newGatt = this.state.tempHgViewParams.gatt;
+      let newTrackServerBySampleSet = (Manifest.trackServerBySampleSet[newSampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
 
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, newGenome);
       
@@ -4112,8 +4119,8 @@ class Viewer extends Component {
           }
         })
         .catch((err) => {
-          // console.log("[triggerUpdate] Error - ", JSON.stringify(err));
-          // console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`);
+          console.log("[triggerUpdate] Error - ", JSON.stringify(err));
+          console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`);
           let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
           self.setState({
             overlayMessage: msg,
@@ -4324,11 +4331,11 @@ class Viewer extends Component {
                 res.data.views[0].initialXDomain = [absLeft, absRight];
                 res.data.views[0].initialYDomain = [absLeft, absRight];
                 // update track servers
-                res.data.views[0].tracks.top[0].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[1].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[2].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[3].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[4].server = Constants.applicationHiGlassServerEndpointRootURL;
+                res.data.views[0].tracks.top[0].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[1].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[2].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[3].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[4].server = newTrackServerBySampleSet;
                 // update track heights -- requires preknowledge of track order from template
                 let windowInnerHeight = document.documentElement.clientHeight + "px";
                 let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
@@ -4757,10 +4764,10 @@ class Viewer extends Component {
                 }
 
                 // update track server
-                res.data.views[0].tracks.top[0].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[1].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[2].server = Constants.applicationHiGlassServerEndpointRootURL;
-                res.data.views[0].tracks.top[3].server = Constants.applicationHiGlassServerEndpointRootURL;
+                res.data.views[0].tracks.top[0].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[1].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[2].server = newTrackServerBySampleSet;
+                res.data.views[0].tracks.top[3].server = newTrackServerBySampleSet;
 
                 // update track names
                 res.data.views[0].tracks.top[0].name = newEpilogosTrackFilename;

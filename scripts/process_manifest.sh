@@ -12,7 +12,7 @@ constants_file=${src_dir}/Manifest.js
 
 if [ -f ${manifest_file} ]; then
   echo "Processing manifest file ${manifest_file}"
-  python ${project_dir}/prebuild/process_manifest.py ${manifest_file} ${constants_file}
+  python ${project_dir}/scripts/process_manifest.py ${manifest_file} ${constants_file}
 else
   echo "No manifest file found, skipping"
   exit -1

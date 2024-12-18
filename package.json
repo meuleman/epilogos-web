@@ -1,7 +1,18 @@
 {
   "name": "epilogos-web",
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "author": "Alex Reynolds <alexpreynolds@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meuleman/epilogos-web"
+  },
   "private": true,
+  "keywords": [
+    "epilogos",
+    "epigenome",
+    "epigenetics",
+    "chromatin-modeling"
+  ],
   "dependencies": {
     "@musicstory/react-bootstrap-table-next": "^1.0.5",
     "@testing-library/react": "^12.1.5",
@@ -48,7 +59,12 @@
     "autoprefixer": "10.4.5"
   },
   "scripts": {
-    "prebuild": "bash -c \"${PWD}/prebuild/run.sh ${PWD}\"",
+    "higlass-manage-install": "bash -c \"${PWD}/scripts/higlass_manage_install.sh\"",
+    "higlass-manage-start": "bash -c \"${PWD}/scripts/higlass_manage_start.sh\"",
+    "higlass-manage-ingest-core": "bash -c \"${PWD}/scripts/higlass_manage_ingest_core.sh\"",
+    "higlass-manage-stop": "bash -c \"${PWD}/scripts/higlass_manage_stop.sh\"",
+    "higlass-manage-clean": "bash -c \"${PWD}/scripts/higlass_manage_clean.sh\"",
+    "prebuild": "bash -c \"${PWD}/scripts/run.sh ${PWD}\"",
     "start": "npm run prebuild && react-scripts start",
     "build": "npm run prebuild && react-scripts build",
     "test": "react-scripts test",

@@ -89,6 +89,7 @@ export const orderedSampleSetKeys = {orderedSets};
 
 
 def process_manifest_item_by_sample_set(orderedSets, sets, out_fh):
+    trackServerBySampleSetObj = {}
     navbarDescriptionsBySampleSetObj = {}
     for orderedSet in orderedSets:
         orderedSetData = None
@@ -104,9 +105,15 @@ def process_manifest_item_by_sample_set(orderedSets, sets, out_fh):
         if not navbarDescriptionsBySampleSetObj[orderedSet]:
             print('Error: Failed to find navbarDescription for orderedSet: {}'.format(orderedSet))
             sys.exit(1)
+        trackServerBySampleSetObj[orderedSet] = orderedSetData['trackServer'] if 'trackServer' in orderedSetData else None
+        if not trackServerBySampleSetObj[orderedSet]:
+            print('Error: Failed to find trackServer for orderedSet: {}'.format(orderedSet))
+            sys.exit(1)
     navbarDescriptionsBySampleSetString = json.dumps(navbarDescriptionsBySampleSetObj, indent=OBJ_INDENT)
+    trackServerBySampleSetString = json.dumps(trackServerBySampleSetObj, indent=OBJ_INDENT)
     out_fh.write(f"""
 export const navbarDescriptionsBySampleSet = {navbarDescriptionsBySampleSetString};
+export const trackServerBySampleSet = {trackServerBySampleSetString};
 """.lstrip())
 
 
