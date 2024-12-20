@@ -563,6 +563,17 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   }
 }
 
+export const epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
+  let result = { A : null, B : null, AvsB : null };
+  const mediaGroupAKey = Manifest.groupsByGenome[sampleSet][genome][groupA].mediaKey;
+  const mediaGroupBKey = Manifest.groupsByGenome[sampleSet][genome][groupB].mediaKey;
+  const mediaGroupAvsBKey = Manifest.groupsByGenome[sampleSet][genome][groupAvsB].mediaKey;
+  result.A = `${sampleSet}.${genome}.${model}.${mediaGroupAKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  result.B = `${sampleSet}.${genome}.${model}.${mediaGroupBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  result.AvsB = `${sampleSet}.${genome}.${model}.${mediaGroupAvsBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  return result;
+}
+
 export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
   // console.log(`groupA, groupB, groupAvsB ${groupA}, ${groupB}, ${groupAvsB}`);
   let result = { A : null, B : null, AvsB : null };

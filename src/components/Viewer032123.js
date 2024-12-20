@@ -4226,11 +4226,15 @@ class Viewer extends Component {
         const newGroupB = groupSplit.groupB;
         // console.log(`newGroupA ${JSON.stringify(newGroupA)} newGroupB ${JSON.stringify(newGroupB)}`);
 
-        const pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
+        let pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
 
-        const newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
-        const newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
-        const newEpilogosTrackAvsBFilename = pairedEpilogosTrackFilenames.AvsB;
+        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+          pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
+        }
+
+        let newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
+        let newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
+        let newEpilogosTrackAvsBFilename = pairedEpilogosTrackFilenames.AvsB;     
 
         // let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
         // let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
@@ -5431,10 +5435,12 @@ class Viewer extends Component {
                                  "openViewerAtChrPosition");
             // console.log("[openViewerAtChrPosition] this.state.selectedSimSearchRowIdx", this.state.selectedSimSearchRowIdx);
             
+            // const currentTrackServerBySampleSet = (Manifest.trackServerBySampleSet[this.state.hgViewParams.sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
+
             this.setState({
               selectedSimSearchRegionBeingUpdated: false,
               simSearchQueryInProgress: false,
-              simSearchQueryCountIsVisible: true,
+              simSearchQueryCountIsVisible: true, // !(Helpers.trackServerPointsToLocalHgServer(currentTrackServerBySampleSet)),
               simSearchQueryCountIsEnabled: true,
             });
           });
@@ -7243,6 +7249,9 @@ class Viewer extends Component {
 
   // simSearchQuery = Helpers.debounce((chrom, start, stop) => {
   simSearchQuery = (chrom, start, stop) => {
+    const sampleSet = this.state.hgViewParams.sampleSet;
+    const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
+    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet)) return; // skip simsearch support when serving tracks from local hg-server
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
     // console.log(`simSearchQuery | ${chrom}:${start}-${stop}`);
