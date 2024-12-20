@@ -4,15 +4,15 @@ set -ex
 
 source ${PWD}/.env
 
-venv=${HG_MANAGE_VIRTUAL_ENVIRONMENT}
+venv=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT}
 
 if [ -z "${venv}" ]; then
-    echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
+    echo "Error: REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON}" ]; then
-    echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON not set"
+if [ -z "${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON not set"
     exit -1
 fi
 
@@ -25,9 +25,11 @@ else
     exit -1
 fi
 
-virtualenv ${venv} --python=${HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON}
+virtualenv ${venv} --python=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON}
 source ${venv}/bin/activate
 pip install --upgrade pip
+pip install clint
+pip install python-dotenv
 pip install higlass-manage
 higlass-manage version
 deactivate

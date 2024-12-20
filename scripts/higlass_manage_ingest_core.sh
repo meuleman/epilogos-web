@@ -4,20 +4,20 @@ set -ex
 
 source ${PWD}/.env
 
-venv=${HG_MANAGE_VIRTUAL_ENVIRONMENT}
+venv=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT}
 
 if [ -z "${venv}" ]; then
-    echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
+    echo "Error: REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_NAME}" ]; then
-    echo "Error: HG_MANAGE_NAME not set"
+if [ -z "${REACT_APP_HG_MANAGE_NAME}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_NAME not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_DATA_DIR}" ]; then
-    echo "Error: HG_MANAGE_DATA_DIR not set"
+if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_DATA_DIR not set"
     exit -1
 fi
 
@@ -34,5 +34,5 @@ fi
 source ${venv}/bin/activate
 higlass-manage version
 python --version
-${PWD}/scripts/higlass_manage_ingest_core.py ${PWD}/manifest.json ${PWD}/scripts ${HG_MANAGE_NAME} ${HG_MANAGE_DATA_DIR}
+${PWD}/scripts/higlass_manage_ingest_core.py ${PWD}/manifest.json ${PWD}/scripts ${REACT_APP_HG_MANAGE_NAME} ${REACT_APP_HG_MANAGE_DATA_DIR}
 deactivate

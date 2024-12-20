@@ -643,6 +643,19 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
   return result;
 }
 
+export const trackServerPointsToLocalHgServer = (trackServer) => {
+  // console.log(`trackServer ${trackServer}`);
+  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT}`;
+  // console.log(`localhost ${localhost}`);
+  // console.log(`trackServer.includes(localhost) ${trackServer.includes(localhost)}`);
+  return trackServer.includes(localhost);
+}
+
+export const epilogosTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSet, genome, model, group, complexity) => {
+  const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
+  return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+}
+
 export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
   let result = null;
   let errorRaised = false;
@@ -790,6 +803,11 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
     throw new Error(errorMessage);
   }
   return result;
+}
+
+export const marksTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSet, genome, model, group) => {
+  const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
+  return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.mv5`;
 }
 
 export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group) => {

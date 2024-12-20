@@ -35,3 +35,5 @@ report.*
 hg-data
 hg-tmp
 epilogos-hgManage
+scripts/hgManage-assets/*.db
+scripts/epilogos-hgManage

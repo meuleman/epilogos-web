@@ -4,7 +4,7 @@ set -ex
 
 source ${PWD}/.env
 
-venv=${HG_MANAGE_VIRTUAL_ENVIRONMENT}
+venv=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT}
 
 if [ -z "${venv}" ]; then
     echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT not set"

@@ -4,25 +4,25 @@ set -ex
 
 source ${PWD}/.env
 
-venv=${HG_MANAGE_VIRTUAL_ENVIRONMENT}
+venv=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT}
 
 if [ -z "${venv}" ]; then
-    echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
+    echo "Error: REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_NAME}"]; then
-    echo "Error: HG_MANAGE_NAME not set"
+if [ -z "${REACT_APP_HG_MANAGE_NAME}"]; then
+    echo "Error: REACT_APP_HG_MANAGE_NAME not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_DATA_DIR}" ]; then
-    echo "Error: HG_MANAGE_DATA_DIR not set"
+if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_DATA_DIR not set"
     exit -1
 fi
 
-if [ -z "${HG_MANAGE_TEMP_DIR}" ]; then
-    echo "Error: HG_MANAGE_TEMP_DIR not set"
+if [ -z "${REACT_APP_HG_MANAGE_TEMP_DIR}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_TEMP_DIR not set"
     exit -1
 fi
 
@@ -38,7 +38,12 @@ fi
 
 source ${venv}/bin/activate
 higlass-manage version
-mkdir -p ${HG_MANAGE_DATA_DIR}
-mkdir -p ${HG_MANAGE_TEMP_DIR}
-higlass-manage start --hg-name ${HG_MANAGE_NAME} --data-dir ${HG_MANAGE_DATA_DIR} --temp-dir ${HG_MANAGE_TEMP_DIR}
+mkdir -p ${REACT_APP_HG_MANAGE_DATA_DIR}
+mkdir -p ${REACT_APP_HG_MANAGE_TEMP_DIR}
+higlass-manage start \
+  --hg-name ${REACT_APP_HG_MANAGE_NAME} \
+  --port ${REACT_APP_HG_MANAGE_PORT} \
+  --media-dir ${REACT_APP_HG_MANAGE_MEDIA_DIR} \
+  --data-dir ${REACT_APP_HG_MANAGE_DATA_DIR} \
+  --temp-dir ${REACT_APP_HG_MANAGE_TEMP_DIR}
 deactivate

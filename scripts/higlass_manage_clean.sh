@@ -4,35 +4,35 @@ set -ex
 
 source ${PWD}/.env
 
-venv=${HG_MANAGE_VIRTUAL_ENVIRONMENT}
+venv=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT}
 
 if [ -z "${venv}" ]; then
-    echo "Error: HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
+    echo "Error: REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT not set"
     exit -1
 fi
 
 ${PWD}/scripts/higlass_manage_stop.sh
 
-if [ -z "${HG_MANAGE_DATA_DIR}" ]; then
-    echo "Error: HG_MANAGE_DATA_DIR not set"
+if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_DATA_DIR not set"
     exit -1
 fi
 
-if [ -d "${HG_MANAGE_DATA_DIR}" ]
+if [ -d "${REACT_APP_HG_MANAGE_DATA_DIR}" ]
 then
     # sanity check to avoid deleting home or root directory
-    if [[ "${HG_MANAGE_DATA_DIR}" -ef "${HOME}" ]]; then
+    if [[ "${REACT_APP_HG_MANAGE_DATA_DIR}" -ef "${HOME}" ]]; then
         echo "Error: HG_MANAGE_DATA_DIR is equal to home directory"
         exit -1
     fi
-    if [[ "${HG_MANAGE_DATA_DIR}" -ef / ]]; then
+    if [[ "${REACT_APP_HG_MANAGE_DATA_DIR}" -ef / ]]; then
         echo "Error: HG_MANAGE_DATA_DIR is equal to root directory"
         exit -1
     fi
-    if [ -L "${HG_MANAGE_DATA_DIR}" ]
+    if [ -L "${REACT_APP_HG_MANAGE_DATA_DIR}" ]
     then
-        rm -f ${HG_MANAGE_DATA_DIR}
+        rm -f ${REACT_APP_HG_MANAGE_DATA_DIR}
     else
-        rm -rf ${HG_MANAGE_DATA_DIR}
+        rm -rf ${REACT_APP_HG_MANAGE_DATA_DIR}
     fi
 fi

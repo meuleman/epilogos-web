@@ -4103,7 +4103,9 @@ class Viewer extends Component {
       // return a Promise to request a UUID from a filename pattern
       //
       const uuidQueryPromise = function(fn, self) {
-        const hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
+        const hgUUIDQueryDefaultURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
+        const hgUUIDQueryLocalHgServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_PORT}/api/v1/tilesets/?ac=${fn}`;
+        const hgUUIDQueryURL = (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) ? hgUUIDQueryLocalHgServerURL : hgUUIDQueryDefaultURL;
         // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
         return axios.get(hgUUIDQueryURL).then((res) => {
           if (res.data && res.data.results && res.data.results[0]) {
@@ -4150,6 +4152,27 @@ class Viewer extends Component {
       let newGenesUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['genes'];
       let newTranscriptsUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['transcripts'];
       // let newMasterlistUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['masterlist_20tpt_itB']; // ['masterlist_40tpt']; //['masterlist'];
+
+      let uuidDelay = 0;
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+        uuidDelay += 500;
+        const newChromsizesUUIDFn = `${newGenome}.chrom.sizes.fixedBin.txt`;
+        const newChromsizesUUIDPromise = uuidQueryPromise(newChromsizesUUIDFn, this);
+        newChromsizesUUIDPromise.then((uuid) => {
+          newChromsizesUUID = uuid;
+          return uuidQueryPromise(`${newGenome}.genes.fixedBin.db`, this);
+        }).then((uuid) => {
+          newGenesUUID = uuid;
+          return uuidQueryPromise(`${newGenome}.transcripts.fixedBin.db`, this);
+        }).then((uuid) => {
+          newTranscriptsUUID = uuid;
+        });
+      }
+
       //
       // we also need the colormap, which is 'genome' and 'model' specific
       //
@@ -4643,6 +4666,10 @@ class Viewer extends Component {
         //
         let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
         let newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup);
+        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+          newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup, newComplexity);
+          newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup);
+        }          
 
         // console.log(`single`);
         // console.log(`${[newSampleSet, newGenome, newModel, newGroup, newComplexity]}`);
@@ -4662,9 +4689,12 @@ class Viewer extends Component {
         //
         let newEpilogosTrackUUID = null;
         let newMarksTrackUUID = null;
-        let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename, this);
+        // let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename, this);
         
-        newEpilogosTrackUUIDQueryPromise.then((res) => {
+        sleep(uuidDelay).then(() => {
+          return uuidQueryPromise(newEpilogosTrackFilename, this);
+        }).then((res) => {
+        // newEpilogosTrackUUIDQueryPromise.then((res) => {
           newEpilogosTrackUUID = res;
           return uuidQueryPromise(newMarksTrackFilename, this);
         }).then((res) => {

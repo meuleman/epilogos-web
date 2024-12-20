@@ -1,0 +1,43 @@
+{
+    "vA": {
+        "tracks": [
+            {
+                "url": "https://meuleman-higlass-us-west-2.altius.org/media/vA.hg19.15.All_127_Roadmap_epigenomes.mv5",
+                "set": "vA",
+                "assembly": "hg19",
+                "model": 15,
+                "group": "All_127_Roadmap_epigenomes",
+                "complexity": null,
+                "name": "vA.hg19.15.All_127_Roadmap_epigenomes.mv5"
+            },
+            {
+                "url": "https://meuleman-higlass-us-west-2.altius.org/media/vA.hg19.15.All_127_Roadmap_epigenomes.S1.mv5",
+                "set": "vA",
+                "assembly": "hg19",
+                "model": 15,
+                "group": "All_127_Roadmap_epigenomes",
+                "complexity": "S1",
+                "name": "vA.hg19.15.All_127_Roadmap_epigenomes.S1.mv5"
+            },
+            {
+                "url": "https://meuleman-higlass-us-west-2.altius.org/media/vA.hg19.18.All_127_Roadmap_epigenomes.mv5",
+                "set": "vA",
+                "assembly": "hg19",
+                "model": 18,
+                "group": "All_127_Roadmap_epigenomes",
+                "complexity": null,
+                "name": "vA.hg19.18.All_127_Roadmap_epigenomes.mv5"
+            },
+            {
+                "url": "https://meuleman-higlass-us-west-2.altius.org/media/vA.hg19.18.All_127_Roadmap_epigenomes.S1.mv5",
+                "set": "vA",
+                "assembly": "hg19",
+                "model": 18,
+                "group": "All_127_Roadmap_epigenomes",
+                "complexity": "S1",
+                "name": "vA.hg19.18.All_127_Roadmap_epigenomes.S1.mv5"
+            }
+        ],
+        "trackServer": "http://localhost:8989/api/v1"
+    }
+}
