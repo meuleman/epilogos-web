@@ -25,6 +25,7 @@ else
     exit -1
 fi
 
+sudo pip install virtualenv
 virtualenv ${venv} --python=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON}
 source ${venv}/bin/activate
 pip install --upgrade pip
