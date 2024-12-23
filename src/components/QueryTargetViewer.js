@@ -1763,8 +1763,8 @@ class QueryTargetViewer extends Component {
         err.response.title = "Please try again";
         err.response.status = "404";
         err.response.statusText = `Could not retrieve recommendations for region query. Please try another region.`;
-        const msg = self.props.errorMessage(err, "Could not retrieve recommendations for region query. Please try another region.");
-        self.props.updateParentViewerOverlay(msg);
+        // const msg = self.props.errorMessage(err, "Could not retrieve recommendations for region query. Please try another region.");
+        // self.props.updateParentViewerOverlay(msg);
         self.enableUI();
       })
     }

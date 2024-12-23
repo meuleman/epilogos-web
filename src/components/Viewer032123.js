@@ -6773,7 +6773,7 @@ class Viewer extends Component {
               drawerIsEnabled: true,
               overlayMessage: msg,
             }, () => {
-              self.fadeInOverlay();
+              // self.fadeInOverlay();
               self.setState({
                 recommenderV3SearchInProgress: false,
                 recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),

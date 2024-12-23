@@ -12,7 +12,7 @@ to select different datasets. The manifest file is expected to follow the schema
 in application documentation.
 '''
 
-OBJ_INDENT = None
+OBJ_INDENT = 2 # None
 
 def process_manifest(in_fn, out_fn, local_overrides_fn=None):
     manifest = None
@@ -48,9 +48,10 @@ def process_manifest(in_fn, out_fn, local_overrides_fn=None):
                 # check that sets key has all local orderedSets values
                 local_ordered_set_sampleSets_found = []
                 for local_ordered_set in local_ordered_sets:
-                    local_ordered_set_sampleSet = local_ordered_set['sampleSet']
-                    if local_ordered_set_sampleSet not in local_data_sets:
-                        raise ValueError('Error: Missing local orderedSet in sets key: {}'.format(local_ordered_set_sampleSet))
+                    # local_ordered_set_sampleSet = local_ordered_set['sampleSet']
+                    local_ordered_set_sampleSet = local_ordered_set
+                    # if local_ordered_set_sampleSet not in local_data_sets:
+                    #    raise ValueError('Error: Missing local orderedSet in sets key: {}'.format(local_ordered_set_sampleSet))
                     local_ordered_set_sampleSets_found.append(local_ordered_set_sampleSet)
                 # is there a set sampleSet entry for each orderedSet key?
                 if set(local_ordered_set_sampleSets_found) != set(local_ordered_sets):
@@ -101,6 +102,7 @@ export const orderedSampleSetKeys = {orderedSets};
 def process_manifest_item_by_sample_set(orderedSets, sets, out_fh, local_overrides=None):
     trackServerBySampleSetObj = {}
     navbarDescriptionsBySampleSetObj = {}
+    formattedDescriptionsBySampleSetObj = {}
     for orderedSet in orderedSets:
         orderedSetData = None
         try:
@@ -115,6 +117,10 @@ def process_manifest_item_by_sample_set(orderedSets, sets, out_fh, local_overrid
         if not navbarDescriptionsBySampleSetObj[orderedSet]:
             print('Error: Failed to find navbarDescription for orderedSet: {}'.format(orderedSet))
             sys.exit(1)
+        formattedDescriptionsBySampleSetObj[orderedSet] = orderedSetData['formattedDescription'] if 'formattedDescription' in orderedSetData else None
+        if not formattedDescriptionsBySampleSetObj[orderedSet]:
+            print('Error: Failed to find formattedDescription for orderedSet: {}'.format(orderedSet))
+            sys.exit(1)
         trackServerBySampleSetObj[orderedSet] = orderedSetData['trackServer'] if 'trackServer' in orderedSetData else None
         if not trackServerBySampleSetObj[orderedSet]:
             print('Error: Failed to find trackServer for orderedSet: {}'.format(orderedSet))
@@ -126,9 +132,11 @@ def process_manifest_item_by_sample_set(orderedSets, sets, out_fh, local_overrid
             if 'trackServer' in local_overrides_data:
                 trackServerBySampleSetObj[orderedSet] = local_overrides_data['trackServer']
     navbarDescriptionsBySampleSetString = json.dumps(navbarDescriptionsBySampleSetObj, indent=OBJ_INDENT)
+    formattedDescriptionsBySampleSetString = json.dumps(formattedDescriptionsBySampleSetObj, indent=OBJ_INDENT)
     trackServerBySampleSetString = json.dumps(trackServerBySampleSetObj, indent=OBJ_INDENT)
     out_fh.write(f"""
 export const navbarDescriptionsBySampleSet = {navbarDescriptionsBySampleSetString};
+export const formattedDescriptionsBySampleSet = {formattedDescriptionsBySampleSetString};
 export const trackServerBySampleSet = {trackServerBySampleSetString};
 """.lstrip())
     return
