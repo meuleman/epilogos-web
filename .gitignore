@@ -37,3 +37,4 @@ hg-tmp
 epilogos-hgManage
 scripts/hgManage-assets/*.db
 scripts/epilogos-hgManage
+manifest.local_overrides.json

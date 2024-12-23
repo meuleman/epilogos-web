@@ -14,10 +14,22 @@ manifest_local_overrides_file=${project_dir}/manifest.local_overrides.json
 if [ -f ${manifest_file} ]; then
   echo "Processing manifest file [${manifest_file}]"
   if [ ! -f ${manifest_local_overrides_file} ]; then
-    python ${project_dir}/scripts/process_manifest.py ${manifest_file} ${constants_file}
+    python3 ${project_dir}/scripts/process_manifest.py ${manifest_file} ${constants_file}
   else
     echo "Adding local overrides file to processing [${manifest_local_overrides_file}]"
-    python ${project_dir}/scripts/process_manifest.py ${manifest_file} ${constants_file} ${manifest_local_overrides_file}
+    if [ ! -f ${project_dir}/scripts/process_manifest.py ]; then
+      echo "Error: Cannot find [${project_dir}/scripts/process_manifest.py]"
+      exit -1
+    fi
+    if [ ! -f ${manifest_file} ]; then
+      echo "Error: Cannot find [${manifest_file}]"
+      exit -1
+    fi
+    if [ ! -f ${manifest_local_overrides_file} ]; then
+      echo "Error: Cannot find [${manifest_local_overrides_file}]"
+      exit -1
+    fi
+    python3 ${project_dir}/scripts/process_manifest.py ${manifest_file} ${constants_file} ${manifest_local_overrides_file}
   fi
 else
   echo "No manifest file found, skipping"

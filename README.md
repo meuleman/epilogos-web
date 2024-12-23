@@ -23,7 +23,15 @@ npm run higlass-manage-prep-assets
 npm run higlass-manage-ingest-core
 ```
 
-Once this is done, run the development website:
+The test datasets can take between 10-20 minutes to download.
+
+Once this is done, install packages for the development website:
+
+```
+npm install
+```
+
+Then start the development website:
 
 ```
 npm run start
