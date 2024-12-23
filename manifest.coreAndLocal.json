@@ -29,7 +29,7 @@
           "defaultSingleGroup": {"hg19": "all"},
           "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like"},
           "trackServer": "http://localhost:8989/api/v1",
-          "mediaServer": "https://areynolds-us-west-2.s3.us-west-2.amazonaws.com/epilogos-local-test",
+          "mediaServer": "https://d1y3bo4esmnv83.cloudfront.net/epilogos-local-test",
           "setMetadataByGenome": {
             "hg19": {
               "all": {
