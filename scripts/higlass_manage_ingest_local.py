@@ -353,8 +353,6 @@ if __name__ == '__main__':
         fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir>")
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_local_manifest_items()
-    note(str(candidate_urls_to_process) + '\n')
-    sys.exit(0)
     required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, uploads_dir)
     note(f"Note: Required disk space for candidate URLs [{required_disk_space / (1024 ** 3):.2f}] GB\n")
     while True:
