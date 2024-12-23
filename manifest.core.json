@@ -1,0 +1,2159 @@
+{
+  "local": {
+    "comments": {
+      "description": "Metadata for datasets provided by the end user",
+      "data": {
+        "description": "Collected local datasets provided by the end user"
+      }
+    },
+    "data": {}
+  },
+  "core": {
+    "comments": {
+      "description": "Metadata for core Meuleman datasets",
+      "version": {
+        "description": "ISO-8601 timestamp"
+      },
+      "data": {
+        "description": "Collected core Meuleman datasets (as of timestamp in version key)"
+      }
+    },
+    "version": "2024-12-17T00:00:00+0000",
+    "data": {
+      "orderedSets": ["vA", "vC", "vD", "vG"],
+      "defaultSet": "vA",
+      "defaultGenome": "hg19",
+      "modernComplexities": {
+        "KL": "S1",
+        "KLs": "S2",
+        "KLss": "S3"
+      },
+      "sets": [
+        {
+          "sampleSet": "vA",
+          "formattedDescription": "Roadmap consortium (127-sample human)",
+          "navbarDescription": "Roadmap",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "availableAssemblies": ["hg19", "hg38"],
+          "defaultAssembly": "hg19",
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like", "hg38": "ESC_vs_NonES-like"},
+          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "setMetadataByGenome": {
+            "hg19": {
+              "all": {
+                "type": "group",
+                "subtype": "single",
+                "value": "all",
+                "sortValue": "001",
+                "text": "All 127 biosamples",
+                "mediaKey": "All_127_Roadmap_epigenomes",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Cancer": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Cancer",
+                "text": "Cancer",
+                "mediaKey": "Cancer",
+                "sortValue": "004",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Female": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Female",
+                "text": "Female donors",
+                "mediaKey": "Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Immune": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Immune",
+                "text": "Immune",
+                "mediaKey": "Immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "005",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Male": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Male",
+                "text": "Male donors",
+                "mediaKey": "Male_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Neural": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neural",
+                "text": "Neural",
+                "mediaKey": "Neural",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "007",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Stem": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Stem",
+                "text": "Stem cells",
+                "mediaKey": "Stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "006",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Cancer_versus_Non-cancer": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Cancer_versus_Non-cancer",
+                "text": "Cancer vs. Non-cancer",
+                "mediaKey": "Cancer_versus_Non-cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "000",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Immune_versus_Non-immune": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Immune_versus_Non-immune",
+                "text": "Immune vs. Non-immune",
+                "mediaKey": "Immune_versus_Non-immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Male_vs_Female": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Male_vs_Female",
+                "text": "Male donors vs. Female donors",
+                "mediaKey": "Male_donors_versus_Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Neural_versus_Non-neural": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Neural_versus_Non-neural",
+                "text": "Neural vs. Non-neural",
+                "mediaKey": "Neural_versus_Non-neural",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Stem_versus_Non-stem": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Stem_versus_Non-stem",
+                "text": "Stem vs. Non-stem",
+                "mediaKey": "Stem_versus_Non-stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              }
+            },
+            "hg38": {
+              "all": {
+                "type": "group",
+                "subtype": "single",
+                "value": "all",
+                "text": "All 127 biosamples",
+                "mediaKey": "All_127_Roadmap_epigenomes",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Cancer": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Cancer",
+                "text": "Cancer",
+                "mediaKey": "Cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "004",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Female": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Female",
+                "text": "Female donors",
+                "mediaKey": "Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Immune": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Immune",
+                "text": "Immune",
+                "mediaKey": "Immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "005",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Male": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Male",
+                "text": "Male donors",
+                "mediaKey": "Male_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Neural": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neural",
+                "text": "Neural",
+                "mediaKey": "Neural",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "007",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Stem": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Stem",
+                "text": "Stem cells",
+                "mediaKey": "Stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "006",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "Cancer_versus_Non-cancer": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Cancer_versus_Non-cancer",
+                "text": "Cancer vs. Non-cancer",
+                "mediaKey": "Cancer_versus_Non-cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "000",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Immune_versus_Non-immune": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Immune_versus_Non-immune",
+                "text": "Immune vs. Non-immune",
+                "mediaKey": "Immune_versus_Non-immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  15,
+                  18,
+                  25
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Male_vs_Female": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Male_vs_Female",
+                "text": "Male donors vs. Female donors",
+                "mediaKey": "Male_donors_versus_Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Neural_versus_Non-neural": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Neural_versus_Non-neural",
+                "text": "Neural vs. Non-neural",
+                "mediaKey": "Neural_versus_Non-neural",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Stem_versus_Non-stem": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Stem_versus_Non-stem",
+                "text": "Stem vs. Non-stem",
+                "mediaKey": "Stem_versus_Non-stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg19": {
+              "single": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              }
+            },
+            "hg38": {
+              "single": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg19": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              },
+              "KLss": {
+                "value": "KLss",
+                "text": "KL**",
+                "titleText": "S<sub>3</sub>",
+                "mediaKey": "S3",
+                "enabled": true,
+                "visible": true
+              },
+              "stacked": {
+                "value": "stacked",
+                "text": "KL/KL*/KL**",
+                "titleText": "S<sub>1,2,3</sub>",
+                "enabled": false,
+                "visible": false
+              }
+            },
+            "hg38": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              },
+              "KLss": {
+                "value": "KLss",
+                "text": "KL**",
+                "titleText": "S<sub>3</sub>",
+                "mediaKey": "S3",
+                "enabled": true,
+                "visible": true
+              },
+              "stacked": {
+                "value": "stacked",
+                "text": "KL/KL*/KL**",
+                "titleText": "S<sub>1,2,3</sub>",
+                "enabled": false,
+                "visible": false
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg19",
+                "hg38"
+              ]
+            },
+            "paired": {
+              "Human": [
+                "hg19",
+                "hg38"
+              ]
+            }
+          }
+        },
+        {
+          "sampleSet": "vC",
+          "formattedDescription": "Boix <em>et al.</em> (833-sample human)",
+          "navbarDescription": "Boix <em>et al.</em>",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "availableAssemblies": ["hg19", "hg38"],
+          "defaultAssembly": "hg38",
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"},
+          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "setMetadataByGenome": {
+            "hg19": {
+              "all": {
+                "type": "group",
+                "subtype": "single",
+                "value": "all",
+                "sortValue": "000",
+                "text": "All 833 biosamples",
+                "mediaKey": "All_833_biosamples",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Male_vs_Female": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Male_vs_Female",
+                "text": "Male donors vs. Female donors",
+                "mediaKey": "Male_donors_versus_Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "000",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Male": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Male",
+                "text": "Male donors",
+                "mediaKey": "Male",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Female": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Female",
+                "text": "Female donors",
+                "mediaKey": "Female",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Cancer_vs_Non-cancer": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Cancer_vs_Non-cancer",
+                "text": "Cancer vs. Non-cancer",
+                "mediaKey": "Cancer_versus_Non-cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Cancer": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Cancer",
+                "text": "Cancer",
+                "mediaKey": "Cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Immune_vs_Non-immune": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Immune_vs_Non-immune",
+                "text": "Immune vs. Non-immune",
+                "mediaKey": "Immune_versus_Non-immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Immune": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Immune",
+                "text": "Immune",
+                "mediaKey": "Immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "004",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Stem_vs_Non-stem": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Stem_vs_Non-stem",
+                "text": "Stem vs Non-stem",
+                "mediaKey": "Stem_versus_Non-stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Stem": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Stem",
+                "text": "Stem cells",
+                "mediaKey": "Stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "005",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Neural_vs_Non-neural": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Neural_vs_Non-neural",
+                "text": "Neural vs. Non-neural",
+                "mediaKey": "Neural_versus_Non-neural",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "004",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Neural": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neural",
+                "text": "Neural",
+                "mediaKey": "Neural",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "006",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              }
+            },
+            "hg38": {
+              "all": {
+                "type": "group",
+                "subtype": "single",
+                "value": "all",
+                "text": "All 833 biosamples",
+                "mediaKey": "All_833_biosamples",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Male_donors_versus_Female_donors": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Male_donors_versus_Female_donors",
+                "text": "Male donors vs. Female donors",
+                "mediaKey": "Male_donors_versus_Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "000",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Male_donors": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Male_donors",
+                "text": "Male donors",
+                "mediaKey": "Male_donors",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Female_donors": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Female_donors",
+                "text": "Female donors",
+                "mediaKey": "Female_donors",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Cancer_versus_Non-cancer": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Cancer_versus_Non-cancer",
+                "text": "Cancer vs. Non-cancer",
+                "mediaKey": "Cancer_versus_Non-cancer",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "001",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Cancer": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Cancer",
+                "text": "Cancer",
+                "mediaKey": "Cancer",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Immune_versus_Non-immune": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Immune_versus_Non-immune",
+                "text": "Immune vs. Non-immune",
+                "mediaKey": "Immune_versus_Non-immune",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "002",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Immune": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Immune",
+                "text": "Immune",
+                "mediaKey": "Immune",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Stem_versus_Non-stem": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Stem_versus_Non-stem",
+                "text": "Stem vs Non-stem",
+                "mediaKey": "Stem_versus_Non-stem",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "003",
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Stem": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Stem",
+                "text": "Stem cells",
+                "mediaKey": "Stem",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Neural_versus_Non-neural": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Neural_versus_Non-neural",
+                "text": "Neural vs. Non-neural",
+                "mediaKey": "Neural_versus_Non-neural",
+                "enabled": true,
+                "preferred": true,
+                "sortValue": "004",
+                "availableForModels": [
+                  15,
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              },
+              "Neural": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neural",
+                "text": "Neural",
+                "mediaKey": "Neural",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg19": {
+              "single": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            },
+            "hg38": {
+              "single": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg19": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              }
+            },
+            "hg38": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg19",
+                "hg38"
+              ]
+            },
+            "paired": {
+              "Human": [
+                "hg19",
+                "hg38"
+              ]
+            }
+          }
+        },
+        {
+          "sampleSet": "vD",
+          "formattedDescription": "Gorkin <em>et al.</em> (65-sample mouse)",
+          "navbarDescription": "Gorkin <em>et al.</em>",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "availableAssemblies": ["mm10"],
+          "defaultAssembly": "mm10",
+          "defaultGroup": "all",
+          "defaultSingleGroup": {"mm10": "all"},
+          "defaultPairedGroup": {"mm10": "P0_vs_e11.5"},
+          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "setMetadataByGenome": {
+            "mm10": {
+              "all": {
+                "type": "group",
+                "subtype": "single",
+                "value": "all",
+                "sortValue": "001",
+                "text": "All 65 biosamples",
+                "mediaKey": "All_65_epigenomes",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "digestiveSystem": {
+                "type": "group",
+                "subtype": "single",
+                "value": "digestiveSystem",
+                "sortValue": "002",
+                "text": "Digestive System",
+                "mediaKey": "Digestive_System",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e11.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e11.5",
+                "sortValue": "003",
+                "text": "Embryonic day 11.5",
+                "mediaKey": "Embryonic_day_11.5",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e12.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e12.5",
+                "text": "Embryonic day 12.5",
+                "mediaKey": "Embryonic_day_12.5",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e13.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e13.5",
+                "text": "Embryonic day 13.5",
+                "mediaKey": "Embryonic_day_13.5",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e14.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e14.5",
+                "text": "Embryonic day 14.5",
+                "mediaKey": "Embryonic_day_14.5",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e15.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e15.5",
+                "text": "Embryonic day 15.5",
+                "mediaKey": "Embryonic_day_15.5",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "e16.5": {
+                "type": "group",
+                "subtype": "single",
+                "value": "e16.5",
+                "text": "Embryonic day 16.5",
+                "mediaKey": "Embryonic_day_16.5",
+                "enabled": false,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "facial-prominence": {
+                "type": "group",
+                "subtype": "single",
+                "value": "facial-prominence",
+                "text": "Facial prominence",
+                "mediaKey": "Facial_Prominence",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "forebrain": {
+                "type": "group",
+                "subtype": "single",
+                "value": "forebrain",
+                "text": "Forebrain",
+                "mediaKey": "Forebrain",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "forebrain_vs_hindbrain": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "forebrain_vs_hindbrain",
+                "text": "Forebrain vs. Hindbrain",
+                "mediaKey": "Forebrain_versus_Hindbrain",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "heart": {
+                "type": "group",
+                "subtype": "single",
+                "value": "heart",
+                "text": "Heart",
+                "mediaKey": "Heart",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "hindbrain": {
+                "type": "group",
+                "subtype": "single",
+                "value": "hindbrain",
+                "text": "Hindbrain",
+                "mediaKey": "Hindbrain",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "intestine": {
+                "type": "group",
+                "subtype": "single",
+                "value": "intestine",
+                "text": "Intestine",
+                "mediaKey": "Intestine",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "kidney": {
+                "type": "group",
+                "subtype": "single",
+                "value": "kidney",
+                "text": "Kidney",
+                "mediaKey": "Kidney",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "limb": {
+                "type": "group",
+                "subtype": "single",
+                "value": "limb",
+                "text": "Limb",
+                "mediaKey": "Limb",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "liver": {
+                "type": "group",
+                "subtype": "single",
+                "value": "liver",
+                "text": "Liver",
+                "mediaKey": "Liver",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "lung": {
+                "type": "group",
+                "subtype": "single",
+                "value": "lung",
+                "text": "Lung",
+                "mediaKey": "Lung",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "neural-tube": {
+                "type": "group",
+                "subtype": "single",
+                "value": "neural-tube",
+                "text": "Neural Tube",
+                "mediaKey": "Neural_Tube",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "P0": {
+                "type": "group",
+                "subtype": "single",
+                "value": "P0",
+                "sortValue": "004",
+                "text": "Day-of-birth",
+                "mediaKey": "Day-of-birth",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              },
+              "P0_vs_e11.5": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "P0_vs_e11.5",
+                "text": "Day-of-birth vs. Embryonic day 11.5",
+                "mediaKey": "Day-of-birth_versus_Embryonic_day_11.5",
+                "enabled": true,
+                "preferred": true,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "stomach": {
+                "type": "group",
+                "subtype": "single",
+                "value": "stomach",
+                "text": "Stomach",
+                "mediaKey": "Stomach",
+                "enabled": true,
+                "preferred": false,
+                "availableForModels": [
+                  15
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs",
+                  "KLss"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "mm10": {
+              "single": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                },
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "25": {
+                  "type": "stateModel",
+                  "value": "25",
+                  "text": "25-state (imputed)",
+                  "titleText": "25-state",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                },
+                "stacked": {
+                  "type": "stateModel",
+                  "value": "stacked",
+                  "text": "15-/18-/25-state",
+                  "titleText": "15-/18-/25-state (stacked)",
+                  "enabled": false,
+                  "visible": false,
+                  "availableForProduction": false
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "mm10": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              },
+              "KLss": {
+                "value": "KLss",
+                "text": "KL**",
+                "titleText": "S<sub>3</sub>",
+                "mediaKey": "S3",
+                "enabled": true,
+                "visible": true
+              },
+              "stacked": {
+                "value": "stacked",
+                "text": "KL/KL*/KL**",
+                "titleText": "S<sub>1,2,3</sub>",
+                "enabled": false,
+                "visible": false
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Mouse": [
+                "mm10"
+              ]
+            },
+            "paired": {
+              "Mouse": [
+                "mm10"
+              ]
+            }
+          }
+        },
+        {
+          "sampleSet": "vG",
+          "formattedDescription": "IHEC (1698-sample human)",
+          "navbarDescription": "IHEC",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single", "paired"],
+          "availableAssemblies": ["hg38"],
+          "defaultAssembly": "hg38",
+          "defaultGroup": "All_1698_biosamples",
+          "defaultSingleGroup": {"hg38": "All_1698_biosamples"},
+          "defaultPairedGroup": {"hg38": "Male_vs_Female"},
+          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "setMetadataByGenome": {
+            "hg38": {
+              "All_1698_biosamples": {
+                "type": "group",
+                "subtype": "single",
+                "value": "All_1698_biosamples",
+                "sortValue": "000",
+                "text": "All 1698 biosamples",
+                "mediaKey": "All_1698_biosamples",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Cancer": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Cancer",
+                "sortValue": "001",
+                "text": "Cancer",
+                "mediaKey": "Cancer",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Female": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Female",
+                "sortValue": "002",
+                "text": "Female",
+                "mediaKey": "Female",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Immune": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Immune",
+                "sortValue": "003",
+                "text": "Immune",
+                "mediaKey": "Immune",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Male": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Male",
+                "sortValue": "004",
+                "text": "Male",
+                "mediaKey": "Male",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Neural": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neural",
+                "sortValue": "005",
+                "text": "Neural",
+                "mediaKey": "Neural",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "partImpOne": {
+                "type": "group",
+                "subtype": "single",
+                "value": "partImpOne",
+                "text": "5 imputed marks",
+                "mediaKey": "partImpOne",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "partImpOneThroughFive": {
+                "type": "group",
+                "subtype": "single",
+                "value": "partImpOneThroughFive",
+                "text": "1-5 imputed marks",
+                "mediaKey": "partImpOneThroughFive",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "partImpSix": {
+                "type": "group",
+                "subtype": "single",
+                "value": "partImpSix",
+                "text": "Observed marks only",
+                "mediaKey": "partImpSix",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": true,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Male_vs_Female": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Male_vs_Female",
+                "sortValue": "000",
+                "text": "Male donors vs. Female donors",
+                "mediaKey": "Male_vs_Female",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Cancer_vs_Not_Cancer": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Cancer_vs_Not_Cancer",
+                "sortValue": "001",
+                "text": "Cancer vs. Non-cancer",
+                "mediaKey": "Cancer_vs_Not_Cancer",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Immune_vs_Not_Immune": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Immune_vs_Not_Immune",
+                "sortValue": "002",
+                "text": "Immune vs. Non-immune",
+                "mediaKey": "Immune_vs_Not_Immune",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Neural_vs_Not_Neural": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "Neural_vs_Not_Neural",
+                "sortValue": "003",
+                "text": "Neural vs. Non-neural",
+                "mediaKey": "Neural_vs_Not_Neural",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "partImpOne_vs_Not_partImpOne": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "partImpOne_vs_Not_partImpOne",
+                "sortValue": "004",
+                "text": "5 vs. 1-4 imputed + observed marks",
+                "mediaKey": "partImpOne_vs_Not_partImpOne",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "partImpSix_vs_Not_partImpSix": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "partImpSix_vs_Not_partImpSix",
+                "sortValue": "005",
+                "text": "Observed vs. 1-5 imputed marks",
+                "mediaKey": "partImpSix_vs_Not_partImpSix",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg38": {
+              "single": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": false
+                }
+              },
+              "paired": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg38": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg38"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

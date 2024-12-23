@@ -16,81 +16,14 @@ hg_name = sys.argv[3]
 uploads_dir = sys.argv[4]
 
 '''
-This script is designed to take candidate URLs generated from parsing the 'core' tracksets from the
+This script is designed to take candidate URLs generated from parsing the 'local' tracksets from the
 root epilogos manifest.json file and ingest those URLs into a running HiGlass server Docker container. 
 The manifest file is expected to follow the schema as defined in application documentation.
 '''
 
 '''
-Note: Comment out the 'allowed_datasets' block to ingest all available core datasets from the parent
-manifest. Otherwise, the 'allowed_datasets' block limits the candidate URL set to the specified datasets,
-where available from the parent manifest. This is useful for testing and development purposes.
-'''
-
-allowed_datasets = {
-    "vA": {
-        "hg19": {
-            "All_127_Roadmap_epigenomes": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors_versus_Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-        },
-        "hg38": {
-            "All_127_Roadmap_epigenomes": {
-                "models": [
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-        },
-    }
-}
-
-'''
-The core_overrides object is used to store properties of the ingested tracks, as well as provide
-input to process_manifest.py for modifying the output Manifest.js file with local overrides, which
-are consumed by the web application and used to modify its behavior for loading tracks.
-'''
-
-core_overrides = {}
-
-'''
 Environment variables are retrieved to run the higlass-manage command line tool and manage
-applying hg-server characteristics to variables stored in the core_overrides object.
+applying hg-server characteristics to variables.
 '''
 
 load_dotenv()
@@ -230,31 +163,6 @@ def delete_staging_path(mediaStagingPath):
         fatal_error(err)
     return
 
-def append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl):
-    sampleSet = candidateUrl.get('set')
-    if not sampleSet:
-        fatal_error(f"Error: Candidate URL object lacks set property\n")
-    localHgServerPort = os.getenv('REACT_APP_HG_MANAGE_PORT')
-    localHgServer = f"http://localhost:{localHgServerPort}"
-    localHgServerTrackUrl = f"{localHgServer}/api/v1"
-    if sampleSet not in core_overrides:
-        core_overrides[sampleSet] = {
-            "tracks": [],
-            "trackServer": localHgServerTrackUrl,
-        }
-    retrievalTimestamp = datetime.datetime.now().isoformat()
-    core_overrides[sampleSet]['tracks'].append({
-        'originatingUrl': candidateUrl.get('url'),
-        'set': candidateUrl.get('set'),
-        'assembly': candidateUrl.get('assembly'),
-        'model': candidateUrl.get('model'),
-        'group': candidateUrl.get('group'),
-        'complexity': candidateUrl.get('complexity'),
-        'name': baseUploadsFn,
-        'retrieved': retrievalTimestamp,
-    })
-    return
-
 '''
 For each candidate, download the file to the staging directory, ingest the file into the HiGlass server 
 container, and append the candidate URL entry to the local overrides object. Delete the staging file, if 
@@ -271,7 +179,6 @@ def process_candidate_urls(candidateUrls, uploadsDir):
             ingest_staged_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType)
             if os.path.exists(mediaUploadsPath) and base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
                 delete_staging_path(mediaStagingPath)
-                append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl)
             else:
                 fatal_error(f"Error: Failed to completely ingest URL [{candidateUrl['url']}]\n")
     return
@@ -296,7 +203,7 @@ def required_disk_space_for_candidate_urls(candidateUrls, uploadsDir):
         fatal_error(f"Error: Insufficient disk space for candidate URLs\n")
     return totalContentLength
 
-def candidate_urls_for_core_manifest_items():
+def candidate_urls_for_local_manifest_items():
     if not os.path.exists(manifest_fn):
         fatal_error(f"Error: Cannot find manifest [{manifest_fn}]\n")
     note(f"Note: Attempting to process manifest [{manifest_fn}]\n")
@@ -306,11 +213,11 @@ def candidate_urls_for_core_manifest_items():
         manifest = json.load(manifest_fh)
     if not manifest:
         fatal_error(f"Error: Failed to load manifest file [{manifest_fn}]\n")
-    if 'core' not in manifest:
-        fatal_error(f"Error: Manifest lacks core property\n")
-    core = manifest['core']
+    if 'local' not in manifest:
+        fatal_error(f"Error: Manifest lacks local property\n")
+    local = manifest['local']
     try:
-        data = core['data']
+        data = local['data']
         orderedSetKeys = data['orderedSets']
         modernizeComplexityKey = data['modernComplexities']
         sets = data['sets']
@@ -432,7 +339,7 @@ def ingest_baseline_fixedBin_tracks():
 
 if __name__ == '__main__':
     if len(sys.argv) != 5:
-        fatal_error(f"Usage: higlass_manage_ingest_core.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir>")
+        fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir>")
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_core_manifest_items()
     note(str(candidate_urls_to_process) + '\n')
@@ -444,6 +351,4 @@ if __name__ == '__main__':
             break
         sys.exit(0)
     process_candidate_urls(candidate_urls_to_process, uploads_dir)
-    if core_overrides:
-        with open('manifest.core_overrides.json', 'w') as core_overrides_fh:
-            json.dump(core_overrides, core_overrides_fh, indent=4)
+    sys.exit(0)
