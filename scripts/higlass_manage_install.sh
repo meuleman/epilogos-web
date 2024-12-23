@@ -21,7 +21,7 @@ if [[ -n "$(docker info --format '{{.OperatingSystem}}' | grep 'Docker Desktop')
 else
     echo "Error: Docker Desktop not running or installed:"
     echo "       1. If installed, please start Docker Desktop; or,"
-    echo "       2. Please install from <https://docs.docker.com/desktop/setup/install/>"
+    echo "       2. Please install from <https://docs.docker.com/desktop/>"
     exit -1
 fi
 

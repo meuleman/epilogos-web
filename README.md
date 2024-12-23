@@ -10,7 +10,7 @@ To run a localized, portable epilogos web frontend, please use the [Docker](#doc
 
 #### Docker
 
-Docker Desktop is required to run Docker containers, including the HiGlass server container. If you do not already have Docker Desktop installed, please first download and install it via their [instructions](https://docs.docker.com/desktop/setup/install). Please open this application and have it running in the background while following the next steps.
+Docker Desktop is required to run Docker containers, including the HiGlass server container. If you do not already have Docker Desktop installed, please first download and install it via their [instructions](https://docs.docker.com/desktop/). Please open this application and have it running in the background while following the next steps.
 
 #### Initialization
 
