@@ -62,6 +62,7 @@
     "higlass-manage-install": "bash -c \"${PWD}/scripts/higlass_manage_install.sh\"",
     "higlass-manage-start": "bash -c \"${PWD}/scripts/higlass_manage_start.sh\"",
     "higlass-manage-prep-assets": "bash -c \"${PWD}/scripts/higlass_manage_prep_assets.sh\"",
+    "higlass-manage-ingest-baseline-assets": "bash -c \"${PWD}/scripts/higlass_manage_ingest_baseline_assets.sh\"",
     "higlass-manage-ingest-core": "bash -c \"${PWD}/scripts/higlass_manage_ingest_core.sh\"",
     "higlass-manage-stop": "bash -c \"${PWD}/scripts/higlass_manage_stop.sh\"",
     "higlass-manage-clean": "bash -c \"${PWD}/scripts/higlass_manage_clean.sh\"",
