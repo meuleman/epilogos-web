@@ -451,11 +451,24 @@ class DrawerContent extends Component {
     const orderedSampleSetKeys = Manifest.orderedSampleSetKeys;
     orderedSampleSetKeys.forEach(k => {
       if (((k === "vB") || (k === "vE") || (k === "vF")) && (this.props.isProductionSite)) return;
-      if (Constants.sampleSetsForSettingsDrawer[k].visible) {
-        const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
-        const kValue = Constants.sampleSetsForSettingsDrawer[k].value;
+      // if (Constants.sampleSetsForSettingsDrawer[k].visible) {
+      //   const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
+      //   const kValue = Constants.sampleSetsForSettingsDrawer[k].value;
+      //   const isActive = (activeSampleSet === k);
+      //   const isDisabled = !Constants.sampleSetsForSettingsDrawer[k].enabled;
+      //   let kButtonKey = kButtonPrefix + kButtonIdx;
+      //   let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
+      //   let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
+      //   let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}} dangerouslySetInnerHTML={{ __html: kLabel }} />;
+      //   kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="sampleSet" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning sample-set-radio-label-text"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+      //   kButtonIdx++;
+      // }
+      // console.log(`Manifest.formattedDescriptionsBySampleSet[k] ${JSON.stringify(Manifest.formattedDescriptionsBySampleSet[k])}`);
+      if (Manifest.formattedDescriptionsBySampleSet[k]) {
+        const kLabel = Manifest.formattedDescriptionsBySampleSet[k];
+        const kValue = k;
         const isActive = (activeSampleSet === k);
-        const isDisabled = !Constants.sampleSetsForSettingsDrawer[k].enabled;
+        const isDisabled = false; // !Manifest.formattedDescriptionsBySampleSet[k].enabled;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;

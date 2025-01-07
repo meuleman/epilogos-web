@@ -27,8 +27,9 @@
           "defaultAssembly": "hg19",
           "defaultGroup": "all",
           "defaultSingleGroup": {"hg19": "all"},
-          "trackServer": "http:/localhost:8989",
-          "mediaServer": "https://areynolds-us-west-2.s3.us-west-2.amazonaws.com/epilogos-local-test/",
+          "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like"},
+          "trackServer": "http://localhost:8989/api/v1",
+          "mediaServer": "https://d1y3bo4esmnv83.cloudfront.net/epilogos-local-test",
           "setMetadataByGenome": {
             "hg19": {
               "all": {
@@ -47,6 +48,79 @@
                   "KL"
                 ]
               }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg19": {
+              "single": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              },
+              "paired": {
+                "15": {
+                  "type": "stateModel",
+                  "value": "15",
+                  "text": "15-state (observed)",
+                  "titleText": "15-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg19": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              },
+              "KLss": {
+                "value": "KLss",
+                "text": "KL**",
+                "titleText": "S<sub>3</sub>",
+                "mediaKey": "S3",
+                "enabled": true,
+                "visible": true
+              },
+              "stacked": {
+                "value": "stacked",
+                "text": "KL/KL*/KL**",
+                "titleText": "S<sub>1,2,3</sub>",
+                "enabled": false,
+                "visible": false
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg19"
+              ]
+            },
+            "paired": {
+              "Human": [
+                "hg19"
+              ]
             }
           }
         }

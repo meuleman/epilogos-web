@@ -1,6 +1,6 @@
 # epilogos-web
 
-This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org). For local development, targets are provided for running a local HiGlass server instance with core files ingested to it.
+This is a React application for presenting epilogos datasets using a HiGlass visualization component, which pulls data from "tilesets" hosted on a separate HiGlass server (at this time, https://explore.altius.org, or locally, if using the `higlass-manage` package). For local development, targets are provided for running a local HiGlass server instance with core files ingested to it.
 
 ## Development
 
@@ -25,7 +25,9 @@ npm run higlass-manage-ingest-core
 
 The test datasets can take between 10-20 minutes to download.
 
-Once this is done, install packages for the development website:
+If you have custom datasets specified in the `local` property of the `manifest.json` file, use `npm run higlass-manage-ingest-local` to download and ingest them into the HiGlass server. An example of this is provided in the file `manifest.coreAndLocal.json`.
+
+Once the server is installed and datasets are ingested, install packages for the epilogos-web frontend application:
 
 ```
 npm install
@@ -37,7 +39,7 @@ Use the `start` directive to open the development website:
 npm run start
 ```
 
-This launches the frontend at [http://localhost:3000](http://localhost:3000), with any overrides for local settings from ingesting core assets to the local HiGlass service.
+This launches the frontend at [http://localhost:3000](http://localhost:3000), with any overrides for settings related to ingested core assets, as well as data specified in the `local` property of the manifest.
 
 #### Core assets
 
@@ -71,7 +73,7 @@ To stop the HiGlass server instance, run:
 npm run higlass-manage-stop
 ```
 
-This does not remove any HiGlass assets. This only stops the HiGlass server instance from running on the specified port. If you reboot your computer, you will need to restart the HiGlass server instance via `npm run higlass-manage-start`.
+This does not remove any HiGlass assets. This only stops the HiGlass server instance from running on the specified port. If you reboot your computer, you will need to restart the HiGlass server instance via Docker Desktop (recommended) or `npm run higlass-manage-start`.
 
 #### Cleanup
 

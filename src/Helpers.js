@@ -428,6 +428,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
     - V2 URLs are derived from recommender analyses, or from Jacob for non-recommender pipeline results
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
+  if (!Constants.groupsForRecommenderV3OptionGroup[newSampleSet]) return;
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let suggestionURL = (newGroupV2) ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
 
@@ -806,8 +807,9 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
       result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
       break;
     default:
-      errorRaised = true;
-      errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      // errorRaised = true;
+      // errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
       break;
   }
   if (errorRaised) {
@@ -954,8 +956,9 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
       result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
       break;
     default: {
-      errorRaised = true;
-      errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      // errorRaised = true;
+      // errorMessage = `Not a valid sample set identifier ${sampleSet}`;
+      result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
       break;
     }
   }

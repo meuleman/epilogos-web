@@ -104,11 +104,18 @@ def download_candidate_url(candidateUrl, uploadsDir):
         try:
             request = requests.get(urlToIngest, stream=True)
             with open(mediaStagingPath, 'wb') as uploadsFh:
-                total_length = int(request.headers.get('content-length'))
-                for chunk in progress.bar(request.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
-                    if chunk:
-                        uploadsFh.write(chunk)
-                        uploadsFh.flush()
+                total_length = 0
+                try:
+                    total_length = int(request.headers.get('content-length'))
+                    for chunk in progress.bar(request.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
+                        if chunk:
+                            uploadsFh.write(chunk)
+                            uploadsFh.flush()
+                except TypeError as err:
+                    for chunk in request.iter_content(chunk_size=1024):
+                        if chunk:
+                            uploadsFh.write(chunk)
+                            uploadsFh.flush()
         except Exception as err:
             delete_staging_path(mediaStagingPath)
             fatal_error(err)
@@ -245,8 +252,10 @@ def candidate_urls_for_local_manifest_items():
                                       note(f"Note: Retrieving file size for [{candidateUrl}]\n")
                                       response = requests.head(candidateUrl)
                                       candidateFileSize = response.headers.get('content-length')
+                                    #   if not candidateFileSize:
+                                    #       fatal_error(f"Error: No file size available for URL [{candidateUrl}] [{str(response.headers)}]\n")
                                       if not candidateFileSize:
-                                          fatal_error(f"Error: No file size available for URL [{candidateUrl}]\n")
+                                          candidateFileSize = 0
                                       candidateUrls.append({
                                           'url': candidateUrl,
                                           'type': 'chromatin_states',
@@ -268,8 +277,10 @@ def candidate_urls_for_local_manifest_items():
                                         note(f"Note: Retrieving file size for [{candidateUrl}]\n")
                                         response = requests.head(candidateUrl)
                                         candidateFileSize = response.headers.get('content-length')
+                                        # if not candidateFileSize:
+                                        #     fatal_error(f"Error: No file size available for URL [{candidateUrl}] [{str(response.headers)}]\n")
                                         if not candidateFileSize:
-                                            fatal_error(f"Error: No file size available for URL [{candidateUrl}]\n")
+                                            candidateFileSize = 0
                                         candidateUrls.append({
                                             'url': candidateUrl,
                                             'type': 'epilogos',
@@ -341,8 +352,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 5:
         fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir>")
     ingest_baseline_fixedBin_tracks()
-    candidate_urls_to_process = candidate_urls_for_core_manifest_items()
-    note(str(candidate_urls_to_process) + '\n')
+    candidate_urls_to_process = candidate_urls_for_local_manifest_items()
     required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, uploads_dir)
     note(f"Note: Required disk space for candidate URLs [{required_disk_space / (1024 ** 3):.2f}] GB\n")
     while True:
