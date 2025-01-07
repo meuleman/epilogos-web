@@ -1230,21 +1230,34 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
     self.setState({
       overlayMessage: msg,
     }, () => {
-      self.fadeInOverlay(() => {
-        self.setState({
-          selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-          recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
-          recommenderV3SearchInProgress: false,
-          recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-          recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
-          recommenderV3ExpandIsEnabled: false,
-          recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
-          genomeSelectIsActive: true,
-          autocompleteInputDisabled: false,
-          simsearchQueryCount: -1,
-          simsearchQueryCountIsVisible: false,
-        })
+      self.setState({
+        selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+        recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
+        recommenderV3SearchInProgress: false,
+        recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+        recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+        recommenderV3ExpandIsEnabled: false,
+        recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+        genomeSelectIsActive: true,
+        autocompleteInputDisabled: false,
+        simsearchQueryCount: -1,
+        simsearchQueryCountIsVisible: false,
       });
+      // self.fadeInOverlay(() => {
+      //   self.setState({
+      //     selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+      //     recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
+      //     recommenderV3SearchInProgress: false,
+      //     recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+      //     recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+      //     recommenderV3ExpandIsEnabled: false,
+      //     recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+      //     genomeSelectIsActive: true,
+      //     autocompleteInputDisabled: false,
+      //     simsearchQueryCount: -1,
+      //     simsearchQueryCountIsVisible: false,
+      //   })
+      // });
     });
     return err;
   })

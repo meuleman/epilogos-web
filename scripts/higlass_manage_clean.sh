@@ -36,3 +36,20 @@ then
         rm -rf ${REACT_APP_HG_MANAGE_DATA_DIR}
     fi
 fi
+if [ -d "${venv}" ]
+then
+    if [[ "${venv}" -ef "${HOME}" ]]; then
+        echo "Error: Virtual environment REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT is equal to home directory"
+        exit -1
+    fi
+    if [[ "${venv}" -ef / ]]; then
+        echo "Error: Virtual environment REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT is equal to root directory"
+        exit -1
+    fi
+    if [ -L "${venv}" ]
+    then
+        rm -f ${venv}
+    else
+        rm -rf ${venv}
+    fi
+fi

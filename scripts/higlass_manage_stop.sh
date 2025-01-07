@@ -21,7 +21,9 @@ else
     exit -1
 fi
 
-source ${venv}/bin/activate
-higlass-manage version
-higlass-manage stop
-deactivate
+if [ -d "${venv}" ]; then
+    source ${venv}/bin/activate
+    higlass-manage version
+    higlass-manage stop
+    deactivate
+fi
