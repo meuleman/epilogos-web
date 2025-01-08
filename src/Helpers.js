@@ -566,12 +566,18 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
 
 export const epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
   let result = { A : null, B : null, AvsB : null };
-  const mediaGroupAKey = Manifest.groupsByGenome[sampleSet][genome][groupA].mediaKey;
-  const mediaGroupBKey = Manifest.groupsByGenome[sampleSet][genome][groupB].mediaKey;
-  const mediaGroupAvsBKey = Manifest.groupsByGenome[sampleSet][genome][groupAvsB].mediaKey;
-  result.A = `${sampleSet}.${genome}.${model}.${mediaGroupAKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-  result.B = `${sampleSet}.${genome}.${model}.${mediaGroupBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-  result.AvsB = `${sampleSet}.${genome}.${model}.${mediaGroupAvsBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  try {
+    const mediaGroupAKey = Manifest.groupsByGenome[sampleSet][genome][groupA].mediaKey;
+    const mediaGroupBKey = Manifest.groupsByGenome[sampleSet][genome][groupB].mediaKey;
+    const mediaGroupAvsBKey = Manifest.groupsByGenome[sampleSet][genome][groupAvsB].mediaKey;
+    result.A = `${sampleSet}.${genome}.${model}.${mediaGroupAKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+    result.B = `${sampleSet}.${genome}.${model}.${mediaGroupBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+    result.AvsB = `${sampleSet}.${genome}.${model}.${mediaGroupAvsBKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  } 
+  catch (error) {
+    console.warn(`Warning: ${error}`);
+    console.warn(`sampleSet, genome, model, groupA, groupB, groupAvsB, complexity ${sampleSet}, ${genome}, ${model}, ${groupA}, ${groupB}, ${groupAvsB}, ${complexity}`);
+  }
   return result;
 }
 
@@ -1269,9 +1275,9 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 //
 // return a Promise to request a UUID from a filename pattern
 //
-export const uuidQueryPromise = function(fn, self) {
-  const hgUUIDQueryURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
-  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+export const uuidQueryPromise = function(fn, self, endpointURL) {
+  const hgUUIDQueryURL = (!endpointURL) ? `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}` : `${endpointURL}/tilesets?ac=${fn}`;
+  console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
   return axios.get(hgUUIDQueryURL).then((res) => {
     if (res.data && res.data.results && res.data.results[0]) {
       return res.data.results[0].uuid;
@@ -1286,14 +1292,87 @@ export const uuidQueryPromise = function(fn, self) {
     }
   })
   .catch((err) => {
-    //console.log("[triggerUpdate] Error - ", JSON.stringify(err));
-    //console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`)
-    let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
-    self.setState({
-      overlayMessage: msg,
-      mainHgViewconf: {}
-    }, () => {
-      self.fadeInOverlay();
-    });
+    console.log("Error - ", JSON.stringify(err));
+    console.log(`Could not retrieve UUID for track query (${fn})`)
+    // let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
+    // self.setState({
+    //   overlayMessage: msg,
+    //   mainHgViewconf: {}
+    // }, () => {
+    //   self.fadeInOverlay();
+    // });
   });
+}
+
+// export const singleEpilogosTrackFnForParams = (sampleSet, genome, model, group, complexity) => {
+//   const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
+//   return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+// }
+
+// export const singleMarksTrackFnForParams = (sampleSet, genome, model, group) => {
+//   const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
+//   return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.mv5`;
+// }
+
+//
+// check if tracks exist for a given hgViewParams object
+//
+export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
+  let arePromisesValid = null;
+  const endpointURL = Manifest.trackServerBySampleSet[hgViewParams.sampleSet];
+  switch (hgViewParams.mode) {
+    case "single":
+      const singleEpilogosTrackFn = (trackServerPointsToLocalHgServer(endpointURL))
+        ? epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group, hgViewParams.complexity)
+        : epilogosTrackFilenameForSingleSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group, hgViewParams.complexity);
+      const singleMarksTrackFn = (trackServerPointsToLocalHgServer(endpointURL))
+        ? marksTrackFilenameForSingleSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group)
+        : marksTrackFilenameForSingleSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group);
+      const promiseArraySingle = [
+        uuidQueryPromise(singleEpilogosTrackFn, this, endpointURL),
+        uuidQueryPromise(singleMarksTrackFn, this, endpointURL),
+      ];
+      arePromisesValid = Promise.all(promiseArraySingle).then((uuidArray) => {
+        console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
+        console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
+        // if either or both UUIDs are undefined, return false
+        if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined")) {
+          return false;
+        }
+        return true;
+      }).catch((error) => {
+        console.log(`[isHgViewParamsObjectValidPromise] error ${error}`);
+        return false;
+      });
+      break;
+    case "paired":
+      const groupSplit = splitPairedGroupString(hgViewParams.group);
+      const newGroupA = groupSplit.groupA;
+      const newGroupB = groupSplit.groupB;
+      const pairedEpilogosTrackFns = (trackServerPointsToLocalHgServer(endpointURL))
+        ? epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity)
+        : epilogosTrackFilenamesForPairedSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity);
+      const promiseArrayPaired = [
+        uuidQueryPromise(pairedEpilogosTrackFns.A, this, endpointURL),
+        uuidQueryPromise(pairedEpilogosTrackFns.B, this, endpointURL),
+        uuidQueryPromise(pairedEpilogosTrackFns.AvsB, this, endpointURL),
+      ];
+      arePromisesValid = Promise.all(promiseArrayPaired).then((uuidArray) => {
+        console.log(`pairedEpilogosTrackFns.A ${pairedEpilogosTrackFns.A} | uuid ${uuidArray[0]}`);
+        console.log(`pairedEpilogosTrackFns.B ${pairedEpilogosTrackFns.B} | uuid ${uuidArray[1]}`);
+        console.log(`pairedEpilogosTrackFns.AvsB ${pairedEpilogosTrackFns.AvsB} | uuid ${uuidArray[2]}`);
+        // if any of the UUIDs are undefined, return false
+        if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined") || (typeof uuidArray[2] === "undefined")) {
+          return false;
+        }
+        return true;
+      }).catch((error) => {
+        console.log(`[isHgViewParamsObjectValidPromise] error ${error}`);
+        return false;
+      });
+      break;
+    default:
+      return Promise.reject(new Error('Error: Invalid mode')).then(() => {}, (error) => { return false });
+  }
+  return arePromisesValid;
 }

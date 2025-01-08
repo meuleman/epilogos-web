@@ -100,3 +100,21 @@ REACT_APP_HG_MANAGE_TEMP_DIR=${HOME}/epilogos-hgManage-data/tmp
 ```
 
 Leaving these set to their default values is advised. You can change these if you have, for example, another service running on port 8989. Or if you would like core HiGlass assets stored elsewhere on your filesystem, such as an external storage volume that might have more free disk space, etc.
+
+#### Customizing tracks
+
+Custom epilgos tracks and track groups can be added to the `local` property of the project root `manifest.json` file. 
+
+Track metadata should follow the schema defined in `manifest.schema.json`, which adheres to JSON Schema Draft 2020-12. Tools such as [jsonschemavalidator.net](jsonschemavalidator.net) can be used to test changes to the manifest.
+
+Description keys in the schema help describe how properties are used to locate tracks in the HiGlass service and present tracks for display in the browser. Existing tracks in the `core` property can help show how metadata are defined and used.
+
+Once the manifest is edited and validated, ingest custom datasets into the HiGlass service via:
+
+```
+npm run higlass-manage-ingest-local
+```
+
+Sufficient disk space will be required for storing tracks in the HiGlass service project folder defined in `REACT_APP_HG_MANAGE_MEDIA_DIR`.
+
+Running the `higlass-manage-clean` target will remove local and core ingested tracks.

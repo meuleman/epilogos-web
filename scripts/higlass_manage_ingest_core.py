@@ -70,6 +70,34 @@ allowed_datasets = {
         "hg38": {
             "All_127_Roadmap_epigenomes": {
                 "models": [
+                    15,
+                    18,
+                ],
+                "saliencies": [
+                    "S1",
+                ],
+            },
+            "Male_donors": {
+                "models": [
+                    15,
+                    18,
+                ],
+                "saliencies": [
+                    "S1",
+                ],
+            },
+            "Female_donors": {
+                "models": [
+                    15,
+                    18,
+                ],
+                "saliencies": [
+                    "S1",
+                ],
+            },
+            "Male_donors_versus_Female_donors": {
+                "models": [
+                    15,
                     18,
                 ],
                 "saliencies": [

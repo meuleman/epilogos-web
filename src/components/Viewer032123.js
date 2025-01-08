@@ -1695,7 +1695,11 @@ class Viewer extends Component {
         if (isNaN(port)) { port = Constants.applicationProductionPort; }
         chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
       }
+      else {
+        chromSizesURL = chromSizesURL.replace("https://epilogos.altius.org:3001", "http://localhost:3000");
+      }
     }
+    // console.log(`Viewer.getChromSizesURL | chromSizesURL ${chromSizesURL}`);
     return chromSizesURL;
   }
   
@@ -3685,7 +3689,9 @@ class Viewer extends Component {
     })
   }
   
-  changeViewParams = (isDirty, tempHgViewParams) => {
+  changeViewParams = (isDirty, tempHgViewParams, currentHgViewParams) => {
+    console.log(`this.state.hgViewParams.sampleSet ${this.state.hgViewParams.sampleSet}`);
+    console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
      // if we are switching from Roadmap to Adsera, or vice versa, preserve the genome selection
     if (((tempHgViewParams.sampleSet === "vA") && (this.state.hgViewParams.sampleSet === "vC")) || ((tempHgViewParams.sampleSet === "vC") && (this.state.hgViewParams.sampleSet === "vA"))) {
       tempHgViewParams.genome = this.state.hgViewParams.genome;
@@ -3701,8 +3707,12 @@ class Viewer extends Component {
       tempHgViewParams.genome = "mm10";
       tempHgViewParams.model = "15";
     }
-    if ((this.state.hgViewParams.sampleSet === "vD") && ((tempHgViewParams.sampleSet === "vA") || (tempHgViewParams.sampleSet === "vC") || (tempHgViewParams.sampleSet === "vG"))) {
+    if ((this.state.hgViewParams.sampleSet === "vD") && ((tempHgViewParams.sampleSet === "vC") || (tempHgViewParams.sampleSet === "vG"))) {
       tempHgViewParams.genome = "hg38";
+    }
+    if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
+      tempHgViewParams.genome = "hg19";
+      tempHgViewParams.model = "18";
     }
     if (tempHgViewParams.sampleSet === "vG") {
       tempHgViewParams.genome = "hg38";
@@ -3745,6 +3755,9 @@ class Viewer extends Component {
         //
         // tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
         tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
+          tempHgViewParams.group = "Male_vs_Female";
+        }
         const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
         const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
         if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
@@ -3827,47 +3840,62 @@ class Viewer extends Component {
     
     // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
 
-    // }
-    this.setState({
-      tempHgViewParams: {...tempHgViewParams},
-    }, () => {
-      if (isDirty) {
-        // this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
-        // this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
+    const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
+
+    // console.log(`isHgViewParamsObjectValidPromise ${isHgViewParamsObjectValidPromise}`);
+
+    isHgViewParamsObjectValidPromise.then((isHgViewParamsObjectValid) => {
+      console.log(`isHgViewParamsObjectValid ${isHgViewParamsObjectValid}`);
+      if (!isHgViewParamsObjectValid) {
         this.setState({
-          recommenderV3SearchInProgress: false,
-          recommenderV3SearchIsVisible: this.recommenderV3SearchCanBeVisible(),
-          recommenderV3SearchIsEnabled: this.recommenderV3SearchCanBeEnabled(),
-          recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-          recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
-          queryRegionIndicatorData: {},
-          queryHgViewHeight: 0,
-          queryHgViewconf: {},
-          mainRegionIndicatorContentTopOffset: Constants.defaultApplicationRegionIndicatorContentMainViewOnlyTopOffset,
-          queryRegionIndicatorContentTopOffset: 0,
-          // selectedExemplarRowIdxOnLoad: Constants.defaultApplicationSerIdx,
-          // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-          mainHgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight,
-          // roiTabTitle: Constants.drawerTitleByType.roi,
-          // roiEnabled: false,
-          // roiJumpActive: false,
-          // roiRegions: [],
-          // roiTableData: [],
-          // roiTableDataCopy: [],
-          // roiTableDataIdxBySort: [],
-          // roiTableDataLongestNameLength: Constants.defaultRoiTableDataLongestNameLength,
-          // roiTableDataLongestAllowedNameLength: Constants.defaultRoiTableDataLongestAllowedNameLength,
-          // roiEncodedURL: "",
-          // roiRawURL: "",
-          selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
-          selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
-          selectedRoiRowIdxOnLoad: Constants.defaultApplicationSrrIdx,
-          selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
+          tempHgViewParams: {...currentHgViewParams},
+          drawerContentKey: this.state.drawerContentKey + 1,
+        });
+        return;
+      }
+      else {
+        this.setState({
+          tempHgViewParams: {...tempHgViewParams},
         }, () => {
-          this.triggerUpdate("update", "changeViewParams");
+          if (isDirty) {
+            // this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
+            // this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
+            this.setState({
+              recommenderV3SearchInProgress: false,
+              recommenderV3SearchIsVisible: this.recommenderV3SearchCanBeVisible(),
+              recommenderV3SearchIsEnabled: this.recommenderV3SearchCanBeEnabled(),
+              recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+              recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+              queryRegionIndicatorData: {},
+              queryHgViewHeight: 0,
+              queryHgViewconf: {},
+              mainRegionIndicatorContentTopOffset: Constants.defaultApplicationRegionIndicatorContentMainViewOnlyTopOffset,
+              queryRegionIndicatorContentTopOffset: 0,
+              // selectedExemplarRowIdxOnLoad: Constants.defaultApplicationSerIdx,
+              // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
+              mainHgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight,
+              // roiTabTitle: Constants.drawerTitleByType.roi,
+              // roiEnabled: false,
+              // roiJumpActive: false,
+              // roiRegions: [],
+              // roiTableData: [],
+              // roiTableDataCopy: [],
+              // roiTableDataIdxBySort: [],
+              // roiTableDataLongestNameLength: Constants.defaultRoiTableDataLongestNameLength,
+              // roiTableDataLongestAllowedNameLength: Constants.defaultRoiTableDataLongestAllowedNameLength,
+              // roiEncodedURL: "",
+              // roiRawURL: "",
+              selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
+              selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
+              selectedRoiRowIdxOnLoad: Constants.defaultApplicationSrrIdx,
+              selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
+            }, () => {
+              this.triggerUpdate("update", "changeViewParams");
+            });
+          }
         });
       }
-    });
+    });    
   }
   
   updateActiveTab = (newTab) => {

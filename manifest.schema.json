@@ -1,0 +1,717 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id": "manifest.schema.json",
+  "title": "Manifest",
+  "description": "Metadata for epilogos track assets",
+  "type": "object",
+  "$defs": {
+    "SetMetadataByGenome": {
+      "$dynamicAnchor": "SetMetadataByGenome",
+      "type": "object",
+      "description": "Per-group display metadata",
+      "properties": {
+        "groupKey": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["group"]
+            },
+            "subtype": {
+              "type": "string",
+              "enum": ["single", "paired"]
+            },
+            "value": {
+              "type": "string"
+            },
+            "sortValue": {
+              "type": "string",
+              "description": "Sort value for group, i.e., for ordering in dropdown",
+              "examples": ["001", "002", "003"]
+            },
+            "text": {
+              "type": "string",
+              "description": "Display text for group in drawer"
+            },
+            "mediaKey": {
+              "type": "string",
+              "description": "Media key used for generating track path to retrieve UUID from HiGlass service"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "preferred": {
+              "type": "boolean",
+              "description": "Whether group is always displayed or is hidden behind a 'more' button"
+            },
+            "availableForModels": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "enum": [15, 18, 25]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "availableForComplexities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["KL", "KLs", "KLss", "S1", "S2", "S3"]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          },
+          "required": ["type", "subtype", "value", "text", "mediaKey", "enabled", "preferred", "availableForModels", "availableForComplexities"]
+        }
+      }
+    },
+    "ModelMetadataByGenome": {
+      "$dynamicAnchor": "ModelMetadataByGenome",
+      "type": "object",
+      "description": "Per-model display metadata",
+      "properties": {
+        "modelKey": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["stateModel"]
+            },
+            "value": {
+              "type": "string",
+              "enum": ["15", "18", "25", "stacked"]
+            },
+            "text": {
+              "type": "string",
+              "description": "Display text for model in drawer",
+              "examples": ["15-state (observed)", "18-state (observed, aux.)", "25-state (imputed)", "15-/18-/25-state (stacked)"]
+            },
+            "titleText": {
+              "type": "string",
+              "description": "Display text for model in title",
+              "examples": ["15-state", "18-state", "25-state", "15-/18-/25-state"]
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "visible": {
+              "type": "boolean",
+              "description": "Whether model is visible in drawer"
+            },
+            "availableForProduction": {
+              "type": "boolean",
+              "description": "Whether model is available for production"
+            },
+          },
+          "required": ["type", "value", "text", "titleText", "enabled", "visible", "availableForProduction"]
+        }
+      }
+    },
+    "ComplexityMetadataByGenome": {
+      "$dynamicAnchor": "ComplexityMetadataByGenome",
+      "type": "object",
+      "description": "Per-complexity display metadata",
+      "properties": {
+        "complexityKey": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "enum": ["KL", "KLs", "KLss", "S1", "S2", "S3"]
+            },
+            "text": {
+              "type": "string",
+              "description": "Display text for complexity",
+              "enum": ["KL", "KLs", "KLss", "S1", "S2", "S3"]
+            },
+            "titleText": {
+              "type": "string",
+              "description": "Display HTML for complexity in title",
+              "enum": ["KL", "KLs", "KLss", "S<sub>1</sub>", "S<sub>2</sub>", "S<sub>3</sub>"]
+            },
+            "mediaKey": {
+              "type": "string",
+              "description": "Key used for generating track path to retrieve UUID from HiGlass service",
+              "enum": ["KL", "KLs", "KLss", "S1", "S2", "S3"]
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "Whether complexity is enabled/selectable in drawer"
+            },
+            "visible": {
+              "type": "boolean",
+              "description": "Whether complexity is enabled/selectable in drawer"
+            }
+          }
+        }
+      }
+    },
+    "AssembliesMetadataByMode": {
+      "$dynamicAnchor": "AssembliesMetadataByMode",
+      "type": "object",
+      "description": "Map of mode to available assemblies",
+      "properties": {
+        "Human": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["hg19", "hg38"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "Mouse": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["mm10"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "properties": {
+    "core": {
+      "type": "object",
+      "description": "Core track metadata",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp"
+        },
+        "comments": {
+          "type": "object",
+          "description": "Comments metadata",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Description"
+            },
+            "version": {
+              "type": "object",
+              "description": "Description of version metadata",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "ISO-8601 timestamp"
+                }
+              }
+            },
+            "data": {
+              "type": "object",
+              "description": "Description of core data metadata",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Core epilogos datasets (as of timestamp in version key)"
+                }
+              }
+            }
+          }
+        },
+        "data": {
+          "type": "object",
+          "description": "Core epilogos datasets",
+          "properties": {
+            "orderedSets": {
+              "description": "Ordered list of epilogos dataset keys",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "defaultSet": {
+              "description": "Default epilogos dataset key, which should be from orderedSets",
+              "type": "string"
+            },
+            "defaultGenome": {
+              "description": "Default genome",
+              "type": "string",
+              "enum": ["hg19", "hg38", "mm10"]
+            },
+            "modernComplexities": {
+              "description": "Map of legacy complexity keys to current complexity keys",
+              "type": "object",
+              "properties": {
+                "KL": {
+                  "type": "string",
+                  "const": "S1"
+                },
+                "KLs": {
+                  "type": "string",
+                  "const": "S2"
+                },
+                "KLss": {
+                  "type": "string",
+                  "const": "S3"
+                }
+              },
+              "required": ["KL", "KLs", "KLss"]
+            },
+            "sets": {
+              "description": "List of epilogos datasets and display properties",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sampleSet": {
+                    "description": "Epilogos dataset key",
+                    "type": "string"
+                  },
+                  "formattedDescription": {
+                    "description": "Long dataset label, e.g. for drawer",
+                    "type": "string"
+                  },
+                  "navbarDescription": {
+                    "description": "Short dataset label, e.g. for navbar",
+                    "type": "string"
+                  },
+                  "visible": {
+                    "description": "Whether dataset is visible in drawer",
+                    "type": "boolean"
+                  },
+                  "enabled": {
+                    "description": "Whether dataset is enabled or clickable in drawer",
+                    "type": "boolean"
+                  },
+                  "availableModes": {
+                    "description": "List of available display modes for dataset",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["single", "paired"]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "availableAssemblies": {
+                    "description": "List of available display assemblies for dataset",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["hg19", "hg38", "mm10"]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "defaultAssembly": {
+                    "description": "Default assembly for dataset",
+                    "type": "string",
+                    "enum": ["hg19", "hg38", "mm10"]
+                  },
+                  "defaultGroup": {
+                    "description": "Default group for dataset",
+                    "type": "string",
+                    "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem", "Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                  },
+                  "defaultSingleGroup": {
+                    "description": "Default single group for dataset, by assembly",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      },
+                      "hg38": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      },
+                      "mm10": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      }
+                    }
+                  },
+                  "defaultPairedGroup": {
+                    "description": "Default paired group for dataset, by assembly",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      },
+                      "hg38": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      },
+                      "mm10": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      }
+                    }
+                  },
+                  "trackServer": {
+                    "description": "Track server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://meuleman-higlass-us-west-2.altius.org/api/v1"]
+                  },
+                  "mediaServer": {
+                    "description": "Media server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://meuleman-higlass-us-west-2.altius.org/media"]
+                  },
+                  "setMetadataByGenome": {
+                    "description": "Map of genome to dataset per-group metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "hg38": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" },
+                    }
+                  },
+                  "modelMetadataByGenome": {
+                    "description": "Map of genome to dataset per-model metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": { 
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      },
+                      "hg38": { 
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      },
+                      "mm10": {
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      }
+                    }
+                  },
+                  "complexitiesMetadataByGenome": {
+                    "description": "Map of genome to dataset per-complexity metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "object",
+                        "properties": {
+                          "KL": { "$dynamicRef": "#ComplexityMetadataByGenome" },
+                          "KLs": { "$dynamicRef": "#ComplexityMetadataByGenome" },
+                          "KLss": { "$dynamicRef": "#ComplexityMetadataByGenome" }
+                        }
+                      }
+                    }
+                  },
+                  "assembliesMetadataByMode": {
+                    "description": "Map of mode to available assemblies",
+                    "type": "object",
+                    "properties": {
+                      "single": { "$dynamicRef": "#AssembliesMetadataByMode" },
+                      "paired": { "$dynamicRef": "#AssembliesMetadataByMode" }
+                    }
+                  }
+                },
+                "required": [
+                  "sampleSet",
+                  "formattedDescription",
+                  "navbarDescription",
+                  "visible",
+                  "availableModes",
+                  "availableAssemblies",
+                  "defaultAssembly",
+                  "defaultGroup",
+                  "trackServer",
+                  "mediaServer",
+                  "setMetadataByGenome",
+                  "modelMetadataByGenome",
+                  "complexitiesMetadataByGenome"
+                ]
+              }
+            }
+          },
+          "required": ["orderedSets", "defaultSet", "defaultGenome", "modernComplexities", "sets"]
+        }
+      },
+      "required": ["version"]
+    },
+    "local": {
+      "type": "object",
+      "description": "Local track metadata",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp"
+        },
+        "comments": {
+          "type": "object",
+          "description": "Comments metadata",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Description"
+            },
+            "version": {
+              "type": "object",
+              "description": "Description of version metadata",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "ISO-8601 timestamp"
+                }
+              }
+            },
+            "data": {
+              "type": "object",
+              "description": "Description of data metadata",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Local epilogos datasets (as of timestamp in version key)"
+                }
+              }
+            }
+          }
+        },
+        "data": {
+          "type": "object",
+          "description": "Local epilogos datasets",
+          "properties": {
+            "orderedSets": {
+              "description": "Ordered list of epilogos dataset keys",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "defaultSet": {
+              "description": "Default epilogos dataset key, which should be from orderedSets",
+              "type": "string"
+            },
+            "defaultGenome": {
+              "description": "Default genome",
+              "type": "string",
+              "enum": ["hg19", "hg38", "mm10"]
+            },
+            "modernComplexities": {
+              "description": "Map of legacy complexity keys to current complexity keys",
+              "type": "object",
+              "properties": {
+                "KL": {
+                  "type": "string",
+                  "const": "S1"
+                },
+                "KLs": {
+                  "type": "string",
+                  "const": "S2"
+                },
+                "KLss": {
+                  "type": "string",
+                  "const": "S3"
+                }
+              },
+              "required": ["KL", "KLs", "KLss"]
+            },
+            "sets": {
+              "description": "List of epilogos datasets and display properties",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sampleSet": {
+                    "description": "Epilogos dataset key",
+                    "type": "string"
+                  },
+                  "formattedDescription": {
+                    "description": "Long dataset label, e.g. for drawer",
+                    "type": "string"
+                  },
+                  "navbarDescription": {
+                    "description": "Short dataset label, e.g. for navbar",
+                    "type": "string"
+                  },
+                  "visible": {
+                    "description": "Whether dataset is visible in drawer",
+                    "type": "boolean"
+                  },
+                  "enabled": {
+                    "description": "Whether dataset is enabled or clickable in drawer",
+                    "type": "boolean"
+                  },
+                  "availableModes": {
+                    "description": "List of available display modes for dataset",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["single", "paired"]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "availableAssemblies": {
+                    "description": "List of available display assemblies for dataset",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["hg19", "hg38", "mm10"]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "defaultAssembly": {
+                    "description": "Default assembly for dataset",
+                    "type": "string",
+                    "enum": ["hg19", "hg38", "mm10"]
+                  },
+                  "defaultGroup": {
+                    "description": "Default group for dataset",
+                    "type": "string",
+                    "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem", "Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                  },
+                  "defaultSingleGroup": {
+                    "description": "Default single group for dataset, by assembly",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      },
+                      "hg38": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      },
+                      "mm10": {
+                        "type": "string",
+                        "examples": ["all", "Cancer", "Female", "Immune", "Male", "Neural", "Stem"]
+                      }
+                    }
+                  },
+                  "defaultPairedGroup": {
+                    "description": "Default paired group for dataset, by assembly",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      },
+                      "hg38": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      },
+                      "mm10": {
+                        "type": "string",
+                        "examples": ["Cancer_vs_Non-Cancer", "Immune_vs_Non-Immune"]
+                      }
+                    }
+                  },
+                  "trackServer": {
+                    "description": "Track server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://meuleman-higlass-us-west-2.altius.org/api/v1"]
+                  },
+                  "mediaServer": {
+                    "description": "Media server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://meuleman-higlass-us-west-2.altius.org/media"]
+                  },
+                  "setMetadataByGenome": {
+                    "description": "Map of genome to dataset per-group metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "hg38": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" },
+                    }
+                  },
+                  "modelMetadataByGenome": {
+                    "description": "Map of genome to dataset per-model metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": { 
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      },
+                      "hg38": { 
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      },
+                      "mm10": {
+                        "type": "object",
+                        "properties": {
+                          "single": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                        }
+                      }
+                    }
+                  },
+                  "complexitiesMetadataByGenome": {
+                    "description": "Map of genome to dataset per-complexity metadata",
+                    "type": "object",
+                    "properties": {
+                      "hg19": {
+                        "type": "object",
+                        "properties": {
+                          "KL": { "$dynamicRef": "#ComplexityMetadataByGenome" },
+                          "KLs": { "$dynamicRef": "#ComplexityMetadataByGenome" },
+                          "KLss": { "$dynamicRef": "#ComplexityMetadataByGenome" }
+                        }
+                      }
+                    }
+                  },
+                  "assembliesMetadataByMode": {
+                    "description": "Map of mode to available assemblies",
+                    "type": "object",
+                    "properties": {
+                      "single": { "$dynamicRef": "#AssembliesMetadataByMode" },
+                      "paired": { "$dynamicRef": "#AssembliesMetadataByMode" }
+                    }
+                  }
+                },
+                "required": [
+                  "sampleSet",
+                  "formattedDescription",
+                  "navbarDescription",
+                  "visible",
+                  "availableModes",
+                  "availableAssemblies",
+                  "defaultAssembly",
+                  "defaultGroup",
+                  "trackServer",
+                  "mediaServer",
+                  "setMetadataByGenome",
+                  "modelMetadataByGenome",
+                  "complexitiesMetadataByGenome"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "required": ["version"]
+    }
+  },
+  "required": ["core"]
+}

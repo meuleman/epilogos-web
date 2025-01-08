@@ -233,7 +233,8 @@ class DrawerContent extends Component {
         // let vAGroupAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
         let vAGroupAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
         if (vAGroupAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
-          newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+          // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+          newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         }
       }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "15")) {
@@ -260,16 +261,19 @@ class DrawerContent extends Component {
           // const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           const vCKeysToInspect18State = Object.keys(Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect18State.indexOf(newViewParams.group) === -1) {
-            newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+            // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+            newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
           }
           else {
             // const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
             const vCKeysToInspect18StateModelAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
             if (!vCKeysToInspect18StateModelAvailability) {
-              newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+              // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+              newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
             else if (vCKeysToInspect18StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
-              newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+              // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
+              newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
           }
         }
@@ -303,7 +307,7 @@ class DrawerContent extends Component {
       tabs: newTabs
     }, () => {
       let viewParamsAreDifferent = !this.state.viewParamsAreEqual;
-      this.props.changeViewParams(viewParamsAreDifferent, newViewParams);
+      this.props.changeViewParams(viewParamsAreDifferent, newViewParams, this.props.viewParams);
     })
   }
   
