@@ -468,9 +468,10 @@ class Portal extends Component {
   }
   
   exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
+    const downloadURLPrefix = (document.location.href === "http://localhost:3000/") ? document.location.href : Helpers.getHrefPrefix(document.location.href);
     // console.log(`document.location.href ${document.location.href}`);
-    const downloadURLPrefix = (document.location.href === "http://localhost:3000/") ? `https://${Constants.applicationHost}` : this.stripQueryStringAndHashFromPath(document.location.href)
-    let downloadURL = this.stripQueryStringAndHashFromPath(downloadURLPrefix) 
+    // console.log(`downloadURLPrefix ${downloadURLPrefix}`);
+    const downloadURL = downloadURLPrefix
       + "/assets/epilogos/" 
       + sampleSet 
       + "/" 
@@ -834,7 +835,7 @@ class Portal extends Component {
     }
   }
   
-  stripQueryStringAndHashFromPath = (url) => { return url.split("?")[0].split("#")[0]; }
+  // stripQueryStringAndHashFromPath = (url) => { return url.split("?")[0].split("#")[0]; }
   
   openViewerAtChrRange = (range) => {
     // console.log(`Portal.openViewerAtChrRange | range ${JSON.stringify(range)}`);
@@ -849,7 +850,7 @@ class Portal extends Component {
       start = parseInt(range[2]);
       stop = parseInt(range[3]);
     }
-    let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    let viewerUrl = Helpers.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + Constants.portalHgViewParameters.mode;
     viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;
@@ -871,7 +872,7 @@ class Portal extends Component {
     let chrRight = pos[0];
     let start = parseInt(pos[1]) - padding;
     let stop = parseInt(pos[1]) + padding;
-    let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    let viewerUrl = Helpers.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + Constants.portalHgViewParameters.mode;
     viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;
@@ -939,7 +940,7 @@ class Portal extends Component {
     }
     // const newMode = "qt";
     const newMode = "single";
-    let viewerUrl = this.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
+    let viewerUrl = Helpers.stripQueryStringAndHashFromPath(document.location.href) + "?application=viewer";
     viewerUrl += "&sampleSet=" + Constants.portalHgViewParameters.sampleSet;
     viewerUrl += "&mode=" + newMode;
     viewerUrl += "&genome=" + Constants.portalHgViewParameters.genome;

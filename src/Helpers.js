@@ -49,6 +49,19 @@ export const getJsonFromUrl = () => {
   // return result;
 }
 
+export const getHrefPrefix = (uri) => {
+  let urlObj = null;
+  try {
+    urlObj = new URL(uri);
+    // console.log(`uri ${JSON.stringify(uri)} | urlObj ${JSON.stringify(urlObj)}`);
+    return (urlObj.port.length > 0) ? `${urlObj.protocol}://${urlObj.hostname}:${urlObj.port}` : `${urlObj.protocol}://${urlObj.hostname}`;
+  }
+  catch (error) {
+    // console.warn(`Warning: ${error}`);
+  }
+  return null;
+}
+
 export const stripQueryStringAndHashFromPath = (url) => { 
   return url.split("?")[0].split("#")[0];
 }
@@ -416,7 +429,9 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
   let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
-  const downloadURLPrefix = (document.location.href.startsWith("http://localhost:3000/")) ? `https://${Constants.applicationHost}` : stripQueryStringAndHashFromPath(document.location.href);
+  const downloadURLPrefix = (document.location.href.startsWith("http://localhost:3000/")) 
+    ? `https://${Constants.applicationHost}` 
+    : stripQueryStringAndHashFromPath(document.location.href);
   // console.log(`Helpers.suggestionDownloadURL | downloadURLPrefix ${downloadURLPrefix}`);
   return downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
 }

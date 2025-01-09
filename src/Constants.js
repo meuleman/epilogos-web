@@ -3,6 +3,8 @@ export const applicationProductionPort = `${process.env.REACT_APP_APPLICATION_PR
 export const applicationProductionProxyPort = `${process.env.REACT_APP_APPLICATION_PRODUCTION_PROXY_PORT}`;
 export const applicationDevelopmentPort = `${process.env.REACT_APP_APPLICATION_DEVELOPMENT_PORT}`;
 
+export const applicationHosts = [applicationHost, `epilogos.net`, `www.epilogos.net`];
+
 export const applicationContactEmail = "areynolds@altius.org";
 
 // export const annotationHost = "18.191.132.31";
