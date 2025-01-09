@@ -956,14 +956,15 @@ class Portal extends Component {
   }
   
   getRandomRangeFromExemplarRegions = () => {
-    let randomRegion = this.state.exemplarRegions[this.state.exemplarRegions.length * Math.random() | 0];
-    console.log(`Portal.getRandomRangeFromExemplarRegions | randomRegion ${randomRegion}`);
-    if (!randomRegion) {
-      randomRegion = `${Constants.defaultApplicationPositions['vA']['hg19']['chr']}\t${Constants.defaultApplicationPositions['vA']['hg19']['start']}\t${Constants.defaultApplicationPositions['vA']['hg19']['stop']}`;
-      console.log(`Portal.getRandomRangeFromExemplarRegions | (postfix) randomRegion ${randomRegion}`);
-    }
+    // let randomRegion = this.state.exemplarRegions[this.state.exemplarRegions.length * Math.random() | 0];
+    // console.log(`Portal.getRandomRangeFromExemplarRegions | randomRegion ${randomRegion}`);
+    // if (!randomRegion) {
+      // randomRegion = `${Constants.defaultApplicationPositions['vA']['hg19']['chr']}\t${Constants.defaultApplicationPositions['vA']['hg19']['start']}\t${Constants.defaultApplicationPositions['vA']['hg19']['stop']}`;
+      // console.log(`Portal.getRandomRangeFromExemplarRegions | (postfix) randomRegion ${randomRegion}`);
+    // }
+    let randomRegion = `${Constants.defaultApplicationPositions['vA']['hg19']['chr']}\t${Constants.defaultApplicationPositions['vA']['hg19']['start']}\t${Constants.defaultApplicationPositions['vA']['hg19']['stop']}`;
     let regionFields = randomRegion.split('\t');
-    console.log(`Portal.getRandomRangeFromExemplarRegions | regionFields ${JSON.stringify(regionFields)}`);
+    // console.log(`Portal.getRandomRangeFromExemplarRegions | regionFields ${JSON.stringify(regionFields)}`);
     let chrLeft = regionFields[0];
     let chrRight = regionFields[0];
     let start = parseInt(regionFields[1].replace(',',''));
