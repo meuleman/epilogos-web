@@ -1530,6 +1530,20 @@ input.epilogos-viewer-search-input:disabled::placeholder {
   letter-spacing: 0.01px;
 }
 
+.radio-label-badge {
+  position: relative;
+  bottom: 2px;
+  right: 3px;
+  padding-right: 2px;
+}
+
+.drawer-pill {
+  font-weight: 500 !important;
+  position: relative;
+  top: 1px;
+  background-color: rgb(0,50,255) !important;
+}
+ 
 .drawer-tab-content {
   background-color: #ffffff;
 }

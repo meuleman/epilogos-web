@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import { 
+import {
+  Badge, 
   TabContent, 
   TabPane, 
   // Nav, 
@@ -10,13 +11,13 @@ import {
   Collapse, 
   FormGroup,
   Label,
-  Input 
+  Input,
 } from 'reactstrap';
 // import classnames from 'classnames';
 
 // Application constants
 import * as Constants from '../Constants.js'; 
-
+import * as Helpers from '../Helpers.js'; 
 import * as Manifest from '../Manifest.js';
 
 import { FaCogs, FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
@@ -468,6 +469,7 @@ class DrawerContent extends Component {
       //   kButtonIdx++;
       // }
       // console.log(`Manifest.formattedDescriptionsBySampleSet[k] ${JSON.stringify(Manifest.formattedDescriptionsBySampleSet[k])}`);
+      const endpointURL = Manifest.trackServerBySampleSet[k];
       if (Manifest.formattedDescriptionsBySampleSet[k]) {
         const kLabel = Manifest.formattedDescriptionsBySampleSet[k];
         const kValue = k;
@@ -477,7 +479,78 @@ class DrawerContent extends Component {
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
         let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}} dangerouslySetInnerHTML={{ __html: kLabel }} />;
-        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="sampleSet" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning sample-set-radio-label-text"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+        const badgeDefaultStyle = {
+          display: "unset",
+          fontSize: "0.6rem", 
+          fontWeight: "700",
+          pointerEvents: "none",
+          // textShadow: "white 1px 1px",
+          border: "solid",
+          borderColor: "white",
+          borderWidth: "0px",
+          backgroundColor: "rgb(0,48,255) !important",
+          color: "rgb(255,255,255)",
+          maxWidth: "45px",
+        };    
+        let sampleSetElem = (Helpers.isLocalhost()) ? 
+          <div key={kButtonParentKey} className="pretty p-default p-round">
+            <Input 
+              key={kButtonKey} 
+              className="btn-xs btn-epilogos" 
+              type="radio" 
+              checked={isActive} 
+              readOnly={true} 
+              disabled={isDisabled} 
+              name="sampleSet" 
+              value={kValue} 
+              onMouseEnter={this.onMouseEnterSettingsButton} 
+              onMouseLeave={this.onMouseLeaveSettingsButton} 
+              onClick={this.onClickSettingsButton} />
+            {' '}
+            <div 
+              key={kButtonLabelKey} 
+              className="state p-warning sample-set-radio-label-text"
+              >
+              <i className="icon mdi mdi-check" />
+              <Label check>
+                <span className="radio-label-text">
+                  <span className="radio-label-badge">
+                    <Badge 
+                      className='drawer-pill'
+                      style={badgeDefaultStyle}
+                      color="rgb(0,48,255)" 
+                      pill>
+                      {(Helpers.trackServerPointsToLocalHgServer(endpointURL)) ? "Loc" : "Ext"}
+                    </Badge>
+                  </span>
+                  {formattedKLabel}
+                </span>
+              </Label>
+            </div>
+          </div>
+          :
+          <div key={kButtonParentKey} className="pretty p-default p-round">
+            <Input 
+              key={kButtonKey} 
+              className="btn-xs btn-epilogos" 
+              type="radio" 
+              checked={isActive} 
+              readOnly={true} 
+              disabled={isDisabled} 
+              name="sampleSet" 
+              value={kValue} 
+              onMouseEnter={this.onMouseEnterSettingsButton} 
+              onMouseLeave={this.onMouseLeaveSettingsButton} 
+              onClick={this.onClickSettingsButton} />
+            {' '}
+            <div 
+              key={kButtonLabelKey} 
+              className="state p-warning sample-set-radio-label-text"
+              >
+              <i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label>
+            </div>
+          </div>
+        kButtons.push(sampleSetElem);
         kButtonIdx++;
       }
     });

@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { AutoComplete } from 'antd';
 
+import './GeneSearch.css';
+
 // import { gencode } from '../lib/Genes';
 import gencodeHg38Raw from "./gencode.hg38.json";
 import gencodeHg19Raw from "./gencode.hg19.json";
@@ -14,6 +16,7 @@ const genomicPositionRegex = /^chr(\d{1,2}|X|Y):(\d+)-(\d+)$/;
 // const gencode = gencodeRaw; // gencodeRaw.filter(d => d.type === "protein_coding");
 
 const GeneSearch = memo(({
+  mode,
   assembly,
   // onBlur = () => {},
   // onFocus = () => {},
@@ -59,13 +62,13 @@ const GeneSearch = memo(({
   }, [assembly, searchValue]);
 
   const handleSearch = (value) => {
-    console.log(`handleSearch ${value}`);
+    console.log(`[GeneSearch.handleSearch] value ${value}`);
     setSearchValue(value);
     setInputValue(value);
   };
 
   const handleSelect = (value) => {
-    console.log(`handleSelect ${value}`);
+    console.log(`[GeneSearch.handleSelect] value ${value}`);
     if (genomicPositionRegex.test(value)) {
       onSelect({
         value: value,
@@ -77,7 +80,7 @@ const GeneSearch = memo(({
       return;
     }
     const selectedOption = filteredOptions.find(option => option.value === value);
-    console.log("gene", selectedOption);
+    console.log("[GeneSearch.handleSelect] selectedOption", selectedOption);
     onSelect(selectedOption);
     setInputValue(selectedOption.label);
   };
@@ -107,7 +110,11 @@ const GeneSearch = memo(({
   // };
 
   return (
-    <div>
+    <div
+      style={{
+        cursor: (mode === 'qt') ? 'not-allowed' : 'default',
+        pointerEvents: (mode === 'qt') ? 'none' : 'all',
+      }}>
       <AutoComplete
         ref={ref}
         options={filteredOptions}
@@ -123,8 +130,12 @@ const GeneSearch = memo(({
           letterSpacing: '0.01px',
           borderRadius: '1px',
           zIndex: '10000',
+          cursor: (mode === 'qt') ? 'not-allowed' : 'default',
+          pointerEvents: (mode === 'qt') ? 'none' : 'all',
         }}
         dropdownStyle={{
+          cursor: (mode === 'qt') ? 'not-allowed' : 'default',
+          pointerEvents: (mode === 'qt') ? 'none' : 'all',
           borderRadius: '1px',
           zIndex: '10000',
         }}
@@ -136,6 +147,7 @@ GeneSearch.displayName = 'GeneSearch';
 export default GeneSearch
 
 GeneSearch.propTypes = {
+  mode: PropTypes.string,
   assembly: PropTypes.string,
   onSelect: PropTypes.func,
 }

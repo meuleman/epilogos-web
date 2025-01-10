@@ -154,7 +154,7 @@ class Viewer extends Component {
       autocompleteInputEntered: false,
       autocompleteInputDisabled: false,
       showDataNotice: true,
-      showUpdateNotice: false,
+      // showUpdateNotice: false,
       tempHgViewParams: {...Constants.viewerHgViewParameters},
       advancedOptionsVisible: false,
       genomeSelectIsEnabled: false,
@@ -414,7 +414,7 @@ class Viewer extends Component {
     this.epilogosViewerContainerErrorOverlay = React.createRef();
     this.epilogosViewerContainerErrorOverlayNotice = React.createRef();
     this.epilogosViewerHamburgerButton = React.createRef();
-    this.epilogosViewerUpdateNotice = React.createRef();
+    // this.epilogosViewerUpdateNotice = React.createRef();
     this.epilogosViewerDataNotice = React.createRef();
     this.epilogosViewerParameterSummary = React.createRef();
     this.epilogosViewerNavbarRighthalf = React.createRef();
@@ -2260,6 +2260,8 @@ class Viewer extends Component {
       currentViewScale: scale.diff,
     }, () => {
       // console.log(`[updateScale] currentViewScale ${this.state.currentViewScale} --> ${this.recommenderV3SearchCanBeEnabled()}`);
+      // console.log(`[updateScale] keepSuggestionInterval ${keepSuggestionInterval}`);
+      if (this.state.currentViewScale === 0) return;
       this.setState({
         recommenderV3SearchIsEnabled: this.recommenderV3SearchCanBeEnabled(),
       }, () => {
@@ -2288,6 +2290,7 @@ class Viewer extends Component {
             });
           }
           if (!this.state.simSearchQueryInProgress) {
+            // console.log(`[updateScale] querying simsearch service`);
             this.setState({
               simSearchQueryInProgress: true,
             }, () => {
@@ -4084,7 +4087,7 @@ class Viewer extends Component {
     if (updateMode === "cancel") {
       this.closeDrawer();
       this.setState({
-        showUpdateNotice: false,
+        // showUpdateNotice: false,
         hideDrawerOverlay: true,
         drawerIsOpen: true,
         tempHgViewParams: {...this.state.hgViewParams},
@@ -7277,9 +7280,14 @@ class Viewer extends Component {
 
   // simSearchQuery = Helpers.debounce((chrom, start, stop) => {
   simSearchQuery = (chrom, start, stop) => {
+    // if (start === 0 || stop === 0) return;
+    console.log(`[Viewer.simSearchQuery] | ${chrom}:${start}-${stop}`);
     const sampleSet = this.state.hgViewParams.sampleSet;
     const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
-    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet)) return; // skip simsearch support when serving tracks from local hg-server
+    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet)) {
+      console.log(`[Viewer.simSearchQuery] currently skipping simsearch query as tracksServer points to localhost`);
+      return; // skip simsearch support when serving tracks from local hg-server
+    }
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
     // console.log(`simSearchQuery | ${chrom}:${start}-${stop}`);
@@ -7551,7 +7559,12 @@ class Viewer extends Component {
       
         <div id="epilogos-viewer-container-error-overlay" className="epilogos-viewer-container-overlay" ref={(component) => this.epilogosViewerContainerErrorOverlay = component} onClick={() => {this.fadeOutOverlay(() => { /*console.log("faded out!");*/ this.setState({ overlayVisible: false }); })}}>
         
-          <div ref={(component) => this.epilogosViewerContainerErrorOverlayNotice = component} id="epilogos-viewer-overlay-error-notice" className="epilogos-viewer-overlay-notice-parent" style={{position: 'absolute', top: '35%', zIndex:10001, textAlign:'center', width: '100%', backfaceVisibility: 'visible', transform: 'translateZ(0) scale(1.0, 1.0)'}} onClick={(e)=>{ e.stopPropagation() }}>
+          <div 
+            ref={(component) => this.epilogosViewerContainerErrorOverlayNotice = component} 
+            id="epilogos-viewer-overlay-error-notice" 
+            className="epilogos-viewer-overlay-notice-parent" 
+            style={{position: 'absolute', top: '35%', zIndex:10001, textAlign:'center', width: '100%', backfaceVisibility: 'visible', transform: 'translateZ(0) scale(1.0, 1.0)'}} 
+            onClick={(e)=>{ e.stopPropagation() }}>
             <Collapse isOpen={this.state.showOverlayNotice}>
               <div className="epilogos-viewer-overlay-notice-child">
                 {this.viewerOverlayNotice()}
@@ -7563,7 +7576,12 @@ class Viewer extends Component {
       
         <div id="epilogos-viewer-container-overlay" className="epilogos-viewer-container-overlay" ref={(component) => this.epilogosViewerContainerOverlay = component} onClick={() => {this.fadeOutContainerOverlay(() => { /*console.log("faded out!");*/ this.setState({ tabixDataDownloadCommandVisible: false }); })}}>
         
-          <div ref={(component) => this.epilogosViewerDataNotice = component} id="epilogos-viewer-data-notice" className="epilogos-viewer-data-notice-parent" style={{position: 'absolute', top: '35%', zIndex:10001, textAlign:'center', width: '100%', backfaceVisibility: 'visible', transform: 'translateZ(0) scale(1.0, 1.0)'}} onClick={(e)=>{ e.stopPropagation() }}>
+          <div 
+            ref={(component) => this.epilogosViewerDataNotice = component} 
+            id="epilogos-viewer-data-notice" 
+            className="epilogos-viewer-data-notice-parent" 
+            style={{position: 'absolute', top: '35%', zIndex:10001, textAlign:'center', width: '100%', backfaceVisibility: 'visible', transform: 'translateZ(0) scale(1.0, 1.0)'}} 
+            onClick={(e)=>{ e.stopPropagation() }}>
             <Collapse isOpen={this.state.showDataNotice}>
               <div className="epilogos-viewer-data-notice-child">
                 {this.viewerDataNotice()}
@@ -7623,13 +7641,17 @@ class Viewer extends Component {
           </Drawer>
         </div>
         
-        <div ref={(component) => this.epilogosViewerUpdateNotice = component} id="epilogos-viewer-update-notice" className="epilogos-viewer-update-notice-parent" style={{position: 'absolute', top: '45%', zIndex:1000, textAlign:'center', width: '100%', backfaceVisibility: 'hidden', transform: 'translateZ(0) scale(1.0, 1.0)'}}>
+        {/* <div 
+          ref={(component) => this.epilogosViewerUpdateNotice = component} 
+          id="epilogos-viewer-update-notice" 
+          className="epilogos-viewer-update-notice-parent" 
+          style={{position: 'absolute', top: '45%', zIndex:1000, textAlign:'center', width: '100%', backfaceVisibility: 'hidden', transform: 'translateZ(0) scale(1.0, 1.0)'}}>
           <Collapse isOpen={this.state.showUpdateNotice}>
             <div className="epilogos-viewer-update-notice-child" style={(this.isMobile && this.isPortrait)?{maxWidth:"320px"}:{}}>
               {this.viewerUpdateNotice()}
             </div>
           </Collapse>
-        </div>
+        </div> */}
       
         <div id="epilogos-viewer-container" className="epilogos-viewer-container">
          
@@ -7674,6 +7696,7 @@ class Viewer extends Component {
                 <div id="epilogos-viewer-search-input-parent" className="epilogos-viewer-search-input-parent">
                   <GeneSearch
                     // onFocus={this.onFocusSearchInput}
+                    mode={this.state.hgViewParams.mode}
                     assembly={this.state.hgViewParams.genome}
                     onSelect={this.onChangeSearchInputLocationViaGeneSearch}
                   />
