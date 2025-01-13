@@ -50,7 +50,7 @@ function start_services () {
         --temp-dir ${REACT_APP_HG_MANAGE_TEMP_DIR}
     docker rename ${REACT_APP_HG_MANAGE_NAME_ORIGINAL} ${REACT_APP_HG_MANAGE_NAME_ROOT}
     #
-    # Add simsearch proxy service to the container
+    # Add simsearch proxy service to the factory-stock container
     #
     if [ -z "${REACT_APP_HG_MANAGE_SIMSEARCH_DIR}" ]; then
         echo "Error: REACT_APP_HG_MANAGE_SIMSEARCH_DIR not set"
@@ -90,12 +90,23 @@ if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
 else
     echo "${REACT_APP_HG_MANAGE_NAME_RUNNING} container found"
     if [ "$(docker container inspect -f '{{.State.Running}}' ${REACT_APP_HG_MANAGE_NAME_RUNNING})" = "true" ]; then
-        echo "${REACT_APP_HG_MANAGE_NAME_RUNNING} container is already running"
+        echo "${REACT_APP_HG_MANAGE_NAME_RUNNING} container is already running - nothing to do"
     else
-        echo "Note: Existing ${REACT_APP_HG_MANAGE_NAME_RUNNING} container is being removed"
+        echo "Note: Existing ${REACT_APP_HG_MANAGE_NAME_RUNNING} container is being restarted"
         docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
         docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
-        start_services
+        REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
+        if [ -z ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID} ]; then
+            echo "Error: ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
+            exit -1
+        fi
+        docker run -d \
+            -p ${REACT_APP_HG_MANAGE_PORT_RUNNING}:80 \
+            --mount type=bind,src=${REACT_APP_HG_MANAGE_DATA_DIR},dst=/data \
+            --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/data/media \
+            --mount type=bind,src=${REACT_APP_HG_MANAGE_TEMP_DIR},dst=/tmp \
+            --name ${REACT_APP_HG_MANAGE_NAME_RUNNING} \
+            ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
     fi
 fi
 
