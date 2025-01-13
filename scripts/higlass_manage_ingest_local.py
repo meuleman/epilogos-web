@@ -15,6 +15,8 @@ root_dir = sys.argv[2]
 hg_name = sys.argv[3]
 uploads_dir = sys.argv[4]
 
+hg_name_running = f"{hg_name}-running"
+
 '''
 This script is designed to take candidate URLs generated from parsing the 'local' tracksets from the
 root epilogos manifest.json file and ingest those URLs into a running HiGlass server Docker container. 
@@ -129,9 +131,9 @@ def ingest_staged_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlTyp
     try:
         cmd = None
         if candidateUrlType == 'chromatin_states':
-            cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name, '--filetype', 'multivec', '--datatype', 'multivec', '--name', baseUploadsFn, mediaStagingPath]
+            cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name_running, '--filetype', 'multivec', '--datatype', 'multivec', '--name', baseUploadsFn, mediaStagingPath]
         elif candidateUrlType == 'epilogos':
-            cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name, '--filetype', 'multivec', '--datatype', 'multivec', '--name', baseUploadsFn, mediaStagingPath]
+            cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name_running, '--filetype', 'multivec', '--datatype', 'multivec', '--name', baseUploadsFn, mediaStagingPath]
         result = subprocess.run(' '.join(cmd), capture_output=True, shell=True, env=higlass_manage_env)
         if result.stderr:
             raise subprocess.CalledProcessError(
@@ -147,7 +149,7 @@ def ingest_staged_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlTyp
 
 def base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
     try:
-        cmd = ['higlass-manage', 'list', 'tilesets', '--hg-name', hg_name]
+        cmd = ['higlass-manage', 'list', 'tilesets', '--hg-name', hg_name_running]
         result = subprocess.run(' '.join(cmd), capture_output=True, shell=True, env=higlass_manage_env)
         if result.stderr:
             raise subprocess.CalledProcessError(
@@ -324,11 +326,11 @@ def ingest_baseline_fixedBin_tracks():
                     # example: higlass-manage ingest --hg-name epilogos --filetype chromsizes-tsv --datatype chromsizes --name hg19.chromsizes.fixedBin.txt hg19.chrom.sizes.fixedBin.txt
                     cmd = None
                     if fixedBin_type == 'chromsizes':
-                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name, '--filetype', 'chromsizes-tsv', '--datatype', 'chromsizes', '--name', fixedBin_fn, root_fixedBin_fn]
+                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name_running, '--filetype', 'chromsizes-tsv', '--datatype', 'chromsizes', '--name', fixedBin_fn, root_fixedBin_fn]
                     elif fixedBin_type == 'genes':
-                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name, '--filetype', 'beddb', '--datatype', 'gene-annotation', '--name', fixedBin_fn, root_fixedBin_fn]
+                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name_running, '--filetype', 'beddb', '--datatype', 'gene-annotation', '--name', fixedBin_fn, root_fixedBin_fn]
                     elif fixedBin_type == 'transcripts':
-                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name, '--filetype', 'beddb', '--datatype', 'gene-annotation', '--name', fixedBin_fn, root_fixedBin_fn]
+                        cmd = ['higlass-manage', 'ingest', '--hg-name', hg_name_running, '--filetype', 'beddb', '--datatype', 'gene-annotation', '--name', fixedBin_fn, root_fixedBin_fn]
                     if not cmd:
                         fatal_error(f"Error: Unknown fixed bin type [{fixedBin_type}]\n")
                     result = subprocess.run(' '.join(cmd), capture_output=True, shell=True, env=higlass_manage_env)

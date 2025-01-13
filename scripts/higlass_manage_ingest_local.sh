@@ -21,13 +21,12 @@ if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
     exit -1
 fi
 
-if [[ -n "$(docker info --format '{{.OperatingSystem}}' | grep 'Docker Desktop')" ]]; then
-    echo "Docker Desktop found and running..."
+if [ -x "$(command -v docker)" ]; then
+    echo "Docker installation found..."
 else
-    echo "Error: Docker Desktop not running or installed:"
-    echo "       1. If installed, please start Docker Desktop; or,"
-    echo "       2. Please install from <https://docs.docker.com/desktop/>"
-    echo "       3. If required, please install higlass-manage via 'npm run higlass-manage-install'"
+    echo "Error: Docker not installed:"
+    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
     exit -1
 fi
 

@@ -11,6 +11,15 @@ if [ -z "${venv}" ]; then
     exit -1
 fi
 
+if [ -x "$(command -v docker)" ]; then
+    echo "Docker installation found..."
+else
+    echo "Error: Docker not installed:"
+    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
+    exit -1
+fi
+
 ${PWD}/scripts/higlass_manage_stop.sh
 
 if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
@@ -53,3 +62,17 @@ then
         rm -rf ${venv}
     fi
 fi
+
+REACT_APP_HG_MANAGE_BASE_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME})
+if [ -z "${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_BASE_IMAGE_NAME ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME} image not found"
+    exit -1
+fi
+docker image rm --force ${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}
+
+REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
+if [ -z "${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
+    exit -1
+fi
+docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
