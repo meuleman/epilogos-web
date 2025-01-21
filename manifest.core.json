@@ -42,8 +42,10 @@
           "defaultGroup": "all",
           "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
           "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like", "hg38": "ESC_vs_NonES-like"},
-          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
-          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "hg19": {
               "all": {
@@ -763,8 +765,10 @@
           "defaultGroup": "all",
           "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
           "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"},
-          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
-          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "hg19": {
               "all": {
@@ -1290,8 +1294,10 @@
           "defaultGroup": "all",
           "defaultSingleGroup": {"mm10": "all"},
           "defaultPairedGroup": {"mm10": "P0_vs_e11.5"},
-          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
-          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "mm10": {
               "all": {
@@ -1812,8 +1818,10 @@
           "defaultGroup": "All_1698_biosamples",
           "defaultSingleGroup": {"hg38": "All_1698_biosamples"},
           "defaultPairedGroup": {"hg38": "Male_vs_Female"},
-          "trackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
-          "mediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "hg38": {
               "All_1698_biosamples": {

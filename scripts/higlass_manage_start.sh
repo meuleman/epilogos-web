@@ -36,7 +36,14 @@ else
 fi
 
 source ${venv}/bin/activate
-higlass-manage version
+
+REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
+if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
+    echo "Error: higlass-manage not installed - please see README for installation instructions"
+    exit -1
+fi
+echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
+
 mkdir -p ${REACT_APP_HG_MANAGE_DATA_DIR}
 mkdir -p ${REACT_APP_HG_MANAGE_TEMP_DIR}
 mkdir -p ${REACT_APP_HG_MANAGE_MEDIA_DIR}
@@ -88,11 +95,11 @@ REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_M
 if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
     start_services
 else
-    echo "${REACT_APP_HG_MANAGE_NAME_RUNNING} container found"
+    echo "higlass-manage container found in Docker inventory [name:${REACT_APP_HG_MANAGE_NAME_RUNNING}] [id:${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}]"
     if [ "$(docker container inspect -f '{{.State.Running}}' ${REACT_APP_HG_MANAGE_NAME_RUNNING})" = "true" ]; then
-        echo "${REACT_APP_HG_MANAGE_NAME_RUNNING} container is already running - nothing to do"
+        echo "higlass-manage container is already running - nothing to do"
     else
-        echo "Note: Existing ${REACT_APP_HG_MANAGE_NAME_RUNNING} container is being restarted"
+        echo "Note: Existing higlass-manage container is being restarted"
         docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
         docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
         REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})

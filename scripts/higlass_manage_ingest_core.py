@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 manifest_fn = sys.argv[1]
 root_dir = sys.argv[2]
 hg_name = sys.argv[3]
-uploads_dir = sys.argv[4]
+hg_uploads_dir = sys.argv[4]
+simsearch_uploads_dir = sys.argv[5]
 
 hg_name_running = f"{hg_name}-running"
 
@@ -137,6 +138,20 @@ saliency_to_complexity = {
     "S3": "KLss",
 }
 
+'''
+The following lists define available scales and windows for simsearch datasets
+'''
+
+simsearch_scales_int = [1, 10, 15, 2, 20, 5]
+simsearch_windows_int = list(map(lambda x: x * 5, simsearch_scales_int))
+simsearch_scales = [str(x) for x in simsearch_scales_int]
+simsearch_windows = [str(x) for x in simsearch_windows_int]
+simsearch_scales_and_windows = list(zip(simsearch_scales, simsearch_windows))
+
+'''
+The following functions are used to provide logging and error handling
+'''
+
 def note(msg):
     sys.stderr.write(msg)
 
@@ -177,7 +192,7 @@ def is_allowed_epilogos_dataset(setKey, assemblyKey, modelKey, mediaGroupKey, co
                         return True
     return False
 
-def download_candidate_url(candidateUrl, uploadsDir):
+def download_hg_candidate_url(candidateUrl, uploadsDir):
     urlToIngest = candidateUrl['url']
     set = candidateUrl['set']
     assembly = candidateUrl['assembly']
@@ -207,7 +222,7 @@ def download_candidate_url(candidateUrl, uploadsDir):
                         uploadsFh.write(chunk)
                         uploadsFh.flush()
         except Exception as err:
-            delete_staging_path(mediaStagingPath)
+            delete_hg_staging_path(mediaStagingPath)
             fatal_error(err)
         if not os.path.exists(mediaStagingPath):
             fatal_error(f"Error: Failed to ingest URL [{urlToIngest}] to [{mediaStagingPath}]\n")
@@ -215,7 +230,33 @@ def download_candidate_url(candidateUrl, uploadsDir):
         warning(f"Warning: Media staging [{mediaStagingPath}] already exists; skipping...\n")
     return (uploadsFn, mediaStagingPath, mediaUploadsPath)
 
-def ingest_staged_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType):
+def download_simsearch_candidate_url(candidateUrl, uploadsDir):
+    urlToIngest = candidateUrl['url']
+    mediaServer = candidateUrl['media-server']
+    uploadsFn = urlToIngest.replace(f"{mediaServer}/", '') # remove trailing slash
+    dataUploadsPath = os.path.join('', *[uploadsDir, uploadsFn])
+    if os.path.exists(dataUploadsPath):
+        warning(f"Warning: Data uploads [{dataUploadsPath}] already exists; skipping...\n")
+        return None
+    note(f"Note: Attempting to download URL [{urlToIngest}] to [{dataUploadsPath}]\n")
+    try:
+        request = requests.get(urlToIngest, stream=True)
+        dataUploadsDir = os.path.dirname(dataUploadsPath)
+        os.makedirs(dataUploadsDir, exist_ok=True)
+        with open(dataUploadsPath, 'wb') as uploadsFh:
+            total_length = int(request.headers.get('content-length'))
+            for chunk in progress.bar(request.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
+                if chunk:
+                    uploadsFh.write(chunk)
+                    uploadsFh.flush()
+    except Exception as err:
+        delete_simsearch_staging_path(dataUploadsPath)
+        fatal_error(err)
+    if not os.path.exists(dataUploadsPath):
+        fatal_error(f"Error: Failed to copy simsearch data URL [{urlToIngest}] to [{dataUploadsPath}]\n")
+    return (dataUploadsPath)
+
+def ingest_staged_hg_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType):
     try:
         cmd = None
         if candidateUrlType == 'chromatin_states':
@@ -252,15 +293,23 @@ def base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
         fatal_error(err.decode('utf-8'))
     return False
 
-def delete_staging_path(mediaStagingPath):
+def delete_hg_staging_path(mediaStagingPath):
     try:
-        note(f"Note: Deleting media staging path [{mediaStagingPath}]\n")
+        note(f"Note: Deleting HiGlass media staging path [{mediaStagingPath}]\n")
         os.remove(mediaStagingPath)
     except Exception as err:
         fatal_error(err)
     return
 
-def append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl):
+def delete_simsearch_staging_path(dataStagingPath):
+    try:
+        note(f"Note: Deleting data staging path [{dataStagingPath}]\n")
+        os.remove(dataStagingPath)
+    except Exception as err:
+        fatal_error(err)
+    return
+
+def append_hg_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl):
     sampleSet = candidateUrl.get('set')
     if not sampleSet:
         fatal_error(f"Error: Candidate URL object lacks set property\n")
@@ -270,11 +319,12 @@ def append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl
     if sampleSet not in core_overrides:
         core_overrides[sampleSet] = {
             "tracks": [],
-            "trackServer": localHgServerTrackUrl,
+            "hgTrackServer": localHgServerTrackUrl,
         }
     retrievalTimestamp = datetime.datetime.now().isoformat()
     core_overrides[sampleSet]['tracks'].append({
         'originatingUrl': candidateUrl.get('url'),
+        'type': candidateUrl.get('type'),
         'set': candidateUrl.get('set'),
         'assembly': candidateUrl.get('assembly'),
         'model': candidateUrl.get('model'),
@@ -285,25 +335,60 @@ def append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl
     })
     return
 
+def append_simsearch_candidate_url_entry_to_core_overrides_obj(candidateUrl, candidateUrlObj, dataUploadsPath):
+    sampleSet = candidateUrlObj.get('set')
+    if not sampleSet:
+        fatal_error(f"Error: Candidate URL object lacks set property\n")
+    localSimsearchServerPort = os.getenv('REACT_APP_RECOMMENDER_PROXY_SERVICE_PORT')
+    localSimsearchServer = f"http://localhost:{localSimsearchServerPort}"
+    localSimsearchDataServerUrl = f"{localSimsearchServer}/"
+    if sampleSet not in core_overrides:
+        core_overrides[sampleSet] = {
+            "tracks": [],
+            "simsearchDataServer": localSimsearchDataServerUrl,
+        }
+    retrievalTimestamp = datetime.datetime.now().isoformat()
+    core_overrides[sampleSet]['tracks'].append({
+        'originatingUrl': candidateUrl,
+        'type': candidateUrl.get('type'),
+        'set': candidateUrlObj.get('set'),
+        'assembly': candidateUrlObj.get('assembly'),
+        'model': candidateUrlObj.get('model'),
+        'group': candidateUrlObj.get('group'),
+        'scale': candidateUrlObj.get('scale'),
+        'window': candidateUrlObj.get('window'),
+        'name': dataUploadsPath,
+        'retrieved': retrievalTimestamp,
+    })
+    return
+
 '''
-For each candidate, download the file to the staging directory, ingest the file into the HiGlass server 
-container, and append the candidate URL entry to the local overrides object. Delete the staging file, if 
-still present.
+For each HiGlass candidate, download the file to the staging directory, ingest the file into the HiGlass 
+server container, and append the candidate URL entry to the local overrides object. Delete the staging file, 
+if still present. For simsearch tracks, the files are copied directly to the simsearch data directory.
 '''
 
-def process_candidate_urls(candidateUrls, uploadsDir):
+def process_candidate_urls(candidateUrls, hgUploadsDir, ssUploadsDir):
     for candidateUrl in candidateUrls:
         candidateUrlType = candidateUrl.get('type')
         if not candidateUrlType:
             fatal_error(f"Error: Candidate URL object lacks type property\n")
-        (baseUploadsFn, mediaStagingPath, mediaUploadsPath) = download_candidate_url(candidateUrl, uploadsDir)
-        if baseUploadsFn and mediaStagingPath and mediaUploadsPath:
-            ingest_staged_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType)
-            if os.path.exists(mediaUploadsPath) and base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
-                delete_staging_path(mediaStagingPath)
-                append_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl)
-            else:
-                fatal_error(f"Error: Failed to completely ingest URL [{candidateUrl['url']}]\n")
+        if candidateUrlType in ['chromatin_states', 'epilogos']:
+            (baseUploadsFn, mediaStagingPath, mediaUploadsPath) = download_hg_candidate_url(candidateUrl, hgUploadsDir)
+            if baseUploadsFn and mediaStagingPath and mediaUploadsPath:
+                ingest_staged_hg_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType)
+                if os.path.exists(mediaUploadsPath) and base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
+                    delete_hg_staging_path(mediaStagingPath)
+                    append_hg_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl)
+                else:
+                    fatal_error(f"Error: Failed to completely ingest URL [{candidateUrl['url']}]\n")
+        elif candidateUrlType in ['simsearch']:
+            (dataUploadsPath) = download_simsearch_candidate_url(candidateUrl, ssUploadsDir)
+            if dataUploadsPath:
+                if os.path.exists(dataUploadsPath):
+                    append_simsearch_candidate_url_entry_to_core_overrides_obj(candidateUrl['url'], candidateUrl, dataUploadsPath)
+                else:
+                    fatal_error(f"Error: Failed to completely download data URL [{candidateUrl['url']}]\n")
     return
 
 '''
@@ -347,7 +432,8 @@ def candidate_urls_for_core_manifest_items():
         for orderedSetKey in orderedSetKeys:
             try:
                 osData = list(filter(lambda x: x['sampleSet'] == orderedSetKey, sets))[0]
-                osMediaServer = osData['mediaServer']
+                osHgMediaServer = osData['hgMediaServer']
+                osSsMediaServer = osData['simsearchMediaServer']
                 osAvailableAssemblies = osData['availableAssemblies']
                 for assemblyKey in osAvailableAssemblies:
                     setMetadata = osData['setMetadataByGenome'][assemblyKey]
@@ -363,15 +449,15 @@ def candidate_urls_for_core_manifest_items():
                             if allowedChromatinDataset:
                               if subtypeKey == 'single':
                                   # chromatin state tracks are available for single subtype groups only
-                                  candidateUrl = f"{osMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.mv5"
-                                  if urlparse(candidateUrl):
-                                      note(f"Note: Retrieving file size for [{candidateUrl}]\n")
-                                      response = requests.head(candidateUrl)
+                                  hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.mv5"
+                                  if urlparse(hgCandidateUrl):
+                                      note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                      response = requests.head(hgCandidateUrl)
                                       candidateFileSize = response.headers.get('content-length')
                                       if not candidateFileSize:
-                                          fatal_error(f"Error: No file size available for URL [{candidateUrl}]\n")
+                                          fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
                                       candidateUrls.append({
-                                          'url': candidateUrl,
+                                          'url': hgCandidateUrl,
                                           'type': 'chromatin_states',
                                           'subtype': subtypeKey,
                                           'content-length': candidateFileSize,
@@ -381,20 +467,52 @@ def candidate_urls_for_core_manifest_items():
                                           'group': mediaGroupKey,
                                       })
                                   else:
-                                      fatal_error(f"Error: URL invalid [{candidateUrl}]\n")
+                                      fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
+                                  # simsearch tracks are available for single subtype only
+                                  if osSsMediaServer:
+                                      for (ssScale, ssWindow) in simsearch_scales_and_windows:
+                                          ssRecDataCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.bed.gz"
+                                          ssRecDataIndexCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.bed.gz.tbi"
+                                          ssRecMinmaxCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.minmax.bed.gz"
+                                          ssRecMinmaxIndexCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.minmax.bed.gz.tbi"
+                                          ssCandidateUrls = [ssRecDataCandidateUrl, ssRecDataIndexCandidateUrl, ssRecMinmaxCandidateUrl, ssRecMinmaxIndexCandidateUrl]
+                                          for ssCandidateUrl in ssCandidateUrls:
+                                              if urlparse(ssCandidateUrl):
+                                                  note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
+                                                  response = requests.head(ssCandidateUrl)
+                                                  candidateFileSize = response.headers.get('content-length')
+                                                  if not candidateFileSize:
+                                                      warning(f"Warning: No file size available for URL [{ssCandidateUrl}]\n")
+                                                  else:
+                                                      candidateUrls.append({
+                                                          'url': ssCandidateUrl,
+                                                          'media-server': osSsMediaServer,
+                                                          'type': 'simsearch',
+                                                          'subtype': subtypeKey,
+                                                          'content-length': candidateFileSize,
+                                                          'set': orderedSetKey,
+                                                          'assembly': assemblyKey,
+                                                          'model': modelKey,
+                                                          'group': mediaGroupKey,
+                                                          'scale': ssScale,
+                                                          'window': ssWindow,
+                                                      })
+                                              else:
+                                                  fatal_error(f"Error: URL invalid [{ssCandidateUrl}]\n")
+                                      
                               # epilogos track
                               for complexityKey in osGroupAvailableComplexityKeys:
                                   allowedEpilogosDataset = is_allowed_epilogos_dataset(orderedSetKey, assemblyKey, modelKey, mediaGroupKey, complexityKey)
                                   if allowedEpilogosDataset:
-                                    candidateUrl = f"{osMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
-                                    if urlparse(candidateUrl):
-                                        note(f"Note: Retrieving file size for [{candidateUrl}]\n")
-                                        response = requests.head(candidateUrl)
+                                    hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
+                                    if urlparse(hgCandidateUrl):
+                                        note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                        response = requests.head(hgCandidateUrl)
                                         candidateFileSize = response.headers.get('content-length')
                                         if not candidateFileSize:
-                                            fatal_error(f"Error: No file size available for URL [{candidateUrl}]\n")
+                                            fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
                                         candidateUrls.append({
-                                            'url': candidateUrl,
+                                            'url': hgCandidateUrl,
                                             'type': 'epilogos',
                                             'subtype': subtypeKey,
                                             'content-length': candidateFileSize,
@@ -405,7 +523,7 @@ def candidate_urls_for_core_manifest_items():
                                             'complexity': complexityKey,
                                         })
                                     else:
-                                        fatal_error(f"Error: URL invalid [{candidateUrl}]\n")
+                                        fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
             except Exception as err:
                 fatal_error(err)
     except KeyError as err:
@@ -428,7 +546,7 @@ def ingest_baseline_fixedBin_tracks():
         fixedBin_fn = fixedBin['fn']
         fixedBin_type = fixedBin['type']
         root_fixedBin_fn = os.path.join(root_dir, 'hgManage-assets', fixedBin_fn)
-        uploads_fixedBin_fn = os.path.join('', *[uploads_dir, 'media', 'uploads', fixedBin_fn])
+        uploads_fixedBin_fn = os.path.join('', *[hg_uploads_dir, 'media', 'uploads', fixedBin_fn])
         if os.path.exists(root_fixedBin_fn):
             if not os.path.exists(uploads_fixedBin_fn):
                 note(f"Note: Attempting to ingest [{root_fixedBin_fn}]\n")
@@ -466,14 +584,14 @@ if __name__ == '__main__':
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_core_manifest_items()
     note(str(candidate_urls_to_process) + '\n')
-    required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, uploads_dir)
+    required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, hg_uploads_dir)
     note(f"Note: Required disk space for candidate URLs [{required_disk_space / (1024 ** 3):.2f}] GB\n")
     while True:
         proceed = input("Proceed with ingest? (y/n): ")
         if proceed == 'y':
             break
         sys.exit(0)
-    process_candidate_urls(candidate_urls_to_process, uploads_dir)
+    process_candidate_urls(candidate_urls_to_process, hg_uploads_dir, simsearch_uploads_dir)
     if core_overrides:
         with open('manifest.core_overrides.json', 'w') as core_overrides_fh:
             json.dump(core_overrides, core_overrides_fh, indent=4)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 source ${PWD}/.env
 
@@ -20,7 +20,11 @@ else
     exit -1
 fi
 
-${PWD}/scripts/higlass_manage_stop.sh
+${PWD}/scripts/higlass_manage_stop.sh || HIGLASS_MANAGE_STOP_CALL_ERROR_CODE=$?
+if [ "${HIGLASS_MANAGE_STOP_CALL_ERROR_CODE}" -ne 0 ]; then
+    echo "Error: higlass_manage_stop.sh failed"
+    exit -1
+fi
 
 if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
     echo "Error: REACT_APP_HG_MANAGE_DATA_DIR not set"

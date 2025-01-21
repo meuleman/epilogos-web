@@ -348,19 +348,33 @@
                       }
                     }
                   },
-                  "trackServer": {
-                    "description": "Track server URL",
+                  "hgTrackServer": {
+                    "description": "HiGlass track server URL",
                     "type": "string",
                     "format": "uri",
                     "pattern": "^(https?|http?)://",
                     "examples": ["https://meuleman-higlass-us-west-2.altius.org/api/v1"]
                   },
-                  "mediaServer": {
-                    "description": "Media server URL",
+                  "hgMediaServer": {
+                    "description": "HiGlass media server URL",
                     "type": "string",
                     "format": "uri",
                     "pattern": "^(https?|http?)://",
                     "examples": ["https://meuleman-higlass-us-west-2.altius.org/media"]
+                  },
+                  "simsearchDataServer": {
+                    "description": "Simsearch data server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://explore.altius.org/tabix/recommender/v2"]
+                  },
+                  "simsearchMediaServer": {
+                    "description": "Simsearch media server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://explore.altius.org/tabix/recommender/v2"]
                   },
                   "setMetadataByGenome": {
                     "description": "Map of genome to dataset per-group metadata",
@@ -430,8 +444,8 @@
                   "availableAssemblies",
                   "defaultAssembly",
                   "defaultGroup",
-                  "trackServer",
-                  "mediaServer",
+                  "hgTrackServer",
+                  "hgMediaServer",
                   "setMetadataByGenome",
                   "modelMetadataByGenome",
                   "complexitiesMetadataByGenome"
@@ -617,19 +631,33 @@
                       }
                     }
                   },
-                  "trackServer": {
-                    "description": "Track server URL",
+                  "hgTrackServer": {
+                    "description": "HiGlass track server URL",
                     "type": "string",
                     "format": "uri",
                     "pattern": "^(https?|http?)://",
                     "examples": ["https://meuleman-higlass-us-west-2.altius.org/api/v1"]
                   },
-                  "mediaServer": {
-                    "description": "Media server URL",
+                  "hgMediaServer": {
+                    "description": "HiGlass media server URL",
                     "type": "string",
                     "format": "uri",
                     "pattern": "^(https?|http?)://",
                     "examples": ["https://meuleman-higlass-us-west-2.altius.org/media"]
+                  },
+                  "simsearchDataServer": {
+                    "description": "Simsearch data server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://explore.altius.org/tabix/recommender/v2"]
+                  },
+                  "simsearchMediaServer": {
+                    "description": "Simsearch media server URL",
+                    "type": "string",
+                    "format": "uri",
+                    "pattern": "^(https?|http?)://",
+                    "examples": ["https://explore.altius.org/tabix/recommender/v2"]
                   },
                   "setMetadataByGenome": {
                     "description": "Map of genome to dataset per-group metadata",
@@ -699,8 +727,8 @@
                   "availableAssemblies",
                   "defaultAssembly",
                   "defaultGroup",
-                  "trackServer",
-                  "mediaServer",
+                  "hgTrackServer",
+                  "hgMediaServer",
                   "setMetadataByGenome",
                   "modelMetadataByGenome",
                   "complexitiesMetadataByGenome"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 source ${PWD}/.env
 
@@ -22,7 +22,12 @@ fi
 
 if [ -d "${venv}" ]; then
     source ${venv}/bin/activate
-    higlass-manage version
+    REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
+    if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
+        echo "Error: higlass-manage not installed - please see README for installation instructions"
+        exit -1
+    fi
+    echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
     REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
     if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
         echo "Error: ${REACT_APP_HG_MANAGE_NAME_RUNNING} container not found"

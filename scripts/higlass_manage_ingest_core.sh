@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 source ${PWD}/.env
 
@@ -21,6 +21,11 @@ if [ -z "${REACT_APP_HG_MANAGE_DATA_DIR}" ]; then
     exit -1
 fi
 
+if [ -z "${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}" ]; then
+    echo "Error: REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR not set"
+    exit -1
+fi
+
 if [ -x "$(command -v docker)" ]; then
     echo "Docker installation found..."
 else
@@ -31,7 +36,12 @@ else
 fi
 
 source ${venv}/bin/activate
-higlass-manage version
+REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
+if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
+    echo "Error: higlass-manage not installed - please see README for installation instructions"
+    exit -1
+fi
+echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
 python --version
-${PWD}/scripts/higlass_manage_ingest_core.py ${PWD}/manifest.json ${PWD}/scripts ${REACT_APP_HG_MANAGE_NAME} ${REACT_APP_HG_MANAGE_DATA_DIR}
+${PWD}/scripts/higlass_manage_ingest_core.py ${PWD}/manifest.json ${PWD}/scripts ${REACT_APP_HG_MANAGE_NAME} ${REACT_APP_HG_MANAGE_DATA_DIR} ${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}
 deactivate

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 source ${PWD}/.env
 
@@ -44,5 +44,10 @@ pip install 'urllib3<2.0'
 pip install clint
 pip install python-dotenv
 pip install higlass-manage
-higlass-manage version
+REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
+if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
+    echo "Error: higlass-manage not installed - please see README for installation instructions"
+    exit -1
+fi
+echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
 deactivate
