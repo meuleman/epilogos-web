@@ -520,7 +520,7 @@ class DrawerContent extends Component {
                       style={badgeDefaultStyle}
                       color="rgb(0,48,255)" 
                       pill>
-                      {(Helpers.trackServerPointsToLocalHgServer(endpointURL)) ? "Loc" : "Ext"}
+                      {(Helpers.trackServerPointsToLocalHgServerForDrawer(endpointURL, 'Drawer.sampleSetSectionBody')) ? "Loc" : "Ext"}
                     </Badge>
                   </span>
                   {formattedKLabel}

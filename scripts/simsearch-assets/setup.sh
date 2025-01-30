@@ -1,8 +1,10 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 apt update
+apt install -y jq
+apt install -y emacs
 apt install -y tabix
 npm install pm2 -g
 cd /data/simsearch/service && npm install

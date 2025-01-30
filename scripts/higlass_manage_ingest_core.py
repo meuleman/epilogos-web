@@ -21,13 +21,15 @@ hg_name_running = f"{hg_name}-running"
 '''
 This script is designed to take candidate URLs generated from parsing the 'core' tracksets from the
 root epilogos manifest.json file and ingest those URLs into a running HiGlass server Docker container. 
-The manifest file is expected to follow the schema as defined in application documentation.
+Additionally, the script will download simsearch data files at various scales and copy them to the 
+simsearch data directory, where available. The manifest file is expected to follow the schema as 
+defined in application documentation.
 '''
 
 '''
 Note: Comment out the 'allowed_datasets' block to ingest all available core datasets from the parent
 manifest. Otherwise, the 'allowed_datasets' block limits the candidate URL set to the specified datasets,
-where available from the parent manifest. This is useful for testing and development purposes.
+where available from the parent manifest, which is specifically useful for testing and development purposes.
 '''
 
 allowed_datasets = {
@@ -223,9 +225,9 @@ def download_hg_candidate_url(candidateUrl, uploadsDir):
                         uploadsFh.flush()
         except Exception as err:
             delete_hg_staging_path(mediaStagingPath)
-            fatal_error(err)
+            warning(repr(err))
         if not os.path.exists(mediaStagingPath):
-            fatal_error(f"Error: Failed to ingest URL [{urlToIngest}] to [{mediaStagingPath}]\n")
+            warning(f"Error: Failed to ingest URL [{urlToIngest}] to [{mediaStagingPath}]\n")
     else:
         warning(f"Warning: Media staging [{mediaStagingPath}] already exists; skipping...\n")
     return (uploadsFn, mediaStagingPath, mediaUploadsPath)
@@ -251,9 +253,9 @@ def download_simsearch_candidate_url(candidateUrl, uploadsDir):
                     uploadsFh.flush()
     except Exception as err:
         delete_simsearch_staging_path(dataUploadsPath)
-        fatal_error(err)
+        warning(repr(err))
     if not os.path.exists(dataUploadsPath):
-        fatal_error(f"Error: Failed to copy simsearch data URL [{urlToIngest}] to [{dataUploadsPath}]\n")
+        warning(f"Error: Failed to copy simsearch data URL [{urlToIngest}] to [{dataUploadsPath}]\n")
     return (dataUploadsPath)
 
 def ingest_staged_hg_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrlType):
@@ -273,7 +275,7 @@ def ingest_staged_hg_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrl
         if result.stdout:
             sys.stderr.write(result.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as err:
-        fatal_error(err.decode('utf-8'))
+        warning(repr(err))
     return
 
 def base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
@@ -290,7 +292,7 @@ def base_uploads_fn_exists_in_hg_manage_tilesets(baseUploadsFn):
             if baseUploadsFn in result.stdout.decode('utf-8'):
                 return True
     except subprocess.CalledProcessError as err:
-        fatal_error(err.decode('utf-8'))
+        warning(repr(err))
     return False
 
 def delete_hg_staging_path(mediaStagingPath):
@@ -298,7 +300,7 @@ def delete_hg_staging_path(mediaStagingPath):
         note(f"Note: Deleting HiGlass media staging path [{mediaStagingPath}]\n")
         os.remove(mediaStagingPath)
     except Exception as err:
-        fatal_error(err)
+        warning(repr(err))
     return
 
 def delete_simsearch_staging_path(dataStagingPath):
@@ -306,7 +308,7 @@ def delete_simsearch_staging_path(dataStagingPath):
         note(f"Note: Deleting data staging path [{dataStagingPath}]\n")
         os.remove(dataStagingPath)
     except Exception as err:
-        fatal_error(err)
+        warning(repr(err))
     return
 
 def append_hg_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl):
@@ -350,7 +352,7 @@ def append_simsearch_candidate_url_entry_to_core_overrides_obj(candidateUrl, can
     retrievalTimestamp = datetime.datetime.now().isoformat()
     core_overrides[sampleSet]['tracks'].append({
         'originatingUrl': candidateUrl,
-        'type': candidateUrl.get('type'),
+        'type': candidateUrlObj.get('type'),
         'set': candidateUrlObj.get('set'),
         'assembly': candidateUrlObj.get('assembly'),
         'model': candidateUrlObj.get('model'),
@@ -381,14 +383,14 @@ def process_candidate_urls(candidateUrls, hgUploadsDir, ssUploadsDir):
                     delete_hg_staging_path(mediaStagingPath)
                     append_hg_candidate_url_entry_to_core_overrides_obj(baseUploadsFn, candidateUrl)
                 else:
-                    fatal_error(f"Error: Failed to completely ingest URL [{candidateUrl['url']}]\n")
+                    warning(f"Warning: Failed to completely ingest URL [{candidateUrl['url']}]\n")
         elif candidateUrlType in ['simsearch']:
             (dataUploadsPath) = download_simsearch_candidate_url(candidateUrl, ssUploadsDir)
             if dataUploadsPath:
                 if os.path.exists(dataUploadsPath):
                     append_simsearch_candidate_url_entry_to_core_overrides_obj(candidateUrl['url'], candidateUrl, dataUploadsPath)
                 else:
-                    fatal_error(f"Error: Failed to completely download data URL [{candidateUrl['url']}]\n")
+                    warning(f"Warning: Failed to completely download data URL [{candidateUrl['url']}]\n")
     return
 
 '''
@@ -406,7 +408,7 @@ def required_disk_space_for_candidate_urls(candidateUrls, uploadsDir):
                 contentLength = int(contentLength)
                 totalContentLength += contentLength
             except ValueError as err:
-                fatal_error(err)
+                fatal_error(repr(err))
     if totalContentLength > availableDiskSpaceInBytes:
         fatal_error(f"Error: Insufficient disk space for candidate URLs\n")
     return totalContentLength
@@ -469,36 +471,39 @@ def candidate_urls_for_core_manifest_items():
                                   else:
                                       fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
                                   # simsearch tracks are available for single subtype only
-                                  if osSsMediaServer:
-                                      for (ssScale, ssWindow) in simsearch_scales_and_windows:
-                                          ssRecDataCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.bed.gz"
-                                          ssRecDataIndexCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.bed.gz.tbi"
-                                          ssRecMinmaxCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.minmax.bed.gz"
-                                          ssRecMinmaxIndexCandidateUrl = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{ssScale}/{ssWindow}/recommendations.minmax.bed.gz.tbi"
-                                          ssCandidateUrls = [ssRecDataCandidateUrl, ssRecDataIndexCandidateUrl, ssRecMinmaxCandidateUrl, ssRecMinmaxIndexCandidateUrl]
-                                          for ssCandidateUrl in ssCandidateUrls:
-                                              if urlparse(ssCandidateUrl):
-                                                  note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
-                                                  response = requests.head(ssCandidateUrl)
-                                                  candidateFileSize = response.headers.get('content-length')
-                                                  if not candidateFileSize:
-                                                      warning(f"Warning: No file size available for URL [{ssCandidateUrl}]\n")
+                                  for complexityKey in osGroupAvailableComplexityKeys:
+                                      if osSsMediaServer:
+                                          for (ssScale, ssWindow) in simsearch_scales_and_windows:
+                                              ssRecUrlPrefix = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{complexityKey}/{ssScale}/{ssWindow}"
+                                              ssRecDataCandidateUrl = f"{ssRecUrlPrefix}/recommendations.bed.gz"
+                                              ssRecDataIndexCandidateUrl = f"{ssRecUrlPrefix}/recommendations.bed.gz.tbi"
+                                              ssRecMinmaxCandidateUrl = f"{ssRecUrlPrefix}/recommendations.minmax.bed.gz"
+                                              ssRecMinmaxIndexCandidateUrl = f"{ssRecUrlPrefix}/recommendations.minmax.bed.gz.tbi"
+                                              ssCandidateUrls = [ssRecDataCandidateUrl, ssRecDataIndexCandidateUrl, ssRecMinmaxCandidateUrl, ssRecMinmaxIndexCandidateUrl]
+                                              for ssCandidateUrl in ssCandidateUrls:
+                                                  if urlparse(ssCandidateUrl):
+                                                      note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
+                                                      response = requests.head(ssCandidateUrl)
+                                                      candidateFileSize = response.headers.get('content-length')
+                                                      if not candidateFileSize:
+                                                          warning(f"Warning: No file size available for URL [{ssCandidateUrl}]\n")
+                                                      else:
+                                                          candidateUrls.append({
+                                                              'url': ssCandidateUrl,
+                                                              'media-server': osSsMediaServer,
+                                                              'type': 'simsearch',
+                                                              'subtype': subtypeKey,
+                                                              'content-length': candidateFileSize,
+                                                              'set': orderedSetKey,
+                                                              'assembly': assemblyKey,
+                                                              'model': modelKey,
+                                                              'group': mediaGroupKey,
+                                                              'scale': ssScale,
+                                                              'window': ssWindow,
+                                                              'complexity': complexityKey,
+                                                          })
                                                   else:
-                                                      candidateUrls.append({
-                                                          'url': ssCandidateUrl,
-                                                          'media-server': osSsMediaServer,
-                                                          'type': 'simsearch',
-                                                          'subtype': subtypeKey,
-                                                          'content-length': candidateFileSize,
-                                                          'set': orderedSetKey,
-                                                          'assembly': assemblyKey,
-                                                          'model': modelKey,
-                                                          'group': mediaGroupKey,
-                                                          'scale': ssScale,
-                                                          'window': ssWindow,
-                                                      })
-                                              else:
-                                                  fatal_error(f"Error: URL invalid [{ssCandidateUrl}]\n")
+                                                      fatal_error(f"Error: URL invalid [{ssCandidateUrl}]\n")
                                       
                               # epilogos track
                               for complexityKey in osGroupAvailableComplexityKeys:
@@ -525,9 +530,9 @@ def candidate_urls_for_core_manifest_items():
                                     else:
                                         fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
             except Exception as err:
-                fatal_error(err)
+                fatal_error(repr(err))
     except KeyError as err:
-        fatal_error(err)
+        fatal_error(repr(err))
     return candidateUrls
 
 def ingest_baseline_fixedBin_tracks():
@@ -571,7 +576,7 @@ def ingest_baseline_fixedBin_tracks():
                     if result.stdout:
                         sys.stderr.write(result.stdout.decode('utf-8'))
                 except subprocess.CalledProcessError as err:
-                    fatal_error(err)
+                    warning(repr(err))
             else:
                 warning(f"Warning: [{uploads_fixedBin_fn}] already exists; skipping...\n")
         else:
@@ -579,11 +584,11 @@ def ingest_baseline_fixedBin_tracks():
     return
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        fatal_error(f"Usage: higlass_manage_ingest_core.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir>")
+    if len(sys.argv) != 6:
+        fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir> <simsearch_assets_dir>\n")
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_core_manifest_items()
-    note(str(candidate_urls_to_process) + '\n')
+    # note(str(candidate_urls_to_process) + '\n')
     required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, hg_uploads_dir)
     note(f"Note: Required disk space for candidate URLs [{required_disk_space / (1024 ** 3):.2f}] GB\n")
     while True:

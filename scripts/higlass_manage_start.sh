@@ -84,8 +84,9 @@ function start_services () {
     REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
     docker run -d \
         -p ${REACT_APP_HG_MANAGE_PORT_RUNNING}:80 \
+        -p ${REACT_APP_HG_MANAGE_SIMSEARCH_PORT}:${REACT_APP_HG_MANAGE_SIMSEARCH_PORT} \
         --mount type=bind,src=${REACT_APP_HG_MANAGE_DATA_DIR},dst=/data \
-        --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/data/media \
+        --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/media \
         --mount type=bind,src=${REACT_APP_HG_MANAGE_TEMP_DIR},dst=/tmp \
         --name ${REACT_APP_HG_MANAGE_NAME_RUNNING} \
         ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
@@ -109,12 +110,16 @@ else
         fi
         docker run -d \
             -p ${REACT_APP_HG_MANAGE_PORT_RUNNING}:80 \
+            -p ${REACT_APP_HG_MANAGE_SIMSEARCH_PORT}:${REACT_APP_HG_MANAGE_SIMSEARCH_PORT} \
             --mount type=bind,src=${REACT_APP_HG_MANAGE_DATA_DIR},dst=/data \
-            --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/data/media \
+            --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/media \
             --mount type=bind,src=${REACT_APP_HG_MANAGE_TEMP_DIR},dst=/tmp \
             --name ${REACT_APP_HG_MANAGE_NAME_RUNNING} \
             ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
     fi
 fi
+
+REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
+docker exec ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} bash -c "pm2 resurrect; pm2 save; pm2 startup"
 
 deactivate

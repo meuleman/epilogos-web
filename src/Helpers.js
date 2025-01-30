@@ -680,9 +680,17 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
   return result;
 }
 
-export const trackServerPointsToLocalHgServer = (trackServer) => {
-  // console.log(`trackServer ${trackServer}`);
-  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT}`;
+export const trackServerPointsToLocalHgServer = (trackServer, cf) => {
+  console.log(`trackServer ${trackServer} | cf ${cf}`);
+  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
+  console.log(`localhost ${localhost}`);
+  console.log(`trackServer.includes(localhost) ${trackServer.includes(localhost)}`);
+  return trackServer.includes(localhost);
+}
+
+export const trackServerPointsToLocalHgServerForDrawer = (trackServer, cf) => {
+  // console.log(`trackServer ${trackServer} | cf ${cf}`);
+  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
   // console.log(`localhost ${localhost}`);
   // console.log(`trackServer.includes(localhost) ${trackServer.includes(localhost)}`);
   return trackServer.includes(localhost);
@@ -1228,7 +1236,17 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
   let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
   
-  let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
+  // let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
+
+  const recommenderV3QueryDefaultURL = Constants.recommenderProxyURL;
+  const recommenderV3QueryLocalServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_SIMSEARCH_PORT}`;
+  const recommenderV3QueryURL = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')) ? recommenderV3QueryLocalServerURL : recommenderV3QueryDefaultURL;
+
+  console.log(`trackServerPointsToLocalHgServer(datasetAltname) ${trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')}`);
+  console.log(`recommenderV3QueryURL ${recommenderV3QueryURL}`);
+  console.log(`Manifest.trackServerBySampleSet[datasetAltname] ${Manifest.trackServerBySampleSet[datasetAltname]}`);
+
+  let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
   
   console.log(`[Helpers.simSearchQueryPromise] simSearchQueryPromiseURL ${JSON.stringify(recommenderV3URL)}`); 
   
@@ -1341,10 +1359,10 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
   const endpointURL = Manifest.trackServerBySampleSet[hgViewParams.sampleSet];
   switch (hgViewParams.mode) {
     case "single":
-      const singleEpilogosTrackFn = (trackServerPointsToLocalHgServer(endpointURL))
+      const singleEpilogosTrackFn = (trackServerPointsToLocalHgServer(endpointURL, 'Helpers.isHgViewParamsObjectValidPromise'))
         ? epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group, hgViewParams.complexity)
         : epilogosTrackFilenameForSingleSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group, hgViewParams.complexity);
-      const singleMarksTrackFn = (trackServerPointsToLocalHgServer(endpointURL))
+      const singleMarksTrackFn = (trackServerPointsToLocalHgServer(endpointURL, 'Helpers.isHgViewParamsObjectValidPromise'))
         ? marksTrackFilenameForSingleSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group)
         : marksTrackFilenameForSingleSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, hgViewParams.group);
       const promiseArraySingle = [
@@ -1368,7 +1386,7 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
       const groupSplit = splitPairedGroupString(hgViewParams.group);
       const newGroupA = groupSplit.groupA;
       const newGroupB = groupSplit.groupB;
-      const pairedEpilogosTrackFns = (trackServerPointsToLocalHgServer(endpointURL))
+      const pairedEpilogosTrackFns = (trackServerPointsToLocalHgServer(endpointURL, 'Helpers.isHgViewParamsObjectValidPromise'))
         ? epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity)
         : epilogosTrackFilenamesForPairedSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity);
       const promiseArrayPaired = [

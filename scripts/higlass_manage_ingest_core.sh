@@ -43,5 +43,10 @@ if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
 fi
 echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
 python --version
-${PWD}/scripts/higlass_manage_ingest_core.py ${PWD}/manifest.json ${PWD}/scripts ${REACT_APP_HG_MANAGE_NAME} ${REACT_APP_HG_MANAGE_DATA_DIR} ${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}
+${PWD}/scripts/higlass_manage_ingest_core.py \
+    ${PWD}/manifest.json \
+    ${PWD}/scripts \
+    ${REACT_APP_HG_MANAGE_NAME} \
+    ${REACT_APP_HG_MANAGE_DATA_DIR} \
+    ${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}
 deactivate

@@ -100,7 +100,7 @@ export const orderedSampleSetKeys = {orderedSets};
     return
 
 def process_manifest_item_by_sample_set(orderedSets, sets, out_fh, local_overrides=None):
-    trackServerBySampleSetObj = {}
+    hgTrackServerBySampleSetObj = {}
     navbarDescriptionsBySampleSetObj = {}
     formattedDescriptionsBySampleSetObj = {}
     for orderedSet in orderedSets:
@@ -121,23 +121,23 @@ def process_manifest_item_by_sample_set(orderedSets, sets, out_fh, local_overrid
         if not formattedDescriptionsBySampleSetObj[orderedSet]:
             print('Error: Failed to find formattedDescription for orderedSet: {}'.format(orderedSet))
             sys.exit(1)
-        trackServerBySampleSetObj[orderedSet] = orderedSetData['trackServer'] if 'trackServer' in orderedSetData else None
-        if not trackServerBySampleSetObj[orderedSet]:
-            print('Error: Failed to find trackServer for orderedSet: {}'.format(orderedSet))
+        hgTrackServerBySampleSetObj[orderedSet] = orderedSetData['hgTrackServer'] if 'hgTrackServer' in orderedSetData else None
+        if not hgTrackServerBySampleSetObj[orderedSet]:
+            print('Error: Failed to find hgTrackServer for orderedSet: {}'.format(orderedSet))
             sys.exit(1)
         if local_overrides and orderedSet in local_overrides:
             local_overrides_data = local_overrides[orderedSet]
             if 'navbarDescription' in local_overrides_data:
                 navbarDescriptionsBySampleSetObj[orderedSet] = local_overrides_data['navbarDescription']
-            if 'trackServer' in local_overrides_data:
-                trackServerBySampleSetObj[orderedSet] = local_overrides_data['trackServer']
+            if 'hgTrackServer' in local_overrides_data:
+                hgTrackServerBySampleSetObj[orderedSet] = local_overrides_data['hgTrackServer']
     navbarDescriptionsBySampleSetString = json.dumps(navbarDescriptionsBySampleSetObj, indent=OBJ_INDENT)
     formattedDescriptionsBySampleSetString = json.dumps(formattedDescriptionsBySampleSetObj, indent=OBJ_INDENT)
-    trackServerBySampleSetString = json.dumps(trackServerBySampleSetObj, indent=OBJ_INDENT)
+    hgTrackServerBySampleSetString = json.dumps(hgTrackServerBySampleSetObj, indent=OBJ_INDENT)
     out_fh.write(f"""
 export const navbarDescriptionsBySampleSet = {navbarDescriptionsBySampleSetString};
 export const formattedDescriptionsBySampleSet = {formattedDescriptionsBySampleSetString};
-export const trackServerBySampleSet = {trackServerBySampleSetString};
+export const trackServerBySampleSet = {hgTrackServerBySampleSetString};
 """.lstrip())
     return
 

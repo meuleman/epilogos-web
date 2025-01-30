@@ -549,6 +549,7 @@ class QueryTargetViewer extends Component {
       };
       // retrieve parent UUID and color parameters to populate in skeleton
       // console.log(`json ${JSON.stringify(self.props.hgViewconf)}`);
+      const epilogosTrackTilesetServer = self.props.hgViewconf.views[0].tracks.top[0].server;
       const epilogosTrackTilesetUUID = self.props.hgViewconf.views[0].tracks.top[0].tilesetUid;
       const epilogosTrackColorScale = self.props.hgViewconf.views[0].tracks.top[0].options.colorScale;
       const chromosomeTrackTilesetUUID = self.props.hgViewconf.views[0].tracks.top[2].tilesetUid;
@@ -595,7 +596,7 @@ class QueryTargetViewer extends Component {
       const queryEpilogosTrackHeight = parseInt(queryPanelHeight - queryChromosomeTrackHeight - queryGeneAnnotationTrackHeight - querySpacerTrackHeight - 10);
       const queryEpilogosTrack = {
         name: 'epilogos-multires',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: epilogosTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-stacked-bar',
@@ -639,7 +640,7 @@ class QueryTargetViewer extends Component {
       };
       const queryChromosomeTrack = {
         name: 'chromosome-track',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: chromosomeTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-chromosome-labels',
@@ -659,7 +660,7 @@ class QueryTargetViewer extends Component {
       };
       const queryGeneAnnotationTrack = {
         name: 'gene-annotations',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: geneAnnotationTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-gene-annotations',
@@ -781,7 +782,7 @@ class QueryTargetViewer extends Component {
       };
       const targetEpilogosTrack = {
         name: 'epilogos-multires',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: epilogosTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-stacked-bar',
@@ -825,7 +826,7 @@ class QueryTargetViewer extends Component {
       };
       const targetChromosomeTrack = {
         name: 'chromosome-track',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: chromosomeTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-chromosome-labels',
@@ -845,7 +846,7 @@ class QueryTargetViewer extends Component {
       };
       const targetGeneAnnotationTrack = {
         name: 'gene-annotations',
-        server: 'https://explore.altius.org/api/v1',
+        server: epilogosTrackTilesetServer,
         tilesetUid: geneAnnotationTrackTilesetUUID,
         uid: uuid4(),
         type: 'horizontal-gene-annotations',
@@ -986,419 +987,419 @@ class QueryTargetViewer extends Component {
       self.state.originalAbsRight = queryAbsRight;
     }
 
-    function initializeQueryTargetUnlockedHgViewconf(chromInfo, self) {
-      // onsole.log(`QueryTargetViewer > initializeQueryTargetUnlockedHgViewconf`);
-      // console.log(`${JSON.stringify(chromInfo, null, 2)}`);
-      // skeleton
-      const newHgViewconf = {
-        editable: false,
-        zoomFixed: false,
-        trackSourceServers: [ '/api/v1', 'http://higlass.io/api/v1' ],
-        exportViewUrl: "/api/v1/viewconfs/",
-        views: [],
-        zoomLocks: {
-          locksByViewUid: {},
-          locksDict: {},
-        },
-        locationLocks: {
-          locksByViewUid: {},
-          locksDict: {},
-        },
-        valueScaleLocks: {
-          locksByViewUid: {},
-          locksDict: {},
-        },
-      };
-      // populate query view skeleton
-      const queryViewUUID = uuid4();
-      const queryAbsLeft = chromInfo.chrToAbs([self.state.queryRegion.left.chr, parseInt(self.state.queryRegion.left.start)]);
-      const queryAbsRight = chromInfo.chrToAbs([self.state.queryRegion.right.chr, parseInt(self.state.queryRegion.right.stop)]);
-      // const queryAbsMidpoint = queryAbsLeft + Math.floor((queryAbsRight - queryAbsLeft) / 2);
-      const queryInitialDomain = [queryAbsLeft, queryAbsRight];
-      const queryView = {
-        uid: queryViewUUID,
-        tracks: {
-          top: [],
-          left: [],
-          center: [],
-          right: [],
-          bottom: [],
-          whole: [],
-          gallery: [],
-        },
-        genomePositionSearchBoxVisible: false,
-        genomePositionSearchBox: {},
-        layout: {
-          w: 12,
-          h: 6,
-          x: 0,
-          y: 0
-        },
-        initialXDomain: queryInitialDomain,
-        initialYDomain: queryInitialDomain,
-      };
-      const queryPanelWidth = self.state.panelWidth;
-      const queryPanelHeight = self.state.panelHeight - 10;
-      const querySpacerTrackWidth = queryPanelWidth;
-      const querySpacerTrackHeight = 20;
-      const queryChromosomeTrackWidth = queryPanelWidth;
-      const queryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
-      const queryGeneAnnotationTrackWidth = queryPanelWidth;
-      const queryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
-      const queryEpilogosTrackWidth = queryPanelWidth;
-      const queryEpilogosTrackHeight = parseInt(queryPanelHeight - queryChromosomeTrackHeight - queryGeneAnnotationTrackHeight - querySpacerTrackHeight - querySpacerTrackHeight - 1);
-      const queryEpilogosTrack = {
-        name: 'epilogos-multires',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'CJDxLt-hSD2E0F4Jw6ngsA',
-        uid: uuid4(),
-        type: 'horizontal-stacked-bar',
-        width: queryEpilogosTrackWidth,
-        height: queryEpilogosTrackHeight,
-        position: 'top',
-        resolutions: [
-          13107200,
-          6553600,
-          3276800,
-          1638400,
-          819200,
-          409600,
-          204800,
-          102400,
-          51200,
-          25600,
-          12800,
-          6400,
-          3200,
-          1600,
-          800,
-          400,
-          200
-        ],
-        options: {
-          name: 'epilogos-multires',
-          labelPosition: 'topLeft',
-          labelColor: 'white',
-          labelTextOpacity: 0,
-          labelBackgroundOpacity: 0,
-          valueScaling: 'exponential',
-          trackBorderWidth: 0,
-          trackBorderColor: 'black',
-          backgroundColor: 'black',
-          barBorder: false,
-          sortLargestOnTop: true,
-          colorScale: [
-            "#ff0000",
-            "#ff4500",
-            "#32cd32",
-            "#008000",
-            "#006400",
-            "#c2e105",
-            "#ffff00",
-            "#66cdaa",
-            "#8a91d0",
-            "#cd5c5c",
-            "#e9967a",
-            "#bdb76b",
-            "#808080",
-            "#c0c0c0",
-            "#ffffff"
-          ],
-        },
-      };
-      const queryChromosomeTrack = {
-        name: 'chromosome-track',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'S_2v_ZbeQIicTqHgGqjrTg',
-        uid: uuid4(),
-        type: 'horizontal-chromosome-labels',
-        width: queryChromosomeTrackWidth,
-        height: queryChromosomeTrackHeight,
-        position: 'top',
-        options: {
-          name: 'chromosome-track',
-          color: '#777777',
-          stroke: '#ffffff',
-          fontSize: 12,
-          fontIsAligned: false,
-          showMousePosition: false,
-          mousePositionColor: '#999999',
-          backgroundColor: 'white'
-        },
-      };
-      const queryGeneAnnotationTrack = {
-        name: 'gene-annotations',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'ftfObGDLT8eLH0_mCK7Hcg',
-        uid: uuid4(),
-        type: 'horizontal-gene-annotations',
-        width: queryGeneAnnotationTrackWidth,
-        height: queryGeneAnnotationTrackHeight,
-        position: 'top',
-        options: {
-          name: 'gene-annotations',
-          fontSize: 11,
-          labelColor: 'black',
-          labelPosition: 'hidden',
-          labelLeftMargin: 0,
-          labelRightMargin: 0,
-          labelTopMargin: 0,
-          labelBottomMargin: 0,
-          plusStrandColor: 'blue',
-          minusStrandColor: 'red',
-          trackBorderWidth: 0,
-          trackBorderColor: 'black',
-          showMousePosition: false,
-          mousePositionColor: '#999999',
-          geneAnnotationHeight: 10,
-          geneLabelPosition: 'outside',
-          geneStrandSpacing: 4,
-          backgroundColor: 'white'
-        },
-      };
-      // const queryGeneAnnotationTrack = {
-      //   name: 'gene-annotations',
-      //   server: 'https://explore.altius.org/api/v1',
-      //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
-      //   uid: uuid4(),
-      //   type: 'horizontal-transcripts',
-      //   width: queryGeneAnnotationTrackWidth,
-      //   height: queryGeneAnnotationTrackHeight,
-      //   position: 'top',
-      //   options: {
-      //     name: 'gene-annotations',
-      //     blockStyle: 'directional',
-      //     highlightTranscriptType: 'none',
-      //     showToggleTranscriptsButton: false,
-      //     trackMargin: {top:10, bottom:10, left:0, right:0},
-      //     labelFontSize: 11,
-      //     labelFontWeight: 5,
-      //     transcriptHeight: 16,
-      //     transcriptSpacing: 5,
-      //     maxRows: 3,
-      //     minRows: 3,
-      //     utrColor: '#afafaf',
-      //   },
-      // };
-      const querySpacerTrack = {
-        name: 'spacer',
-        tilesetUid: '',
-        uid: uuid4(),
-        position: 'top',
-        width: querySpacerTrackWidth,
-        height: querySpacerTrackHeight,
-        type: 'empty',
-        options: {
-          backgroundColor: 'black'
-        },
-      };
-      queryView.tracks.top.push(querySpacerTrack);
-      queryView.tracks.top.push(queryEpilogosTrack);
-      queryView.tracks.top.push(queryChromosomeTrack);
-      queryView.tracks.top.push(queryGeneAnnotationTrack);
-      queryView.tracks.top.push(querySpacerTrack);
-      // populate target (search hit) view
-      const targetViewUUID = uuid4();
-      const targetAbsLeft = chromInfo.chrToAbs([self.state.targetRegion.left.chr, parseInt(self.state.targetRegion.left.start)]);
-      const targetAbsRight = chromInfo.chrToAbs([self.state.targetRegion.right.chr, parseInt(self.state.targetRegion.right.stop)]);
-      // const targetAbsMidpoint = targetAbsLeft + Math.floor((targetAbsRight - targetAbsLeft) / 2);
-      const targetInitialDomain = [targetAbsLeft, targetAbsRight];
-      const targetView = {
-        uid: targetViewUUID,
-        tracks: {
-          top: [],
-          left: [],
-          center: [],
-          right: [],
-          bottom: [],
-          whole: [],
-          gallery: [],
-        },
-        genomePositionSearchBoxVisible: false,
-        genomePositionSearchBox: {},
-        layout: {
-          w: 12,
-          h: 6,
-          x: 0,
-          y: 6
-        },
-        initialXDomain: targetInitialDomain,
-        initialYDomain: targetInitialDomain,
-      };
-      const targetPanelWidth = self.state.panelWidth;
-      const targetPanelHeight = self.state.panelHeight;
-      const targetSpacerTrackWidth = targetPanelWidth;
-      const targetSpacerTrackHeight = 20;
-      const targetChromosomeTrackWidth = targetPanelWidth;
-      const targetChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
-      const targetGeneAnnotationTrackWidth = targetPanelWidth;
-      const targetGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
-      const targetEpilogosTrackWidth = targetPanelWidth;
-      const targetEpilogosTrackHeight = parseInt(targetPanelHeight - targetChromosomeTrackHeight - targetGeneAnnotationTrackHeight - 40);
-      const targetSpacerTrack = {
-        name: 'spacer',
-        tilesetUid: '',
-        uid: uuid4(),
-        position: 'top',
-        width: targetSpacerTrackWidth,
-        height: targetSpacerTrackHeight,
-        type: 'empty',
-        options: {
-          backgroundColor: 'black'
-        },
-      };
-      const targetEpilogosTrack = {
-        name: 'epilogos-multires',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'CJDxLt-hSD2E0F4Jw6ngsA',
-        uid: uuid4(),
-        type: 'horizontal-stacked-bar',
-        width: targetEpilogosTrackWidth,
-        height: targetEpilogosTrackHeight,
-        position: 'top',
-        resolutions: [
-          13107200,
-          6553600,
-          3276800,
-          1638400,
-          819200,
-          409600,
-          204800,
-          102400,
-          51200,
-          25600,
-          12800,
-          6400,
-          3200,
-          1600,
-          800,
-          400,
-          200
-        ],
-        options: {
-          name: 'epilogos-multires',
-          labelPosition: 'topLeft',
-          labelColor: 'white',
-          labelTextOpacity: 0,
-          labelBackgroundOpacity: 0,
-          valueScaling: 'exponential',
-          trackBorderWidth: 0,
-          trackBorderColor: 'black',
-          backgroundColor: 'black',
-          barBorder: false,
-          sortLargestOnTop: true,
-          colorScale: [
-            "#ff0000",
-            "#ff4500",
-            "#32cd32",
-            "#008000",
-            "#006400",
-            "#c2e105",
-            "#ffff00",
-            "#66cdaa",
-            "#8a91d0",
-            "#cd5c5c",
-            "#e9967a",
-            "#bdb76b",
-            "#808080",
-            "#c0c0c0",
-            "#ffffff"
-          ],
-        },
-      };
-      const targetChromosomeTrack = {
-        name: 'chromosome-track',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'S_2v_ZbeQIicTqHgGqjrTg',
-        uid: uuid4(),
-        type: 'horizontal-chromosome-labels',
-        width: targetChromosomeTrackWidth,
-        height: targetChromosomeTrackHeight,
-        position: 'top',
-        options: {
-          name: 'chromosome-track',
-          color: '#777777',
-          stroke: '#ffffff',
-          fontSize: 12,
-          fontIsAligned: false,
-          showMousePosition: false,
-          mousePositionColor: '#999999',
-          backgroundColor: 'white'
-        },
-      };
-      const targetGeneAnnotationTrack = {
-        name: 'gene-annotations',
-        server: 'https://explore.altius.org/api/v1',
-        tilesetUid: 'ftfObGDLT8eLH0_mCK7Hcg',
-        uid: uuid4(),
-        type: 'horizontal-gene-annotations',
-        width: targetGeneAnnotationTrackWidth,
-        height: targetGeneAnnotationTrackHeight,
-        position: 'top',
-        options: {
-          name: 'gene-annotations',
-          fontSize: 11,
-          labelColor: 'black',
-          labelPosition: 'hidden',
-          labelLeftMargin: 0,
-          labelRightMargin: 0,
-          labelTopMargin: 0,
-          labelBottomMargin: 0,
-          plusStrandColor: 'blue',
-          minusStrandColor: 'red',
-          trackBorderWidth: 0,
-          trackBorderColor: 'black',
-          showMousePosition: false,
-          mousePositionColor: '#999999',
-          geneAnnotationHeight: 10,
-          geneLabelPosition: 'outside',
-          geneStrandSpacing: 4,
-          backgroundColor: 'white'
-        },
-      };
-      // const targetGeneAnnotationTrack = {
-      //   name: 'gene-annotations',
-      //   server: 'https://explore.altius.org/api/v1',
-      //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
-      //   uid: uuid4(),
-      //   type: 'horizontal-transcripts',
-      //   width: queryGeneAnnotationTrackWidth,
-      //   height: queryGeneAnnotationTrackHeight,
-      //   position: 'top',
-      //   options: {
-      //     name: 'gene-annotations',
-      //     blockStyle: 'directional',
-      //     highlightTranscriptType: 'none',
-      //     showToggleTranscriptsButton: false,
-      //     trackMargin: {top:10, bottom:10, left:0, right:0},
-      //     labelFontSize: 11,
-      //     labelFontWeight: 5,
-      //     transcriptHeight: 16,
-      //     transcriptSpacing: 5,
-      //     maxRows: 3,
-      //     minRows: 3,
-      //     utrColor: '#afafaf',
-      //   },
-      // };
-      targetView.tracks.top.push(targetSpacerTrack);
-      targetView.tracks.top.push(targetEpilogosTrack);
-      targetView.tracks.top.push(targetChromosomeTrack);
-      targetView.tracks.top.push(targetGeneAnnotationTrack);
+    // function initializeQueryTargetUnlockedHgViewconf(chromInfo, self) {
+    //   // onsole.log(`QueryTargetViewer > initializeQueryTargetUnlockedHgViewconf`);
+    //   // console.log(`${JSON.stringify(chromInfo, null, 2)}`);
+    //   // skeleton
+    //   const newHgViewconf = {
+    //     editable: false,
+    //     zoomFixed: false,
+    //     trackSourceServers: [ '/api/v1', 'http://higlass.io/api/v1' ],
+    //     exportViewUrl: "/api/v1/viewconfs/",
+    //     views: [],
+    //     zoomLocks: {
+    //       locksByViewUid: {},
+    //       locksDict: {},
+    //     },
+    //     locationLocks: {
+    //       locksByViewUid: {},
+    //       locksDict: {},
+    //     },
+    //     valueScaleLocks: {
+    //       locksByViewUid: {},
+    //       locksDict: {},
+    //     },
+    //   };
+    //   // populate query view skeleton
+    //   const queryViewUUID = uuid4();
+    //   const queryAbsLeft = chromInfo.chrToAbs([self.state.queryRegion.left.chr, parseInt(self.state.queryRegion.left.start)]);
+    //   const queryAbsRight = chromInfo.chrToAbs([self.state.queryRegion.right.chr, parseInt(self.state.queryRegion.right.stop)]);
+    //   // const queryAbsMidpoint = queryAbsLeft + Math.floor((queryAbsRight - queryAbsLeft) / 2);
+    //   const queryInitialDomain = [queryAbsLeft, queryAbsRight];
+    //   const queryView = {
+    //     uid: queryViewUUID,
+    //     tracks: {
+    //       top: [],
+    //       left: [],
+    //       center: [],
+    //       right: [],
+    //       bottom: [],
+    //       whole: [],
+    //       gallery: [],
+    //     },
+    //     genomePositionSearchBoxVisible: false,
+    //     genomePositionSearchBox: {},
+    //     layout: {
+    //       w: 12,
+    //       h: 6,
+    //       x: 0,
+    //       y: 0
+    //     },
+    //     initialXDomain: queryInitialDomain,
+    //     initialYDomain: queryInitialDomain,
+    //   };
+    //   const queryPanelWidth = self.state.panelWidth;
+    //   const queryPanelHeight = self.state.panelHeight - 10;
+    //   const querySpacerTrackWidth = queryPanelWidth;
+    //   const querySpacerTrackHeight = 20;
+    //   const queryChromosomeTrackWidth = queryPanelWidth;
+    //   const queryChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
+    //   const queryGeneAnnotationTrackWidth = queryPanelWidth;
+    //   const queryGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
+    //   const queryEpilogosTrackWidth = queryPanelWidth;
+    //   const queryEpilogosTrackHeight = parseInt(queryPanelHeight - queryChromosomeTrackHeight - queryGeneAnnotationTrackHeight - querySpacerTrackHeight - querySpacerTrackHeight - 1);
+    //   const queryEpilogosTrack = {
+    //     name: 'epilogos-multires',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'CJDxLt-hSD2E0F4Jw6ngsA',
+    //     uid: uuid4(),
+    //     type: 'horizontal-stacked-bar',
+    //     width: queryEpilogosTrackWidth,
+    //     height: queryEpilogosTrackHeight,
+    //     position: 'top',
+    //     resolutions: [
+    //       13107200,
+    //       6553600,
+    //       3276800,
+    //       1638400,
+    //       819200,
+    //       409600,
+    //       204800,
+    //       102400,
+    //       51200,
+    //       25600,
+    //       12800,
+    //       6400,
+    //       3200,
+    //       1600,
+    //       800,
+    //       400,
+    //       200
+    //     ],
+    //     options: {
+    //       name: 'epilogos-multires',
+    //       labelPosition: 'topLeft',
+    //       labelColor: 'white',
+    //       labelTextOpacity: 0,
+    //       labelBackgroundOpacity: 0,
+    //       valueScaling: 'exponential',
+    //       trackBorderWidth: 0,
+    //       trackBorderColor: 'black',
+    //       backgroundColor: 'black',
+    //       barBorder: false,
+    //       sortLargestOnTop: true,
+    //       colorScale: [
+    //         "#ff0000",
+    //         "#ff4500",
+    //         "#32cd32",
+    //         "#008000",
+    //         "#006400",
+    //         "#c2e105",
+    //         "#ffff00",
+    //         "#66cdaa",
+    //         "#8a91d0",
+    //         "#cd5c5c",
+    //         "#e9967a",
+    //         "#bdb76b",
+    //         "#808080",
+    //         "#c0c0c0",
+    //         "#ffffff"
+    //       ],
+    //     },
+    //   };
+    //   const queryChromosomeTrack = {
+    //     name: 'chromosome-track',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'S_2v_ZbeQIicTqHgGqjrTg',
+    //     uid: uuid4(),
+    //     type: 'horizontal-chromosome-labels',
+    //     width: queryChromosomeTrackWidth,
+    //     height: queryChromosomeTrackHeight,
+    //     position: 'top',
+    //     options: {
+    //       name: 'chromosome-track',
+    //       color: '#777777',
+    //       stroke: '#ffffff',
+    //       fontSize: 12,
+    //       fontIsAligned: false,
+    //       showMousePosition: false,
+    //       mousePositionColor: '#999999',
+    //       backgroundColor: 'white'
+    //     },
+    //   };
+    //   const queryGeneAnnotationTrack = {
+    //     name: 'gene-annotations',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'ftfObGDLT8eLH0_mCK7Hcg',
+    //     uid: uuid4(),
+    //     type: 'horizontal-gene-annotations',
+    //     width: queryGeneAnnotationTrackWidth,
+    //     height: queryGeneAnnotationTrackHeight,
+    //     position: 'top',
+    //     options: {
+    //       name: 'gene-annotations',
+    //       fontSize: 11,
+    //       labelColor: 'black',
+    //       labelPosition: 'hidden',
+    //       labelLeftMargin: 0,
+    //       labelRightMargin: 0,
+    //       labelTopMargin: 0,
+    //       labelBottomMargin: 0,
+    //       plusStrandColor: 'blue',
+    //       minusStrandColor: 'red',
+    //       trackBorderWidth: 0,
+    //       trackBorderColor: 'black',
+    //       showMousePosition: false,
+    //       mousePositionColor: '#999999',
+    //       geneAnnotationHeight: 10,
+    //       geneLabelPosition: 'outside',
+    //       geneStrandSpacing: 4,
+    //       backgroundColor: 'white'
+    //     },
+    //   };
+    //   // const queryGeneAnnotationTrack = {
+    //   //   name: 'gene-annotations',
+    //   //   server: 'https://explore.altius.org/api/v1',
+    //   //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
+    //   //   uid: uuid4(),
+    //   //   type: 'horizontal-transcripts',
+    //   //   width: queryGeneAnnotationTrackWidth,
+    //   //   height: queryGeneAnnotationTrackHeight,
+    //   //   position: 'top',
+    //   //   options: {
+    //   //     name: 'gene-annotations',
+    //   //     blockStyle: 'directional',
+    //   //     highlightTranscriptType: 'none',
+    //   //     showToggleTranscriptsButton: false,
+    //   //     trackMargin: {top:10, bottom:10, left:0, right:0},
+    //   //     labelFontSize: 11,
+    //   //     labelFontWeight: 5,
+    //   //     transcriptHeight: 16,
+    //   //     transcriptSpacing: 5,
+    //   //     maxRows: 3,
+    //   //     minRows: 3,
+    //   //     utrColor: '#afafaf',
+    //   //   },
+    //   // };
+    //   const querySpacerTrack = {
+    //     name: 'spacer',
+    //     tilesetUid: '',
+    //     uid: uuid4(),
+    //     position: 'top',
+    //     width: querySpacerTrackWidth,
+    //     height: querySpacerTrackHeight,
+    //     type: 'empty',
+    //     options: {
+    //       backgroundColor: 'black'
+    //     },
+    //   };
+    //   queryView.tracks.top.push(querySpacerTrack);
+    //   queryView.tracks.top.push(queryEpilogosTrack);
+    //   queryView.tracks.top.push(queryChromosomeTrack);
+    //   queryView.tracks.top.push(queryGeneAnnotationTrack);
+    //   queryView.tracks.top.push(querySpacerTrack);
+    //   // populate target (search hit) view
+    //   const targetViewUUID = uuid4();
+    //   const targetAbsLeft = chromInfo.chrToAbs([self.state.targetRegion.left.chr, parseInt(self.state.targetRegion.left.start)]);
+    //   const targetAbsRight = chromInfo.chrToAbs([self.state.targetRegion.right.chr, parseInt(self.state.targetRegion.right.stop)]);
+    //   // const targetAbsMidpoint = targetAbsLeft + Math.floor((targetAbsRight - targetAbsLeft) / 2);
+    //   const targetInitialDomain = [targetAbsLeft, targetAbsRight];
+    //   const targetView = {
+    //     uid: targetViewUUID,
+    //     tracks: {
+    //       top: [],
+    //       left: [],
+    //       center: [],
+    //       right: [],
+    //       bottom: [],
+    //       whole: [],
+    //       gallery: [],
+    //     },
+    //     genomePositionSearchBoxVisible: false,
+    //     genomePositionSearchBox: {},
+    //     layout: {
+    //       w: 12,
+    //       h: 6,
+    //       x: 0,
+    //       y: 6
+    //     },
+    //     initialXDomain: targetInitialDomain,
+    //     initialYDomain: targetInitialDomain,
+    //   };
+    //   const targetPanelWidth = self.state.panelWidth;
+    //   const targetPanelHeight = self.state.panelHeight;
+    //   const targetSpacerTrackWidth = targetPanelWidth;
+    //   const targetSpacerTrackHeight = 20;
+    //   const targetChromosomeTrackWidth = targetPanelWidth;
+    //   const targetChromosomeTrackHeight = Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight;
+    //   const targetGeneAnnotationTrackWidth = targetPanelWidth;
+    //   const targetGeneAnnotationTrackHeight = Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight;
+    //   const targetEpilogosTrackWidth = targetPanelWidth;
+    //   const targetEpilogosTrackHeight = parseInt(targetPanelHeight - targetChromosomeTrackHeight - targetGeneAnnotationTrackHeight - 40);
+    //   const targetSpacerTrack = {
+    //     name: 'spacer',
+    //     tilesetUid: '',
+    //     uid: uuid4(),
+    //     position: 'top',
+    //     width: targetSpacerTrackWidth,
+    //     height: targetSpacerTrackHeight,
+    //     type: 'empty',
+    //     options: {
+    //       backgroundColor: 'black'
+    //     },
+    //   };
+    //   const targetEpilogosTrack = {
+    //     name: 'epilogos-multires',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'CJDxLt-hSD2E0F4Jw6ngsA',
+    //     uid: uuid4(),
+    //     type: 'horizontal-stacked-bar',
+    //     width: targetEpilogosTrackWidth,
+    //     height: targetEpilogosTrackHeight,
+    //     position: 'top',
+    //     resolutions: [
+    //       13107200,
+    //       6553600,
+    //       3276800,
+    //       1638400,
+    //       819200,
+    //       409600,
+    //       204800,
+    //       102400,
+    //       51200,
+    //       25600,
+    //       12800,
+    //       6400,
+    //       3200,
+    //       1600,
+    //       800,
+    //       400,
+    //       200
+    //     ],
+    //     options: {
+    //       name: 'epilogos-multires',
+    //       labelPosition: 'topLeft',
+    //       labelColor: 'white',
+    //       labelTextOpacity: 0,
+    //       labelBackgroundOpacity: 0,
+    //       valueScaling: 'exponential',
+    //       trackBorderWidth: 0,
+    //       trackBorderColor: 'black',
+    //       backgroundColor: 'black',
+    //       barBorder: false,
+    //       sortLargestOnTop: true,
+    //       colorScale: [
+    //         "#ff0000",
+    //         "#ff4500",
+    //         "#32cd32",
+    //         "#008000",
+    //         "#006400",
+    //         "#c2e105",
+    //         "#ffff00",
+    //         "#66cdaa",
+    //         "#8a91d0",
+    //         "#cd5c5c",
+    //         "#e9967a",
+    //         "#bdb76b",
+    //         "#808080",
+    //         "#c0c0c0",
+    //         "#ffffff"
+    //       ],
+    //     },
+    //   };
+    //   const targetChromosomeTrack = {
+    //     name: 'chromosome-track',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'S_2v_ZbeQIicTqHgGqjrTg',
+    //     uid: uuid4(),
+    //     type: 'horizontal-chromosome-labels',
+    //     width: targetChromosomeTrackWidth,
+    //     height: targetChromosomeTrackHeight,
+    //     position: 'top',
+    //     options: {
+    //       name: 'chromosome-track',
+    //       color: '#777777',
+    //       stroke: '#ffffff',
+    //       fontSize: 12,
+    //       fontIsAligned: false,
+    //       showMousePosition: false,
+    //       mousePositionColor: '#999999',
+    //       backgroundColor: 'white'
+    //     },
+    //   };
+    //   const targetGeneAnnotationTrack = {
+    //     name: 'gene-annotations',
+    //     server: 'https://explore.altius.org/api/v1',
+    //     tilesetUid: 'ftfObGDLT8eLH0_mCK7Hcg',
+    //     uid: uuid4(),
+    //     type: 'horizontal-gene-annotations',
+    //     width: targetGeneAnnotationTrackWidth,
+    //     height: targetGeneAnnotationTrackHeight,
+    //     position: 'top',
+    //     options: {
+    //       name: 'gene-annotations',
+    //       fontSize: 11,
+    //       labelColor: 'black',
+    //       labelPosition: 'hidden',
+    //       labelLeftMargin: 0,
+    //       labelRightMargin: 0,
+    //       labelTopMargin: 0,
+    //       labelBottomMargin: 0,
+    //       plusStrandColor: 'blue',
+    //       minusStrandColor: 'red',
+    //       trackBorderWidth: 0,
+    //       trackBorderColor: 'black',
+    //       showMousePosition: false,
+    //       mousePositionColor: '#999999',
+    //       geneAnnotationHeight: 10,
+    //       geneLabelPosition: 'outside',
+    //       geneStrandSpacing: 4,
+    //       backgroundColor: 'white'
+    //     },
+    //   };
+    //   // const targetGeneAnnotationTrack = {
+    //   //   name: 'gene-annotations',
+    //   //   server: 'https://explore.altius.org/api/v1',
+    //   //   tilesetUid: 'CILWmEMfQV29UAaZPP3vNg',
+    //   //   uid: uuid4(),
+    //   //   type: 'horizontal-transcripts',
+    //   //   width: queryGeneAnnotationTrackWidth,
+    //   //   height: queryGeneAnnotationTrackHeight,
+    //   //   position: 'top',
+    //   //   options: {
+    //   //     name: 'gene-annotations',
+    //   //     blockStyle: 'directional',
+    //   //     highlightTranscriptType: 'none',
+    //   //     showToggleTranscriptsButton: false,
+    //   //     trackMargin: {top:10, bottom:10, left:0, right:0},
+    //   //     labelFontSize: 11,
+    //   //     labelFontWeight: 5,
+    //   //     transcriptHeight: 16,
+    //   //     transcriptSpacing: 5,
+    //   //     maxRows: 3,
+    //   //     minRows: 3,
+    //   //     utrColor: '#afafaf',
+    //   //   },
+    //   // };
+    //   targetView.tracks.top.push(targetSpacerTrack);
+    //   targetView.tracks.top.push(targetEpilogosTrack);
+    //   targetView.tracks.top.push(targetChromosomeTrack);
+    //   targetView.tracks.top.push(targetGeneAnnotationTrack);
 
-      // populate skeleton with views
-      newHgViewconf.views.push(queryView);
-      newHgViewconf.views.push(targetView);
-      // console.log(`newHgViewconf ${JSON.stringify(newHgViewconf, null, 2)}`);
-      self.state.queryTargetUnlockedHgViewconf = {...newHgViewconf};
+    //   // populate skeleton with views
+    //   newHgViewconf.views.push(queryView);
+    //   newHgViewconf.views.push(targetView);
+    //   // console.log(`newHgViewconf ${JSON.stringify(newHgViewconf, null, 2)}`);
+    //   self.state.queryTargetUnlockedHgViewconf = {...newHgViewconf};
 
-      // let queryScale = Helpers.calculateScale(self.state.queryRegion.left.chr, self.state.queryRegion.right.chr, self.state.queryRegion.left.start, self.state.queryRegion.right.stop, self);
-      // console.log(`queryScale ${JSON.stringify(queryScale)}`);
-      self.updateQueryRegionLabel([self.state.queryRegion.left.chr, self.state.queryRegion.left.start], [self.state.queryRegion.right.chr, self.state.queryRegion.right.stop]);
-      self.updateTargetRegionLabel([self.state.targetRegion.left.chr, self.state.targetRegion.left.start], [self.state.targetRegion.right.chr, self.state.targetRegion.right.stop]);
+    //   // let queryScale = Helpers.calculateScale(self.state.queryRegion.left.chr, self.state.queryRegion.right.chr, self.state.queryRegion.left.start, self.state.queryRegion.right.stop, self);
+    //   // console.log(`queryScale ${JSON.stringify(queryScale)}`);
+    //   self.updateQueryRegionLabel([self.state.queryRegion.left.chr, self.state.queryRegion.left.start], [self.state.queryRegion.right.chr, self.state.queryRegion.right.stop]);
+    //   self.updateTargetRegionLabel([self.state.targetRegion.left.chr, self.state.targetRegion.left.start], [self.state.targetRegion.right.chr, self.state.targetRegion.right.stop]);
 
-      self.state.originalAbsLeft = queryAbsLeft;
-      self.state.originalAbsRight = queryAbsRight;
-    }
+    //   self.state.originalAbsLeft = queryAbsLeft;
+    //   self.state.originalAbsRight = queryAbsRight;
+    // }
 
     // console.log(`hitsIdxBySort ${this.props.hitsIdxBySort}`);
   }

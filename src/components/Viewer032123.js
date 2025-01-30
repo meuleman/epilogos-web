@@ -3845,7 +3845,7 @@ class Viewer extends Component {
 
     const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
 
-    // console.log(`isHgViewParamsObjectValidPromise ${isHgViewParamsObjectValidPromise}`);
+    console.log(`isHgViewParamsObjectValidPromise ${isHgViewParamsObjectValidPromise}`);
 
     isHgViewParamsObjectValidPromise.then((isHgViewParamsObjectValid) => {
       console.log(`isHgViewParamsObjectValid ${isHgViewParamsObjectValid}`);
@@ -4083,7 +4083,7 @@ class Viewer extends Component {
   
   triggerUpdate = (updateMode, cf) => {
     // if (!this.mainHgView) return;
-    // console.log(`[triggerUpdate] <- ${cf} | ${updateMode}`);
+    console.log(`[triggerUpdate] <- ${cf} | ${updateMode}`);
     if (updateMode === "cancel") {
       this.closeDrawer();
       this.setState({
@@ -4108,6 +4108,9 @@ class Viewer extends Component {
       let newSrrIdx = this.state.selectedRoiRowIdx;
       let newGatt = this.state.tempHgViewParams.gatt;
       let newTrackServerBySampleSet = (Manifest.trackServerBySampleSet[newSampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
+
+      console.log(`newSampleSet ${newSampleSet}`);
+      console.log(`newTrackServerBySampleSet ${newTrackServerBySampleSet}`);
 
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, newGenome);
       
@@ -4135,8 +4138,8 @@ class Viewer extends Component {
       //
       const uuidQueryPromise = function(fn, self) {
         const hgUUIDQueryDefaultURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
-        const hgUUIDQueryLocalHgServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_PORT}/api/v1/tilesets/?ac=${fn}`;
-        const hgUUIDQueryURL = (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) ? hgUUIDQueryLocalHgServerURL : hgUUIDQueryDefaultURL;
+        const hgUUIDQueryLocalHgServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}/api/v1/tilesets/?ac=${fn}`;
+        const hgUUIDQueryURL = (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.uuidQueryPromise')) ? hgUUIDQueryLocalHgServerURL : hgUUIDQueryDefaultURL;
         // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
         return axios.get(hgUUIDQueryURL).then((res) => {
           if (res.data && res.data.results && res.data.results[0]) {
@@ -4189,7 +4192,7 @@ class Viewer extends Component {
         return new Promise(resolve => setTimeout(resolve, ms));
       }
 
-      if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+      if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.triggerUpdate')) {
         uuidDelay += 500;
         const newChromsizesUUIDFn = `${newGenome}.chrom.sizes.fixedBin.txt`;
         const newChromsizesUUIDPromise = uuidQueryPromise(newChromsizesUUIDFn, this);
@@ -4259,7 +4262,7 @@ class Viewer extends Component {
 
         let pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
 
-        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.triggerUpdate')) {
           pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
         }
 
@@ -4701,7 +4704,7 @@ class Viewer extends Component {
         //
         let newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup, newComplexity);
         let newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSet(newSampleSet, newGenome, newModel, newGroup);
-        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet)) {
+        if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.triggerUpdate')) {
           newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup, newComplexity);
           newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup);
         }          
@@ -7284,9 +7287,10 @@ class Viewer extends Component {
     console.log(`[Viewer.simSearchQuery] | ${chrom}:${start}-${stop}`);
     const sampleSet = this.state.hgViewParams.sampleSet;
     const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
-    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet)) {
-      console.log(`[Viewer.simSearchQuery] currently skipping simsearch query as tracksServer points to localhost`);
-      return; // skip simsearch support when serving tracks from local hg-server
+    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet, 'Viewer.simSearchQuery')) {
+      console.log(`[Viewer.simSearchQuery] local`);
+    //   console.log(`[Viewer.simSearchQuery] currently skipping simsearch query as tracksServer points to localhost`);
+    //   return; // skip simsearch support when serving tracks from local hg-server
     }
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
