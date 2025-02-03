@@ -23,11 +23,11 @@ npm run higlass-manage-prep-assets
 npm run higlass-manage-ingest-core
 ```
 
-The test datasets can take between 10-20 minutes to download. Downloading the entirety of the dataset collection will take considerably longer and require accordingly more disk space. 
+Note: If you only have locally-generated epilogos and simsearch assets, and you do not want or need to download core assets, please skip the `higlass-manage-ingest-core` target and jump to the [Custom Assets](#custom-assets) section below.
+
+The test core datasets can take between 10-20 minutes to download. Downloading the entirety of the core dataset collection will take considerably longer and require accordingly more disk space.
 
 The `higlass-manage-ingest-core` scripts will calculate needed disk space and ask you to confirm this capacity is available before any files are retrieved.
-
-If you have custom datasets specified in the `local` property of the `manifest.json` file, use `npm run higlass-manage-ingest-local` to download and ingest them into the HiGlass server and simsearch service. An example of this is provided in the file `manifest.coreAndLocal.json`.
 
 Once the server is installed and datasets are ingested, install packages for the epilogos-web frontend application:
 
@@ -49,9 +49,51 @@ The core assets include files for epilogos and chromatin state matrix tracks ren
 
 The `scripts/higlass_manage_ingest_core.py` Python script contains an `allowed_datasets` object that can be used to pull a local copy of a subset of the core epilogos asset set.
 
-Or the entirety of sets can be pulled: For testing purposes, the `allowed_datasets` object is currently defined with a small subset of Roadmap tracks and simsearch data. To pull in the entirety of core datasets (if you have sufficient disk space), comment out `allowed_datasets` in this script and rerun the `npm run higlass-manage-ingest-core` target. 
+Or the entirety of sets can be pulled: For testing purposes, the `allowed_datasets` object is currently defined with a small subset of Roadmap tracks and simsearch data. To pull in the entirety of core datasets (if you have sufficient disk space), comment out `allowed_datasets` in this script and rerun the `npm run higlass-manage-ingest-core` target.
 
 The `scripts/higlass_manage_ingest_core.py` script will calculate the disk space required and ask you to confirm downloading and ingesting assets, or the script will quit if insufficient disk space is available.
+
+#### Custom assets
+
+Custom datasets are epilogos and chromatin state matrix (multivec-formatted) tracks, and simsearch (tabix-formatted) files which you have generated with the [epilogos](https://github.com/meuleman/epilogos) toolkit and the [clodius](https://github.com/higlass/clodius) toolkit from your own chromatin state data.
+
+You can use `epilogos-web` as a frontend viewer for exploring your custom-generated data. 
+
+You will need to modify the `manifest.json` file with properties that specify where these data are hosted, so that the usual scripts can pull these in and put them in the right place for local services.
+
+An example of how one might specify local data is provided in the file `manifest.coreAndLocal.json`, which shows how the `local` property is populated. This example includes a subset of Roadmap consortium data, but this can be used with any custom data you would like to import, so long as it uses the assembly `hg19`, `hg38`, or `mm10`.
+
+You can copy the `manifest.coreAndLocal.json` file over to `manifest.json`, and then use `npm run higlass-manage-ingest-local` to download and ingest these custom data files into the HiGlass server and simsearch services.
+
+Your data files must initially be hosted on a publicly-accessible web server and that server hostname should be specified in `hgMediaServer` and `simsearchMediaServer` properties within the local sample set (e.g., `vLocal` or whatever set name you like).
+
+If you would also like to download and ingest core datasets alongside your custom local datasets, you can also then use `npm run higlass-manage-ingest-core`. You will need sufficient time and disk space to store custom and any core datasets.
+
+##### Custom asset pathname rules
+
+Epilogos filenames should follow this pattern, so that our scripts can find and import files:
+
+```
+${sampleSet}.${assembly}.${stateModel}.${groupName}.${saliency}.mv5
+```
+
+An example is: `vLocal.hg19.15.All_127_Roadmap_epigenomes.S1.mv5`
+
+Chromatin state multivec filenames should follow this pattern:
+
+```
+${sampleSet}.${assembly}.${stateModel}.${groupName}.mv5
+```
+
+An example is: `vLocal.hg19.15.All_127_Roadmap_epigenomes.mv5`
+
+Finally, simsearch assets should follow this pattern:
+
+```
+${hostname}/${sampleSet}/${assembly}/${stateModel}/${groupName}/${saliency}/${windowSize}/${windowSpan}/...
+```
+
+Examples would be: `https://explore.altius.org/tabix/recommender/v2/vLocal/hg19/15/All_127_Roadmap_epigenomes/S1/1/5/recommendations.bed.gz` and its associated index file: `https://explore.altius.org/tabix/recommender/v2/vLocal/hg19/15/All_127_Roadmap_epigenomes/S1/1/5/recommendations.bed.gz.tbi`
 
 #### Ongoing
 
@@ -60,6 +102,8 @@ To run the local HiGlass and simsearch services on an ongoing basis, after initi
 ```
 npm run higlass-manage-start
 ```
+
+You will need to do this if you log out of your account or reboot your host computer.
 
 Once this is done, run the development website:
 

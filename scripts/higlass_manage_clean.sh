@@ -81,3 +81,8 @@ if [ -z "${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}" ]; then
     exit -1
 fi
 docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+
+CORE_OVERRIDES_FN=${PWD}/manifest.core_overrides.json
+if [ -e "${CORE_OVERRIDES_FN}" ]; then
+    rm -f ${CORE_OVERRIDES_FN}
+fi

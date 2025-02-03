@@ -103,7 +103,7 @@
             "availableForProduction": {
               "type": "boolean",
               "description": "Whether model is available for production"
-            },
+            }
           },
           "required": ["type", "value", "text", "titleText", "enabled", "visible", "availableForProduction"]
         }
@@ -382,7 +382,7 @@
                     "properties": {
                       "hg19": { "$dynamicRef": "#SetMetadataByGenome" },
                       "hg38": { "$dynamicRef": "#SetMetadataByGenome" },
-                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" }
                     }
                   },
                   "modelMetadataByGenome": {
@@ -393,21 +393,21 @@
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       },
                       "hg38": { 
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       },
                       "mm10": {
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       }
                     }
@@ -665,7 +665,7 @@
                     "properties": {
                       "hg19": { "$dynamicRef": "#SetMetadataByGenome" },
                       "hg38": { "$dynamicRef": "#SetMetadataByGenome" },
-                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" },
+                      "mm10": { "$dynamicRef": "#SetMetadataByGenome" }
                     }
                   },
                   "modelMetadataByGenome": {
@@ -676,21 +676,21 @@
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       },
                       "hg38": { 
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       },
                       "mm10": {
                         "type": "object",
                         "properties": {
                           "single": { "$dynamicRef": "#ModelMetadataByGenome" },
-                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" },
+                          "paired": { "$dynamicRef": "#ModelMetadataByGenome" }
                         }
                       }
                     }
