@@ -54,8 +54,9 @@ function start_services () {
         --port ${REACT_APP_HG_MANAGE_PORT_ROOT} \
         --media-dir ${REACT_APP_HG_MANAGE_MEDIA_DIR} \
         --data-dir ${REACT_APP_HG_MANAGE_DATA_DIR} \
-        --temp-dir ${REACT_APP_HG_MANAGE_TEMP_DIR}
-    docker rename ${REACT_APP_HG_MANAGE_NAME_ORIGINAL} ${REACT_APP_HG_MANAGE_NAME_ROOT}
+        --temp-dir ${REACT_APP_HG_MANAGE_TEMP_DIR} \
+        >/dev/null 2>&1
+    docker rename ${REACT_APP_HG_MANAGE_NAME_ORIGINAL} ${REACT_APP_HG_MANAGE_NAME_ROOT} >/dev/null 2>&1
     #
     # Add simsearch proxy service to the factory-stock container
     #
@@ -72,11 +73,11 @@ function start_services () {
         cp ${PWD}/scripts/simsearch-assets/simsearch-proxy.json ${REACT_APP_HG_MANAGE_SIMSEARCH_SERVICE_DIR}
     fi
     REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_ROOT}")
-    docker exec -t ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT} bash -c "bash /data/simsearch/service/setup.sh"
+    docker exec -t ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT} bash -c "bash /data/simsearch/service/setup.sh" >/dev/null 2>&1
     REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
     if [ ! -z ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID} ]; then
         echo "Note: Removing existing image ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME}"
-        docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME}
+        docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} >/dev/null 2>&1
     fi
     docker commit ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT} ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME}
     docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT}
@@ -89,7 +90,8 @@ function start_services () {
         --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/media \
         --mount type=bind,src=${REACT_APP_HG_MANAGE_TEMP_DIR},dst=/tmp \
         --name ${REACT_APP_HG_MANAGE_NAME_RUNNING} \
-        ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+        ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID} \
+        >/dev/null 2>&1
 }
 
 REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
@@ -101,8 +103,8 @@ else
         echo "higlass-manage container is already running - nothing to do"
     else
         echo "Note: Existing higlass-manage container is being restarted"
-        docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
-        docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
+        docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} >/dev/null 2>&1
+        docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} >/dev/null 2>&1
         REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
         if [ -z ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID} ]; then
             echo "Error: ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
@@ -115,11 +117,12 @@ else
             --mount type=bind,src=${REACT_APP_HG_MANAGE_MEDIA_DIR},dst=/media \
             --mount type=bind,src=${REACT_APP_HG_MANAGE_TEMP_DIR},dst=/tmp \
             --name ${REACT_APP_HG_MANAGE_NAME_RUNNING} \
-            ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+            ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID} \
+            >/dev/null 2>&1
     fi
 fi
 
 REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
-docker exec ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} bash -c "pm2 resurrect; pm2 save; pm2 startup"
+docker exec ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} bash -c "pm2 resurrect; pm2 save; pm2 startup" >/dev/null 2>&1
 
 deactivate

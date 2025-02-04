@@ -42,7 +42,7 @@ if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
     exit -1
 fi
 echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
-python --version
+# python --version
 ${PWD}/scripts/higlass_manage_ingest_core.py \
     ${PWD}/manifest.json \
     ${PWD}/scripts \

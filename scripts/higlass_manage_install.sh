@@ -34,16 +34,16 @@ if [[ "${venv}" -ef / ]]; then
     exit -1
 fi
 
-pip install virtualenv
+pip install virtualenv --quiet
 virtualenv ${venv} --python=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON_VERSION}
 source ${venv}/bin/activate
-pip install --upgrade pip
+pip install --upgrade pip --quiet
 # workaround for urllib3 OpenSSL issue on silicon Macs
-pip uninstall urllib3
-pip install 'urllib3<2.0'
-pip install clint
-pip install python-dotenv
-pip install higlass-manage
+pip uninstall --yes urllib3 --quiet
+pip install 'urllib3<2.0' --quiet
+pip install clint --quiet
+pip install python-dotenv --quiet
+pip install higlass-manage --quiet
 REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
 if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
     echo "Error: higlass-manage not installed - please see README for installation instructions"

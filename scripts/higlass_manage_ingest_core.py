@@ -4,11 +4,21 @@ import os
 import sys
 import json
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
 import datetime
 import subprocess
 from urllib.parse import urlparse
 from clint.textui import progress
 from dotenv import load_dotenv
+
+'''
+This script is designed to take candidate URLs generated from parsing the 'core' tracksets from the
+root epilogos manifest.json file and ingest those URLs into a running HiGlass server Docker container. 
+Additionally, the script will download simsearch data files at various scales and copy them to the 
+simsearch data directory, where available. The manifest file is expected to follow the schema as 
+defined in application documentation.
+'''
 
 manifest_fn = sys.argv[1]
 root_dir = sys.argv[2]
@@ -19,12 +29,19 @@ simsearch_uploads_dir = sys.argv[5]
 hg_name_running = f"{hg_name}-running"
 
 '''
-This script is designed to take candidate URLs generated from parsing the 'core' tracksets from the
-root epilogos manifest.json file and ingest those URLs into a running HiGlass server Docker container. 
-Additionally, the script will download simsearch data files at various scales and copy them to the 
-simsearch data directory, where available. The manifest file is expected to follow the schema as 
-defined in application documentation.
+The following code block is used to configure the requests library to handle retries for
+HTTP status codes 429, 500, 502, 503, and 504, in case downloads fail due to server-side
+issues. The retry strategy is set to a maximum of 4 retries.
 '''
+
+retry_strategy = Retry(
+    total=4,  # maximum number of retries
+    status_forcelist=[429, 500, 502, 503, 504],  # the HTTP status codes to retry on
+)
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session = requests.Session()
+session.mount("http://", adapter)
+session.mount("https://", adapter)
 
 '''
 Note: Comment out the 'allowed_datasets' block to ingest all available core datasets from the parent
@@ -34,44 +51,6 @@ where available from the parent manifest, which is specifically useful for testi
 
 allowed_datasets = {
     "vA": {
-        "hg19": {
-            "All_127_Roadmap_epigenomes": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors_versus_Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-        },
         "hg38": {
             "All_127_Roadmap_epigenomes": {
                 "models": [
@@ -216,7 +195,7 @@ def download_hg_candidate_url(candidateUrl, uploadsDir):
     if not os.path.exists(mediaStagingPath):
         note(f"Note: Attempting to download URL [{urlToIngest}] to [{mediaStagingPath}]\n")
         try:
-            request = requests.get(urlToIngest, stream=True)
+            request = session.get(urlToIngest, stream=True)
             with open(mediaStagingPath, 'wb') as uploadsFh:
                 total_length = int(request.headers.get('content-length'))
                 for chunk in progress.bar(request.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1):
@@ -242,7 +221,7 @@ def download_simsearch_candidate_url(candidateUrl, uploadsDir):
         return None
     note(f"Note: Attempting to download URL [{urlToIngest}] to [{dataUploadsPath}]\n")
     try:
-        request = requests.get(urlToIngest, stream=True)
+        request = session.get(urlToIngest, stream=True)
         dataUploadsDir = os.path.dirname(dataUploadsPath)
         os.makedirs(dataUploadsDir, exist_ok=True)
         with open(dataUploadsPath, 'wb') as uploadsFh:
@@ -272,8 +251,8 @@ def ingest_staged_hg_candidate_url(baseUploadsFn, mediaStagingPath, candidateUrl
                 cmd = result.args,
                 stderr = result.stderr.decode('utf-8')
                 )
-        if result.stdout:
-            sys.stderr.write(result.stdout.decode('utf-8'))
+        # if result.stdout:
+        #     sys.stderr.write(result.stdout.decode('utf-8'))
     except subprocess.CalledProcessError as err:
         warning(repr(err))
     return
@@ -453,8 +432,8 @@ def candidate_urls_for_core_manifest_items():
                                   # chromatin state tracks are available for single subtype groups only
                                   hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.mv5"
                                   if urlparse(hgCandidateUrl):
-                                      note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
-                                      response = requests.head(hgCandidateUrl)
+                                      # note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                      response = session.head(hgCandidateUrl)
                                       candidateFileSize = response.headers.get('content-length')
                                       if not candidateFileSize:
                                           fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
@@ -472,6 +451,7 @@ def candidate_urls_for_core_manifest_items():
                                       fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
                                   # simsearch tracks are available for single subtype only
                                   for complexityKey in osGroupAvailableComplexityKeys:
+                                      if complexityKey not in allowed_datasets[orderedSetKey][assemblyKey][mediaGroupKey]['saliencies']: continue
                                       if osSsMediaServer:
                                           for (ssScale, ssWindow) in simsearch_scales_and_windows:
                                               ssRecUrlPrefix = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{complexityKey}/{ssScale}/{ssWindow}"
@@ -482,8 +462,8 @@ def candidate_urls_for_core_manifest_items():
                                               ssCandidateUrls = [ssRecDataCandidateUrl, ssRecDataIndexCandidateUrl, ssRecMinmaxCandidateUrl, ssRecMinmaxIndexCandidateUrl]
                                               for ssCandidateUrl in ssCandidateUrls:
                                                   if urlparse(ssCandidateUrl):
-                                                      note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
-                                                      response = requests.head(ssCandidateUrl)
+                                                      # note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
+                                                      response = session.head(ssCandidateUrl)
                                                       candidateFileSize = response.headers.get('content-length')
                                                       if not candidateFileSize:
                                                           warning(f"Warning: No file size available for URL [{ssCandidateUrl}]\n")
@@ -511,8 +491,8 @@ def candidate_urls_for_core_manifest_items():
                                   if allowedEpilogosDataset:
                                     hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
                                     if urlparse(hgCandidateUrl):
-                                        note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
-                                        response = requests.head(hgCandidateUrl)
+                                        # note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                        response = session.head(hgCandidateUrl)
                                         candidateFileSize = response.headers.get('content-length')
                                         if not candidateFileSize:
                                             fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
@@ -554,7 +534,7 @@ def ingest_baseline_fixedBin_tracks():
         uploads_fixedBin_fn = os.path.join('', *[hg_uploads_dir, 'media', 'uploads', fixedBin_fn])
         if os.path.exists(root_fixedBin_fn):
             if not os.path.exists(uploads_fixedBin_fn):
-                note(f"Note: Attempting to ingest [{root_fixedBin_fn}]\n")
+                # note(f"Note: Attempting to ingest [{root_fixedBin_fn}]\n")
                 try:
                     # example: higlass-manage ingest --hg-name epilogos --filetype chromsizes-tsv --datatype chromsizes --name hg19.chromsizes.fixedBin.txt hg19.chrom.sizes.fixedBin.txt
                     cmd = None
@@ -573,8 +553,8 @@ def ingest_baseline_fixedBin_tracks():
                             cmd = result.args,
                             stderr = result.stderr.decode('utf-8')
                             )
-                    if result.stdout:
-                        sys.stderr.write(result.stdout.decode('utf-8'))
+                    # if result.stdout:
+                    #     sys.stderr.write(result.stdout.decode('utf-8'))
                 except subprocess.CalledProcessError as err:
                     warning(repr(err))
             else:
