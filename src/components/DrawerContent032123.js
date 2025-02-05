@@ -151,6 +151,31 @@ class DrawerContent extends Component {
     newViewParams[event.target.name] = event.target.value;
     let targetName = (event.target && event.target.name) ? event.target.name : null
 
+    console.log(`targetName ${targetName}`);
+
+    if (targetName === "sampleSet") {
+      switch (event.target.value) {
+        case "vA":
+          newViewParams.group = "all";
+          newViewParams.mode = "single";
+          break;
+        case "vC":
+          newViewParams.group = "all";
+          newViewParams.mode = "single";
+          break;
+        case "vD":
+          newViewParams.group = "all";
+          newViewParams.mode = "single";
+          break;
+        case "vG":
+          newViewParams.group = "All_1698_biosamples";
+          newViewParams.mode = "single";
+          break;
+        default:
+          break;
+      }
+    }
+
     //
     // we have do some annoying custom things specific to the selected genome or mode
     //
@@ -315,9 +340,35 @@ class DrawerContent extends Component {
   compareViewParams = (a, b) => {
     return equal(a, b);
   }
+
+  isSampleSetModeSwitchDisabled = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
+    if (availableOverriddenSampleSetMetadata == null) return false;
+    const assembly = this.state.viewParams.genome;
+    const availableOverriddenSampleSetMetadataByAssembly = Object.hasOwn(availableOverriddenSampleSetMetadata, assembly) ? availableOverriddenSampleSetMetadata[assembly] : null;
+    if (availableOverriddenSampleSetMetadataByAssembly == null) return false;
+    const model = this.state.viewParams.model;
+    const availableOverriddenSampleSetMetadataByAssemblyModel = Object.hasOwn(availableOverriddenSampleSetMetadataByAssembly, model) ? availableOverriddenSampleSetMetadataByAssembly[model] : null;
+    if (availableOverriddenSampleSetMetadataByAssemblyModel == null) return false;
+    const newComplexity = Constants.complexitiesForDataExport[this.state.viewParams.complexity];
+    const availableOverriddenSampleSetMetadataByAssemblyModelComplexity = Object.hasOwn(availableOverriddenSampleSetMetadataByAssemblyModel, newComplexity) ? availableOverriddenSampleSetMetadataByAssemblyModel[newComplexity] : null;
+    if (availableOverriddenSampleSetMetadataByAssemblyModelComplexity == null) return false;
+    let singleMode = false;
+    let pairedMode = false;
+    for (let i = 0; i < availableOverriddenSampleSetMetadataByAssemblyModelComplexity.length; i++) {
+      // console.log(`availableOverriddenSampleSetMetadataByAssemblyModelComplexity[${i}] ${availableOverriddenSampleSetMetadataByAssemblyModelComplexity[i]}`);
+      const group = availableOverriddenSampleSetMetadataByAssemblyModelComplexity[i];
+      if (group.includes('versus')) pairedMode = true; else singleMode = true;
+      if (singleMode && pairedMode) break;
+    }
+    return !(singleMode && pairedMode);
+  }
   
   modeSectionBody = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
+    const isSampleSetModeSwitchDisabled = this.isSampleSetModeSwitchDisabled();
+    // console.log(`isSampleSetModeSwitchDisabled ${isSampleSetModeSwitchDisabled}`);
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
@@ -340,7 +391,8 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
-    let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD") && (activeSampleSet !== "vF") && (activeSampleSet !== "vG")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
+    // let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD") && (activeSampleSet !== "vF") && (activeSampleSet !== "vG")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
+    let modeToggleDisabled = isSampleSetModeSwitchDisabled;
     if (activeSampleSet === 'vG' && (this.props.isProductionSite || this.props.isInternalProductionSite)) modeToggleDisabled = true;
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
     result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} disabled={modeToggleDisabled} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
@@ -348,11 +400,19 @@ class DrawerContent extends Component {
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
   
+  availableAssembliesForSampleSet = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
+    return (availableOverriddenSampleSetMetadata == null) ? Object.keys(Manifest.groupsByGenome[sampleSet]) : Object.keys(availableOverriddenSampleSetMetadata);
+  }
+
   genomeSectionBody = () => {
+    const availableAssemblies = this.availableAssembliesForSampleSet();
+    // console.log(`availableAssemblies ${JSON.stringify(availableAssemblies)}`);
     const activeGenome = this.state.viewParams.genome;
     const activeSampleSet = this.state.viewParams.sampleSet;
     const activeMode = this.state.viewParams.mode;
-    //console.log(`[genomeSectionBody] ${activeGenome} ${activeSampleSet} ${activeMode}`);
+    // console.log(`[genomeSectionBody] ${activeGenome} ${activeSampleSet} ${activeMode}`);
     let result = [];
     const kButtonGroupPrefix = 'genome-bg-';
     let kButtonGroupIdx = 0;
@@ -371,13 +431,15 @@ class DrawerContent extends Component {
       const kButtonLabelPrefix = 'genome-bg-btn-label-';
       kButtonLabels.forEach((label) => {
         const isActive = (activeGenome === label);
-        let isDisabled = false;
+        let isDisabled = availableAssemblies.includes(label) ? false : true;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
         let formattedLabel = <span style={{fontWeight:(isActive)?600:100}}>{label}</span>;
-        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="genome" value={label} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><Label check><span className="radio-label-text">{formattedLabel}</span></Label></div></div>);
-        kButtonIdx++;
+        if (!isDisabled) {
+          kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="genome" value={label} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><Label check><span className="radio-label-text">{formattedLabel}</span></Label></div></div>);
+          kButtonIdx++;
+        }
       });      
       kButtonGroupIdx++;
     });
@@ -386,8 +448,26 @@ class DrawerContent extends Component {
     const kSectionBodyKey = 'genome-sb';
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
+
+  availableModelsForSampleSet = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const coreModels = () => {
+      const activeGenome = (sampleSet === 'vD') ? "mm10" : 'hg38'; // this.state.viewParams.genome;
+      const activeGroup = this.state.viewParams.group;
+      const availableModels = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForModels;
+      return availableModels;
+    }
+    const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
+    if (availableOverriddenSampleSetMetadata == null) return coreModels();
+    const assembly = this.state.viewParams.genome;
+    const availableOverriddenSampleSetMetadataByAssembly = Object.hasOwn(availableOverriddenSampleSetMetadata, assembly) ? availableOverriddenSampleSetMetadata[assembly] : null;
+    if (availableOverriddenSampleSetMetadataByAssembly == null) return coreModels();
+    return Object.keys(availableOverriddenSampleSetMetadataByAssembly).map((model) => parseInt(model));
+  }
   
   modelSectionBody = () => {
+    const availableModels = this.availableModelsForSampleSet();
+    // console.log(`availableModels ${JSON.stringify(availableModels)}`);
     const activeGenome = this.state.viewParams.genome;
     const activeMode = this.state.viewParams.mode;
     const activeModel = this.state.viewParams.model;
@@ -424,7 +504,7 @@ class DrawerContent extends Component {
         const isActive = (activeModel === k);
         // console.log(`activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value) ${activeObj[k].value} ${JSON.stringify(activeGroupAvailabilityForModels)} ${activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value))} ${!activeObj[k].enabled}`);
         const isInactiveForModel = activeGenomeAvailability[activeGroup] && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
-        const isDisabled = !activeObj[k].enabled || isInactiveForModel;
+        const isDisabled = !activeObj[k].enabled || isInactiveForModel || !availableModels.includes(parseInt(activeObj[k].value));
         // console.log(`isDisabled ${isDisabled}`);
         const kLabel = activeObj[k].titleText;
         const kValue = activeObj[k].value;
@@ -432,8 +512,10 @@ class DrawerContent extends Component {
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
         let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="model" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-        kButtonIdx++;
+        if (!isDisabled) {
+          kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="model" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+          kButtonIdx++;
+        }
       }
     });
     const kButtonGroupPrefix = 'model-bg-';
@@ -601,7 +683,29 @@ class DrawerContent extends Component {
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
 
+  availableComplexitiesForSampleSet = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const coreComplexities = () => {
+      const activeGenome = (sampleSet === 'vD') ? "mm10" : "hg38"; // this.state.viewParams.genome;
+      const activeGroup = this.state.viewParams.group;
+      const availableComplexities = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForComplexities;
+      return availableComplexities;
+    }
+    const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
+    if (availableOverriddenSampleSetMetadata == null) return coreComplexities();
+    const assembly = this.state.viewParams.genome;
+    const availableOverriddenSampleSetMetadataByAssembly = Object.hasOwn(availableOverriddenSampleSetMetadata, assembly) ? availableOverriddenSampleSetMetadata[assembly] : null;
+    if (availableOverriddenSampleSetMetadataByAssembly == null) return coreComplexities();
+    const model = this.state.viewParams.model;
+    const availableOverriddenSampleSetMetadataByAssemblyModel = Object.hasOwn(availableOverriddenSampleSetMetadataByAssembly, model) ? availableOverriddenSampleSetMetadataByAssembly[model] : null;
+    if (availableOverriddenSampleSetMetadataByAssemblyModel == null) return coreComplexities();
+    const availableComplexities = Object.keys(availableOverriddenSampleSetMetadataByAssemblyModel).map((complexity) => Constants.reverseComplexities[complexity]);
+    return availableComplexities;
+  }
+
   complexitySectionBody = () => {
+    const availableComplexities = this.availableComplexitiesForSampleSet();
+    // console.log(`availableComplexities ${JSON.stringify(availableComplexities)}`);
     let activeGenome = this.state.viewParams.genome;
     let activeComplexity = this.state.viewParams.complexity;
     let activeSampleSet = this.state.viewParams.sampleSet;
@@ -621,7 +725,7 @@ class DrawerContent extends Component {
         const kLabel = activeObj[k].titleText;
         const kValue = activeObj[k].value;
         const isActive = (activeComplexity === k);
-        let isDisabled = !activeObj[k].enabled;
+        let isDisabled = !activeObj[k].enabled || !availableComplexities.includes(k);
         if ((activeSampleSet === "vA") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Roadmap
         if ((activeSampleSet === "vD") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Gorkin
         if ((activeSampleSet === "vC") && (activeMode === "paired") && (activeComplexity === "KL") && (kValue === "KLs")) isDisabled = true;
@@ -643,7 +747,30 @@ class DrawerContent extends Component {
     return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
   }
   
+  availableSamplesForSampleSet = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const coreSamples = () => {
+      const activeGenome = (sampleSet === 'vD') ? "mm10" : "hg38"; // this.state.viewParams.genome;
+      const availableSamples = Object.keys(Manifest.groupsByGenome[sampleSet][activeGenome]);
+      return availableSamples;
+    }
+    const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
+    if (availableOverriddenSampleSetMetadata == null) return coreSamples();
+    const assembly = this.state.viewParams.genome;
+    const availableOverriddenSampleSetMetadataByAssembly = Object.hasOwn(availableOverriddenSampleSetMetadata, assembly) ? availableOverriddenSampleSetMetadata[assembly] : null;
+    if (availableOverriddenSampleSetMetadataByAssembly == null) return coreSamples();
+    const model = this.state.viewParams.model;
+    const availableOverriddenSampleSetMetadataByAssemblyModel = Object.hasOwn(availableOverriddenSampleSetMetadataByAssembly, model) ? availableOverriddenSampleSetMetadataByAssembly[model] : null;
+    if (availableOverriddenSampleSetMetadataByAssemblyModel == null) return coreSamples();
+    const newComplexity = Constants.complexitiesForDataExport[this.state.viewParams.complexity];
+    const availableOverriddenSampleSetMetadataByAssemblyModelComplexity = Object.hasOwn(availableOverriddenSampleSetMetadataByAssemblyModel, newComplexity) ? availableOverriddenSampleSetMetadataByAssemblyModel[newComplexity] : null;
+    if (availableOverriddenSampleSetMetadataByAssemblyModelComplexity == null) return coreSamples();
+    return availableOverriddenSampleSetMetadataByAssemblyModelComplexity;
+  }
+
   preferredSamplesSectionBody = () => {
+    const availableSamples = this.availableSamplesForSampleSet();
+    // console.log(`availableSamples ${JSON.stringify(availableSamples)}`);
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'preferred-samples-bg-btn-';
@@ -658,13 +785,18 @@ class DrawerContent extends Component {
       let kSample = preferredSamples[k];
       let kLabel = kSample.label;
       let kValue = kSample.value;
+      let kMediaKey = kSample.mediaKey;
       const isActive = (this.state.viewParams.group === kValue);
+      let isDisabled = !availableSamples.includes(kMediaKey);
+      if (isDisabled) isDisabled = !availableSamples.includes(kValue);
       let kButtonKey = kButtonPrefix + kButtonIdx;
       let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
       let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
       let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-      kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="preferred-groups" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-      kButtonIdx++;
+      if (!isDisabled) {
+        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="preferred-groups" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+        kButtonIdx++;
+      }
     });
     const kButtonGroupPrefix = 'preferred-samples-bg-';
     let kButtonGroupIdx = 0;
@@ -712,15 +844,18 @@ class DrawerContent extends Component {
     // console.log(`enabledPreferredSamples ${JSON.stringify(enabledPreferredSamples)}`);
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledPreferredSampleItems = toObj(jp.query(enabledPreferredSamples, "$..value"), jp.query(enabledPreferredSamples, "$..text"));
+    let enabledPreferredSampleMkItems = toObj(jp.query(enabledPreferredSamples, "$..value"), jp.query(enabledPreferredSamples, "$..mediaKey"));
     let ks = Object.keys(enabledPreferredSampleItems);
     // console.log(`ks ${JSON.stringify(ks)}`);
     return ks.map((s) => {
       let sv = md[s].sortValue || s;
-      return {'label' : enabledPreferredSampleItems[s], 'value' : s, 'sortValue' : sv};
+      return {'label' : enabledPreferredSampleItems[s], 'mediaKey': enabledPreferredSampleMkItems[s], 'value' : s, 'sortValue' : sv};
     });
   }
   
   samplesSectionBody = () => {
+    const availableSamples = this.availableSamplesForSampleSet();
+    // console.log(`availableSamples ${JSON.stringify(availableSamples)}`);
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'samples-bg-btn-';
@@ -733,15 +868,21 @@ class DrawerContent extends Component {
     samples.sort(compareOnSortValue);
     Object.keys(samples).forEach(k => {
       let kSample = samples[k];
+      // console.log(`kSample ${JSON.stringify(kSample)}`);
       let kLabel = kSample.label;
       let kValue = kSample.value;
+      let kMediaKey = kSample.mediaKey;
       const isActive = (this.state.viewParams.group === kValue);
+      let isDisabled = !availableSamples.includes(kMediaKey);
+      // console.log(`availableSamples.includes(${kMediaKey}) ${availableSamples.includes(kMediaKey)}`);
       let kButtonKey = kButtonPrefix + kButtonIdx;
       let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
       let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
       let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-      kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="group" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-      kButtonIdx++;
+      if (!isDisabled) {
+        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="group" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+        kButtonIdx++;
+      }
     });
     const kButtonGroupPrefix = 'samples-bg-';
     let kButtonGroupIdx = 0;
@@ -783,10 +924,12 @@ class DrawerContent extends Component {
     // console.log(`activeModel ${activeModel} enabledSamples ${JSON.stringify(enabledSamples)}`);
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledSampleItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..text"));
+    let enabledSampleMkItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..mediaKey"));
     let ks = Object.keys(enabledSampleItems);
+    // console.log(`enabledSampleMkItems ${JSON.stringify(enabledSampleMkItems)}`);
     return ks.map((s) => {
       let sv = md[s].sortValue || s;
-      return {'label' : enabledSampleItems[s], 'value' : s, 'sortValue' : sv};
+      return {'label' : enabledSampleItems[s], 'mediaKey': enabledSampleMkItems[s], 'value' : s, 'sortValue' : sv};
       // return {'label' : enabledSampleItems[s], 'value' : s};
     });
   }
@@ -1239,125 +1382,6 @@ class DrawerContent extends Component {
       })
     }
     
-    // const exemplarColumns = [
-    //   {
-    //     attrs: idxExemplarAttrs,
-    //     dataField: 'idx',
-    //     text: '',
-    //     headerStyle: {
-    //       fontSize: '0.8em',
-    //       width: '30px',
-    //       borderBottom: '1px solid #b5b5b5',
-    //       textAlign: 'center',
-    //     },
-    //     style: {
-    //       fontSize: '0.8em',
-    //       outlineWidth: '0px',
-    //       marginLeft: '4px',
-    //       paddingTop: '4px',
-    //       paddingBottom: '2px',
-    //       textAlign: 'center',
-    //     },
-    //     sort: true,
-    //     onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
-    //     // eslint-disable-next-line no-unused-vars
-    //     sortCaret: (order, column) => {
-    //       switch (order) {
-    //         case "asc":
-    //           return <div><ReactTooltip key="exemplar-column-sort-idx-asc" id="exemplar-column-sort-idx-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in descending order</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
-    //         case "desc":
-    //           return <div><ReactTooltip key="exemplar-column-sort-idx-desc" id="exemplar-column-sort-idx-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices in ascending order</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
-    //         case "undefined":
-    //         default:
-    //           return <div><ReactTooltip key="exemplar-column-sort-idx-undefined" id="exemplar-column-sort-idx-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort indices</ReactTooltip><div data-tip data-for={"exemplar-column-sort-idx-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
-    //       }
-    //     }
-    //   },
-    //   {
-    //     dataField: 'state',
-    //     text: '',
-    //     formatter: stateFormatter,
-    //     headerStyle: {
-    //       fontSize: '0.8em',
-    //       width: '30px',
-    //       borderBottom: '1px solid #b5b5b5',
-    //     },
-    //     style: {
-    //       fontSize: '0.8em',
-    //       outlineWidth: '0px',
-    //       paddingTop: '4px',
-    //       paddingBottom: '2px',
-    //       textAlign: 'left'
-    //     },
-    //     sort: true,
-    //     // eslint-disable-next-line no-unused-vars
-    //     sortFunc: (a, b, order, dataField) => {
-    //       if (order === 'asc') {
-    //         return b.paddedNumerical.localeCompare(a.paddedNumerical);
-    //       }
-    //       else {
-    //         return a.paddedNumerical.localeCompare(b.paddedNumerical); // desc
-    //       }          
-    //     },
-    //     onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
-    //     // eslint-disable-next-line no-unused-vars
-    //     sortCaret: (order, column) => {
-    //       switch (order) {
-    //         case "asc":
-    //           return <div><ReactTooltip key="column-sort-state-asc" id="column-sort-state-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort states in descending order</ReactTooltip><div data-tip data-for={"column-sort-state-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
-    //         case "desc":
-    //           return <div><ReactTooltip key="column-sort-state-desc" id="column-sort-state-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort states in ascending order</ReactTooltip><div data-tip data-for={"column-sort-state-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
-    //         case "undefined":
-    //         default:
-    //           return <div><ReactTooltip key="column-sort-state-undefined" id="column-sort-state-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort states</ReactTooltip><div data-tip data-for={"column-sort-state-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
-    //       }
-    //     }
-    //   },
-    //   {
-    //     dataField: 'element',
-    //     text: '',
-    //     formatter: elementExemplarFormatter,
-    //     headerStyle: {
-    //       fontSize: '0.8em',
-    //       width: '230px',
-    //       borderBottom: '1px solid #b5b5b5',
-    //     },
-    //     style: {
-    //       fontFamily: 'Source Code Pro',
-    //       fontWeight: 'normal',
-    //       fontSize: '0.8em',
-    //       outlineWidth: '0px',
-    //       paddingTop: '4px',
-    //       paddingBottom: '2px',
-    //       paddingRight: '6px',
-    //     },
-    //     sort: true,
-    //     // eslint-disable-next-line no-unused-vars
-    //     sortFunc: (a, b, order, dataField) => {
-    //       //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
-    //       if (order === 'asc') {
-    //         return b.paddedPosition.localeCompare(a.paddedPosition);
-    //       }
-    //       else {
-    //         return a.paddedPosition.localeCompare(b.paddedPosition); // desc
-    //       }          
-    //     },
-    //     onSort: (field, order) => { this.props.onExemplarColumnSort(field, order); },
-    //     // eslint-disable-next-line no-unused-vars
-    //     sortCaret: (order, column) => {
-    //       switch (order) {
-    //         case "asc":
-    //           return <div><ReactTooltip key="column-sort-element-asc" id="column-sort-element-asc" aria-haspopup="true" place="right" type="dark" effect="float">Sort intervals in ascending order</ReactTooltip><div data-tip data-for={"column-sort-element-asc"}><FaChevronCircleDown className="column-sort-defined" /></div></div>
-    //         case "desc":
-    //           return <div><ReactTooltip key="column-sort-element-desc" id="column-sort-element-desc" aria-haspopup="true" place="right" type="dark" effect="float">Sort intervals in descending order</ReactTooltip><div data-tip data-for={"column-sort-element-desc"}><FaChevronCircleUp className="column-sort-defined" /></div></div>
-    //         case "undefined":
-    //         default:
-    //           return <div><ReactTooltip key="column-sort-element-undefined" id="column-sort-element-undefined" aria-haspopup="true" place="right" type="dark" effect="float">Sort intervals</ReactTooltip><div data-tip data-for={"column-sort-element-undefined"}><FaChevronCircleDown className="column-sort-undefined" /></div></div>
-    //       }
-    //     }
-    //   }, 
-    // ];
-    
     // eslint-disable-next-line no-unused-vars
     function idxExemplarAttrs(cell, row, rowIndex, colIndex) {
       return { id : `exemplar_idx_${rowIndex}` };
@@ -1372,15 +1396,6 @@ class DrawerContent extends Component {
     function elementRoiFormatter(cell, row) {
       return <div><span>{ row.position }</span></div>
     }
-    
-/*
-    function nameRoiFormatter(cell, row) {
-      const maxLength = 6;
-      const modifiedName = (row.name.length > maxLength) ? row.name.substr(0, maxLength) + "…" : row.name;
-      return <div><span title={ row.name }>{ modifiedName }</span></div>
-      return <div><span title={ row.name }>{ row.name }</span></div>
-    }
-*/
 
     // eslint-disable-next-line no-unused-vars
     function nameRoiFormatter(cell, row) {
@@ -1458,103 +1473,13 @@ class DrawerContent extends Component {
       return style;
     };
     
-    // const customRoiRowEvents = {
-    //   // eslint-disable-next-line no-unused-vars
-    //   onClick: (evt, row, rowIndex) => {
-    //     // this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.roi, row.idx, row.element.strand);
-    //     this.props.jumpToRoi("skip", row.idx);
-    //   },
-    //   // // eslint-disable-next-line no-unused-vars
-    //   // onMouseEnter: (evt, row, rowIndex) => {
-    //   //   this.setState({
-    //   //     currentRoiMouseoverRow: row.idx
-    //   //   });
-    //   // },
-    //   // // eslint-disable-next-line no-unused-vars
-    //   // onMouseLeave: (evt, row, rowIndex) => {
-    //   //   this.setState({
-    //   //     currentRoiMouseoverRow: -1
-    //   //   });
-    //   // }
-    // };
-    
-    // const customExemplarRowEvents = {
-    //   // eslint-disable-next-line no-unused-vars
-    //   onClick: (evt, row, rowIndex) => {
-    //     // console.log(`[DrawerContent] customExemplarRowEvents > onClick > row ${JSON.stringify(row)}`);
-    //     this.props.jumpToExemplar("skip", row.idx);
-        
-    //     // if (this.props.viewParams.mode === "query") {
-    //     //   // let applyPadding = true;
-    //     //   // let nonQueryModeSelected = true;
-    //     //   // this.props.expandToRegion(row.position, applyPadding, nonQueryModeSelected);
-    //     //   this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
-    //     // }
-    //     // else {
-    //     //   //console.log(`row ${JSON.stringify(row)}`);
-    //     //   // this.props.jumpToRegion(row.position, Constants.applicationRegionTypes.exemplars, row.idx);
-    //     //   this.props.jumpToExemplar("skip", row.idx);
-    //     // }
-    //   },
-    //   // eslint-disable-next-line no-unused-vars
-    //   // onMouseEnter: (evt, row, rowIndex) => {
-    //   //   this.setState({
-    //   //     currentExemplarMouseoverRow: row.idx
-    //   //   });
-    //   // },
-    //   // // eslint-disable-next-line no-unused-vars
-    //   // onMouseLeave: (evt, row, rowIndex) => {
-    //   //   this.setState({
-    //   //     currentExemplarMouseoverRow: -1
-    //   //   });
-    //   // }
-    // };
-    
     function tabContent() {
       return (
         <div>
-          {/* <Nav tabs>
-            <NavItem disabled={!self.state.tabs.settings}>
-              <NavLink
-                className={classnames({ active: self.state.activeTab === 'settings' })}
-                onClick={() => { self.toggle('settings'); }}
-                disabled={!self.state.tabs.settings}
-              >
-                settings
-              </NavLink>
-            </NavItem>
-            {(self.props && self.props.exemplarsEnabled) ?
-              <NavItem disabled={!self.state.tabs.exemplars}>
-                <NavLink
-                  className={classnames({ active: self.state.activeTab === 'exemplars' })}
-                  onClick={() => { self.toggle('exemplars'); }}
-                  disabled={!self.state.tabs.exemplars}
-                >
-                  suggestions
-                </NavLink>
-              </NavItem> : ""}
-            {(self.props && self.props.roiEnabled) ?
-              <NavItem disabled={!self.state.tabs.roi}>
-                <NavLink
-                  className={classnames({ active: self.state.activeTab === 'roi' })}
-                  onClick={() => { self.toggle('roi'); }}
-                  disabled={!self.state.tabs.roi}
-                >
-                  {self.props.roiTabTitle}
-                </NavLink>
-              </NavItem> : ""}
-          </Nav> */}
           <TabContent activeTab={self.state.activeTab} className="drawer-tab-content">
             <TabPane tabId="settings">
               { contentByType("settings") }
             </TabPane>
-            {/* <TabPane tabId="exemplars">
-              { contentByType("exemplars") }
-            </TabPane>
-            {(self.props && self.props.roiEnabled) ? 
-              <TabPane tabId="roi">
-                { contentByType("roi") }
-              </TabPane> : ""} */}
           </TabContent>
         </div>
       )

@@ -19,6 +19,28 @@ export const trackServerBySampleSet = {
   "vD": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
   "vG": "https://meuleman-higlass-us-west-2.altius.org/api/v1"
 };
+export const availableOverriddenSampleSet = {
+  "vA": {
+    "hg38": {
+      "15": {
+        "S1": [
+          "All_127_Roadmap_epigenomes",
+          "Female_donors",
+          "Male_donors",
+          "Male_donors_versus_Female_donors"
+        ]
+      },
+      "18": {
+        "S1": [
+          "All_127_Roadmap_epigenomes",
+          "Female_donors",
+          "Male_donors",
+          "Male_donors_versus_Female_donors"
+        ]
+      }
+    }
+  }
+};
 export const groupsByGenome = {
   "vA": {
     "hg19": {

@@ -3693,155 +3693,212 @@ class Viewer extends Component {
   }
   
   changeViewParams = (isDirty, tempHgViewParams, currentHgViewParams) => {
-    console.log(`this.state.hgViewParams.sampleSet ${this.state.hgViewParams.sampleSet}`);
-    console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-     // if we are switching from Roadmap to Adsera, or vice versa, preserve the genome selection
-    if (((tempHgViewParams.sampleSet === "vA") && (this.state.hgViewParams.sampleSet === "vC")) || ((tempHgViewParams.sampleSet === "vC") && (this.state.hgViewParams.sampleSet === "vA"))) {
-      tempHgViewParams.genome = this.state.hgViewParams.genome;
-      if ((this.state.hgViewParams.complexity === "KL") || (this.state.hgViewParams.complexity === "KLs")) {
-        tempHgViewParams.complexity = this.state.hgViewParams.complexity;
-      }
-      if ((this.state.hgViewParams.sampleSet === "vC") || ((this.state.hgViewParams.sampleSet === "vA") && (this.state.hgViewParams.model === "18"))) {
-        tempHgViewParams.model = this.state.hgViewParams.model;
-      }
-    }
-    // if we are switching from Roadmap/Adsera to Gorkin, or vice versa, switch genome to useful default
-    if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC") || (this.state.hgViewParams.sampleSet === "vG"))) {
-      tempHgViewParams.genome = "mm10";
-      tempHgViewParams.model = "15";
-    }
-    if ((this.state.hgViewParams.sampleSet === "vD") && ((tempHgViewParams.sampleSet === "vC") || (tempHgViewParams.sampleSet === "vG"))) {
-      tempHgViewParams.genome = "hg38";
-    }
-    if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
-      tempHgViewParams.genome = "hg19";
-      tempHgViewParams.model = "18";
-    }
-    if (tempHgViewParams.sampleSet === "vG") {
-      tempHgViewParams.genome = "hg38";
-      tempHgViewParams.model = "18";
-      // tempHgViewParams.group = "All_1698_biosamples";
-    }
+    console.log(`changeViewParams | this.state.hgViewParams.sampleSet ${this.state.hgViewParams.sampleSet}`);
+    console.log(`changeViewParams | tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
 
-    //
-    // adjust by mode
-    //
-    if ((tempHgViewParams.mode === "single") && (this.state.hgViewParams.mode === "paired")) {
-      tempHgViewParams.group = (tempHgViewParams.sampleSet !== "vG") ? "all" : "All_1698_biosamples";
-    }
-    else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
-      if ((tempHgViewParams.sampleSet === "vA") || (tempHgViewParams.sampleSet === "vC")) {
-        tempHgViewParams.group = "Male_vs_Female";
+    // if switching between core sets, try to preserve the selections
+    if (tempHgViewParams.sampleSet !== this.state.hgViewParams.sampleSet) {
+      // If switching to locally-hosted core set from remotely-hosted core, then check if the genome, state model, group, and saliency are available. If not, set to defaults.
+      const destinationIsLocalCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(tempHgViewParams.sampleSet);
+      const destinationIsRemoteCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(this.state.hgViewParams.sampleSet);
+      console.log(`destinationIsLocalCoreSet ${destinationIsLocalCoreSet}`);
+      console.log(`destinationIsRemoteCoreSet ${destinationIsRemoteCoreSet}`);
+      if (destinationIsLocalCoreSet) {
+        const isGenomeAvailable = Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet]).includes(tempHgViewParams.genome);
+        const isStateModelAvailable = (isGenomeAvailable) ? Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome]).includes(tempHgViewParams.model) : false;
+        const isComplexityAvailable = (isStateModelAvailable) ? Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.model]).includes(tempHgViewParams.complexity) : false;
+        const isGroupAvailable = (isComplexityAvailable) ? Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.model][tempHgViewParams.complexity]).includes(tempHgViewParams.group) : false;
+        if (!isGroupAvailable) {
+          tempHgViewParams.genome = Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet])[0];
+          tempHgViewParams.model = Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome])[0];
+          tempHgViewParams.saliency = Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.model])[0];
+          tempHgViewParams.complexity = Constants.reverseComplexities[tempHgViewParams.saliency];
+          tempHgViewParams.group = Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.model][tempHgViewParams.saliency][0];
+          tempHgViewParams.mode = (tempHgViewParams.group.includes("versus")) ? "paired" : "single";
+          // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
+          const availableCoreGroups = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+          if (!availableCoreGroups.includes(tempHgViewParams.group)) {
+            tempHgViewParams.group = availableCoreGroups[0];
+          }
+          console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
+        }
       }
-      if (tempHgViewParams.sampleSet === "vD") {
-        tempHgViewParams.group = "P0_vs_e11.5";
-      }
-      if (tempHgViewParams.sampleSet === "vG") {
-        tempHgViewParams.group = "Male_vs_Female";
-      }
-    }
-
-    //
-    // adjust group
-    //
-    // let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
-    let availableGroupsForNewSampleSet = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
-    if (availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group) === -1) {
-      if (this.state.hgViewParams.mode === "single") {
-        // tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
-        tempHgViewParams.group = Manifest.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
-      }
-      else if (this.state.hgViewParams.mode === "paired") {
-        // console.log(`availableGroupsForNewSampleSet | (${this.state.hgViewParams.group}) ${availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group)} | ${JSON.stringify(availableGroupsForNewSampleSet)}`);
-        //
-        // it can be possible for an A_vs_B group name to have an according A_versus_B name (and vice versa)
-        //
-        // tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
-        tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+      // else if (destinationIsRemoteCoreSet) {
+      else {
+        // if we are switching from Roadmap to Adsera, or vice versa, preserve the genome selection
+        if (((tempHgViewParams.sampleSet === "vA") && (this.state.hgViewParams.sampleSet === "vC")) || ((tempHgViewParams.sampleSet === "vC") && (this.state.hgViewParams.sampleSet === "vA"))) {
+          tempHgViewParams.genome = this.state.hgViewParams.genome;
+          if ((this.state.hgViewParams.complexity === "KL") || (this.state.hgViewParams.complexity === "KLs")) {
+            tempHgViewParams.complexity = this.state.hgViewParams.complexity;
+          }
+          if ((this.state.hgViewParams.sampleSet === "vC") || ((this.state.hgViewParams.sampleSet === "vA") && (this.state.hgViewParams.model === "18"))) {
+            tempHgViewParams.model = this.state.hgViewParams.model;
+          }
+          if ((this.state.hgViewParams.sampleSet === "vA") && (tempHgViewParams.sampleSet === "vC")) {
+            tempHgViewParams.genome = "hg38";
+            tempHgViewParams.model = "18";
+            tempHgViewParams.complexity = "KL";
+            tempHgViewParams.group = "all";
+            tempHgViewParams.mode = "single";
+          }
+        }
+        // if we are switching from Roadmap/Adsera to Gorkin, or vice versa, switch genome to useful default
+        if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC") || (this.state.hgViewParams.sampleSet === "vG"))) {
+          console.log(`vA,vC,vG => vD`);
+          tempHgViewParams.genome = "mm10";
+          tempHgViewParams.model = "15";
+          tempHgViewParams.complexity = "KL";
+          tempHgViewParams.group = "all";
+          tempHgViewParams.mode = "single";
+        }
+        if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vC")) {
+          console.log(`vD => vC`);
+          tempHgViewParams.genome = "hg38";
+          tempHgViewParams.model = "18";
+          tempHgViewParams.complexity = "KL";
+          tempHgViewParams.group = "all";
+          tempHgViewParams.mode = "single";
+        }
+        if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vG")) {
+          console.log(`vD => vG`);
+          tempHgViewParams.genome = "hg38";
+          tempHgViewParams.model = "18";
+          tempHgViewParams.complexity = "KL";
+          tempHgViewParams.group = "All_1698_biosamples";
+          tempHgViewParams.mode = "single";
+        }
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
+          tempHgViewParams.genome = "hg19";
+          tempHgViewParams.model = "18";
+        }
+        if (tempHgViewParams.sampleSet === "vG") {
+          tempHgViewParams.genome = "hg38";
+          tempHgViewParams.model = "18";
+          tempHgViewParams.group = "All_1698_biosamples";
+        }
+      }
+    }
+    else {
+      //
+      // adjust by mode
+      //
+      if ((tempHgViewParams.mode === "single") && (this.state.hgViewParams.mode === "paired")) {
+        tempHgViewParams.group = (tempHgViewParams.sampleSet !== "vG") ? "all" : "All_1698_biosamples";
+      }
+      else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
+        if ((tempHgViewParams.sampleSet === "vA") || (tempHgViewParams.sampleSet === "vC")) {
           tempHgViewParams.group = "Male_vs_Female";
         }
-        const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
-        const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
-        if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
-          // console.log(`testing substituteGroupNameVsToVersus...`);
-          if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVsToVersus) !== -1) {
-            tempHgViewParams.group = substituteGroupNameVsToVersus;
-          }
+        if (tempHgViewParams.sampleSet === "vD") {
+          tempHgViewParams.group = "P0_vs_e11.5";
         }
-        else if (substituteGroupNameVersusToVs !== this.state.hgViewParams.group) {
-          // console.log(`testing substituteGroupNameVersusToVs...`);
-          if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVersusToVs) !== -1) {
-            tempHgViewParams.group = substituteGroupNameVersusToVs;
+        if (tempHgViewParams.sampleSet === "vG") {
+          tempHgViewParams.group = "Male_vs_Female";
+        }
+      }
+
+      //
+      // adjust group
+      //
+      // let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+      let availableGroupsForNewSampleSet = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
+      if (availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group) === -1) {
+        if (this.state.hgViewParams.mode === "single") {
+          // tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+          tempHgViewParams.group = Manifest.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+        }
+        else if (this.state.hgViewParams.mode === "paired") {
+          // console.log(`availableGroupsForNewSampleSet | (${this.state.hgViewParams.group}) ${availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group)} | ${JSON.stringify(availableGroupsForNewSampleSet)}`);
+          //
+          // it can be possible for an A_vs_B group name to have an according A_versus_B name (and vice versa)
+          //
+          // tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+          tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
+          if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
+            tempHgViewParams.group = "Male_vs_Female";
+          }
+          const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
+          const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
+          if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
+            // console.log(`testing substituteGroupNameVsToVersus...`);
+            if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVsToVersus) !== -1) {
+              tempHgViewParams.group = substituteGroupNameVsToVersus;
+            }
+          }
+          else if (substituteGroupNameVersusToVs !== this.state.hgViewParams.group) {
+            // console.log(`testing substituteGroupNameVersusToVs...`);
+            if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVersusToVs) !== -1) {
+              tempHgViewParams.group = substituteGroupNameVersusToVs;
+            }
           }
         }
       }
-    }
-    //
-    // adjust complexity
-    //
-    try {
-      // let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
-      let availableComplexitiesForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
-      // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-      // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
-      // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
-      // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
-      if (availableComplexitiesForNewGroup.indexOf(this.state.hgViewParams.complexity) === -1) {
-        tempHgViewParams.complexity = "KL"; // this should always be available
+      //
+      // adjust complexity
+      //
+      try {
+        // let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
+        let availableComplexitiesForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
+        // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
+        // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
+        // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
+        // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
+        if (availableComplexitiesForNewGroup.indexOf(this.state.hgViewParams.complexity) === -1) {
+          tempHgViewParams.complexity = "KL"; // this should always be available
+        }
       }
-    }
-    catch (error) {
-      // tempHgViewParams.complexity = "KL";
-      // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-      // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
-      // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
-      // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
-    }
-    //
-    // adjust model
-    //
-    try {
-      // let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
-      let availableModelsForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
-      // console.log(`availableModelsForNewGroup | (${tempHgViewParams.model}) ${availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model))} | ${JSON.stringify(availableModelsForNewGroup)}`);
-      if (availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model)) === -1) {
-        tempHgViewParams.model = this.state.hgViewParams.model; // this might be available
+      catch (error) {
+        // tempHgViewParams.complexity = "KL";
+        // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
+        // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
+        // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
+        // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
+      }
+      //
+      // adjust model
+      //
+      try {
+        // let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
+        let availableModelsForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
+        // console.log(`availableModelsForNewGroup | (${tempHgViewParams.model}) ${availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model))} | ${JSON.stringify(availableModelsForNewGroup)}`);
+        if (availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model)) === -1) {
+          tempHgViewParams.model = this.state.hgViewParams.model; // this might be available
+          if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
+            tempHgViewParams.model = "18";
+          }
+          if ((tempHgViewParams.sampleSet === "vA") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
+            tempHgViewParams.model = "18";
+          }
+        }
+      }
+      catch (error) {
+        // console.log(`error ${JSON.stringify(error, null, 2)}`);
+        tempHgViewParams.model = this.state.hgViewParams.model; // this should presumably be available
         if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
           tempHgViewParams.model = "18";
         }
-        if ((tempHgViewParams.sampleSet === "vA") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
-          tempHgViewParams.model = "18";
-        }
       }
-    }
-    catch (error) {
-      // console.log(`error ${JSON.stringify(error, null, 2)}`);
-      tempHgViewParams.model = this.state.hgViewParams.model; // this should presumably be available
-      if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
-        tempHgViewParams.model = "18";
+
+      //
+      // adjust group name, based on sample set and genome combination
+      //    
+      if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg38") && (tempHgViewParams.group === "Male_vs_Female")) {
+        tempHgViewParams.group = "Male_donors_versus_Female_donors";
+      }
+      else if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg19") && (tempHgViewParams.group === "Male_donors_versus_Female_donors")) {
+        tempHgViewParams.group = "Male_vs_Female";
+      }
+      
+      //
+      // revert to single mode, if visiting internal production site
+      //
+      if (tempHgViewParams.sampleSet === "vG" && this.isInternalProductionSite && this.state.hgViewParams.mode === "paired") {
+        tempHgViewParams.group = "All_1698_biosamples";
+        tempHgViewParams.mode = "single";
       }
     }
 
-    //
-    // adjust group name, based on sample set and genome combination
-    //    
-    if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg38") && (tempHgViewParams.group === "Male_vs_Female")) {
-      tempHgViewParams.group = "Male_donors_versus_Female_donors";
-    }
-    else if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg19") && (tempHgViewParams.group === "Male_donors_versus_Female_donors")) {
-      tempHgViewParams.group = "Male_vs_Female";
-    }
-    
-    //
-    // revert to single mode, if visiting internal production site
-    //
-    if (tempHgViewParams.sampleSet === "vG" && this.isInternalProductionSite && this.state.hgViewParams.mode === "paired") {
-      tempHgViewParams.group = "All_1698_biosamples";
-      tempHgViewParams.mode = "single";
-    }
-    
-    // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
+    console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
 
     const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
 

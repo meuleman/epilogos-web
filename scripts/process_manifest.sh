@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 project_dir=${1}
 src_dir=${2}

@@ -428,7 +428,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 }
 
 export const isLocalhost = () => {
-  return document.location.href.startsWith("http://localhost");
+  return window.location.href.includes("localhost");
 }
 
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
@@ -702,6 +702,8 @@ export const epilogosTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSe
 }
 
 export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
+  // console.log(`epilogosTrackFilenameForSingleSampleSet | sampleSet ${sampleSet} | genome ${genome} | model ${model} | group ${group} | complexity ${complexity}`);
+  // genome = (sampleSet === 'vD') ? 'mm10' : 'hg38';
   let result = null;
   let errorRaised = false;
   let errorMessage = null;
@@ -857,6 +859,7 @@ export const marksTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSet, 
 }
 
 export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group) => {
+  // genome = (sampleSet === 'vD') ? 'mm10' : 'hg38';
   let result = null;
   let errorRaised = false;
   let errorMessage = null;

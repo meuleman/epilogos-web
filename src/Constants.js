@@ -666,6 +666,12 @@ export const complexities = {
   "stacked": "S<sub>1,2,3</sub>"
 };
 
+export const reverseComplexities = {
+  "S1": "KL",
+  "S2": "KLs",
+  "S3": "KLss"
+};
+
 export const complexitiesForDataExport = {
   "KL": "S1",
   "KLs": "S2",
@@ -2568,8 +2574,8 @@ export const applicationViewerTest = "viewerTest";
 export const defaultApplication = applicationViewer;
 
 // drawer width
-export const defaultMinimumDrawerWidth = 362;
-export const defaultMaximumDrawerWidth = 362;
+export const defaultMinimumDrawerWidth = 380;
+export const defaultMaximumDrawerWidth = 380;
 
 // ?mode=xyz
 export const applicationModes = modes;
