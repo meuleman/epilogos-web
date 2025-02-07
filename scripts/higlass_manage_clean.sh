@@ -11,16 +11,16 @@ if [ -z "${venv}" ]; then
     exit -1
 fi
 
-if [ -x "$(command -v docker)" ]; then
-    echo "Docker installation found..."
-else
-    echo "Error: Docker not installed:"
-    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
-    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
-    exit -1
-fi
+# if [ -x "$(command -v docker)" ]; then
+#     echo "Note: Docker installation found..."
+# else
+#     echo "Error: Docker not installed. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+#     echo "Note: Once Docker is installed, please follow installation instructions in README.md to setup the higlass-manage and simsearch services"
+#     exit -1
+# fi
 
 ${PWD}/scripts/higlass_manage_stop.sh
+
 # ${PWD}/scripts/higlass_manage_stop.sh || HIGLASS_MANAGE_STOP_CALL_ERROR_CODE=$?
 # if [ "${HIGLASS_MANAGE_STOP_CALL_ERROR_CODE//[$'\t\r\n ']}" -ne 0 ]; then
 #     echo "Error: higlass_manage_stop.sh failed"
@@ -71,17 +71,22 @@ fi
 REACT_APP_HG_MANAGE_BASE_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME})
 if [ -z "${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}" ]; then
     echo "Error: REACT_APP_HG_MANAGE_BASE_IMAGE_NAME ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME} image not found"
+    echo "Note: Please follow installation instructions in README.md to setup the higlass-manage and simsearch services in order to perform cleanup"
     exit -1
 fi
-docker image rm --force ${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}
+echo "Note: Removing base higlass-manage image..."
+docker rmi -f ${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}
 
 REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
 if [ -z "${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}" ]; then
     echo "Error: REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
+    echo "Note: Please follow installation instructions in README.md to setup the higlass-manage and simsearch services in order to perform cleanup"
     exit -1
 fi
-docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+echo "Note: Removing modified higlass-manage image..."
+docker rmi -f ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
 
+echo "Note: Removing manifest.core_overrides.json..."
 CORE_OVERRIDES_FN=${PWD}/manifest.core_overrides.json
 if [ -e "${CORE_OVERRIDES_FN}" ]; then
     rm -f ${CORE_OVERRIDES_FN}

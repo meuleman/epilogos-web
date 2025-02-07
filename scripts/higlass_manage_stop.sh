@@ -12,11 +12,10 @@ if [ -z "${venv}" ]; then
 fi
 
 if [ -x "$(command -v docker)" ]; then
-    echo "Docker installation found..."
+    echo "Note: Docker installation found..."
 else
-    echo "Error: Docker not installed:"
-    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
-    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
+    echo "Error: Docker not installed. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+    echo "Note: Once Docker is installed, please follow installation instructions in README.md to setup the higlass-manage and simsearch services"
     exit -1
 fi
 
@@ -24,16 +23,16 @@ if [ -d "${venv}" ]; then
     source ${venv}/bin/activate
     REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
     if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
-        echo "Error: higlass-manage not installed - please see README for installation instructions"
+        echo "Error: higlass-manage package not installed - please see README for installation instructions"
         exit -1
     fi
-    echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
+    echo "Note: higlass-manage installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
     REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
     if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
         echo "Error: ${REACT_APP_HG_MANAGE_NAME_RUNNING} container not found"
         exit -1
     fi
+    echo "Note: Stopping higlass-manage container..."
     docker stop ${REACT_APP_HG_MANAGE_NAME_RUNNING}
-    docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
     deactivate
 fi

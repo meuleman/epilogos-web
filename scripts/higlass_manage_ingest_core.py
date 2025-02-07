@@ -432,7 +432,7 @@ def candidate_urls_for_core_manifest_items():
                                   # chromatin state tracks are available for single subtype groups only
                                   hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.mv5"
                                   if urlparse(hgCandidateUrl):
-                                      # note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                      note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
                                       response = session.head(hgCandidateUrl)
                                       candidateFileSize = response.headers.get('content-length')
                                       if not candidateFileSize:
@@ -462,7 +462,7 @@ def candidate_urls_for_core_manifest_items():
                                               ssCandidateUrls = [ssRecDataCandidateUrl, ssRecDataIndexCandidateUrl, ssRecMinmaxCandidateUrl, ssRecMinmaxIndexCandidateUrl]
                                               for ssCandidateUrl in ssCandidateUrls:
                                                   if urlparse(ssCandidateUrl):
-                                                      # note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
+                                                      note(f"Note: Retrieving file size for [{ssCandidateUrl}]\n")
                                                       response = session.head(ssCandidateUrl)
                                                       candidateFileSize = response.headers.get('content-length')
                                                       if not candidateFileSize:
@@ -491,7 +491,7 @@ def candidate_urls_for_core_manifest_items():
                                   if allowedEpilogosDataset:
                                     hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
                                     if urlparse(hgCandidateUrl):
-                                        # note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                        note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
                                         response = session.head(hgCandidateUrl)
                                         candidateFileSize = response.headers.get('content-length')
                                         if not candidateFileSize:

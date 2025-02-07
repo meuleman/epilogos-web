@@ -27,7 +27,7 @@ if [ -z "${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}" ]; then
 fi
 
 if [ -x "$(command -v docker)" ]; then
-    echo "Docker installation found..."
+    echo "Note: Docker installation found..."
 else
     echo "Error: Docker not installed:"
     echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
@@ -41,8 +41,8 @@ if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
     echo "Error: higlass-manage not installed - please see README for installation instructions"
     exit -1
 fi
-echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
-python --version
+echo "Note: higlass-manage installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
+# python --version
 ${PWD}/scripts/higlass_manage_ingest_local.py \
     ${PWD}/manifest.json \
     ${PWD}/scripts \
@@ -50,3 +50,4 @@ ${PWD}/scripts/higlass_manage_ingest_local.py \
     ${REACT_APP_HG_MANAGE_DATA_DIR} \
     ${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}
 deactivate
+echo "Note: Local asset download and ingestion complete"

@@ -13,19 +13,19 @@ import axios from "axios";
 
 // higlass
 // cf. https://www.npmjs.com/package/higlass
-import "higlass/dist/hglib.css";
+import "@apr144/higlass/dist/hglib.css";
 import { 
   HiGlassComponent, 
   ChromosomeInfo 
-} from "higlass";
+} from "@apr144/higlass";
 
 // higlass-multivec
 // cf. https://www.npmjs.com/package/higlass-multivec
-import "higlass-multivec/dist/higlass-multivec.js";
+import "@apr144/higlass-multivec/dist/higlass-multivec.js";
 
 // higlass-transcripts
 // cf. https://github.com/higlass/higlass-transcripts
-import "higlass-transcripts/dist/higlass-transcripts.js";
+import "@apr144/higlass-transcripts/dist/higlass-transcripts.js";
 
 // Target content
 import QueryTargetViewer from "./QueryTargetViewer"

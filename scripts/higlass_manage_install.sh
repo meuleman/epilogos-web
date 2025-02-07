@@ -17,11 +17,10 @@ if [ -z "${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON_VERSION}" ]; then
 fi
 
 if [ -x "$(command -v docker)" ]; then
-    echo "Docker installation found..."
+    echo "Note: Docker installation found..."
 else
-    echo "Error: Docker not installed:"
-    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
-    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
+    echo "Error: Docker not installed. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+    echo "Note: Once Docker is installed, please follow installation instructions in README.md to setup the higlass-manage and simsearch services"
     exit -1
 fi
 
@@ -34,6 +33,7 @@ if [[ "${venv}" -ef / ]]; then
     exit -1
 fi
 
+echo "Note: Installing Python environment for higlass-manage and simsearch proxy services... (please wait)"
 pip install virtualenv --quiet
 virtualenv ${venv} --python=${REACT_APP_HG_MANAGE_VIRTUAL_ENVIRONMENT_PYTHON_VERSION}
 source ${venv}/bin/activate
@@ -49,5 +49,5 @@ if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
     echo "Error: higlass-manage not installed - please see README for installation instructions"
     exit -1
 fi
-echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
+echo "Note: higlass-manage package successfully installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
 deactivate

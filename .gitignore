@@ -38,3 +38,4 @@ epilogos-hgManage
 scripts/hgManage-assets/*.db
 scripts/epilogos-hgManage
 manifest.core_overrides.json
+src/Manifest.js

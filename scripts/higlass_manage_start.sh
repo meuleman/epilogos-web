@@ -27,11 +27,10 @@ if [ -z "${REACT_APP_HG_MANAGE_TEMP_DIR}" ]; then
 fi
 
 if [ -x "$(command -v docker)" ]; then
-    echo "Docker installation found..."
+    echo "Note: Docker installation found..."
 else
-    echo "Error: Docker not installed:"
-    echo "       1. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
-    echo "       2. If required, please install higlass-manage via 'npm run higlass-manage-install'"
+    echo "Error: Docker not installed. Please install from <https://docs.docker.com/desktop/> or Homebrew/yum/apt package manager etc."
+    echo "Note: Once Docker is installed, please follow installation instructions in README.md to setup the higlass-manage and simsearch services"
     exit -1
 fi
 
@@ -39,16 +38,17 @@ source ${venv}/bin/activate
 
 REACT_APP_HG_MANAGE_VERSION=$(higlass-manage version)
 if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
-    echo "Error: higlass-manage not installed - please see README for installation instructions"
+    echo "Error: higlass-manage was not installed - please see README for installation instructions"
     exit -1
 fi
-echo "higlass-manage found [version:${REACT_APP_HG_MANAGE_VERSION}]"
+echo "Note: higlass-manage package installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
 
 mkdir -p ${REACT_APP_HG_MANAGE_DATA_DIR}
 mkdir -p ${REACT_APP_HG_MANAGE_TEMP_DIR}
 mkdir -p ${REACT_APP_HG_MANAGE_MEDIA_DIR}
 
 function start_services () {
+    echo "Note: Setting up base higlass-manage image... (please wait: this may take 1-2 minutes to update)"
     higlass-manage start \
         --hg-name ${REACT_APP_HG_MANAGE_NAME} \
         --port ${REACT_APP_HG_MANAGE_PORT_ROOT} \
@@ -56,10 +56,12 @@ function start_services () {
         --data-dir ${REACT_APP_HG_MANAGE_DATA_DIR} \
         --temp-dir ${REACT_APP_HG_MANAGE_TEMP_DIR} \
         >/dev/null 2>&1
+    echo "Note: Renaming base higlass-manage image..."
     docker rename ${REACT_APP_HG_MANAGE_NAME_ORIGINAL} ${REACT_APP_HG_MANAGE_NAME_ROOT} >/dev/null 2>&1
     #
     # Add simsearch proxy service to the factory-stock container
     #
+    echo "Note: Adding simsearch proxy service to base higlass-manage container... (please wait)"
     if [ -z "${REACT_APP_HG_MANAGE_SIMSEARCH_DIR}" ]; then
         echo "Error: REACT_APP_HG_MANAGE_SIMSEARCH_DIR not set"
         exit -1
@@ -79,10 +81,12 @@ function start_services () {
         echo "Note: Removing existing image ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME}"
         docker image rm --force ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} >/dev/null 2>&1
     fi
+    echo "Note: Committing changes to modified higlass-manage container..."
     docker commit ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT} ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME}
     docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT}
     docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT}
     REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
+    echo "Note: Initializing modified higlass-manage container..."
     docker run -d \
         -p ${REACT_APP_HG_MANAGE_PORT_RUNNING}:80 \
         -p ${REACT_APP_HG_MANAGE_SIMSEARCH_PORT}:${REACT_APP_HG_MANAGE_SIMSEARCH_PORT} \
@@ -98,11 +102,11 @@ REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_M
 if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
     start_services
 else
-    echo "higlass-manage container found in Docker inventory [name:${REACT_APP_HG_MANAGE_NAME_RUNNING}] [id:${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}]"
+    echo "Note: higlass-manage container found in Docker inventory [name:${REACT_APP_HG_MANAGE_NAME_RUNNING}] [id:${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}]"
     if [ "$(docker container inspect -f '{{.State.Running}}' ${REACT_APP_HG_MANAGE_NAME_RUNNING})" = "true" ]; then
-        echo "higlass-manage container is already running - nothing to do"
+        echo "Note: higlass-manage container is already running - nothing to do"
     else
-        echo "Note: Existing higlass-manage container is being restarted"
+        echo "Note: Running modified higlass-manage container is being stopped..."
         docker stop ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} >/dev/null 2>&1
         docker container rm ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} >/dev/null 2>&1
         REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
@@ -110,6 +114,7 @@ else
             echo "Error: ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
             exit -1
         fi
+        echo "Note: Restarting modified higlass-manage container..."
         docker run -d \
             -p ${REACT_APP_HG_MANAGE_PORT_RUNNING}:80 \
             -p ${REACT_APP_HG_MANAGE_SIMSEARCH_PORT}:${REACT_APP_HG_MANAGE_SIMSEARCH_PORT} \
@@ -122,6 +127,7 @@ else
     fi
 fi
 
+echo "Note: Restarting simsearch-proxy service..."
 REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
 docker exec ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} bash -c "pm2 resurrect; pm2 save; pm2 startup" >/dev/null 2>&1
 
