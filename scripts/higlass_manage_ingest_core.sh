@@ -49,5 +49,8 @@ ${PWD}/scripts/higlass_manage_ingest_core.py \
     ${REACT_APP_HG_MANAGE_NAME} \
     ${REACT_APP_HG_MANAGE_DATA_DIR} \
     ${REACT_APP_HG_MANAGE_SIMSEARCH_ASSETS_DIR}
+
 deactivate
-echo "Note: Core asset download and ingestion complete"
+
+echo "Done"
+exit 0

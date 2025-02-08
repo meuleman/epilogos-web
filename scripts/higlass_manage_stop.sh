@@ -29,10 +29,14 @@ if [ -d "${venv}" ]; then
     echo "Note: higlass-manage installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
     REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
     if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
-        echo "Error: ${REACT_APP_HG_MANAGE_NAME_RUNNING} container not found"
-        exit -1
+        echo "Warning: ${REACT_APP_HG_MANAGE_NAME_RUNNING} Docker container was not found"
+        echo "Note: This warning may show up if the Docker container was removed manually"
+    else
+        echo "Note: Stopping higlass-manage container..."
+        docker stop ${REACT_APP_HG_MANAGE_NAME_RUNNING}
     fi
-    echo "Note: Stopping higlass-manage container..."
-    docker stop ${REACT_APP_HG_MANAGE_NAME_RUNNING}
     deactivate
 fi
+
+echo "Done"
+exit 0

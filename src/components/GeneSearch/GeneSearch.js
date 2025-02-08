@@ -68,7 +68,7 @@ const GeneSearch = memo(({
   };
 
   const handleSelect = (value) => {
-    console.log(`[GeneSearch.handleSelect] value ${value}`);
+    // console.log(`[GeneSearch.handleSelect] value ${value}`);
     if (genomicPositionRegex.test(value)) {
       onSelect({
         value: value,
@@ -80,18 +80,10 @@ const GeneSearch = memo(({
       return;
     }
     const selectedOption = filteredOptions.find(option => option.value === value);
-    console.log("[GeneSearch.handleSelect] selectedOption", selectedOption);
+    // console.log("[GeneSearch.handleSelect] selectedOption", selectedOption);
     onSelect(selectedOption);
     setInputValue(selectedOption.label);
   };
-
-  // const handleOnFocus = () => {
-  //   onFocus();
-  // }
-
-  // const handleOnBlur = () => {
-  //   onBlur();
-  // }
 
   const handleOnDropdownVisibleChange = () => {
     setDropdownVisible(!dropdownVisible);

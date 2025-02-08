@@ -65,3 +65,6 @@ fi
 if [ ! -f ${PWD}/scripts/hgManage-assets/mm10.transcripts.fixedBin.db ]; then
     wget -O ${PWD}/scripts/hgManage-assets/mm10.transcripts.fixedBin.db ${hgServer}/media/gencode.vM21.annotation.gtf.higlass-transcripts.longest-isoform.072921.beddb
 fi
+
+echo "Done"
+exit 0

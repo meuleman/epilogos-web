@@ -39,26 +39,15 @@ export const getJsonFromSpecifiedUrl = (urlStr) => {
 
 export const getJsonFromUrl = () => {
   return getJsonFromSpecifiedUrl(window.location);
-  // let query = window.location.search.substr(1);
-  // let result = {};
-  // query.split("&").forEach(function(part) {
-  //     var item = part.split("=");
-  //     if (item[0].length > 0)
-  //       result[item[0]] = decodeURIComponent(item[1]);
-  // });
-  // return result;
 }
 
 export const getHrefPrefix = (uri) => {
   let urlObj = null;
   try {
     urlObj = new URL(uri);
-    // console.log(`uri ${JSON.stringify(uri)} | urlObj ${JSON.stringify(urlObj)}`);
     return (urlObj.port.length > 0) ? `${urlObj.protocol}://${urlObj.hostname}:${urlObj.port}` : `${urlObj.protocol}://${urlObj.hostname}`;
   }
-  catch (error) {
-    // console.warn(`Warning: ${error}`);
-  }
+  catch (error) {}
   return null;
 }
 
@@ -136,7 +125,6 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
   let chrom = "";
   let start = -1;
   let stop = -1;
-  // console.log("matches", matches);
   if (matches.length === 3) {
     chrom = matches[0];
     start = parseInt(matches[1].replace(',',''));
@@ -184,10 +172,8 @@ export const getRangeFromString = (str, applyPadding, applyApplicationBinShift, 
 }
 
 export const positionSummaryElement = (showClipboard, showScale, self) => {
-  // console.log(`positionSummaryElement called ${self.state.width}`);
   if (showClipboard == null) showClipboard = true;
   if ((typeof self.state.currentPosition === "undefined") || (typeof self.state.currentPosition.chrLeft === "undefined") || (typeof self.state.currentPosition.chrRight === "undefined") || (typeof self.state.currentPosition.startLeft === "undefined") || (typeof self.state.currentPosition.stopRight === "undefined")) {
-    // console.log(`positionSummaryElement > ${JSON.stringify(self.state.currentPosition)}`);
     return <div />
   }
 
@@ -197,7 +183,6 @@ export const positionSummaryElement = (showClipboard, showScale, self) => {
   
   if (showClipboard) {
     if (parseInt(self.state.width)>1150) {
-      // console.log(`positionSummaryElement > ${positionSummary}`);
       return (
         <div id="epilogos-viewer-navigation-summary-position-content" style={(parseInt(self.state.width)<1300)?{"letterSpacing":"0.005em"}:{}}>
           <span title={"Current genomic position"}>{positionSummary} {(showScale) ? scaleSummary : ""}</span> <CopyToClipboard text={positionSummary} onMouseDown={(e) => {self.onClickCopyRegionCommand(e) }}><span className="navigation-summary-position-clipboard-parent" title={"Copy genomic position to clipboard"}><FaClipboard className="navigation-summary-position-clipboard" /></span></CopyToClipboard>
@@ -225,32 +210,26 @@ export const calculateScale = (leftChr, rightChr, start, stop, self, includeAsse
     diff = parseInt(stop) - parseInt(start);
   }
   else {
-    // console.log(`updateScale > chromosomes are different`);
     const leftDiff = parseInt(Constants.assemblyBounds[self.state.hgViewParams.genome][leftChr]['ub']) - parseInt(start);
     const rightDiff = parseInt(stop);
     const allChrs = Object.keys(Constants.assemblyBounds[self.state.hgViewParams.genome]).sort((a, b) => { return parseInt(a.replace("chr", "")) - parseInt(b.replace("chr", "")); });
-    // console.log(`leftChr ${leftChr} | rightChr ${rightChr} | start ${start} | stop ${stop} | leftDiff ${leftDiff} | rightDiff ${rightDiff} | allChrs ${allChrs}`);
     let log10DiffFlag = false;
     for (let i = 0; i < allChrs.length; i++) {
       const currentChr = allChrs[i];
       if (currentChr === leftChr) {
-        // console.log(`adding ${leftDiff} for chromosome ${currentChr}`);
         diff += (leftDiff > 0) ? leftDiff : 1;
         log10DiffFlag = true;
       }
       else if (currentChr === rightChr) {
-        // console.log(`adding ${rightDiff} for chromosome ${currentChr}`);
         diff += (rightDiff > 0) ? rightDiff : 1;
         log10DiffFlag = false;
         break;
       }
       else if (log10DiffFlag) {
-        // console.log(`adding ${Constants.assemblyBounds[this.state.hgViewParams.genome][currentChr]['ub']} for chromosome ${currentChr}`);
         diff += Constants.assemblyBounds[self.state.hgViewParams.genome][currentChr]['ub'];
       }
     }
   }
-  // console.log(`calculateScale ${diff}`);
   log10Diff = log10(diff);
   scaleAsStr = (log10Diff < 3) ? `${Math.ceil(diff/100)*100}nt` :
                (log10Diff < 4) ? `${Math.floor(diff/1000)}kb` :
@@ -288,14 +267,9 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   */
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
-  // let exemplarV1URL = exemplarV1DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet);
-
-  // console.log(`Helpers > updateExemplars > exemplarV2URL ${JSON.stringify(exemplarV2URL, null, 2)}`);
-  // console.log(`Helpers > updateExemplars > exemplarV1URL ${JSON.stringify(exemplarV1URL, null, 2)}`);
   
   function updateExemplarRegionsWithResponse(res, cb) {
     const newExemplarRegions = res.data.split('\n');
-    // console.log(`updateExemplarRegionsWithResponse ${JSON.stringify(newExemplarRegions)}`);
     self.setState({
       exemplarJumpActive: true,
       exemplarRegions: newExemplarRegions,
@@ -311,7 +285,6 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         let stop = elem[2];
         let state = elem[3];
         if (!chrom) return;
-        // console.log("chrom, start, stop, state", chrom, start, stop, state);
         let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
         if (isNaN(chrom.replace(/chr/, ''))) {
           paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
@@ -341,7 +314,6 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
         dataIdxBySort.push(idx + 1);
         chromatinStates[state] = 0;
       });
-      // console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
       setTimeout(() => {
         self.setState({
           exemplarTableData: data,
@@ -355,29 +327,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     });
   }
 
-  // function tryExemplarV1URL(exemplarV1URL) {
-  //   axios.head(exemplarV1URL)
-  //     .then((res) => {
-  //       // console.log(`Helpers > updateExemplars > attempting to GET exemplarV1URL | ${JSON.stringify(res)}`);
-  //       axios.get(exemplarV1URL)
-  //         .then((res) => {
-  //           if (!res.data || res.data.startsWith("<!doctype html>")) {
-  //             throw String(`Error: v1 exemplars not returned from: ${exemplarV1URL}`);
-  //           }
-  //           // console.log(`Helpers > updateExemplars > updating with exemplarV1URL`);
-  //           updateExemplarRegionsWithResponse(res, cb);
-  //         })
-  //         .catch((err) => {
-  //           console.log(`Helpers > updateExemplars > v1 exemplar GET failed: ${exemplarV1URL} | ${JSON.stringify(err)}`)
-  //         });
-  //     })
-  //     .catch((err) => {
-  //       console.log(`Helpers > updateExemplars > v1 exemplar URL does not exist: ${exemplarV1URL} | ${JSON.stringify(err)}`);
-  //     });
-  // }
-
   function handleNoExemplarsFound(self) {
-    // console.log(`handleNoExemplarsFound()`)
     self.setState({
       selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
       exemplarTableData: [],
@@ -393,36 +343,26 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
       // eslint-disable-next-line no-unused-vars
       .then((res) => {
         // handle V2 exemplar as normal
-        // console.log(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
         axios.get(exemplarV2URL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
-              // throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
-              // tryExemplarV1URL(exemplarV1URL);
               handleNoExemplarsFound(self);
             }
             else {
-              // console.log(`Helpers > updateExemplars > updating with exemplarV2URL`);
               updateExemplarRegionsWithResponse(res, cb);
             }
           })
           // eslint-disable-next-line no-unused-vars
           .catch((err) => {
-            // console.log(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
-            // tryExemplarV1URL(exemplarV1URL);
             handleNoExemplarsFound(self);
           });
       })
       // eslint-disable-next-line no-unused-vars
       .catch((err) => {
-        // console.log(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
-        // fall back to trying V1 exemplar URL
-        // tryExemplarV1URL(exemplarV1URL);
         handleNoExemplarsFound(self);
       });
   }
   else {
-    // tryExemplarV1URL(exemplarV1URL);
     handleNoExemplarsFound(self);
   }
 }
@@ -436,7 +376,6 @@ export const suggestionDownloadURL = (assembly, model, complexity, group, sample
   const downloadURLPrefix = (isLocalhost) 
     ? `https://${Constants.applicationHost}` 
     : stripQueryStringAndHashFromPath(document.location.href);
-  // console.log(`Helpers.suggestionDownloadURL | downloadURLPrefix ${downloadURLPrefix}`);
   return downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
 }
 
@@ -450,12 +389,9 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   if (!Constants.groupsForRecommenderV3OptionGroup[newSampleSet]) return;
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let suggestionURL = (newGroupV2) ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
-
-  // console.log(`Helpers > updateSuggestions > suggestionURL ${JSON.stringify(suggestionURL, null, 2)}`);
   
   function updateSuggestionRegionsWithResponse(res, cb) {
     const newSuggestionRegions = res.data.split('\n');
-    // console.log(`updateExemplarRegionsWithResponse ${JSON.stringify(newExemplarRegions)}`);
     const newSelectedSuggestionRowIdx = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? ((newSuggestionRegions.length > self.state.selectedSuggestionRowIdx) ? self.state.selectedSuggestionRowIdx : Constants.defaultApplicationSugIdx) : Constants.defaultApplicationSugIdx;
     self.setState({
       suggestionRegions: newSuggestionRegions,
@@ -472,7 +408,6 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
         let stop = elem[2];
         let state = elem[3];
         if (!chrom) return;
-        // console.log("chrom, start, stop, state", chrom, start, stop, state);
         let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
         if (isNaN(chrom.replace(/chr/, ''))) {
           paddedPosition = chrom.replace(/chr/, '') + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
@@ -502,7 +437,6 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
         dataIdxBySort.push(idx + 1);
         chromatinStates[state] = 0;
       });
-      // console.log(`Helpers > updateExemplars > updateExemplarRegionsWithResponse > data[0] ${JSON.stringify(data[0], null, 2)}`);
       const newSelectedSuggestionChrLeft = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.chrom : data[0].element.chrom;
       const newSelectedSuggestionStart = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.start : data[0].element.start;
       const newSelectedSuggestionStop = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? data[self.state.selectedSuggestionRowIdx - 1].element.stop : data[0].element.stop;
@@ -511,7 +445,6 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
         self.setState({
           suggestionButtonInProgress: false,
           suggestionsAreLoaded: true,
-          // selectedSuggestionRowIdx: 1,
           suggestionTableData: data,
           suggestionTableDataCopy: dataCopy,
           suggestionTableDataIdxBySort: dataIdxBySort,
@@ -530,7 +463,6 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   }
 
   function handleNoSuggestionsFound(self) {
-    // console.log(`handleNoSuggestionsFound()`)
     self.setState({
       suggestionTableKey: self.state.suggestionTableKey + 1,
       suggestionButtonInProgress: false,
@@ -549,36 +481,27 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
       // eslint-disable-next-line no-unused-vars
       .then((res) => {
         // handle V2 exemplar as normal
-        // console.log(`Helpers > updateExemplars > attempting to GET exemplarV2URL | ${JSON.stringify(res)}`);
         axios.get(suggestionURL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
-              // throw String(`Error: v2 exemplars not returned from: ${exemplarV2URL}`);
-              // tryExemplarV1URL(exemplarV1URL);
               handleNoSuggestionsFound(self);
             }
             else {
-              // console.log(`Helpers > updateExemplars > updating with exemplarV2URL`);
               updateSuggestionRegionsWithResponse(res, cb);
             }
           })
           // eslint-disable-next-line no-unused-vars
           .catch((err) => {
-            // console.log(`Helpers > updateExemplars > v2 exemplar GET failed: ${exemplarV2URL} | ${JSON.stringify(err)}`);
-            // tryExemplarV1URL(exemplarV1URL);
             handleNoSuggestionsFound(self);
           });
       })
       // eslint-disable-next-line no-unused-vars
       .catch((err) => {
-        // console.log(`Helpers > updateExemplars > v1 fallback | ${JSON.stringify(err)}`);
         // fall back to trying V1 exemplar URL
-        // tryExemplarV1URL(exemplarV1URL);
         handleNoSuggestionsFound(self);
       });
   }
   else {
-    // tryExemplarV1URL(exemplarV1URL);
     handleNoSuggestionsFound(self);
   }
 }
@@ -601,7 +524,6 @@ export const epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer = (sampleS
 }
 
 export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, model, groupA, groupB, groupAvsB, complexity) => {
-  // console.log(`groupA, groupB, groupAvsB ${groupA}, ${groupB}, ${groupAvsB}`);
   let result = { A : null, B : null, AvsB : null };
   let errorRaised = false;
   let errorMessage = null;
@@ -681,18 +603,12 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
 }
 
 export const trackServerPointsToLocalHgServer = (trackServer, cf) => {
-  console.log(`trackServer ${trackServer} | cf ${cf}`);
   const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
-  console.log(`localhost ${localhost}`);
-  console.log(`trackServer.includes(localhost) ${trackServer.includes(localhost)}`);
   return trackServer.includes(localhost);
 }
 
 export const trackServerPointsToLocalHgServerForDrawer = (trackServer, cf) => {
-  // console.log(`trackServer ${trackServer} | cf ${cf}`);
   const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
-  // console.log(`localhost ${localhost}`);
-  // console.log(`trackServer.includes(localhost) ${trackServer.includes(localhost)}`);
   return trackServer.includes(localhost);
 }
 
@@ -702,8 +618,6 @@ export const epilogosTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSe
 }
 
 export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
-  // console.log(`epilogosTrackFilenameForSingleSampleSet | sampleSet ${sampleSet} | genome ${genome} | model ${model} | group ${group} | complexity ${complexity}`);
-  // genome = (sampleSet === 'vD') ? 'mm10' : 'hg38';
   let result = null;
   let errorRaised = false;
   let errorMessage = null;
@@ -842,8 +756,6 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
       result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
       break;
     default:
-      // errorRaised = true;
-      // errorMessage = `Not a valid sample set identifier ${sampleSet}`;
       result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
       break;
   }
@@ -859,7 +771,6 @@ export const marksTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSet, 
 }
 
 export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group) => {
-  // genome = (sampleSet === 'vD') ? 'mm10' : 'hg38';
   let result = null;
   let errorRaised = false;
   let errorMessage = null;
@@ -992,8 +903,6 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
       result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
       break;
     default: {
-      // errorRaised = true;
-      // errorMessage = `Not a valid sample set identifier ${sampleSet}`;
       result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
       break;
     }
@@ -1032,9 +941,6 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   viewerUrl += "&start=" + parseInt(start);
   viewerUrl += "&stop=" + parseInt(stop);
   
-  // console.log(`[constructViewerURL] selectedExemplarRowIdx ${state.selectedExemplarRowIdx} | selectedRoiRowIdx ${state.selectedRoiRowIdx}`);
-
-  
   if (state.roiEncodedURL.length > 0) {
     viewerUrl += `&roiURL=${state.roiEncodedURL}`;
   }
@@ -1047,8 +953,6 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   if (state.roiPaddingFractional && ((parseFloat(state.roiPaddingFractional) > 0) && (parseFloat(state.roiPaddingFractional) < 1)) && (parseFloat(state.roiPaddingFractional) !== Constants.defaultApplicationRoiPaddingFraction)) {
     viewerUrl += `&roiPaddingFractional=${state.roiPaddingFractional}`;
   }
-  // console.log(`state.selectedRoiRowIdx ${state.selectedRoiRowIdx}`);
-  // console.log(`state.roiTableData.length ${state.roiTableData.length}`);
   if ((parseInt(state.selectedRoiRowIdx) >= 0) && (state.roiTableData.length > 0)) {
     viewerUrl += "&srrIdx=" + parseInt(state.selectedRoiRowIdx);
   }
@@ -1058,9 +962,6 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
   if (parseInt(state.selectedSuggestionRowIdx) >= 0) {
     viewerUrl += "&sugIdx=" + parseInt(state.selectedSuggestionRowIdx);
   }
-  // if (parseInt(state.selectedSimSearchRowIdx) >= 0) {
-  //   viewerUrl += "&ssrIdx=" + parseInt(state.selectedSimSearchRowIdx);
-  // }
   //
   // row highlighting
   //
@@ -1093,7 +994,6 @@ export const constructViewerURL = (mode, genome, model, complexity, group, sampl
     viewerUrl += `&sugStyle=${state.suggestionStyle}`;
   }
 
-  // console.log(`viewerUrl ${viewerUrl}`);
   return viewerUrl;
 }
 
@@ -1101,7 +1001,7 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
   const newHgViewParams = {...oldHgViewParams};
   newHgViewParams.genome = newGenome;
   const sampleSet = newHgViewParams.sampleSet;
-  const oldGroups = Object.keys(Constants.groupsByGenome[sampleSet][newGenome]);
+  const oldGroups = Object.keys(Manifest.groupsByGenome[sampleSet][newGenome]);
   if (newGenome === "mm10") {
     newHgViewParams.group = (newHgViewParams.mode === "single") ? Constants.defaultSingleGroupKeys[sampleSet].mm10 : Constants.defaultPairedGroupKeys[sampleSet].mm10;
     newHgViewParams.model = (newHgViewParams.mode === "single") ? Constants.defaultSingleModelKeys.mm10 : Constants.defaultPairedModelKeys[sampleSet].mm10;
@@ -1111,7 +1011,7 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
       if (newHgViewParams.complexity === "KLss") newHgViewParams.complexity = "KL";
       if ((newHgViewParams.genome === "hg19") && (oldHgViewParams.genome === "hg38")) {
         const oldGroupsVersusToVs = {};
-        Object.keys(Constants.groupsByGenome[sampleSet][newGenome]).forEach((g) => {
+        oldGroups.forEach((g) => {
           let k = g.replace("_vs_", "_versus_");
           oldGroupsVersusToVs[k] = g;
         });
@@ -1148,7 +1048,7 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
       if (newHgViewParams.complexity === "KLss") newHgViewParams.complexity = "KL";
       if ((newHgViewParams.genome === "hg38") && (oldHgViewParams.genome === "hg19")) {
         const oldGroupsVsToVersus = {};
-        Object.keys(Constants.groupsByGenome[sampleSet][newGenome]).forEach((g) => {
+        oldGroups.forEach((g) => {
           let k = g.replace("_versus_", "_vs_");
           oldGroupsVsToVersus[k] = g;
         });
@@ -1209,7 +1109,6 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   if (qWindowSizeKb === 0) return Promise.reject(new Error('Invalid window size')).then(
     (result) => { return {'resolved': true} }, (result) => { return {'rejected': true} }
   );
-  console.log(`[Helpers.simSearchQueryPromise] ${qChr}:${qStart}-${qEnd}`);
   let params = self.state.tempHgViewParams;
   let datasetAltname = params.sampleSet;
   let assembly = params.genome;
@@ -1239,29 +1138,18 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
   let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
   
-  // let recommenderV3URL = `${Constants.recommenderProxyURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
-
   const recommenderV3QueryDefaultURL = Constants.recommenderProxyURL;
   const recommenderV3QueryLocalServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_SIMSEARCH_PORT}`;
   const recommenderV3QueryURL = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')) ? recommenderV3QueryLocalServerURL : recommenderV3QueryDefaultURL;
 
-  console.log(`trackServerPointsToLocalHgServer(datasetAltname) ${trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')}`);
-  console.log(`recommenderV3QueryURL ${recommenderV3QueryURL}`);
-  console.log(`Manifest.trackServerBySampleSet[datasetAltname] ${Manifest.trackServerBySampleSet[datasetAltname]}`);
-
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
   
-  console.log(`[Helpers.simSearchQueryPromise] simSearchQueryPromiseURL ${JSON.stringify(recommenderV3URL)}`); 
-  
   return axios.get(recommenderV3URL).then((res) => {
-    // console.log(`[Helpers.simSearchQueryPromise] res ${JSON.stringify(res)}`);
     if (res.data) {
-      console.log(`[Helpers.simSearchQueryPromise] res.data ${JSON.stringify(res.data)}`);
       if (res.data.hits && res.data.hits.length > 0 && res.data.hits[0].length > 0) {
         return res.data;
       }
       else {
-        // console.log(`res ${JSON.stringify(res)}`);
         if (!ignoreNoHits) throw new Error("[Helpers.simSearchQueryPromise] No recommendations found");
       }
     }
@@ -1274,7 +1162,6 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
     err.response.title = "Please try again";
     err.response.status = "404";
     err.response.statusText = `Could not retrieve recommendations for region query. Please try another region.`;
-    // console.log(`[recommenderV1SearchOnClick] err ${JSON.stringify(err)}`);
     let msg = self.errorMessage(err, err.response.statusText, null);
     self.setState({
       overlayMessage: msg,
@@ -1292,21 +1179,6 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
         simsearchQueryCount: -1,
         simsearchQueryCountIsVisible: false,
       });
-      // self.fadeInOverlay(() => {
-      //   self.setState({
-      //     selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-      //     recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
-      //     recommenderV3SearchInProgress: false,
-      //     recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-      //     recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
-      //     recommenderV3ExpandIsEnabled: false,
-      //     recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
-      //     genomeSelectIsActive: true,
-      //     autocompleteInputDisabled: false,
-      //     simsearchQueryCount: -1,
-      //     simsearchQueryCountIsVisible: false,
-      //   })
-      // });
     });
     return err;
   })
@@ -1327,32 +1199,14 @@ export const uuidQueryPromise = function(fn, self, endpointURL) {
       err.response = {};
       err.response.status = "404";
       err.response.statusText = "No tileset data found for specified UUID";
-      //throw {response:{status:"404", statusText:"No tileset data found for specified UUID"}};
       throw err;
     }
   })
   .catch((err) => {
     console.log("Error - ", JSON.stringify(err));
-    console.log(`Could not retrieve UUID for track query (${fn})`)
-    // let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
-    // self.setState({
-    //   overlayMessage: msg,
-    //   mainHgViewconf: {}
-    // }, () => {
-    //   self.fadeInOverlay();
-    // });
+    console.log(`Could not retrieve UUID for track query (${fn})`);
   });
 }
-
-// export const singleEpilogosTrackFnForParams = (sampleSet, genome, model, group, complexity) => {
-//   const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
-//   return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-// }
-
-// export const singleMarksTrackFnForParams = (sampleSet, genome, model, group) => {
-//   const mediaGroupKey = Manifest.groupsByGenome[sampleSet][genome][group].mediaKey;
-//   return `${sampleSet}.${genome}.${model}.${mediaGroupKey}.mv5`;
-// }
 
 //
 // check if tracks exist for a given hgViewParams object

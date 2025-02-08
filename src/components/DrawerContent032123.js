@@ -2,18 +2,14 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Badge, 
-  TabContent, 
-  TabPane, 
-  // Nav, 
-  // NavItem, 
-  // NavLink, 
-  Collapse, 
+  Badge,
+  TabContent,
+  TabPane,
+  Collapse,
   FormGroup,
   Label,
   Input,
 } from 'reactstrap';
-// import classnames from 'classnames';
 
 // Application constants
 import * as Constants from '../Constants.js'; 
@@ -28,11 +24,6 @@ import 'pretty-checkbox/dist/pretty-checkbox.css';
 // React-toggle (toggle switch)
 import 'react-toggle/style.css';
 import Toggle from 'react-toggle';
-
-// cf. https://react-bootstrap-table.github.io/react-bootstrap-table2/storybook
-// cf. https://github.com/react-bootstrap-table/react-bootstrap-table2/tree/master/docs
-// import '@musicstory/react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-// import BootstrapTable from '@musicstory/react-bootstrap-table-next';
 
 // Tooltip (for state and other mouseover help)
 import ReactTooltip from 'react-tooltip';
@@ -117,17 +108,14 @@ class DrawerContent extends Component {
   }
   
   toggleSettings = (category) => {
-    //console.log("toggleSettings - old", this.state.hideshow);
     let newHideshow = this.state.hideshow;
     newHideshow[category] = !newHideshow[category];
-    //console.log("toggleSettings - new", newHideshow);
     this.setState({
       hideshow : newHideshow
     });
   }
   
   onMouseEnterSettingsButton = (event) => {
-    //console.log("onMouseEnterSettingsButton", event.target.name, event.target.value);
     if (!event.target.disabled) {
       this.setState({
         enteredSettingsButtonName: event.target.name,
@@ -137,7 +125,6 @@ class DrawerContent extends Component {
   }
   
   onMouseLeaveSettingsButton = (event) => {
-    //console.log("onMouseLeaveSettingsButton", event.target.name, event.target.value);
     if (!event.target.disabled) {
       this.setState({
         enteredSettingsButtonName: null,
@@ -150,8 +137,6 @@ class DrawerContent extends Component {
     let newViewParams = {...this.state.viewParams};
     newViewParams[event.target.name] = event.target.value;
     let targetName = (event.target && event.target.name) ? event.target.name : null
-
-    console.log(`targetName ${targetName}`);
 
     if (targetName === "sampleSet") {
       switch (event.target.value) {
@@ -175,73 +160,18 @@ class DrawerContent extends Component {
           break;
       }
     }
-
-    //
-    // we have do some annoying custom things specific to the selected genome or mode
-    //
-    // if (targetName === "sampleSet") {
-      // console.warn("switching sampleSet!", targetName);
-      // switch (event.target.value) {
-      //   case "vA":
-      //   case "vB":
-      //     // newViewParams.mode = "single";
-      //     // newViewParams.group = "all";
-      //     newViewParams.genome = "hg19";
-      //     newViewParams.model = "15";
-      //     newViewParams.complexity = "KL";
-      //     newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
-      //     break;
-      //   case "vC":
-      //     // newViewParams.mode = "single";
-      //     // newViewParams.group = "all";
-      //     newViewParams.genome = "hg19";
-      //     newViewParams.model = "18";
-      //     newViewParams.complexity = "KL";
-      //     newViewParams.group = (this.state.viewParams.mode === "single") ? "all" : "Male_vs_Female";
-      //     break;
-      //   case "vD":
-      //     newViewParams.mode = "single";
-      //     newViewParams.group = "all";
-      //     newViewParams.genome = "mm10";
-      //     newViewParams.model = "15";
-      //     newViewParams.complexity = "KL";  
-      //     break;
-      //   case "vE":
-      //     newViewParams.mode = "single";
-      //     newViewParams.group = "Female";
-      //     newViewParams.genome = "hg19";
-      //     newViewParams.model = "18";
-      //     newViewParams.complexity = "KL";  
-      //     break;
-      //   case "vF":
-      //     newViewParams.mode = "single";
-      //     newViewParams.group = "Female";
-      //     newViewParams.genome = "hg19";
-      //     newViewParams.model = "18";
-      //     newViewParams.complexity = "KL";  
-      //     break;
-      //   default:
-      //     throw Error("Unknown sampleSet parameter specified in DrawerContent:onClickSettingsButton()");
-      // }
-      // console.log(`newViewParams ${JSON.stringify(newViewParams)}`);
-    // }
     
     if (targetName === "mode") {
       // get toggle value from event.target.checked
       event.target.value = (!event.target.checked) ? "single" : "paired";
-      // console.log(`event.target.value ${event.target.value}`);
-      // console.log(`viewParams ${JSON.stringify(this.props.viewParams, null, 2)}`);
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
-        // newViewParams.group = Constants.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         newViewParams.group = Manifest.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         if ((newViewParams.sampleSet === "vC") && (newViewParams.model === "15")) {
           newViewParams.model = "18";
         }
       }
       else if (event.target.value === "paired") {
-        // newViewParams.genome = ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38")) ? "hg19" : newViewParams.genome;
-        // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         newViewParams.complexity = ( ((newViewParams.sampleSet === "vC") && (newViewParams.complexity !== "KL")) || (newViewParams.complexity === "KLss") ) ? "KL" : newViewParams.complexity;
       }
@@ -256,26 +186,19 @@ class DrawerContent extends Component {
     if (targetName === "model") {
       if ((newViewParams.sampleSet === "vA") && (newViewParams.mode === "paired")) {
         // is the group available for the selected model? if not, we need to revert to a useful default
-        // let vAGroupAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
         let vAGroupAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
         if (vAGroupAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
-          // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
           newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
         }
       }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "15")) {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
-          // const vCKeysToInspect15State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           const vCKeysToInspect15State = Object.keys(Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect15State.indexOf(newViewParams.group) === -1) {
             newViewParams.group = "Adult_versus_Embryonic";
           }
           else {
-            // const vCKeysToInspect15StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
             const vCKeysToInspect15StateModelAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome][newViewParams.group].availableForModels;
-            // console.log(`newViewParams.sampleSet ${newViewParams.sampleSet}`);
-            // console.log(`newViewParams.genome ${newViewParams.genome}`);
-            // console.log(`Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome] ${JSON.stringify(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome])}`);
             if (vCKeysToInspect15StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
               newViewParams.group = "Adult_versus_Embryonic";
             }
@@ -284,34 +207,22 @@ class DrawerContent extends Component {
       }
       if ((newViewParams.sampleSet === "vC") && (newViewParams.mode === "paired") && (newViewParams.model === "18")) {
         if ((newViewParams.genome === "hg19") || (newViewParams.genome === "hg38")) {
-          // const vCKeysToInspect18State = Object.keys(Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           const vCKeysToInspect18State = Object.keys(Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome]);
           if (vCKeysToInspect18State.indexOf(newViewParams.group) === -1) {
-            // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
           }
           else {
-            // const vCKeysToInspect18StateModelAvailability = Constants.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
             const vCKeysToInspect18StateModelAvailability = Manifest.groupsByGenome[newViewParams.sampleSet][newViewParams.genome].availableForModels;
             if (!vCKeysToInspect18StateModelAvailability) {
-              // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
               newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
             else if (vCKeysToInspect18StateModelAvailability.indexOf(parseInt(newViewParams.model)) === -1) {
-              // newViewParams.group = Constants.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
               newViewParams.group = Manifest.defaultPairedGroupKeys[newViewParams.sampleSet][newViewParams.genome];
             }
           }
         }
       }
     }
-
-    // if ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg38") && (newViewParams.group === "Male_vs_Female")) {
-    //   newViewParams.group = "Male_donors_versus_Female_donors";
-    // }
-    // else if ((newViewParams.sampleSet === "vC") && (newViewParams.genome === "hg19") && (newViewParams.group === "Male_donors_versus_Female_donors")) {
-    //   newViewParams.group = "Male_vs_Female";
-    // }
     
     //
     // if the user clicks on a preferred biosample grouping, we handle that here
@@ -324,7 +235,6 @@ class DrawerContent extends Component {
     // back to generic business...
     //
     let newViewParamsAreEqual = this.compareViewParams(newViewParams, this.props.viewParams);
-    // if (!newViewParamsAreEqual) { console.log("new", newViewParams); }
     let newTabs = {...this.state.tabs};
     newTabs.exemplars = newViewParamsAreEqual;
     this.setState({
@@ -357,7 +267,6 @@ class DrawerContent extends Component {
     let singleMode = false;
     let pairedMode = false;
     for (let i = 0; i < availableOverriddenSampleSetMetadataByAssemblyModelComplexity.length; i++) {
-      // console.log(`availableOverriddenSampleSetMetadataByAssemblyModelComplexity[${i}] ${availableOverriddenSampleSetMetadataByAssemblyModelComplexity[i]}`);
       const group = availableOverriddenSampleSetMetadataByAssemblyModelComplexity[i];
       if (group.includes('versus')) pairedMode = true; else singleMode = true;
       if (singleMode && pairedMode) break;
@@ -368,7 +277,6 @@ class DrawerContent extends Component {
   modeSectionBody = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
     const isSampleSetModeSwitchDisabled = this.isSampleSetModeSwitchDisabled();
-    // console.log(`isSampleSetModeSwitchDisabled ${isSampleSetModeSwitchDisabled}`);
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
@@ -391,7 +299,6 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
-    // let modeToggleDisabled = ((activeSampleSet !== "vA") && (activeSampleSet !== "vC") && (activeSampleSet !== "vD") && (activeSampleSet !== "vF") && (activeSampleSet !== "vG")) ? true : false; // allow mode switch for Roadmap human and Gorkin mouse datasets
     let modeToggleDisabled = isSampleSetModeSwitchDisabled;
     if (activeSampleSet === 'vG' && (this.props.isProductionSite || this.props.isInternalProductionSite)) modeToggleDisabled = true;
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
@@ -408,23 +315,19 @@ class DrawerContent extends Component {
 
   genomeSectionBody = () => {
     const availableAssemblies = this.availableAssembliesForSampleSet();
-    // console.log(`availableAssemblies ${JSON.stringify(availableAssemblies)}`);
     const activeGenome = this.state.viewParams.genome;
     const activeSampleSet = this.state.viewParams.sampleSet;
     const activeMode = this.state.viewParams.mode;
-    // console.log(`[genomeSectionBody] ${activeGenome} ${activeSampleSet} ${activeMode}`);
     let result = [];
     const kButtonGroupPrefix = 'genome-bg-';
     let kButtonGroupIdx = 0;
     let kButtons = [];
     let kButtonIdx = 0;
-    // const genomes = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode];
     const genomes = Manifest.assembliesByMode[activeSampleSet][activeMode];
     if (!genomes) {
       return <div></div>;
     }
     Object.keys(genomes).forEach(k => {
-      // let kButtonLabels = Constants.genomesForSettingsDrawer[activeSampleSet][activeMode][k];
       let kButtonLabels = Manifest.assembliesByMode[activeSampleSet][activeMode][k];
       const kButtonPrefix = 'genome-bg-btn-';
       const kButtonParentPrefix = 'genome-bg-parent-btn-';
@@ -467,15 +370,11 @@ class DrawerContent extends Component {
   
   modelSectionBody = () => {
     const availableModels = this.availableModelsForSampleSet();
-    // console.log(`availableModels ${JSON.stringify(availableModels)}`);
     const activeGenome = this.state.viewParams.genome;
     const activeMode = this.state.viewParams.mode;
     const activeModel = this.state.viewParams.model;
     const activeSampleSet = this.state.viewParams.sampleSet;
     const activeGroup = this.state.viewParams.group;
-    // const activeGroupAvailabilityForModels = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup].availableForModels;
-    // const activeGroupAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome][activeGroup];
-    // const activeGenomeAvailability = Constants.groupsByGenome[activeSampleSet][activeGenome];
     const activeGenomeAvailability = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     let result = [];
     let kButtons = [];
@@ -483,13 +382,8 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
-    // let activeObj = (Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome]) ? Constants.modelsForSettingsDrawer[activeSampleSet][activeGenome][activeMode] : null;
     let activeObj = (Manifest.modelsByGenome[activeSampleSet][activeGenome]) ? Manifest.modelsByGenome[activeSampleSet][activeGenome][activeMode] : null;
     if (!activeObj) {
-      // console.log(`activeSampleSet ${activeSampleSet}`);
-      // console.log(`activeGenome ${activeGenome}`);
-      // console.log(`activeMode ${activeMode}`);
-      // console.log(`activeSampleSet ${activeSampleSet}`);
       return result;
     }
     if (this.props.isProductionSite) { 
@@ -502,10 +396,8 @@ class DrawerContent extends Component {
     Object.keys(activeObj).forEach(k => {
       if (activeObj[k].visible) {
         const isActive = (activeModel === k);
-        // console.log(`activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value) ${activeObj[k].value} ${JSON.stringify(activeGroupAvailabilityForModels)} ${activeGroupAvailabilityForModels.indexOf(parseInt(activeObj[k].value))} ${!activeObj[k].enabled}`);
         const isInactiveForModel = activeGenomeAvailability[activeGroup] && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
         const isDisabled = !activeObj[k].enabled || isInactiveForModel || !availableModels.includes(parseInt(activeObj[k].value));
-        // console.log(`isDisabled ${isDisabled}`);
         const kLabel = activeObj[k].titleText;
         const kValue = activeObj[k].value;
         let kButtonKey = kButtonPrefix + kButtonIdx;
@@ -538,25 +430,12 @@ class DrawerContent extends Component {
     const orderedSampleSetKeys = Manifest.orderedSampleSetKeys;
     orderedSampleSetKeys.forEach(k => {
       if (((k === "vB") || (k === "vE") || (k === "vF")) && (this.props.isProductionSite)) return;
-      // if (Constants.sampleSetsForSettingsDrawer[k].visible) {
-      //   const kLabel = Constants.sampleSetsForSettingsDrawer[k].titleText;
-      //   const kValue = Constants.sampleSetsForSettingsDrawer[k].value;
-      //   const isActive = (activeSampleSet === k);
-      //   const isDisabled = !Constants.sampleSetsForSettingsDrawer[k].enabled;
-      //   let kButtonKey = kButtonPrefix + kButtonIdx;
-      //   let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
-      //   let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
-      //   let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}} dangerouslySetInnerHTML={{ __html: kLabel }} />;
-      //   kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="sampleSet" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning sample-set-radio-label-text"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-      //   kButtonIdx++;
-      // }
-      // console.log(`Manifest.formattedDescriptionsBySampleSet[k] ${JSON.stringify(Manifest.formattedDescriptionsBySampleSet[k])}`);
       const endpointURL = Manifest.trackServerBySampleSet[k];
       if (Manifest.formattedDescriptionsBySampleSet[k]) {
         const kLabel = Manifest.formattedDescriptionsBySampleSet[k];
         const kValue = k;
         const isActive = (activeSampleSet === k);
-        const isDisabled = false; // !Manifest.formattedDescriptionsBySampleSet[k].enabled;
+        const isDisabled = false;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -770,7 +649,6 @@ class DrawerContent extends Component {
 
   preferredSamplesSectionBody = () => {
     const availableSamples = this.availableSamplesForSampleSet();
-    // console.log(`availableSamples ${JSON.stringify(availableSamples)}`);
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'preferred-samples-bg-btn-';
@@ -812,41 +690,23 @@ class DrawerContent extends Component {
     let activeMode = this.state.viewParams.mode;
     let activeGenome = this.state.viewParams.genome;
     let activeComplexity = this.state.viewParams.complexity;
-    // if (activeSampleSet === "vD") {
-    //   activeGenome = "mm10";
-    //   activeModel = 15;
-    //   activeComplexity = "KL";
-    // }
-    // let md = Constants.groupsByGenome[activeSampleSet][activeGenome];
     let md = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
         "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18], availableForComplexities:["KL", "KLs"] }
       };
     }
-    
-    // console.log("------");
-    // console.log(`activeSampleSet ${JSON.stringify(activeSampleSet, null, 2)}`);
-    // console.log(`activeModel ${JSON.stringify(activeModel, null, 2)}`);
-    // console.log(`activeMode ${JSON.stringify(activeMode, null, 2)}`);
-    // console.log(`activeGenome ${JSON.stringify(activeGenome, null, 2)}`);
-    // console.log(`activeComplexity ${JSON.stringify(activeComplexity, null, 2)}`);
-    // console.log(`md ${JSON.stringify(md, null, 2)}`);
-    // console.log("------");
 
     if (!md) return null;
 
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     let preferredSamples = jp.query(samples, '$..[?(@.preferred==true)]');
     preferredSamples = preferredSamples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
-    // console.log(`preferredSamples ${JSON.stringify(preferredSamples)}`);
     let enabledPreferredSamples = (activeSampleSet === 'vG' && (this.props.isProductionSite || this.props.isInternalProductionSite)) ? jp.query(preferredSamples, '$..[?(@.enabled==true && @.visibleInProd==true)]') : jp.query(preferredSamples, '$..[?(@.enabled==true)]');
-    // console.log(`enabledPreferredSamples ${JSON.stringify(enabledPreferredSamples)}`);
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledPreferredSampleItems = toObj(jp.query(enabledPreferredSamples, "$..value"), jp.query(enabledPreferredSamples, "$..text"));
     let enabledPreferredSampleMkItems = toObj(jp.query(enabledPreferredSamples, "$..value"), jp.query(enabledPreferredSamples, "$..mediaKey"));
     let ks = Object.keys(enabledPreferredSampleItems);
-    // console.log(`ks ${JSON.stringify(ks)}`);
     return ks.map((s) => {
       let sv = md[s].sortValue || s;
       return {'label' : enabledPreferredSampleItems[s], 'mediaKey': enabledPreferredSampleMkItems[s], 'value' : s, 'sortValue' : sv};
@@ -855,7 +715,6 @@ class DrawerContent extends Component {
   
   samplesSectionBody = () => {
     const availableSamples = this.availableSamplesForSampleSet();
-    // console.log(`availableSamples ${JSON.stringify(availableSamples)}`);
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'samples-bg-btn-';
@@ -868,13 +727,11 @@ class DrawerContent extends Component {
     samples.sort(compareOnSortValue);
     Object.keys(samples).forEach(k => {
       let kSample = samples[k];
-      // console.log(`kSample ${JSON.stringify(kSample)}`);
       let kLabel = kSample.label;
       let kValue = kSample.value;
       let kMediaKey = kSample.mediaKey;
       const isActive = (this.state.viewParams.group === kValue);
       let isDisabled = !availableSamples.includes(kMediaKey);
-      // console.log(`availableSamples.includes(${kMediaKey}) ${availableSamples.includes(kMediaKey)}`);
       let kButtonKey = kButtonPrefix + kButtonIdx;
       let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
       let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
@@ -907,30 +764,17 @@ class DrawerContent extends Component {
     }
     if (!md) return null;
 
-    // console.log("------");
-    // console.log(`activeSampleSet ${JSON.stringify(activeSampleSet, null, 2)}`);
-    // console.log(`activeModel ${JSON.stringify(activeModel, null, 2)}`);
-    // console.log(`activeMode ${JSON.stringify(activeMode, null, 2)}`);
-    // console.log(`activeGenome ${JSON.stringify(activeGenome, null, 2)}`);
-    // console.log(`activeComplexity ${JSON.stringify(activeComplexity, null, 2)}`);
-    // console.log(`md ${JSON.stringify(md, null, 2)}`);
-    // console.log("------");
-
     let samples = jp.query(md, '$..[?(@.subtype=="' + activeMode + '")]');
     samples = samples.filter(d => (d.availableForModels && d.availableForModels.indexOf(activeModel) !== -1));
-    // console.log(`samples ${JSON.stringify(samples)}`);
     // let enabledSamples = jp.query(samples, '$..[?(@.enabled==true)]');
     let enabledSamples = (activeSampleSet === 'vG' && (this.props.isProductionSite || this.props.isInternalProductionSite)) ? jp.query(samples, '$..[?(@.enabled==true && @.visibleInProd==true)]') : jp.query(samples, '$..[?(@.enabled==true)]');
-    // console.log(`activeModel ${activeModel} enabledSamples ${JSON.stringify(enabledSamples)}`);
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let enabledSampleItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..text"));
     let enabledSampleMkItems = toObj(jp.query(enabledSamples, "$..value"), jp.query(enabledSamples, "$..mediaKey"));
     let ks = Object.keys(enabledSampleItems);
-    // console.log(`enabledSampleMkItems ${JSON.stringify(enabledSampleMkItems)}`);
     return ks.map((s) => {
       let sv = md[s].sortValue || s;
       return {'label' : enabledSampleItems[s], 'mediaKey': enabledSampleMkItems[s], 'value' : s, 'sortValue' : sv};
-      // return {'label' : enabledSampleItems[s], 'value' : s};
     });
   }
   
@@ -939,67 +783,8 @@ class DrawerContent extends Component {
     let self = this;
         
     function contentByType(type) {
-      // console.log(`[DrawerContent] > render > contentByType ${type}`);
       
       switch (type) {
-        
-        // case "roi": {
-        //   let roiResult = "";
-        //   roiResult = <BootstrapTable 
-        //                 id="drawer-content-roi-table"
-        //                 keyField='idx' 
-        //                 data={self.props.roiTableData}
-        //                 columns={roiColumns} 
-        //                 bootstrap4={true} 
-        //                 bordered={false}
-        //                 classes="elementTable"
-        //                 rowStyle={customRoiRowStyle}
-        //                 rowEvents={customRoiRowEvents}
-        //                 />
-        //   return <div style={{"height":self.props.drawerHeight,"overflowY":"auto"}} >{roiResult}</div>;
-        // }
-
-        // case "exemplars": {
-        //   let exemplarResult = "";
-        //   let exemplarTooltips = [];
-        //   const kExemplarTooltipPrefix = 'tooltip-exemplar-';
-        //   let kExemplarTooltipIdx = 0;
-        //     // eslint-disable-next-line no-unused-vars
-        //   self.props.exemplarChromatinStates.forEach((val, idx) => {
-        //     let exemplarId = "exemplar-chromatinState-" + val;
-            
-        //     // console.log("val", val);
-        //     // console.log("idx", idx);
-        //     // console.log("self.props.viewParams.genome", self.props.viewParams.genome);
-        //     // console.log("self.props.viewParams.model", self.props.viewParams.model);
-        //     // console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model]);
-        //     // console.log("Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]", Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val]);
-
-        //     let exemplarChromatinStateName = ((Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val] && Constants.stateColorPalettes[self.props.viewParams.genome][self.props.viewParams.model][val][0]) || "Undefined");
-        //     const kExemplarTooltipKey = kExemplarTooltipPrefix + kExemplarTooltipIdx;
-        //     exemplarTooltips.push(<ReactTooltip key={kExemplarTooltipKey} id={exemplarId} aria-haspopup='true' place="right" type="dark" effect="float">{exemplarChromatinStateName}</ReactTooltip>);
-        //     kExemplarTooltipIdx++;
-        //   });
-        //   exemplarResult = <BootstrapTable 
-        //                      keyField='idx' 
-        //                      data={self.props.exemplarTableData}
-        //                      columns={exemplarColumns} 
-        //                      bootstrap4={true} 
-        //                      bordered={false}
-        //                      classes="elementTable"
-        //                      rowStyle={customExemplarRowStyle}
-        //                      rowEvents={customExemplarRowEvents}
-        //                      />
-        //   return (self.props.exemplarTableData.length > 0) 
-        //     ? <div style={{"height": self.props.drawerHeight, "overflowY": "auto"}}>
-        //         {exemplarResult}{exemplarTooltips}
-        //       </div> 
-        //     : <div style={{"display": "flex", "position": "relative", "paddingLeft": "50px", "height": parseInt(parseInt(self.props.drawerHeight) / 2)}}>
-        //         <div style={{"display": "inline-block", "alignSelf": "flex-end"}} className="regions-not-found-message">
-        //           {Constants.defaultApplicationNoExemplarsFoundMessage}
-        //         </div>
-        //       </div>;
-        // }
 
         case "settings": {
           let parameters = [];
@@ -1010,7 +795,6 @@ class DrawerContent extends Component {
           let genome = self.props.viewParams.genome;
           let genomeText = Constants.genomes[genome];
           let group = self.props.viewParams.group;
-          // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
           let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
           let model = self.props.viewParams.model;
           let modelText = Constants.models[model];
@@ -1241,7 +1025,6 @@ class DrawerContent extends Component {
         sort: true,
         // eslint-disable-next-line no-unused-vars
         sortFunc: (a, b, order, dataField, rowA, rowB) => {
-          //console.log(a.paddedPosition, b.paddedPosition, order, dataField);
           if (order === 'asc') {
             return b.paddedPosition.localeCompare(a.paddedPosition);
           }

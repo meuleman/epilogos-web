@@ -39,4 +39,8 @@ fi
 echo "Note: higlass-manage installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
 # python --version
 ${PWD}/scripts/higlass_manage_ingest_baseline_assets.py ${PWD}/manifest.json ${PWD}/scripts ${REACT_APP_HG_MANAGE_NAME} ${REACT_APP_HG_MANAGE_DATA_DIR}
+
 deactivate
+
+echo "Done"
+exit 0

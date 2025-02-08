@@ -51,3 +51,6 @@ if [ -z "${REACT_APP_HG_MANAGE_VERSION}" ]; then
 fi
 echo "Note: higlass-manage package successfully installed [version:${REACT_APP_HG_MANAGE_VERSION}]"
 deactivate
+
+echo "Done"
+exit 0

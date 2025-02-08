@@ -68,26 +68,51 @@ then
     fi
 fi
 
-REACT_APP_HG_MANAGE_BASE_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME})
-if [ -z "${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}" ]; then
-    echo "Error: REACT_APP_HG_MANAGE_BASE_IMAGE_NAME ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME} image not found"
-    echo "Note: Please follow installation instructions in README.md to setup the higlass-manage and simsearch services in order to perform cleanup"
-    exit -1
-fi
-echo "Note: Removing base higlass-manage image..."
-docker rmi -f ${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}
+# REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_RUNNING}")
+# if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}" ]; then
+#     echo "Warning: ${REACT_APP_HG_MANAGE_NAME_RUNNING} container was not found"
+#     echo "Note: This warning may show up if the Docker container was removed manually"
+# else
+#     echo "Note: Removing running higlass-manage container..."
+#     docker rm -f ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING}
+#     sleep 1
+# fi
 
 REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME})
 if [ -z "${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}" ]; then
-    echo "Error: REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} image not found"
-    echo "Note: Please follow installation instructions in README.md to setup the higlass-manage and simsearch services in order to perform cleanup"
-    exit -1
+    echo "Warning: ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_NAME} Docker image was not found"
+    echo "Note: This warning may show up if the Docker image was removed manually"
+else
+    echo "Note: Removing modified higlass-manage image..."
+    docker rmi -f ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+    sleep 1
 fi
-echo "Note: Removing modified higlass-manage image..."
-docker rmi -f ${REACT_APP_HG_MANAGE_WITH_SIMSEARCH_PROXY_IMAGE_ID}
+
+REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT=$(docker ps -aqf "name=${REACT_APP_HG_MANAGE_NAME_ROOT}")
+if [ -z "${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT}" ]; then
+    echo "Warning: ${REACT_APP_HG_MANAGE_NAME_ROOT} Docker container was not found"
+    echo "Note: This warning may show up if the Docker container was removed manually"
+else
+    echo "Note: Removing base higlass-manage container..."
+    docker rm -f ${REACT_APP_HG_MANAGE_CONTAINER_ID_ROOT}
+    sleep 1
+fi
+
+REACT_APP_HG_MANAGE_BASE_IMAGE_ID=$(docker images -q ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME})
+if [ -z "${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}" ]; then
+    echo "Warning: ${REACT_APP_HG_MANAGE_BASE_IMAGE_NAME} Docker image was not found"
+    echo "Note: This warning may show up if the Docker image was removed manually"
+else
+    echo "Note: Removing base higlass-manage image..."
+    docker rmi -f ${REACT_APP_HG_MANAGE_BASE_IMAGE_ID}
+    sleep 1
+fi
 
 echo "Note: Removing manifest.core_overrides.json..."
 CORE_OVERRIDES_FN=${PWD}/manifest.core_overrides.json
 if [ -e "${CORE_OVERRIDES_FN}" ]; then
     rm -f ${CORE_OVERRIDES_FN}
 fi
+
+echo "Done"
+exit 0

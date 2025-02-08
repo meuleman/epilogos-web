@@ -35,6 +35,7 @@ import "@apr144/higlass-multivec/dist/higlass-multivec.js";
 // Application constants
 import * as Constants from "../Constants.js";
 import * as Helpers from "../Helpers.js";
+import * as Manifest from '../Manifest.js';
 
 // Application autocomplete
 import GeneSearch from './GeneSearch/GeneSearch';
@@ -535,7 +536,7 @@ class Portal extends Component {
   }
     
   singleGroupMenuItems = () => {
-    let md = Constants.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
+    let md = Manifest.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
     let singles = jp.query(md, '$..[?(@.subtype=="single")]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let groupItems = toObj(jp.query(singles, "$..value"), jp.query(singles, "$..text"));
@@ -552,7 +553,7 @@ class Portal extends Component {
   }
   
   singleGroupMenuItemSelectionToText = (s) => {
-    let md = Constants.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
+    let md = Manifest.groupsByGenome[this.state.hgViewParams.sampleSet][this.state.singleGroupGenomeDropdownSelection];
     let singles = jp.query(md, '$..[?(@.subtype=="single")]');
     let toObj = (ks, vs) => ks.reduce((o,k,i)=> {o[k] = vs[i]; return o;}, {});
     let groupItems = toObj(jp.query(singles, "$..value"), jp.query(singles, "$..text"));

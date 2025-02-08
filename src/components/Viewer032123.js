@@ -39,11 +39,6 @@ import QueryTargetViewer from "./QueryTargetViewer"
 
 // Application autocomplete
 import GeneSearch from './GeneSearch/GeneSearch';
-// import Autocomplete from "./Autocomplete/Autocomplete";
-
-// Region indicator content
-// import RegionMidpointIndicator from "./RegionMidpointIndicator";
-// import RegionIntervalIndicator from "./RegionIntervalIndicator";
 
 // Drawer content
 import DrawerContent from "./DrawerContent032123";
@@ -76,9 +71,6 @@ import SimsearchPill from "./SimsearchPill";
 import RoiButton from "./RoiButton";
 import RoiTable from "./RoiTable";
 
-// GenomeSelectButton
-// import GenomeSelectButton from "./GenomeSelectButton";
-
 // HTML5 file saver
 // cf. https://github.com/eligrey/FileSaver.js/
 import saveAs from 'file-saver';
@@ -88,7 +80,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 // Validate strings (URLs etc.)
 import validator from 'validator';
-// import { type } from "os";
 
 // Generate UUIDs
 export const uuid4 = require("uuid4");
@@ -154,7 +145,6 @@ class Viewer extends Component {
       autocompleteInputEntered: false,
       autocompleteInputDisabled: false,
       showDataNotice: true,
-      // showUpdateNotice: false,
       tempHgViewParams: {...Constants.viewerHgViewParameters},
       advancedOptionsVisible: false,
       genomeSelectIsEnabled: false,
@@ -211,7 +201,6 @@ class Viewer extends Component {
       selectedSimSearchRegionStart: -1,
       selectedSimSearchRegionStop: -1,
       selectedSimSearchRegionBeingUpdated: false,
-      // simSearchTableIsVisible: false,
       simSearchTableKey: 0,
       simSearchIndicatorIsVisible: false,
       simSearchIndicatorLeftPx: -1,
@@ -333,24 +322,19 @@ class Viewer extends Component {
       showingClipboardCopiedAlert: false,
 
       mousePosition: {x:-1000, y:-1000},
-
-      // locationHandles: 0,
     };
 
     //
     // debounced browser history update
     //
     this.updateViewerHistory = this.debounce((viewerUrlStr) => {
-      // console.log(`updateViewerHistory - ${viewerUrlStr}`);
       const previousUrlStr = window.history.state;
-      // console.log(`previousUrlStr ${previousUrlStr}`);
       const previousUrlQuery = previousUrlStr && Helpers.getJsonFromSpecifiedUrl(previousUrlStr);
       const currentUrlQuery = Helpers.getJsonFromSpecifiedUrl(viewerUrlStr);
       //
       // allow up to ten bases of slippage
       //
       const baseSlippage = 10;
-      // (previousUrlQuery.mode === this.state.hgViewParams.mode) &&
       if (previousUrlQuery) {
         const previousUrlIdentical = ((previousUrlQuery.mode === this.state.hgViewParams.mode) && 
           (previousUrlQuery.genome === this.state.hgViewParams.genome) && 
@@ -360,13 +344,9 @@ class Viewer extends Component {
           (previousUrlQuery.sampleSet === this.state.hgViewParams.sampleSet) && 
           (previousUrlQuery.chrLeft === this.state.currentPosition.chrLeft) && 
           (previousUrlQuery.chrRight === this.state.currentPosition.chrRight) && 
-          (previousUrlQuery.gatt === this.state.hgViewParams.gatt)); 
-        // console.log(`previousUrlIdentical ${previousUrlIdentical}`);
+          (previousUrlQuery.gatt === this.state.hgViewParams.gatt));
         
         const previousCurrentDiffWithinBounds = (previousUrlIdentical && (Math.abs(this.state.currentPosition.startLeft - previousUrlQuery.start) < baseSlippage) && (Math.abs(this.state.currentPosition.stopRight - previousUrlQuery.stop) < baseSlippage));
-        // console.log(`previousCurrentDiffWithinBounds ${previousUrlIdentical}`);
-        
-        // const exemplarRowSelectionChanged = (currentUrlQuery.serIdx && (currentUrlQuery.serIdx !== Constants.defaultApplicationSerIdx)) || (previousUrlQuery && previousUrlQuery.serIdx && (previousUrlQuery.serIdx !== currentUrlQuery.serIdx) && (currentUrlQuery.serIdx !== Constants.defaultApplicationSerIdx));
 
         const simSearchRowSelectionChanged = (currentUrlQuery.ssrIdx && (currentUrlQuery.ssrIdx !== Constants.defaultApplicationSsrIdx)) || (previousUrlQuery && previousUrlQuery.ssrIdx && (previousUrlQuery.ssrIdx !== currentUrlQuery.ssrIdx) && (currentUrlQuery.ssrIdx !== Constants.defaultApplicationSsrIdx));
 
@@ -393,7 +373,6 @@ class Viewer extends Component {
           // some versions of window.history.pushState do not provide title update functionality
           window.history.pushState(viewerUrlStr, historyTitle, viewerUrlStr);
           document.title = historyTitle;
-          // this.simSearchQuery();
         }
       }
     }, Constants.defaultViewerHistoryChangeEventDebounceTimeout);
@@ -414,7 +393,6 @@ class Viewer extends Component {
     this.epilogosViewerContainerErrorOverlay = React.createRef();
     this.epilogosViewerContainerErrorOverlayNotice = React.createRef();
     this.epilogosViewerHamburgerButton = React.createRef();
-    // this.epilogosViewerUpdateNotice = React.createRef();
     this.epilogosViewerDataNotice = React.createRef();
     this.epilogosViewerParameterSummary = React.createRef();
     this.epilogosViewerNavbarRighthalf = React.createRef();
@@ -423,13 +401,11 @@ class Viewer extends Component {
     this.epilogosViewerTrackLabelSingleGeneAnnotation = React.createRef();
     //
     this.epilogosViewerContainerVerticalDropMain = React.createRef();
-    //this.epilogosViewerContainerVerticalDropLabel = React.createRef();
     this.epilogosViewerContainerVerticalDropMainRegionMidpointIndicator = React.createRef();
     this.epilogosViewerContainerVerticalDropMainTop = React.createRef();
     this.epilogosViewerContainerVerticalDropMainBottom = React.createRef();
     //
     this.epilogosViewerContainerIntervalDropMain = React.createRef();
-    //this.epilogosViewerContainerIntervalDropLabel = React.createRef();
     this.epilogosViewerContainerIntervalDropMainRegionIntervalIndicator = React.createRef();
     this.epilogosViewerContainerIntervalDropMainLeftTop = React.createRef();
     this.epilogosViewerContainerIntervalDropMainRightTop = React.createRef();
@@ -455,7 +431,6 @@ class Viewer extends Component {
     this.genomeSelectButtonRef = React.createRef();
     
     // timeout for location change
-    //this.viewerLocationChangeEventTimer = null;
     this.viewerZoomPastExtentTimer = null;
     this.viewerHistoryChangeEventTimer = null;
     this.viewerKeyEventChangeEventTimer = null;
@@ -463,7 +438,6 @@ class Viewer extends Component {
     // get current URL attributes (protocol, port, etc.)
     this.currentURL = document.createElement('a');
     this.currentURL.setAttribute('href', window.location.href);
-    // console.log("[constructor] this.currentURL.port", this.currentURL.port);
     
     // is this site production or development?
     let sitePort = parseInt(this.currentURL.port);
@@ -471,8 +445,6 @@ class Viewer extends Component {
     this.isProductionSite = ((sitePort === "") || (sitePort === 443)); // || (sitePort !== 3000 && sitePort !== 3001));
     this.isInternalProductionSite = (sitePort === 1234);
     this.isProductionProxySite = (sitePort === Constants.applicationProductionProxyPort); // || (sitePort !== 3000 && sitePort !== 3001));
-    // console.log("[constructor] this.isProductionSite", this.isProductionSite);
-    // console.log("[constructor] this.isProductionProxySite", this.isProductionProxySite);
 
     //
     // initialize state from URL on initial request
@@ -499,10 +471,6 @@ class Viewer extends Component {
     newTempHgViewParams.start = parseInt(queryObj.start || Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].start);
     newTempHgViewParams.stop = parseInt(queryObj.stop || Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].stop);
 
-    //newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType;
-    // if (!(newTempHgViewParams.annotationsTrackType in Constants.applicationAnnotationsTrackTypes)) {
-    //   newTempHgViewParams.annotationsTrackType = Constants.defaultApplicationAnnotationsTrackType;
-    // }
     this.state.selectedExemplarRowIdxOnLoad = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
     this.state.selectedExemplarRowIdx = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
     this.state.selectedNonRoiRowIdxOnLoad = parseInt(this.state.selectedExemplarRowIdx);
@@ -567,8 +535,6 @@ class Viewer extends Component {
     }
 
     if ((newTempHgViewParams.chrLeft === newTempHgViewParams.chrRight) && (newTempHgViewParams.start === newTempHgViewParams.stop)) {
-      // console.log("[constructor] Coordinates are identical!");
-      // throw new TypeError();
       newTempHgViewParams.chrLeft = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].chr;
       newTempHgViewParams.chrRight = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].chr;
       newTempHgViewParams.start = Constants.defaultApplicationPositions[newTempHgViewParams.sampleSet][newTempHgViewParams.genome].start;
@@ -581,10 +547,8 @@ class Viewer extends Component {
         stopLeft : newTempHgViewParams.stop,
         stopRight : newTempHgViewParams.stop
       };
-      // console.log(`this.state.currentPosition ${JSON.stringify(this.state.currentPosition, null, 2)}`);
     }
     else if ((newTempHgViewParams.chrLeft === newTempHgViewParams.chrRight) && (newTempHgViewParams.start > newTempHgViewParams.stop)) {
-      //console.log("[constructor] swapping coords");
       const tempStart = newTempHgViewParams.start;
       newTempHgViewParams.start = newTempHgViewParams.stop;
       newTempHgViewParams.stop = tempStart;
@@ -596,7 +560,6 @@ class Viewer extends Component {
         stopLeft : newTempHgViewParams.stop,
         stopRight : newTempHgViewParams.stop
       };
-      // console.log(`this.state.currentPosition ${JSON.stringify(this.state.currentPosition, null, 2)}`);
     }
     
     function updateWithRoisInMemory(self) {
@@ -611,14 +574,12 @@ class Viewer extends Component {
           if (self.state.roiTableData && self.state.roiTableData.length > 0 && roiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) {
             self.roiButtonToggle(true, "constructor (updateWithRoisInMemory)");
           }
-        }, Constants.defaultApplicationRowRefreshInitTimer); // 0);
+        }, Constants.defaultApplicationRowRefreshInitTimer);
       }, 0); 
     }
 
     function updateWithSimSearchRegionsInMemory(self) {
       const firstSimSearchRegion = self.state.simSearchTableData[0];
-
-      // console.log(`firstSimSearchRegion ${JSON.stringify(firstSimSearchRegion)}`);
       
       let newCurrentPosition = self.state.currentPosition;
       newCurrentPosition.chrLeft = self.state.queryRegionIndicatorData.chromosome;
@@ -698,14 +659,9 @@ class Viewer extends Component {
         keepSuggestionInterval,
         "constructor",
       );
-
-      // if (self.state.selectedSimSearchRowIdxOnLoad !== Constants.defaultApplicationSsrIdx) {
-      //   self.queryTargetHgView.jumpToTargetRegionByIdx(self.state.selectedSimSearchRowIdxOnLoad);
-      // }
     }
     
     function updateWithDefaults(self) {
-      // console.log(`[constructor] updateWithDefaults()`);
       const scale = Helpers.calculateScale(newTempHgViewParams.chrLeft, newTempHgViewParams.chrRight, newTempHgViewParams.start, newTempHgViewParams.stop, self, true);
       self.state.previousViewScale = scale.diff;
       self.state.currentViewScale = scale.diff;
@@ -733,7 +689,7 @@ class Viewer extends Component {
       }
 
       self.triggerUpdate("update", "constructor (updateWithDefaults)");
-      const keepSuggestionInterval = true; // false;
+      const keepSuggestionInterval = true;
       self.updateViewerURL(
         mode,
         genome,
@@ -748,19 +704,8 @@ class Viewer extends Component {
         keepSuggestionInterval,
         "constructor",
       );
-
-      // if (self.state.selectedExemplarRowIdx !== Constants.defaultApplicationSerIdx) {
-      //   setTimeout(() => {
-      //     // self.state.selectedExemplarRowIdx = parseInt(queryObj.serIdx);
-      //     // console.log(`A (${self.state.selectedExemplarRowIdx}) | self.state.drawerActiveRegionTab ${self.state.drawerActiveRegionTab}`);
-      //     self.state.drawerActiveRegionTab = Constants.applicationRegionTypes.exemplars;
-      //     self.updateExemplarRowIdxFromCurrentIdx("skip", self.state.selectedExemplarRowIdx);
-          
-      //   }, Constants.defaultApplicationRowRefreshInitTimer);
-      // }
     }
     
-    // console.log(`[constructor] queryObj.roiSet ${queryObj.roiSet} queryObj.roiURL ${queryObj.roiURL}`);
     // 
     // If the roiSet parameter is defined, we check if there is a string defining intervals
     // for the url-decoded key.
@@ -769,12 +714,9 @@ class Viewer extends Component {
       this.state.roiEncodedSet = queryObj.roiSet;
       this.state.roiRawSet = decodeURIComponent(this.state.roiEncodedSet);
       if (this.state.roiRawSet in Constants.roiSets) {
-        // console.log("[constructor] queryObj.roiSet (decoded)", this.state.roiRawSet);
-        // const updateViaConstructor = true;
         this.roiRegionsUpdate(Constants.roiSets[this.state.roiRawSet], updateWithRoisInMemory, this);
       }
       else {
-        // console.log("[constructor] queryObj.roiSet (decoded) not in Constants.roiSets", this.state.roiRawSet);
         updateWithDefaults(this);
       }
     }
@@ -783,24 +725,10 @@ class Viewer extends Component {
     // to get the first row, to set position before the HiGlass container is rendered
     //
     else if (queryObj.roiURL && newTempHgViewParams.mode !== "qt") {
-      // this.state.activeTab = Constants.applicationRegionTypes.roi;
       this.state.selectedExemplarRowIdxOnLoad = Constants.defaultApplicationSerIdx;
       this.state.selectedExemplarRowIdx = Constants.defaultApplicationSerIdx;
       this.state.selectedNonRoiRowIdxOnLoad = Constants.defaultApplicationSerIdx;
-      // this.state.queryTargetQueryRegion = {
-      //   left: {
-      //     chr: newTempHgViewParams.chrLeft,
-      //     start: newTempHgViewParams.startLeft,
-      //     stop: newTempHgViewParams.stopLeft,
-      //   },
-      //   right: {
-      //     chr: newTempHgViewParams.chrRight,
-      //     start: newTempHgViewParams.startRight,
-      //     stop: newTempHgViewParams.stopRight,
-      //   },
-      // };
       setTimeout(() => {
-        // console.log("[constructor] queryObj.roiURL", queryObj.roiURL);
         this.updateRois(queryObj.roiURL, updateWithRoisInMemory);
       }, 0);
     }
@@ -821,9 +749,6 @@ class Viewer extends Component {
       this.state.simSearchQueryCountIsVisible = false;
       this.state.simSearchQueryCountIsEnabled = false;
 
-      // console.log(`queryScale ${JSON.stringify(queryScale)}`);
-      // console.log(`queryWindowSize ${JSON.stringify(queryWindowSize)}`);
-
       const handleSimSearchQueryForChromInfoFn = function handleSimSearchQueryForChromInfo(chromInfo, self) {
 
         const newViewconfUUID = Constants.viewerHgViewconfTemplates[newTempHgViewParams.mode];
@@ -831,8 +756,6 @@ class Viewer extends Component {
           self.state.hgViewParams.hgViewconfEndpointURL,
           newViewconfUUID, 
           self.state.hgViewParams.hgViewconfEndpointURLSuffix);
-
-        // console.log(`newHgViewconfURL ${newHgViewconfURL}`);
 
         axios.get(newHgViewconfURL)
           .then((res) => {
@@ -865,9 +788,6 @@ class Viewer extends Component {
               self.state.tempHgViewParams = newTempHgViewParams;
               const newSimSearchQuery = Helpers.recommenderV3QueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
               newSimSearchQuery.then((res) => {
-                if (!res.query) {
-                  // console.log(`res ${JSON.stringify(res)}`);
-                }
                 const queryRegionIndicatorData = {
                   chromosome: res.query.chromosome,
                   start: res.query.start,
@@ -883,18 +803,12 @@ class Viewer extends Component {
                   minMax: JSON.parse(res.query.minmax),
                 };
                 
-                // console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
-                // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
-      
-                // console.log(`mainHgViewconf before qt ${JSON.stringify(self.state.mainHgViewconf)}`);
-
                 const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
 
                 self.state.queryTargetModeWillRequireFullExpand = true;
                 self.state.queryRegionIndicatorData = queryRegionIndicatorData;
                 self.state.queryTargetLocalMinMax = newMinMax;
                 self.state.queryTargetGlobalMinMax = newMinMax;
-                // self.roiRegionsUpdate(res.hits[0], updateWithSimSearchRoisInMemory, self);
                 self.simSearchRegionsUpdate(res.hits[0], updateWithSimSearchRegionsInMemory, self);
               })
               // eslint-disable-next-line no-unused-vars
@@ -925,7 +839,6 @@ class Viewer extends Component {
             newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
             newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
             this.chromInfoCache[genome] = newChromInfo;
-            // throw new Error(`Error - [handleZoomPastExtent] could not retrieve chromosome information - ${JSON.stringify(err)}`);
           });
       }
     }
@@ -944,16 +857,12 @@ class Viewer extends Component {
   componentDidMount() {
     setTimeout(() => { 
       this.updateViewportDimensions();
-      // this.addCanvasWebGLContextLossEventListener();
-      // this.simulateWebGLContextLoss();
       setTimeout(() => {
-        // console.log("[updateViewportDimensions] W x H", this.state.width, this.state.height);
         this.setState({
           parameterSummaryKey: this.state.parameterSummaryKey + 1,
           recommenderV3CanAnimate: true,
           recommenderV3AnimationHasFinished: true,
         });
-        // this.updateViewerHistory();
       }, 0);
       this._gemRefreshTimer = setInterval(() => {
         if (!this.isProductionSite) {
@@ -964,8 +873,6 @@ class Viewer extends Component {
     window.addEventListener("resize", this.updateViewportDimensions);
     document.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("popstate", (e) => this.handlePopState(e));
-    // window.addEventListener("mouseup", this.updateViewerHistory, true);
-    // window.addEventListener("mousemove", this.handleMouseMove);
   }
   
   // eslint-disable-next-line no-unused-vars
@@ -977,14 +884,7 @@ class Viewer extends Component {
     document.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("popstate", null);
     this._gemRefreshTimer = null;
-    // window.removeEventListener("mouseup", this.updateViewerHistory, true);
-    // window.removeEventListener("mousemove", this.handleMouseMove);
   }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log(`[epilogos-web] nextProps ${JSON.stringify(nextProps, null, 2)}`);
-  //   console.log(`[epilogos-web] nextState ${JSON.stringify(nextState, null, 2)}`);
-  // }
 
   addCanvasWebGLContextLossEventListener = () => {
     const canvases = document.getElementsByTagName("canvas");
@@ -992,16 +892,7 @@ class Viewer extends Component {
       const canvas = canvases[0];
       // eslint-disable-next-line no-unused-vars
       canvas.addEventListener('webglcontextlost', (event) => {
-        // console.warn(`WebGL context lost`);
         window.location.reload();
-        // if (this.mainHgView) {
-        //   this.setState({
-        //     mainHgViewKey: this.state.mainHgViewKey + 1,
-        //     queryHgViewKey: this.state.queryHgViewKey + 1,
-        //   }, () => {
-        //     console.error("WebGL context was lost; refreshed HiGlass canvas");
-        //   });
-        // }
       });
     }
   }
@@ -1026,13 +917,11 @@ class Viewer extends Component {
         const canvas = canvases[0];
         const webgl2Context = canvas.getContext("webgl2", {});
         if (webgl2Context) {
-          // console.log(`losing webgl2 context...`);
           webgl2Context.getExtension('WEBGL_lose_context').loseContext();
         }
         else {
           const webglContext = canvas.getContext("webgl", {});
           if (webglContext) {
-            // console.log(`losing webgl context...`);
             webglContext.getExtension('WEBGL_lose_context').loseContext();
           }
         }
@@ -1066,15 +955,11 @@ class Viewer extends Component {
 
   // eslint-disable-next-line no-unused-vars
   handlePopState = (event) => {
-    // console.log("[handlePopState] handlePopState", location);
-    // console.log(`[handlePopState] location: ${document.location}, state: ${JSON.stringify(event.state)}`);
     const queryObj = Helpers.getJsonFromUrl();
-    // console.log(`queryObj ${JSON.stringify(queryObj)}`);
     let newTempHgViewParams = {...this.state.tempHgViewParams};
     newTempHgViewParams.genome = queryObj.genome || Constants.defaultApplicationGenome;
     newTempHgViewParams.model = queryObj.model || Constants.defaultApplicationModel;
     newTempHgViewParams.complexity = queryObj.complexity || Constants.defaultApplicationComplexity;
-    // newTempHgViewParams.group = queryObj.group || Constants.defaultApplicationGroup;
     newTempHgViewParams.group = queryObj.group || Manifest.defaultApplicationGroup;
     newTempHgViewParams.chrLeft = queryObj.chrLeft || Constants.defaultApplicationChr;
     newTempHgViewParams.chrRight = queryObj.chrRight || Constants.defaultApplicationChr;
@@ -1083,7 +968,6 @@ class Viewer extends Component {
     newTempHgViewParams.mode = queryObj.mode || Constants.defaultApplicationMode;
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
     newTempHgViewParams.roiMode = queryObj.roiMode || Constants.defaultApplicationRoiMode;
-    // newTempHgViewParams.annotationsTrackType = queryObj.annotationsTrackType || Constants.defaultApplicationAnnotationsTrackType;
     
     newTempHgViewParams.gatt = queryObj.gatt || Constants.defaultApplicationGattCategory;
     newTempHgViewParams.gac = queryObj.gac || Constants.defaultApplicationGacCategory;
@@ -1097,10 +981,6 @@ class Viewer extends Component {
       stopRight: newTempHgViewParams.stop
     };
     newTempHgViewParams.mode = (newTempHgViewParams.mode === 'qt') ? Constants.defaultApplicationMode : newTempHgViewParams.mode;
-    // console.log(`selectedExemplarRowIdxOnLoad ${this.state.selectedExemplarRowIdxOnLoad}`);
-    // console.log(`selectedExemplarRowIdx ${this.state.selectedExemplarRowIdx}`);
-    // console.log(`selectedRoiRowIdxOnLoad ${this.state.selectedRoiRowIdxOnLoad}`);
-    // console.log(`selectedRoiRowIdx ${this.state.selectedRoiRowIdx}`);
     this.setState({
       tempHgViewParams: newTempHgViewParams,
       selectedExemplarRowIdxOnLoad: parseInt(newSerIdx),
@@ -1125,7 +1005,6 @@ class Viewer extends Component {
     const J_KEY = 74;
     const R_KEY = 82;
     const S_KEY = 83;
-    // console.log(`Viewer - event.keyCode ${event.keyCode}`);
     switch (event.keyCode) {
       case ESCAPE_KEY: 
         if (this.state.drawerIsOpen) {
@@ -1146,8 +1025,6 @@ class Viewer extends Component {
       case LEFT_ARROW_KEY:
       case UP_ARROW_KEY:
         if (this.state.hgViewParams.mode !== 'qt' && !this.state.autocompleteSuggestionListShown) {
-          // if (!this.state.selectedExemplarBeingUpdated && this.state.activeTab === "exemplars") { this.updateExemplarRowIdxFromCurrentIdx("previous"); }
-          // if (!this.state.selectedRoiBeingUpdated && this.state.activeTab === "roi") { this.updateRoiRowIdxFromCurrentIdx("previous"); }
           if (this.state.suggestionTableIsVisible && !this.state.roiTableIsVisible) {
             event.preventDefault();
             this.updateSuggestionRowIdxFromCurrentIdx("previous", null);
@@ -1165,8 +1042,6 @@ class Viewer extends Component {
       case RIGHT_ARROW_KEY:
       case DOWN_ARROW_KEY:
         if (this.state.hgViewParams.mode !== 'qt' && !this.state.autocompleteSuggestionListShown) {
-          // if (!this.state.selectedExemplarBeingUpdated && this.state.activeTab === "exemplars") { this.updateExemplarRowIdxFromCurrentIdx("next"); }
-          // if (!this.state.selectedRoiBeingUpdated && this.state.activeTab === "roi") { this.updateRoiRowIdxFromCurrentIdx("next"); }
           if (this.state.suggestionTableIsVisible && !this.state.roiTableIsVisible) {
             event.preventDefault();
             this.updateSuggestionRowIdxFromCurrentIdx("next", null);
@@ -1199,8 +1074,6 @@ class Viewer extends Component {
         }
         break;
       case FORWARD_SLASH_KEY: {
-        // console.log(`FORWARD_SLASH_KEY`);
-        // console.log(`this.state.drawerIsOpen ${this.state.drawerIsOpen}`);
         if (this.state.drawerIsOpen) {
           this.closeDrawer();
         }
@@ -1213,13 +1086,11 @@ class Viewer extends Component {
         break;
       }
       default: 
-        // console.log(`searchInputLocationBeingChanged ${this.state.searchInputLocationBeingChanged} | ${event.keyCode}`);
         break;
     }
   }
 
   shiftRoiTableOffset = (newHitIdx, direction) => {
-    // console.log(`[Viewer] shiftRoiTableOffset | newHitIdx ${newHitIdx} | direction ${direction}`);
     const roiHitsWrapper = document.getElementById(`roi_hits_table_content`);
     const roiHitsTable = document.getElementById(`roi_hits_table`);
     const roiHitsThead =  (roiHitsTable) ? roiHitsTable.tHead : null;
@@ -1229,13 +1100,11 @@ class Viewer extends Component {
     const behavior = "auto";
     if (roiRowEl) {
       const idxOfHitBySort = this.state.roiTableDataIdxBySort.indexOf(newHitIdx);
-      // console.log(`idxOfHitBySort ${idxOfHitBySort}`);
       if (idxOfHitBySort < 0) return;
       const roiRowElHeight = parseFloat(roiRowEl.offsetHeight);
       const newTopOffset = (((parseFloat(roiRowEl.offsetHeight)) * idxOfHitBySort) > 0) ? roiRowEl.offsetHeight * idxOfHitBySort : 0;
       switch (direction) {
         case "previous": {
-          // console.log(`newTopOffset ${newTopOffset} | roiPanelHeight ${roiPanelHeight} | roiScrollTop ${roiScrollTop} | roiRowElHeight ${roiRowElHeight}`);
           if ((newTopOffset - roiScrollTop) < -roiRowElHeight) {
             roiHitsWrapper.scrollBy({
               top: -roiRowElHeight,
@@ -1246,7 +1115,6 @@ class Viewer extends Component {
           break;
         }
         case "next": {
-          // console.log(`newTopOffset ${newTopOffset} | roiPanelHeight ${roiPanelHeight} | roiScrollTop ${roiScrollTop} | roiRowElHeight ${roiRowElHeight}`);
           if ((roiPanelHeight - newTopOffset) < roiRowElHeight) {
             roiHitsWrapper.scrollBy({
               top: roiRowElHeight,
@@ -1258,7 +1126,6 @@ class Viewer extends Component {
         }
         case "skip": {
           const skipOffset = parseFloat(roiRowEl.offsetHeight) * idxOfHitBySort;
-          // console.log(`idxOfHitBySort ${idxOfHitBySort} | skipOffset ${skipOffset}`);
           roiHitsWrapper.scrollBy({
             top: skipOffset,
             left: 0, 
@@ -1277,33 +1144,22 @@ class Viewer extends Component {
   }
   
   updateRoiRowIdxFromCurrentIdx = (direction, overrideNewRowIdx, cf) => {
-    // console.log(`[updateRoiRowIdxFromCurrentIdx] <- ${cf} | ${direction} | ${overrideNewRowIdx}`);
     if (!this.state.roiTableIsVisible || overrideNewRowIdx === Constants.defaultApplicationSrrIdx) return;
-    // console.log("[updateRoiRowIdxFromCurrentIdx] direction", direction);
-    // console.log("[updateRoiRowIdxFromCurrentIdx] this.state.selectedRoiRowIdx", this.state.selectedRoiRowIdx);
-    // console.log("[updateRoiRowIdxFromCurrentIdx] this.state.roiTableDataIdxBySort", JSON.stringify(this.state.roiTableDataIdxBySort, null, 2));
     let currentIdx = this.state.selectedRoiRowIdx;
     if (((currentIdx < 1) || (!this.state.roiTableData) || (this.state.roiTableData.length === 0)) && ((direction !== "skip") && (direction !== "skipNoScroll"))) return;
     let indexOfCurrentIdx = parseInt(this.state.roiTableDataIdxBySort.indexOf(currentIdx));
     let newRowIdx = currentIdx;
     let minIdx = Math.min(...this.state.roiTableDataIdxBySort) - 1;
     let maxIdx = Math.max(...this.state.roiTableDataIdxBySort) - 1;
-    // console.log("[updateRoiRowIdxFromCurrentIdx] maxIdx", maxIdx);
     switch (direction) {
       case "previous":
         if (indexOfCurrentIdx > minIdx) {
-          // let previousValue = this.state.roiTableDataIdxBySort[indexOfCurrentIdx - 1];
-          // let indexOfPreviousValue = this.state.roiTableDataIdxBySort.indexOf(previousValue);
-          // newRowIdx = parseInt(this.state.roiTableDataIdxBySort[indexOfPreviousValue]);
           const previousRowIdx = this.state.roiTableDataIdxBySort[indexOfCurrentIdx - 1];
           newRowIdx = previousRowIdx;
         }
         break;
       case "next":
         if (indexOfCurrentIdx < maxIdx) {
-          // let nextValue = this.state.roiTableDataIdxBySort[indexOfCurrentIdx + 1];
-          // let indexOfNextValue = this.state.roiTableDataIdxBySort.indexOf(nextValue);
-          // newRowIdx = parseInt(this.state.roiTableDataIdxBySort[indexOfNextValue]);
           const nextRowIdx = this.state.roiTableDataIdxBySort[indexOfCurrentIdx + 1];
           newRowIdx = nextRowIdx;
         }
@@ -1315,13 +1171,10 @@ class Viewer extends Component {
       default:
         throw new Error('[updateRoiRowIdxFromCurrentIdx] Unknown direction for ROI row index update', direction);
     }
-    // console.log(`[updateRoiRowIdxFromCurrentIdx] indexOfCurrentIdx ${indexOfCurrentIdx} newRowIdx ${newRowIdx}`);
     let newRoiObj = this.state.roiTableData.filter((e) => e.idx === newRowIdx);
     if (!newRoiObj) return;
-    // console.log(`newRoiObj ${JSON.stringify(newRoiObj)}`);
     let newRoi = newRoiObj[0].position;
     const pos = Helpers.getRangeFromString(newRoi, false, true, this.state.hgViewParams.genome);
-    // console.log(`pos ${pos} | newRoi ${JSON.stringify(newRoi)}`);
     const chromosome = pos[0];
     const start = parseInt(pos[1]);
     const stop = parseInt(pos[2]);
@@ -1365,17 +1218,12 @@ class Viewer extends Component {
 
   updateSimSearchRowIdxFromCurrentIdx = (direction, overrideNewRowIdx) => {
     if (!this.state.simSearchTableIsVisible) return;
-    // console.log("[updateSimSearchRowIdxFromCurrentIdx]");
-    // console.log("[updateSimSearchRowIdxFromCurrentIdx] direction", direction);
-    // console.log("[updateSimSearchRowIdxFromCurrentIdx] this.state.selectedSimSearchRowIdx", this.state.selectedSimSearchRowIdx);
-    // console.log("[updateSimSearchRowIdxFromCurrentIdx] this.state.simSearchTableDataIdxBySort", JSON.stringify(this.state.simSearchTableDataIdxBySort, null, 2));
     let currentIdx = this.state.selectedSimSearchRowIdx;
     if (((currentIdx < 1) || (!this.state.simSearchTableData) || (this.state.simSearchTableData.length === 0)) && (direction !== "skip")) return;
     let indexOfCurrentIdx = parseInt(this.state.simSearchTableDataIdxBySort.indexOf(currentIdx));
     let newRowIdx = currentIdx;
     let minIdx = Math.min(...this.state.simSearchTableDataIdxBySort) - 1;
     let maxIdx = Math.max(...this.state.simSearchTableDataIdxBySort) - 1;
-    // console.log("[updateSimSearchRowIdxFromCurrentIdx] maxIdx", maxIdx);
     switch (direction) {
       case "previous":
         if (indexOfCurrentIdx > minIdx) {
@@ -1397,27 +1245,16 @@ class Viewer extends Component {
       default:
         throw new Error('[updateSimSearchRowIdxFromCurrentIdx] Unknown direction for simSearch row index update', direction);
     }
-    // console.log(`[updateSimSearchRowIdxFromCurrentIdx] indexOfCurrentIdx ${indexOfCurrentIdx} newRowIdx ${newRowIdx}`);
     let newSimSearchObj = this.state.simSearchTableData.filter((e) => e.idx === newRowIdx);
-    // console.log(`newSimSearchObj ${JSON.stringify(newSimSearchObj)}`);
     let newSimSearchPosition = newSimSearchObj[0].position;
     const pos = Helpers.getRangeFromString(newSimSearchPosition, false, true, this.state.hgViewParams.genome);
-    // console.log(`pos ${pos} | newSimSearchPosition ${JSON.stringify(newSimSearchPosition)}`);
     const chromosome = pos[0];
     const start = parseInt(pos[1]);
     const stop = parseInt(pos[2]);
 
-    // console.log(`newSimSearchPosition ${JSON.stringify(newSimSearchPosition)}`);
-
     const simSearchEl = document.getElementById(`simSearch_idx_${newRowIdx}`);
     if (simSearchEl) simSearchEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-    
-    /* { this.setState({
-      selectedSimSearchBeingUpdated: true
-    }, () => {
-      this.jumpToRegion(newSimSearchPosition, Constants.applicationRegionTypes.simsearch, newRowIdx);
-    }); } */
-    
+        
     // update selection
     this.setState({
       selectedSimSearchRowIdx: parseInt(newRowIdx),
@@ -1434,21 +1271,11 @@ class Viewer extends Component {
           this.state.hgViewParams, 
           parseInt(newRowIdx)
         );
-        // if (this.state.roiTableData && this.state.roiTableData[this.state.selectedRoiRowIdx - 1]) {
-        //   // this.jumpToRegion(
-        //   //   this.state.roiTableData[this.state.selectedRoiRowIdx - 1].position,
-        //   //   Constants.applicationRegionTypes.roi, 
-        //   //   this.state.selectedRoiRowIdx);
-        // }
-        // this.setState({
-        //   selectedRoiBeingUpdated: false
-        // });
       }, Constants.defaultViewerKeyEventChangeEventDebounceTimeout);
     });
   }
 
   shiftSuggestionTableOffset = (newHitIdx, direction) => {
-    // console.log(`[Viewer] shiftSuggestionTableOffset | newHitIdx ${newHitIdx} | direction ${direction}`);
     const suggestionHitsWrapper = document.getElementById(`suggestion_hits_table_content`);
     const suggestionHitsTable = document.getElementById(`suggestion_hits_table`);
     const suggestionHitsThead =  (suggestionHitsTable) ? suggestionHitsTable.tHead : null;
@@ -1458,13 +1285,11 @@ class Viewer extends Component {
     const behavior = "auto";
     if (suggestionRowEl) {
       const idxOfHitBySort = this.state.suggestionTableDataIdxBySort.indexOf(newHitIdx);
-      // console.log(`idxOfHitBySort ${idxOfHitBySort}`);
       if (idxOfHitBySort < 0) return;
       const suggestionRowElHeight = parseFloat(suggestionRowEl.offsetHeight);
       const newTopOffset = (((parseFloat(suggestionRowEl.offsetHeight)) * idxOfHitBySort) > 0) ? suggestionRowEl.offsetHeight * idxOfHitBySort : 0;      
       switch (direction) {
         case "previous": {
-          // console.log(`newTopOffset ${newTopOffset} | suggestionPanelHeight ${suggestionPanelHeight} | suggestionScrollTop ${suggestionScrollTop} | suggestionRowElHeight ${suggestionRowElHeight}`);
           if ((newTopOffset - suggestionScrollTop) < -suggestionRowElHeight) {
             suggestionHitsWrapper.scrollBy({
               top: -suggestionRowElHeight,
@@ -1475,7 +1300,6 @@ class Viewer extends Component {
           break;
         }
         case "next": {
-          // console.log(`newTopOffset ${newTopOffset} | suggestionPanelHeight ${suggestionPanelHeight} | suggestionScrollTop ${suggestionScrollTop} | suggestionRowElHeight ${suggestionRowElHeight}`);
           if ((suggestionPanelHeight - newTopOffset) < suggestionRowElHeight) {
             suggestionHitsWrapper.scrollBy({
               top: suggestionRowElHeight,
@@ -1487,7 +1311,6 @@ class Viewer extends Component {
         }
         case "skip": {
           const skipOffset = parseFloat(suggestionRowEl.offsetHeight) * idxOfHitBySort;
-          // console.log(`idxOfHitBySort ${idxOfHitBySort} | skipOffset ${skipOffset}`);
           suggestionHitsWrapper.scrollBy({
             top: skipOffset,
             left: 0, 
@@ -1506,7 +1329,6 @@ class Viewer extends Component {
   }
  
   updateSuggestionRowIdxFromCurrentIdx = (direction, overrideNewRowIdx) => {
-    // console.log(`updateSuggestionRowIdxFromCurrentIdx | ${direction} | ${this.state.selectedSuggestionRowIdx} | ${overrideNewRowIdx}`);
     let currentIdx = parseInt(this.state.selectedSuggestionRowIdx);
     let indexOfCurrentIdx = parseInt(this.state.suggestionTableDataIdxBySort.indexOf(currentIdx));
     let newRowIdx = currentIdx;
@@ -1532,16 +1354,13 @@ class Viewer extends Component {
       default:
         throw new Error('[updateSuggestionRowIdxFromCurrentIdx] Unknown direction for suggestion row index update', direction);
     }
-    // console.log(`newRowIdx ${newRowIdx}`);
     const newSuggestionObj = this.state.suggestionTableData.filter((e) => e.idx === newRowIdx);
     if (!newSuggestionObj || !newSuggestionObj[0]) return;
-    // console.log(`newSuggestionObj ${JSON.stringify(newSuggestionObj)}`);
     const newSuggestion = newSuggestionObj[0].position;
     const pos = Helpers.getRangeFromString(newSuggestion, false, true, this.state.hgViewParams.genome);
     const chromosome = pos[0];
     const start = parseInt(pos[1]);
     const stop = parseInt(pos[2]);
-    // console.log(`newSuggestionObj[0].state ${JSON.stringify(newSuggestionObj[0].state)}`);
     const chromatinState = (newSuggestionObj[0].state && newSuggestionObj[0].state.numerical) ? parseInt(newSuggestionObj[0].state.numerical) : -1;
     const stateColor = ((Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][chromatinState] && Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][chromatinState][1]) || "white");
     const stateText = ((Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][chromatinState] && Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][chromatinState][0]) || "Undefined");
@@ -1590,7 +1409,6 @@ class Viewer extends Component {
   }, 10);
 
   jumpToSuggestionRow = (position, idx) => {
-    // console.log(`jumpToSuggestionRow | ${JSON.stringify(position)} | ${JSON.stringify(idx)}`);
     this.updateSuggestionRowIdxFromCurrentIdx("skipNoScroll", idx);
   }
 
@@ -1599,20 +1417,15 @@ class Viewer extends Component {
   }, 10);
 
   jumpToRoiRow = (position, idx) => {
-    // console.log(`jumpToRoiRow | ${JSON.stringify(position)} | ${JSON.stringify(idx)}`);
     this.updateRoiRowIdxFromCurrentIdx("skipNoScroll", idx, "jumpToRoiRow");
   }
 
   updateExemplarRowIdxFromCurrentIdx = (direction, overrideNewRowIdx) => {
-    // console.log(`[Viewer] updateExemplarRowIdxFromCurrentIdx > ${direction} ${overrideNewRowIdx}`);
     let currentIdx = this.state.selectedExemplarRowIdx;
-    // if (currentIdx < 1) return;
     let indexOfCurrentIdx = parseInt(this.state.exemplarTableDataIdxBySort.indexOf(currentIdx));
     let newRowIdx = currentIdx;
-    // console.log("[updateExemplarRowIdxFromCurrentIdx] this.state.exemplarTableDataIdxBySort", this.state.exemplarTableDataIdxBySort);
     let minIdx = Math.min(...this.state.exemplarTableDataIdxBySort) - 1;
     let maxIdx = Math.max(...this.state.exemplarTableDataIdxBySort) - 1;
-    // console.log("[updateExemplarRowIdxFromCurrentIdx]", direction, currentIdx, indexOfCurrentIdx, newRowIdx, minIdx, maxIdx);
     switch (direction) {
       case "previous":
         if (indexOfCurrentIdx > minIdx) {
@@ -1635,29 +1448,17 @@ class Viewer extends Component {
         throw new Error('[updateExemplarRowIdxFromCurrentIdx] Unknown direction for exemplar row index update', direction);
     }
     
-    // console.log(`[updateExemplarRowIdxFromCurrentIdx] called direction: ${direction} | ${currentIdx} | ${newRowIdx}`);
-
     const newExemplarObj = this.state.exemplarTableData.filter((e) => e.idx === newRowIdx);
-    // console.log(`newExemplarObj ${JSON.stringify(newExemplarObj)}`);
     if (!newExemplarObj || !newExemplarObj[0]) return;
 
     const newExemplar = newExemplarObj[0].position;
     const pos = Helpers.getRangeFromString(newExemplar, false, true, this.state.hgViewParams.genome);
-    // console.log(`pos ${pos} | newExemplar ${JSON.stringify(newExemplar)}`);
     const chromosome = pos[0];
     const start = parseInt(pos[1]);
     const stop = parseInt(pos[2]);
 
-    // console.log(`newExemplar ${JSON.stringify(newExemplar)}`);
-    
     const exemplarEl = document.getElementById(`exemplar_idx_${newRowIdx}`);
     if (exemplarEl) exemplarEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
-    
-    /* { this.setState({
-      selectedExemplarBeingUpdated: true
-    }, () => {
-      this.jumpToRegion(newExemplar, Constants.applicationRegionTypes.exemplars, newRowIdx);
-    }) } */
     
     // update selection
     this.setState({
@@ -1689,7 +1490,6 @@ class Viewer extends Component {
       chromSizesURL = chromSizesURL.replace(/^https/, "http");
     }
     else {
-      // console.log(`Viewer.getChromSizesURL | this.currentURL.host ${this.currentURL.host}`);
       if (this.currentURL.host !== "localhost:3000") {
         let port = parseInt(this.currentURL.port);
         if (isNaN(port)) { port = Constants.applicationProductionPort; }
@@ -1699,7 +1499,6 @@ class Viewer extends Component {
         chromSizesURL = chromSizesURL.replace("https://epilogos.altius.org:3001", "http://localhost:3000");
       }
     }
-    // console.log(`Viewer.getChromSizesURL | chromSizesURL ${chromSizesURL}`);
     return chromSizesURL;
   }
   
@@ -1708,7 +1507,6 @@ class Viewer extends Component {
   }
   
   handleZoomPastExtent = () => {
-    // console.log("[handleZoomPastExtent] start");
     if (this.state.searchInputLocationBeingChanged) return;
     if (!this.viewerZoomPastExtentTimer) {
       clearTimeout(this.viewerZoomPastExtentTimer);
@@ -1717,7 +1515,6 @@ class Viewer extends Component {
         const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, genome);
         const boundsLeft = 20;
         const boundsRight = Constants.assemblyBounds[genome].chrY.ub - boundsLeft;
-        // let chromSizesURL = this.getChromSizesURL(genome);
 
         function handleZoomPastExtentForChromInfo(chromInfo, self) {
           setTimeout(() => {
@@ -1747,14 +1544,11 @@ class Viewer extends Component {
               newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
               newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
               this.chromInfoCache[genome] = newChromInfo;
-              // throw new Error(`Error - [handleZoomPastExtent] could not retrieve chromosome information - ${JSON.stringify(err)}`);
             });
         }
 
         setTimeout(() => { 
           this.viewerZoomPastExtentTimer = null; 
-          // console.log("[handleZoomPastExtent] this.viewerZoomPastExtentTimer unset"); 
-          // console.log("calling [updateViewerURL] from [handleZoomPastExtent]");
           const keepSuggestionInterval = true; // false;
           this.updateViewerURL(this.state.tempHgViewParams.mode,
                                this.state.tempHgViewParams.genome,
@@ -1778,19 +1572,7 @@ class Viewer extends Component {
   }
   
   updateViewerLocation = (event, cf) => {
-    // console.log(`[updateViewerLocation] <- ${cf}`);
-    
-    // if (this.state.roiTableIsVisible) this.fadeOutRoiIntervalDrop();
-    // if (this.state.suggestionTableIsVisible) this.fadeOutSuggestionIntervalDrop();
-    
-    // this.updateViewerURLWithLocation(event);
-    // const transcriptsTrackObj = this.mainHgView.api.getComponent().getTrackObject(
-    //   res.data.views[0].uid,
-    //   res.data.views[0].tracks.top[3].uid,
-    // );
     function isLocationChanged(oldLocation, newLocation) {
-      // console.log(`target ${JSON.stringify(oldLocation)}`);
-      // console.log(`new ${JSON.stringify(newLocation)}`);
       if (!oldLocation || !newLocation) return false;
       return (oldLocation.chrLeft !== newLocation.chrLeft) || (oldLocation.chrRight !== newLocation.chrRight) || (oldLocation.start !== newLocation.start) || (oldLocation.stop !== newLocation.stop);
     }
@@ -1800,37 +1582,14 @@ class Viewer extends Component {
     if (!this.viewerLocationChangeEventTimer) {
       clearTimeout(this.viewerLocationChangeEventTimer);
       this.viewerLocationChangeEventTimer = setTimeout(() => {
-        //this.updateViewerURLWithLocation(event);
-        
         setTimeout(() => {
-          // console.log(`this.state.tempHgViewParams ${JSON.stringify(this.state.tempHgViewParams)}`);
-          // console.log(`this.state.hgViewParams ${JSON.stringify(this.state.hgViewParams)}`);
-          // console.log(`this.state.currentPosition ${JSON.stringify(this.state.currentPosition)}`);
-          // const oldLoc = {
-          //   chrLeft: this.state.currentPosition.chrLeft,
-          //   chrRight: this.state.currentPosition.chrRight,
-          //   start: this.state.currentPosition.startLeft,
-          //   stop: this.state.currentPosition.stopRight,
-          // };
-          // if (isLocationChanged(oldLoc, newLoc)) {
-            // console.log(`fading out drops...`);
-            // this.fadeOutIntervalDrop();
-            // this.fadeOutVerticalDrop();
-          // }
-          // else {
-          //   console.log(`oldLoc ${JSON.stringify(oldLoc)}`);
-          //   console.log(`newLoc ${JSON.stringify(newLoc)}`);
-          // }
           this.viewerLocationChangeEventTimer = null;
           this.updateViewerURLWithLocation(event, () => {
-            // console.log(`this.state.drawerActiveTabOnOpen ${this.state.drawerActiveTabOnOpen}`);
-            // console.log(`this.state.drawerActiveRegionTab ${this.state.drawerActiveRegionTab}`);
             if (
               (this.state.selectedRoiRowIdx !== Constants.defaultApplicationSrrIdx) || 
               (this.state.selectedExemplarRowIdx !== Constants.defaultApplicationSerIdx)
               ) {
               const tableDataRow = (this.state.roiTableIsVisible) ? this.state.roiTableData[this.state.selectedRoiRowIdx - 1] : this.state.exemplarTableData[this.state.selectedExemplarRowIdx - 1];
-              // console.log(`tableDataRow ${JSON.stringify(tableDataRow)} | this.state.drawerActiveRegionTab ${this.state.drawerActiveRegionTab}`);
               if (!tableDataRow) {
                 this.setState({
                   selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
@@ -1839,11 +1598,6 @@ class Viewer extends Component {
                 });
                 return;
               }
-              // console.log(`this.state.currentPosition ${JSON.stringify(this.state.currentPosition)}`);
-              // console.log(`this.state.mainRegionIndicatorData ${JSON.stringify(this.state.mainRegionIndicatorData)}`);
-              // console.log(`this.state.drawerActiveTabOnOpen ${this.state.drawerActiveTabOnOpen}`);
-              // console.log(`this.state.mainRegionIndicatorData.upstreamPadding ${JSON.stringify(this.state.mainRegionIndicatorData.upstreamPadding)}`);
-              // console.log(`this.state.mainRegionIndicatorData.upstreamPadding[this.state.drawerActiveTabOnOpen] ${JSON.stringify((this.state.mainRegionIndicatorData && this.state.mainRegionIndicatorData.upstreamPadding) ? this.state.mainRegionIndicatorData.upstreamPadding[this.state.drawerActiveTabOnOpen] : null)}`);
               const targetLoc = (this.state.roiTableIsVisible) ? {
                 chrLeft: tableDataRow.chrom,
                 chrRight: tableDataRow.chrom,
@@ -1869,7 +1623,6 @@ class Viewer extends Component {
               else {
                 downstreamPadding = (!this.state.roiTableIsVisible) ? Constants.defaultHgViewRegionDownstreamPadding : Constants.defaultApplicationRoiSetPaddingAbsolute;
               }
-              // console.log(`upstreamPadding ${upstreamPadding} | downstreamPadding ${downstreamPadding}`);
               const srcLoc = {
                 chrLeft: this.state.currentPosition.chrLeft,
                 chrRight: this.state.currentPosition.chrRight,
@@ -1877,26 +1630,13 @@ class Viewer extends Component {
                 stop: roundNearest100(this.state.currentPosition.stopRight) - downstreamPadding,
               };
               if (isLocationChanged(targetLoc, srcLoc)) {
-                // console.log(`fading out drops...`);
-                // this.fadeOutIntervalDrop();
-                // this.fadeOutVerticalDrop();
                 this.fadeOutRoiIntervalDrop();
                 this.fadeOutSuggestionIntervalDrop();
-                // this.setState({
-                //   selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
-                //   selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
-                //   selectedRoiRowIdxOnLoad: Constants.defaultApplicationSrrIdx,
-                //   selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
-                // }, () => {
-                //   this.updateViewerURLForCurrentState(null, false);
-                // });
-                // console.log(`running simsearch query...`);
               }
             }
           },
           "updateViewerLocation");
         }, 0);
-        // console.log("[updateViewerLocation] this.viewerLocationChangeEventTimer set");
       }, 750);
     }
   }
@@ -1919,11 +1659,7 @@ class Viewer extends Component {
   }
   
   updateViewerURL = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, keepSuggestionInterval, cf) => {
-    // console.log(`[updateViewerURL] <- ${cf}`);
-    // console.log(`gatt ${this.state.hgViewParams.gatt}`);
-    // console.log(mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop);
     const viewerUrl = Helpers.constructViewerURL(mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, this.state);
-    // console.log(`viewerUrl ${JSON.stringify(viewerUrl)}`);
     setTimeout(() => {
       if (typeof keepSuggestionInterval === "undefined") keepSuggestionInterval = true;
       this.updateScale(keepSuggestionInterval, "updateViewerURL");
@@ -1934,7 +1670,6 @@ class Viewer extends Component {
   }
 
   updateViewerURLForQueryTargetMode = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop) => {
-    // console.log(`mode ${mode}`);
     this.setState({
       currentPositionKey: Math.random(),
       currentPosition : {
@@ -1982,7 +1717,6 @@ class Viewer extends Component {
   }
 
   updateViewerOverlay = (msg) => {
-    // console.log(`[updateViewerOverlay] ${msg}`);
     this.setState({
       overlayMessage: msg
     }, () => {
@@ -2009,22 +1743,6 @@ class Viewer extends Component {
     })
   }
 
-  // updateRegionsForQueryTargetView = (data, cb) => {
-  //   const [roiTableRows, roiTableRowsCopy, roiTableRowsIdxBySort, dataRegions, newRoiMaxColumns, newRoiTableDataLongestNameLength] = this.roiProcessData(data);
-  //   this.setState({
-  //     roiRegions: dataRegions,
-  //     roiTableData: roiTableRows,
-  //     roiTableDataCopy: roiTableRowsCopy,
-  //     roiTableDataIdxBySort: roiTableRowsIdxBySort,
-  //     roiMaxColumns: newRoiMaxColumns,
-  //     roiTableDataLongestNameLength: newRoiTableDataLongestNameLength,
-  //   }, () => {
-  //     if (cb) {
-  //       cb();
-  //     }
-  //   });
-  // }
-
   updateRegionsForQueryTargetView = (data, cb) => {
     const [simSearchTableRows, simSearchTableRowsCopy, simSearchTableRowsIdxBySort, dataRegions, newSimSearchMaxColumns, newSimSearchTableDataLongestNameLength] = this.simSearchProcessData(data);
     this.setState({
@@ -2042,7 +1760,6 @@ class Viewer extends Component {
   }
 
   expandViewerToRegion = (region, willRequireFullExpand) => {
-    // console.log(`expandViewerToRegion ${JSON.stringify(region)} ${willRequireFullExpand}`);
     // {"left":{"chr":"chr1","start":82288000,"stop":82313000},"right":{"chr":"chr1","start":82288000,"stop":82313000}}
     const newRoiButtonIsEnabled = (this.state.roiTableData.length > 0);
     if (willRequireFullExpand) {
@@ -2061,10 +1778,6 @@ class Viewer extends Component {
         const complexity = this.state.hgViewParams.complexity;
         const group = this.state.hgViewParams.group;
         const sampleSet = this.state.hgViewParams.sampleSet;
-        // const chrLeft = this.state.currentPosition.chrLeft;
-        // const chrRight = this.state.currentPosition.chrRight;
-        // const start = this.state.currentPosition.startLeft;
-        // const stop = this.state.currentPosition.stopRight;
         const chrLeft = region.left.chr;
         const chrRight = region.right.chr;
         const start = region.left.start;
@@ -2099,66 +1812,19 @@ class Viewer extends Component {
           region.left.start,
           region.right.stop,
         ];
-        //
-        // if the viewer was opened directly to the recommender view, it is likely that the
-        // main view container was not initialized, so we redirect via URL and allow the app 
-        // to be reconstructed that way
-        //
-        // if (!this.state.mainHgViewconf.hasOwnProperty('views')) {
-        // if (!Object.prototype.hasOwnProperty.call(this.state.mainHgViewconf, 'views')) {
-        // if (willRequireFullExpand) {
-        //   this.setState({
-        //     queryTargetModeWillRequireFullExpand: false,
-        //   }, () => {
-        //     const mode = "single"; // this.state.hgViewParams.mode;
-        //     const genome = this.state.hgViewParams.genome;
-        //     const model = this.state.hgViewParams.model;
-        //     const complexity = this.state.hgViewParams.complexity;
-        //     const group = this.state.hgViewParams.group;
-        //     const sampleSet = this.state.hgViewParams.sampleSet;
-        //     const chrLeft = this.state.currentPosition.chrLeft;
-        //     const chrRight = this.state.currentPosition.chrRight;
-        //     const start = this.state.currentPosition.startLeft;
-        //     const stop = this.state.currentPosition.stopRight;
-        //     const viewerUrl = Helpers.constructViewerURL(mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop, this.state);
-        //     const viewerUrlTarget = "_self";
-        //     window.open(viewerUrl, viewerUrlTarget);
-        //   });
-        // }
-        //
-        // otherwise, we can safely manipulate the main view container
-        //
-        // else {
-        //   this.openViewerAtChrRange(range, false, this.state.hgViewParams);
-        //   this.mainHgView.api.on("location", (event) => { 
-        //     this.updateViewerLocation(event);
-        //   });
-        // }
         this.openViewerAtChrRange(range, false, this.state.hgViewParams);
-        // this.mainHgView.api.on("location", (event) => { 
-        //   this.updateViewerLocation(event, "expandViewerToRegion");
-        // });
         this.mainHgView.current.api.on("location", (event) => { 
           this.updateViewerLocation(event, "expandViewerToRegion");
         });
-        // this.setState({
-        //   locationHandles: this.state.locationHandles + 1,
-        // }, () => { 
-        //   console.log(`locationHandles ${this.state.locationHandles}`); 
-        // });
       });
     }
   }
 
   // eslint-disable-next-line no-unused-vars
   updateViewerURLWithLocation = (event, cb, cf) => {
-    // console.log(`[updateViewerURLWithLocation] <- ${cf}`);
-    // console.log("[updateViewerURLWithLocation] this.state.searchInputLocationBeingChanged", this.state.searchInputLocationBeingChanged);
-
     if (!this.mainHgView) return;
     
     // test update from view directly
-    // const api = this.mainHgView.api;
     const api = this.mainHgView.current.api;
     let trueXDomain = api.getLocation(this.state.mainHgViewconf.views[0].uid).xDomain;
     let queryTargetLocalMinMax = this.state.queryTargetLocalMinMax;
@@ -2193,11 +1859,7 @@ class Viewer extends Component {
           stopRight : stop
         },
         queryTargetLocalMinMax: queryTargetLocalMinMax,
-        // selectedExemplarRowIdx: selectedExemplarRowIdx,
-        // selectedRoiRowIdx: selectedRoiRowIdx,
       }, () => {
-        // console.log("[updateViewerURLWithLocation] calling [updateViewerURL]");
-        // console.log(`[updateViewerURLWithLocation] selectedRoiBeingUpdated ${self.state.selectedRoiBeingUpdated}`);
         const keepSuggestionInterval = false;
         self.updateViewerURL(self.state.hgViewParams.mode,
                              self.state.hgViewParams.genome,
@@ -2214,11 +1876,8 @@ class Viewer extends Component {
         let boundsLeft = 20;
         let boundsRight = Constants.assemblyBounds[self.state.hgViewParams.genome].chrY.ub - boundsLeft;
         if (((chrLeft === "chr1") && (start < boundsLeft)) && ((chrRight === "chrY") && (stop > boundsRight))) {
-          // console.log("[updateViewerURLWithLocation] handleZoomPastExtent() called");
           self.handleZoomPastExtent();
         }
-        // console.log("[updateViewerURLWithLocation] finished");
-        // self.updateViewerHistory();
         if (cb) cb();
       });
     }
@@ -2238,14 +1897,11 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[genome] = newChromInfo;
-          // throw new Error(`Error - [updateViewerURLWithLocation] could not retrieve chromosome information -  ${JSON.stringify(err)}`);
         });
     }
   }
   
-  // updateScale = Helpers.debounce((keepSuggestionInterval, cf) => {
   updateScale = (keepSuggestionInterval, cf) => {
-    // console.log(`[updateScale] <- ${cf} | ${keepSuggestionInterval} | ${this.state.selectedSuggestionRowIdxOnLoad} | ${this.state.simSearchQueryInProgress}`);
     const scale = Helpers.calculateScale(
       this.state.currentPosition.chrLeft, 
       this.state.currentPosition.chrRight, 
@@ -2259,8 +1915,6 @@ class Viewer extends Component {
       previousViewScale: this.state.currentViewScale,
       currentViewScale: scale.diff,
     }, () => {
-      // console.log(`[updateScale] currentViewScale ${this.state.currentViewScale} --> ${this.recommenderV3SearchCanBeEnabled()}`);
-      // console.log(`[updateScale] keepSuggestionInterval ${keepSuggestionInterval}`);
       if (this.state.currentViewScale === 0) return;
       this.setState({
         recommenderV3SearchIsEnabled: this.recommenderV3SearchCanBeEnabled(),
@@ -2279,18 +1933,9 @@ class Viewer extends Component {
                   this.updateViewerURLForCurrentState(null, false);
                 })
               }
-              // if (this.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) {
-              //   this.setState({
-              //     selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
-              //     selectedRoiRowIdxOnLoad: this.state.selectedRoiRowIdxOnLoad,
-              //   }, () => {
-              //     this.updateViewerURLForCurrentState(null, false);
-              //   })
-              // }
             });
           }
           if (!this.state.simSearchQueryInProgress) {
-            // console.log(`[updateScale] querying simsearch service`);
             this.setState({
               simSearchQueryInProgress: true,
             }, () => {
@@ -2301,37 +1946,21 @@ class Viewer extends Component {
       })
     });
   }
-  // }, 100);
   
   updateHgViewWithPosition = () => {
-    // console.log(`[updateHgViewWithPosition] start`);
     let obj = Helpers.getJsonFromUrl();
     const chr = obj.chr || Constants.defaultApplicationChr;
     const txStart = obj.start || Constants.defaultApplicationStart;
     const txEnd = obj.stop || Constants.defaultApplicationStop;
-    // this.hgViewUpdatePosition(this.state.hgViewParams.build, chr, txStart, txEnd, chr, txStart, txEnd, false);
-    
-    // console.log("[updateHgViewWithPosition] calling [hgViewUpdatePosition]");
-    
+        
     this.hgViewUpdatePosition(this.state.hgViewParams, chr, txStart, txEnd, chr, txStart, txEnd);
     setTimeout(() => { this.updateViewportDimensions(); }, 500);
   }
   
   updateViewportDimensions = () => {
-    // console.log("[updateViewportDimensions] start");
     let windowInnerHeight = document.documentElement.clientHeight + "px";
     let windowInnerWidth = document.documentElement.clientWidth + "px";
-    // console.log("[updateViewportDimensions] windowInnerHeight", windowInnerHeight);
-    // console.log("[updateViewportDimensions] windowInnerWidth", windowInnerWidth);
-    
-    // let isMobile = false;
-    // let isPortrait = false;
-
-    // this.fadeInParameterSummary();
-    
-    // let epilogosViewerHeaderNavbarHeight = parseInt(document.getElementById("epilogos-viewer-container-navbar").clientHeight) + "px";
     let epilogosViewerHeaderNavbarHeight = "55px";
-    // let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 70) + "px";
     let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 35) + "px";
     let navbarRighthalfDiv = document.getElementsByClassName("navbar-righthalf")[0];
     if (!navbarRighthalfDiv) return;
@@ -2341,7 +1970,6 @@ class Viewer extends Component {
     let epilogosViewerHeaderNavbarRighthalfWidth = parseInt(navbarRighthalfDivWidth + navbarRighthalfDivMarginLeft + 15) + "px";
     let epilogosViewerHeaderNavbarLefthalfWidth = parseInt(parseInt(windowInnerWidth) - parseInt(epilogosViewerHeaderNavbarRighthalfWidth) - parseInt(document.getElementById("navigation-summary-parameters").offsetWidth)) + "px";
     
-    // let epilogosContentHeight = parseInt(parseFloat(windowInnerHeight) - parseFloat(this.state.mainHgViewHeight) - parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
     let epilogosContentHeight = parseInt(parseFloat(windowInnerHeight)) + "px";
     let epilogosContentPsHeight = epilogosContentHeight;
     
@@ -2350,41 +1978,26 @@ class Viewer extends Component {
     if (!deepCopyMainHgViewconf.views) return;
     
     // query track details (if visible)
-    // console.log(`queryHgViewconf (via updateViewportDimensions) ${JSON.stringify(this.state.queryHgViewconf)}`);
-    // let deepCopyQueryHgViewconf = JSON.parse(JSON.stringify(this.state.queryHgViewconf));
-    // console.log(`deepCopyQueryHgViewconf (via updateViewportDimensions) ${JSON.stringify(deepCopyQueryHgViewconf)}`);
-    // console.log(`deepCopyQueryHgViewconf.views (via updateViewportDimensions) ${JSON.stringify(deepCopyQueryHgViewconf.views)}`);
-
+    
     let mode = this.state.hgViewParams.mode;
-    // let annotationsTrackType = this.state.hgViewParams.annotationsTrackType;
     let gatt = this.state.hgViewParams.gatt;
     
     let newHgViewTrackChromosomeHeight = parseInt(this.state.hgViewParams.hgViewTrackChromosomeHeight);
     let newHgViewTrackGeneAnnotationsHeight = parseInt(this.state.hgViewParams.hgViewTrackGeneAnnotationsHeight);
-    // console.log("[updateViewportDimensions] newHgViewTrackChromosomeHeight", newHgViewTrackChromosomeHeight);
-    // console.log("[updateViewportDimensions] newHgViewTrackGeneAnnotationsHeight", newHgViewTrackGeneAnnotationsHeight);
-
+    
     let allEpilogosTracksHeight = parseInt(windowInnerHeight) 
       - parseInt(newHgViewTrackChromosomeHeight) 
       - parseInt(newHgViewTrackGeneAnnotationsHeight) 
       - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) 
       - Constants.applicationViewerHgViewPaddingTop;
-      // - Constants.applicationViewerHgViewPaddingBottom;
 
-    // console.log(`[updateViewportDimensions] ${mode}`);
     if (mode === "paired") {
       let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
       let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
-      // deepCopyMainHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
-      // deepCopyMainHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
-      // deepCopyMainHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
-      // deepCopyMainHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackChromosomeHeight;
-      // deepCopyMainHgViewconf.views[0].tracks.top[4].width = parseInt(windowInnerWidth);
-      // deepCopyMainHgViewconf.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
       
       switch (gatt) {
         case "cv": {
@@ -2395,8 +2008,6 @@ class Viewer extends Component {
           break;
         }
         case "ht": {
-          // console.log(`[updateViewportDimensions] transcripts track height at time of resizing ${this.state.transcriptsTrackHeight}`);
-          // console.log(`[updateViewportDimensions] chromatin state track height (pre) ${deepCopyMainHgViewconf.views[0].tracks.top[1].height}`);
           allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(this.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) - Constants.applicationViewerHgViewPaddingTop - Constants.applicationViewerHgViewPaddingBottom;
           singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
           pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
@@ -2404,7 +2015,6 @@ class Viewer extends Component {
           deepCopyMainHgViewconf.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
           deepCopyMainHgViewconf.views[0].tracks.top[2].height = pairedEpilogosTrackHeight;
           deepCopyMainHgViewconf.views[0].tracks.top[4].height = parseInt(this.state.transcriptsTrackHeight);
-          // console.log(`[updateViewportDimensions] chromatin state track height (post) ${deepCopyMainHgViewconf.views[0].tracks.top[1].height}`)
           break;
         }
         default: {
@@ -2413,19 +2023,11 @@ class Viewer extends Component {
       }     
     }
     else if (mode === "single") {
-      // deepCopyMainHgViewconf.views[0].tracks.top[0].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[0].height = Math.max(this.state.hgViewParams.hgViewTrackEpilogosHeight, (parseInt(windowInnerHeight) / 2) - 3 * parseInt((newHgViewTrackChromosomeHeight + newHgViewTrackGeneAnnotationsHeight) / 4));
-      // console.log("[updateViewportDimensions] deepCopyHgViewconf.views[0].tracks.top[0].height", deepCopyHgViewconf.views[0].tracks.top[0].height);
-      // console.log("[updateViewportDimensions] parseInt(windowInnerHeight)/2", parseInt(windowInnerHeight)/2);
-      if (deepCopyMainHgViewconf.views[0].tracks.top[0].height > parseInt(windowInnerHeight)/2) {
-        deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(windowInnerHeight)/2 - 50;
-        // console.log("deepCopyMainHgViewconf.views[0].tracks.top[0].height", deepCopyMainHgViewconf.views[0].tracks.top[0].height);
+      if (deepCopyMainHgViewconf.views[0].tracks.top[0].height > parseInt(windowInnerHeight) / 2) {
+        deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(windowInnerHeight) / 2 - 50;
       }
-      // deepCopyMainHgViewconf.views[0].tracks.top[1].width = parseInt(windowInnerWidth);
-      // deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) - deepCopyMainHgViewconf.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
-      // deepCopyMainHgViewconf.views[0].tracks.top[2].width = parseInt(windowInnerWidth);
       deepCopyMainHgViewconf.views[0].tracks.top[2].height = this.state.hgViewParams.hgViewTrackChromosomeHeight;
-      // deepCopyMainHgViewconf.views[0].tracks.top[3].width = parseInt(windowInnerWidth);
       
       if ((this.state.hgViewParams.sampleSet === "vE") || (this.state.hgViewParams.sampleSet === "vF")) {
         deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(allEpilogosTracksHeight / 2);
@@ -2445,7 +2047,6 @@ class Viewer extends Component {
             - parseInt(newHgViewTrackGeneAnnotationsHeight) 
             - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) 
             - Constants.applicationViewerHgViewPaddingTop;
-            // - Constants.applicationViewerHgViewPaddingBottom;
           deepCopyMainHgViewconf.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight + 3;
           if (this.epilogosViewerTrackLabelSingleGeneAnnotation && this.epilogosViewerTrackLabelSingleGeneAnnotation.style) {
             this.epilogosViewerTrackLabelSingleGeneAnnotation.style.bottom = `${45 + Constants.applicationViewerHgViewPaddingBottom}px`;
@@ -2453,29 +2054,19 @@ class Viewer extends Component {
           break;
         }
         case "ht": {
-          // console.log(`[updateViewportDimensions] transcripts track height at time of resizing ${this.state.transcriptsTrackHeight}`);
-          // console.log(`[updateViewportDimensions] chromatin state track height (pre) ${deepCopyMainHgViewconf.views[0].tracks.top[1].height}`)
           deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(windowInnerHeight) 
             - deepCopyMainHgViewconf.views[0].tracks.top[0].height 
             - parseInt(newHgViewTrackChromosomeHeight) 
             - parseInt(this.state.transcriptsTrackHeight) 
             - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight) 
             - Constants.applicationViewerHgViewPaddingTop;
-            // - Constants.applicationViewerHgViewPaddingBottom;
           deepCopyMainHgViewconf.views[0].tracks.top[3].height = parseInt(this.state.transcriptsTrackHeight);
-          // console.log(`[updateViewportDimensions] chromatin state track height (post) ${deepCopyMainHgViewconf.views[0].tracks.top[1].height}`)
           break;
         }
         default: {
           throw new Error('[updateViewportDimensions] Unknown annotations track type', this.state.hgViewParams.gatt);
         }
-      }      
-      // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf.views[0].tracks.top[0].height ${deepCopyMainHgViewconf.views[0].tracks.top[0].height}`);
-      // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf.views[0].tracks.top[1].height ${deepCopyMainHgViewconf.views[0].tracks.top[1].height}`);
-      // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf.views[0].tracks.top[2].height ${deepCopyMainHgViewconf.views[0].tracks.top[2].height}`);
-      // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf.views[0].tracks.top[3].height ${deepCopyMainHgViewconf.views[0].tracks.top[3].height}`);
-
-      // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf ${JSON.stringify(deepCopyMainHgViewconf)}`);
+      }
     }
 
     // eslint-disable-next-line no-empty
@@ -2492,53 +2083,29 @@ class Viewer extends Component {
     });
     childMainViewHeightTotal += 10;
     let childMainViewHeightTotalPx = childMainViewHeightTotal + "px";
-    // let childQueryViewHeightTotalPx = childQueryViewHeightTotal + "px";
     
-    // console.log(`[updateViewportDimensions] childMainViewHeightTotalPx ${childMainViewHeightTotalPx}`);
-    // console.log(`[updateViewportDimensions] childQueryViewHeightTotalPx ${childQueryViewHeightTotalPx}`);
-    
-    // if epilogosViewerHeaderNavbarLefthalfWidth is smaller than needed, adjust to minimum
-    // console.log(`epilogosViewerHeaderNavbarLefthalfWidth ${epilogosViewerHeaderNavbarLefthalfWidth}`);
     epilogosViewerHeaderNavbarLefthalfWidth = (parseInt(epilogosViewerHeaderNavbarLefthalfWidth) < Constants.defaultMinimumDrawerWidth) ? `${Constants.defaultMinimumDrawerWidth}px` : epilogosViewerHeaderNavbarLefthalfWidth;
     
     // if ROI table width is wider, use it, instead
     let roiTableWidth = 0;
-    // let isDrawerWidthWider = false;
     if (document.getElementById("drawer-content-roi-table")) {
       roiTableWidth = parseInt(document.getElementById("drawer-content-roi-table").offsetWidth);
-      // console.log("[updateViewportDimensions] roiTableWidth", roiTableWidth);
       if (roiTableWidth > parseInt(epilogosViewerHeaderNavbarLefthalfWidth)) {
         epilogosViewerHeaderNavbarLefthalfWidth = (roiTableWidth + 50) + "px";
       }
     }
 
-    // if (this.state.hgViewParams.sampleSet === "vE") {
-    //   console.log(`deepCopyMainHgViewconf ${JSON.stringify(deepCopyMainHgViewconf, null, 2)}`);
-    // }
-
-    // console.log(`[updateViewportDimensions] deepCopyMainHgViewconf.views[0].tracks.top[3]`, JSON.stringify(deepCopyMainHgViewconf.views[0].tracks.top[3], null, 2));
-
-    // console.log(`epilogosViewerHeaderNavbarLefthalfWidth ${epilogosViewerHeaderNavbarLefthalfWidth}`);
-    
-    //let self = this;
     this.setState({
       height: windowInnerHeight,
       width: windowInnerWidth,
       mainHgViewHeight: childMainViewHeightTotalPx,
       mainHgViewconf: deepCopyMainHgViewconf,
-      // queryHgViewHeight: childQueryViewHeightTotalPx,
-      // queryHgViewconf: deepCopyQueryHgViewconf,
       epilogosContentHeight: epilogosContentHeight,
       epilogosContentPsHeight: epilogosContentPsHeight,
-      // drawerWidth: epilogosViewerHeaderNavbarLefthalfWidth,
       drawerWidth: Constants.defaultMinimumDrawerWidth,
       drawerHeight: epilogosViewerDrawerHeight,
       downloadIsVisible: false,
     }, () => { 
-      // this.mainHgView.api.setViewConfig(deepCopyMainHgViewconf, true);
-      // console.log("[updateViewportDimensions] W x H", this.state.width, this.state.height);
-      // console.log("[updateViewportDimensions] drawer height", this.state.drawerHeight);
-      // console.log("[updateViewportDimensions] drawer width", this.state.drawerWidth);
       setTimeout(() => {
         this.setState({
           width: `${parseInt(document.documentElement.clientWidth)}px`,
@@ -2560,11 +2127,8 @@ class Viewer extends Component {
     if ((typeof startLeft === "undefined") || (typeof stopLeft === "undefined") || (typeof startRight === "undefined") || (typeof stopRight === "undefined")) {
       return;
     }
-    // let chromSizesURL = this.getChromSizesURL(params.genome);
     let viewRef = (!queryViewNeedsUpdate) ? this.mainHgView : this.queryHgView;
     let viewconfRef = (!queryViewNeedsUpdate) ? this.state.mainHgViewconf : this.state.queryHgViewconf;
-
-    // console.log(`[hgViewUpdatePosition] viewconfRef ${JSON.stringify(viewconfRef, null, 2)}`);
 
     if (!viewconfRef.views) return;
 
@@ -2575,7 +2139,6 @@ class Viewer extends Component {
     const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, params.genome);
 
     function hgViewUpdatePositionForChromInfo(chromInfo, self) {
-      // console.log(`[hgViewUpdatePosition] > hgViewUpdatePositionForChromInfo - ${JSON.stringify(chromInfo)}`);
       if (params.mode === "qt") {
         self.setState({
           currentPositionKey: Math.random(),
@@ -2606,7 +2169,6 @@ class Viewer extends Component {
               stopRight : stopRight
             }
           }, () => {          
-            // console.log("[hgViewUpdatePositionForChromInfo] calling [updateViewerURL]");
             const keepSuggestionInterval = true; // false;
             self.updateViewerURL(params.mode,
                                  params.genome,
@@ -2625,18 +2187,13 @@ class Viewer extends Component {
       }
 
       if (queryViewNeedsUpdate) {
-        // console.log(`[hgViewUpdatePosition] updating queryHgView ${chrLeft} | ${startLeft} | ${stopRight}`);
         const absLeft = chromInfo.chrToAbs([chrLeft, parseInt(startLeft)]);
         const absRight = chromInfo.chrToAbs([chrRight, parseInt(stopRight)]);
         viewconfRef.views[0].initialXDomain = [absLeft, absRight];
         viewconfRef.views[0].initialYDomain = [absLeft, absRight];
         self.setState({
           queryHgViewconf: viewconfRef
-        }, () => {
-          self.setState({
-            // queryHgViewKey: self.state.queryHgViewKey + 1
-          })
-        });
+        }, () => {});
         return;
       }
       if (viewRef && params.paddingMidpoint === 0) {
@@ -2692,15 +2249,12 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[params.genome] = newChromInfo;
-          // throw new Error(`Warning - [hgViewUpdatePosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
   }
 
   hgViewUpdateSuggestionPosition = (params, rowIndex) => {
     
-    // console.log(`[hgViewUpdateSuggestionPosition]`);
-
     const viewRef = this.mainHgView;
     const viewconfRef = this.state.mainHgViewconf;
     const animationTime = params.hgViewAnimationTime;
@@ -2709,17 +2263,13 @@ class Viewer extends Component {
 
     function hgViewUpdateSuggestionPositionForChromInfo(chromInfo, self) {
       const region = `${self.state.selectedSuggestionChrLeft}:${self.state.selectedSuggestionStart}-${self.state.selectedSuggestionStop}`;
-      // console.log(`hgViewUpdateSuggestionPositionForChromInfo ${JSON.stringify(region)}`);
-      // const regionState = self.state.suggestionTableData[(rowIndex - 1)].state.numerical;
-      // const regionStateLabel = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][0];
-      // const regionStateColor = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][1];
       const unpaddedChromosome = self.state.selectedSuggestionChrLeft;
       const unpaddedStart = self.state.selectedSuggestionStart;
       const unpaddedStop = self.state.selectedSuggestionStop;
       const unpaddedBasesDiff = parseFloat(unpaddedStop - unpaddedStart);
 
-      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionUpstreamPadding;
-      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionDownstreamPadding;
+      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2);
+      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2);
 
       const windowInnerWidth = parseFloat(document.documentElement.clientWidth);
       
@@ -2728,17 +2278,8 @@ class Viewer extends Component {
 
       const basesCoveredBySuggestionsTable = parseInt((drawerCoverage * (unpaddedUpstreamPadding + unpaddedDownstreamPadding + unpaddedBasesDiff)) / (1 - drawerCoverage)); // parseInt((320 * (Constants.defaultHgViewRegionUpstreamPadding + Constants.defaultHgViewRegionDownstreamPadding + basesDiff)) / (windowInnerWidth - 320)); // drawer = 260px + 3*20px padding; units = bases
 
-      const upstreamPadding = unpaddedUpstreamPadding + basesCoveredBySuggestionsTable; // parseInt(basesCoveredBySuggestionsTable / 2); // Constants.defaultHgViewRegionUpstreamPadding + basesCoveredBySuggestionsTable + Constants.defaultHgViewRegionDownstreamPadding;
-      const downstreamPadding = unpaddedDownstreamPadding; // - parseInt(basesCoveredBySuggestionsTable / 2);
-
-      // console.log(`windowInnerWidth ${windowInnerWidth}`);
-      // console.log(`basesDiff ${unpaddedBasesDiff}`);
-      // console.log(`basesCoveredBySuggestionsTable ${basesCoveredBySuggestionsTable}`);
-      // console.log(`upstreamPadding ${upstreamPadding}`);
-      // console.log(`downstreamPadding ${downstreamPadding}`);
-
-      // const upstreamPadding = (self.state.selectedSuggestionStop - self.state.selectedSuggestionStart < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarUpstreamPadding : Constants.defaultHgViewRegionUpstreamPadding;
-      // const downstreamPadding = (self.state.selectedSuggestionStop - self.state.selectedSuggestionStart < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarDownstreamPadding : Constants.defaultHgViewRegionDownstreamPadding;
+      const upstreamPadding = unpaddedUpstreamPadding + basesCoveredBySuggestionsTable;
+      const downstreamPadding = unpaddedDownstreamPadding;
 
       const upstreamPaddingObj = { 
         "roi" : (self.state.mainRegionIndicatorData && self.state.mainRegionIndicatorData.upstreamPadding && self.state.mainRegionIndicatorData.upstreamPadding.roi) 
@@ -2763,14 +2304,8 @@ class Viewer extends Component {
         upstreamPadding: upstreamPaddingObj,
         downstreamPadding: downstreamPaddingObj,
         regionLabel: region,
-        // regionState: { 
-        //   numerical: regionState, 
-        //   label: regionStateLabel, 
-        //   color: regionStateColor 
-        // },
         msg: null
       };
-      // console.log(`regionIndicatorData ${JSON.stringify(regionIndicatorData)}`);
       self.setState({
         mainRegionIndicatorData: regionIndicatorData,
         currentPositionKey: self.state.currentPositionKey + 1,
@@ -2784,10 +2319,6 @@ class Viewer extends Component {
         },
         selectedSuggestionBeingUpdated: false,
       }, () => {
-        // console.log(`chromInfo ${JSON.stringify(chromInfo)}`);
-        // console.log(`unpaddedChromosome ${unpaddedChromosome} | paddedStart ${paddedStart}`);
-        // console.log(`unpaddedChromosome ${unpaddedChromosome} | paddedStop  ${paddedStop}`);
-        // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
         viewRef.current.zoomTo(
           viewconfRef.views[0].uid,
           chromInfo.chrToAbs([unpaddedChromosome, paddedStart]),
@@ -2796,8 +2327,6 @@ class Viewer extends Component {
           chromInfo.chrToAbs([unpaddedChromosome, paddedStop]),
           animationTime
         );
-        // self.fadeOutIntervalDrop();
-        // self.fadeInIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
         self.updateScale(true, "hgViewUpdateSuggestionPosition");
         self.updateViewerURLForCurrentState(null, true);
         self.fadeInSuggestionIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
@@ -2819,14 +2348,11 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[params.genome] = newChromInfo;
-          // throw new Error(`Warning - [hgViewUpdateSuggestionPosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
   }
   
   hgViewUpdateExemplarPosition = (params, rowIndex) => {
-    
-    // console.log(`[hgViewUpdateExemplarPosition]`);
 
     const viewRef = this.mainHgView;
     const viewconfRef = this.state.mainHgViewconf;
@@ -2907,14 +2433,11 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[params.genome] = newChromInfo;
-          // throw new Error(`Warning - [hgViewUpdateExemplarPosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
   }
 
   hgViewUpdateRoiPosition = (params, rowIndex, cf) => {
-    // console.log(`[hgViewUpdateRoiPosition] <- ${cf} | ${rowIndex}`);
-
     const viewRef = this.mainHgView;
     const viewconfRef = this.state.mainHgViewconf;
     const animationTime = params.hgViewAnimationTime;
@@ -2923,17 +2446,13 @@ class Viewer extends Component {
 
     function hgViewUpdateRoiPositionForChromInfo(chromInfo, self) {
       const region = `${self.state.selectedRoiChrLeft}:${self.state.selectedRoiStart}-${self.state.selectedRoiStop}`;
-      // console.log(`hgViewUpdateSuggestionPositionForChromInfo ${JSON.stringify(region)}`);
-      // const regionState = self.state.suggestionTableData[(rowIndex - 1)].state.numerical;
-      // const regionStateLabel = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][0];
-      // const regionStateColor = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][1];
       const unpaddedChromosome = self.state.selectedRoiChrLeft;
       const unpaddedStart = self.state.selectedRoiStart;
       const unpaddedStop = self.state.selectedRoiStop;
       const unpaddedBasesDiff = parseFloat(unpaddedStop - unpaddedStart);
 
-      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionUpstreamPadding;
-      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionDownstreamPadding;
+      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2);
+      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2);
 
       const windowInnerWidth = parseFloat(document.documentElement.clientWidth);
       
@@ -2944,15 +2463,6 @@ class Viewer extends Component {
 
       const upstreamPadding = unpaddedUpstreamPadding + basesCoveredByRoiTable;
       const downstreamPadding = unpaddedDownstreamPadding;
-
-      // console.log(`windowInnerWidth ${windowInnerWidth}`);
-      // console.log(`basesDiff ${unpaddedBasesDiff}`);
-      // console.log(`basesCoveredBySuggestionsTable ${basesCoveredBySuggestionsTable}`);
-      // console.log(`upstreamPadding ${upstreamPadding}`);
-      // console.log(`downstreamPadding ${downstreamPadding}`);
-
-      // const upstreamPadding = (self.state.selectedSuggestionStop - self.state.selectedSuggestionStart < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarUpstreamPadding : Constants.defaultHgViewRegionUpstreamPadding;
-      // const downstreamPadding = (self.state.selectedSuggestionStop - self.state.selectedSuggestionStart < Constants.defaultHgViewShortExemplarLengthThreshold) ? Constants.defaultHgViewShortExemplarDownstreamPadding : Constants.defaultHgViewRegionDownstreamPadding;
 
       const upstreamPaddingObj = { 
         "roi" : (self.state.mainRegionIndicatorData && self.state.mainRegionIndicatorData.upstreamPadding && self.state.mainRegionIndicatorData.upstreamPadding.roi) 
@@ -2977,11 +2487,6 @@ class Viewer extends Component {
         upstreamPadding: upstreamPaddingObj,
         downstreamPadding: downstreamPaddingObj,
         regionLabel: region,
-        // regionState: { 
-        //   numerical: regionState, 
-        //   label: regionStateLabel, 
-        //   color: regionStateColor 
-        // },
         msg: null
       };
       const newCurrentPositionKey = (self.state.roiTableIsVisible) ? self.state.currentPositionKey + 1 : self.state.currentPositionKey;
@@ -2993,14 +2498,12 @@ class Viewer extends Component {
         startRight : paddedStart,
         stopRight : paddedStop
       } : self.state.currentPosition;
-      // console.log(`regionIndicatorData ${JSON.stringify(regionIndicatorData)}`);
       self.setState({
         mainRegionIndicatorData: regionIndicatorData,
         currentPositionKey: newCurrentPositionKey,
         currentPosition : newCurrentPosition,
         selectedRoiBeingUpdated: false,
       }, () => {
-        // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
         if (self.state.roiTableIsVisible) {
           viewRef.current.zoomTo(
             viewconfRef.views[0].uid,
@@ -3011,8 +2514,6 @@ class Viewer extends Component {
             animationTime
           );
         }
-        // self.fadeOutIntervalDrop();
-        // self.fadeInIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
         self.updateScale(true, "hgViewUpdateRoiPosition");
         self.updateViewerURLForCurrentState(null, true);
         self.fadeInRoiIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
@@ -3034,25 +2535,20 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[params.genome] = newChromInfo;
-          // throw new Error(`Warning - [hgViewUpdateRoiPosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
   }
 
   updateSimSearchHitSelection = (newIdx, cf) => {
-    // console.log(`updateSimSearchHitSelection <- ${cf} | ${newIdx}`);
     this.setState({
       selectedSimSearchRowIdx: newIdx
     }, () => {
-      // console.log(`selectedSimSearchRowIdx | ${this.state.selectedSimSearchRowIdx}`);
       this.updateViewerURLForCurrentState(null, true);
     });
   }
 
   hgViewUpdateSimSearchPosition = (params, rowIndex) => {
     
-    // console.log(`[hgViewUpdateSimSearchPosition]`);
-
     const viewRef = this.mainHgView;
     const viewconfRef = this.state.mainHgViewconf;
     const animationTime = params.hgViewAnimationTime;
@@ -3061,17 +2557,13 @@ class Viewer extends Component {
 
     function hgViewUpdateSimSearchPositionForChromInfo(chromInfo, self) {
       const region = `${self.state.selectedSimSearchRegionChrLeft}:${self.state.selectedSimSearchRegionStart}-${self.state.selectedSimSearchRegionStop}`;
-      // console.log(`hgViewUpdateSimSearchPositionForChromInfo ${JSON.stringify(region)}`);
-      // const regionState = self.state.suggestionTableData[(rowIndex - 1)].state.numerical;
-      // const regionStateLabel = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][0];
-      // const regionStateColor = Constants.stateColorPalettes[self.state.hgViewParams.genome][self.state.hgViewParams.model][regionState][1];
       const unpaddedChromosome = self.state.selectedSimSearchRegionChrLeft;
       const unpaddedStart = self.state.selectedSimSearchRegionStart;
       const unpaddedStop = self.state.selectedSimSearchRegionStop;
       const unpaddedBasesDiff = parseFloat(unpaddedStop - unpaddedStart);
 
-      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionUpstreamPadding;
-      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2); // Constants.defaultHgViewRegionDownstreamPadding;
+      const unpaddedUpstreamPadding = parseInt(unpaddedBasesDiff / 2);
+      const unpaddedDownstreamPadding = parseInt(unpaddedBasesDiff / 2);
 
       const windowInnerWidth = parseFloat(document.documentElement.clientWidth);
       
@@ -3105,11 +2597,6 @@ class Viewer extends Component {
         upstreamPadding: upstreamPaddingObj,
         downstreamPadding: downstreamPaddingObj,
         regionLabel: region,
-        // regionState: { 
-        //   numerical: regionState, 
-        //   label: regionStateLabel, 
-        //   color: regionStateColor 
-        // },
         msg: null
       };
       const newCurrentPositionKey = (self.state.simSearchTableIsVisible) ? self.state.currentPositionKey + 1 : self.state.currentPositionKey;
@@ -3121,14 +2608,12 @@ class Viewer extends Component {
         startRight : paddedStart,
         stopRight : paddedStop
       } : self.state.currentPosition;
-      // console.log(`regionIndicatorData ${JSON.stringify(regionIndicatorData)}`);
       self.setState({
         mainRegionIndicatorData: regionIndicatorData,
         currentPositionKey: newCurrentPositionKey,
         currentPosition : newCurrentPosition,
         selectedSimSearchRegionBeingUpdated: false,
       }, () => {
-        // console.log(`zoomTo: ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStart])} | ${chromInfo.chrToAbs([unpaddedChromosome, paddedStop])}`);
         if (self.state.simSearchTableIsVisible) {
           viewRef.current.zoomTo(
             viewconfRef.views[0].uid,
@@ -3139,8 +2624,6 @@ class Viewer extends Component {
             animationTime
           );
         }
-        // self.fadeOutIntervalDrop();
-        // self.fadeInIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
         self.updateScale(true, "hgViewUpdateSimSearchPosition");
         self.updateViewerURLForCurrentState(null, true);
         self.fadeInSimSearchIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
@@ -3162,7 +2645,6 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[params.genome] = newChromInfo;
-          // throw new Error(`Warning - [hgViewUpdateSimSearchPosition] could not retrieve chromosome information - ${JSON.stringify(err)}`);
         });
     }
   }
@@ -3177,21 +2659,16 @@ class Viewer extends Component {
   
   handleDrawerStateChange = (state) => {
     if (state.isOpen === this.state.drawerIsOpen) return; // short-circuit a repeat call
-    // console.log(`[handleDrawerStateChange] new state ${JSON.stringify(state)}`);
-    // let mode = this.state.hgViewParams.mode;
     const sampleSet = this.state.hgViewParams.sampleSet;
     const genome = this.state.hgViewParams.genome;
     const group = this.state.hgViewParams.group;
-    // const isGroupPreferredSample = Constants.groupsByGenome[sampleSet][genome][group].preferred;
     const isGroupPreferredSample = Manifest.groupsByGenome[sampleSet][genome][group].preferred;
     if (!isGroupPreferredSample) {
       this.toggleAdvancedOptionsVisible();
     }
     if (state.isOpen) { // open
-      //let windowInnerHeight = window.innerHeight + "px";
       let windowInnerHeight = document.documentElement.clientHeight + "px";
       let epilogosViewerHeaderNavbarHeight = parseInt(document.getElementById("epilogos-viewer-container-navbar").clientHeight) + "px";
-      // let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 70) + "px";
       let epilogosViewerDrawerHeight = parseInt(parseInt(windowInnerHeight) - parseInt(epilogosViewerHeaderNavbarHeight) - 35) + "px";
       this.setState({
         drawerSelection: Constants.defaultDrawerType,
@@ -3238,28 +2715,18 @@ class Viewer extends Component {
     
     // if ROI table width is wider, use it
     let roiTableWidth = 0;
-    // let isRoiTableWidthWidened = false;
     if (document.getElementById("drawer-content-roi-table")) {
       roiTableWidth = parseInt(document.getElementById("drawer-content-roi-table").offsetWidth);
-      // console.log("[toggleDrawer] roiTableWidth", roiTableWidth);
       if (roiTableWidth > parseInt(epilogosViewerHeaderNavbarLefthalfWidth)) {
         epilogosViewerHeaderNavbarLefthalfWidth = roiTableWidth + "px";
-        // isRoiTableWidthWidened = true;
       }
     }
     
     const drawerType = (name) ? Constants.drawerTypeByName[name] : Constants.defaultDrawerType;
     this.setState({
-      // navbarLefthalfWidth: epilogosViewerHeaderNavbarLefthalfWidth
       drawerSelection: drawerType,
-      // drawerWidth: parseInt(epilogosViewerHeaderNavbarLefthalfWidth) + (isRoiTableWidthWidened ? 45 : 0) 
       drawerWidth: Constants.defaultMinimumDrawerWidth,
     }, () => {
-      // console.log(`drawerSelection ${this.state.drawerSelection}`);
-      // console.log(`drawerActiveTabOnOpen ${this.state.drawerActiveTabOnOpen}`);
-      // let selection = name;
-      // let title = (selection) ? Constants.drawerTitleByType[selection] : "";
-      // console.log("[toggleDrawer] title", title);
       this.handleDrawerStateChange({
         isOpen: !this.state.drawerIsOpen
       });
@@ -3331,7 +2798,6 @@ class Viewer extends Component {
 
   onChangeSearchInputLocationViaGeneSearch = (selected) => {
     if (!selected) return;
-    // console.log("[epilogos] selected", selected);
     const location = (selected.gene && selected.gene.chromosome && selected.gene.start && selected.gene.end) ? {
       chrom: selected.gene.chromosome,
       start: selected.gene.start,
@@ -3347,23 +2813,17 @@ class Viewer extends Component {
       location.start = location.stop;
       location.stop = tempStart;
     }
-    // console.log("[epilogos] location", location);
     this.onChangeSearchInputLocation(location, true, '');
   }
   
   onChangeSearchInputLocation = (location, applyPadding, userInput) => {
-    // console.log("[onChangeSearchInputLocation] location", location);
-    // this.fadeOutIntervalDrop();
-    // this.fadeOutSuggestionIntervalDrop();
     const locationComponents = {
       chromosome: location.chrom, 
       start: location.start, 
-      end: location.stop 
-      // order: ...
+      end: location.stop,
     };
     const locationAsInterval = `${locationComponents.chromosome}:${locationComponents.start}-${locationComponents.end}`;
     let range = Helpers.getRangeFromString(locationAsInterval, applyPadding, null, this.state.hgViewParams.genome);
-    // console.log(`[onChangeSearchInputLocation] range ${range}`);
     if (range) {
       this.setState({
         searchInputText: userInput,
@@ -3387,7 +2847,6 @@ class Viewer extends Component {
   }
   
   onFocusSearchInput = (cb) => {
-    // console.log(`[onFocusSearchInput] called`);
     this.closeDrawer(() => {
       this.setState({
         searchInputLocationBeingChanged: false
@@ -3406,12 +2865,6 @@ class Viewer extends Component {
     let start = parseInt(pos[1]);
     let stop = parseInt(pos[2]);
     let regionLabel = null;
-
-    // console.log(`[jumpToRegion] region ${JSON.stringify(this.state.exemplarTableData[rowIndex])}`);
-    // console.log(`[jumpToRegion] regionType ${regionType}`);
-    // console.log("[jumpToRegion] rowIndex", rowIndex);
-    // console.log("[jumpToRegion] region", region);
-    // console.log("[jumpToRegion] pos", pos);
 
     let regionState = (regionType === Constants.applicationRegionTypes.roi || regionType === Constants.applicationRegionTypes.simsearch) ? null : this.state.exemplarTableData[(rowIndex - 1)].state.numerical;
     let regionStateLabel = (regionType === Constants.applicationRegionTypes.roi || regionType === Constants.applicationRegionTypes.simsearch) ? null : Constants.stateColorPalettes[this.state.hgViewParams.genome][this.state.hgViewParams.model][regionState][0];
@@ -3481,12 +2934,9 @@ class Viewer extends Component {
   }
   
   updateSortOrderOfRoiTableDataIndices = (field, order) => {
-    // console.log("[updateSortOrderOfRoiTableDataIndices] field and order", field, order);
-    // console.log("[updateSortOrderOfRoiTableDataIndices] (before) this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
     let resortData = Array.from(this.state.roiTableDataCopy);
     switch(field) {
       case 'idx':
-        // console.log("[updateSortOrderOfRoiTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
         }
@@ -3495,7 +2945,6 @@ class Viewer extends Component {
         }
         break;
       case 'element':
-        // console.log("[updateSortOrderOfRoiTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.paddedPosition.localeCompare(a.element.paddedPosition));
         }
@@ -3534,19 +2983,14 @@ class Viewer extends Component {
     this.setState({
       roiTableDataIdxBySort: resortedIndices,
     }, () => {
-      // console.log("[updateSortOrderOfRoiTableDataIndices] (after) this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
-      // this.adjustRoiTableOffset(this.state.selectedRoiRowIdx, true, true);
       this.shiftRoiTableOffset(this.state.selectedRoiRowIdx, "skip");
     })
   }
   
   updateSortOrderOfExemplarTableDataIndices = (field, order) => {
-    // console.log("[updateSortOrderOfExemplarTableDataIndices] field and order", field, order);
-    // console.log("[updateSortOrderOfExemplarTableDataIndices] (before) this.state.exemplarTableDataIdxBySort", this.state.exemplarTableDataIdxBySort);
     let resortData = Array.from(this.state.exemplarTableDataCopy);
     switch(field) {
       case 'idx':
-        // console.log("[updateSortOrderOfExemplarTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
         }
@@ -3555,7 +2999,6 @@ class Viewer extends Component {
         }
         break;
       case 'state':
-        // console.log("[updateSortOrderOfExemplarTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.state.localeCompare(a.state));
         }
@@ -3564,7 +3007,6 @@ class Viewer extends Component {
         }
         break;
       case 'element':
-        // console.log("[updateSortOrderOfExemplarTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.localeCompare(a.element));
         }
@@ -3578,17 +3020,13 @@ class Viewer extends Component {
     let resortedIndices = resortData.map((e) => parseInt(e.idx));
     this.setState({
       exemplarTableDataIdxBySort: resortedIndices
-    }, () => {
-      // console.log("[updateSortOrderOfExemplarTableDataIndices] (after) this.state.exemplarTableDataIdxBySort", this.state.exemplarTableDataIdxBySort);
-    })
+    }, () => {})
   }
 
   updateSortOrderOfSuggestionTableDataIndices = (field, order) => {
-    // console.log(`updateSortOrderOfSuggestionTableDataIndices | ${field} | ${order}`);
     let resortData = Array.from(this.state.suggestionTableDataCopy);
     switch(field) {
       case 'idx':
-        // console.log("[updateSortOrderOfSuggestionTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
         }
@@ -3597,7 +3035,6 @@ class Viewer extends Component {
         }
         break;
       case 'state':
-        // console.log("[updateSortOrderOfSuggestionTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.state.localeCompare(a.state));
         }
@@ -3606,7 +3043,6 @@ class Viewer extends Component {
         }
         break;
       case 'element':
-        // console.log("[updateSortOrderOfSuggestionTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.localeCompare(a.element));
         }
@@ -3621,26 +3057,14 @@ class Viewer extends Component {
     this.setState({
       suggestionTableDataIdxBySort: resortedIndices
     }, () => {
-      // console.log("[updateSortOrderOfSuggestionTableDataIndices] (after) this.state.suggestionTableDataIdxBySort", this.state.suggestionTableDataIdxBySort);
-      // this.updateSuggestionRowIdxFromCurrentIdx("skip", this.state.selectedSuggestionRowIdx);
-      // this.adjustSuggestionTableOffset(this.state.selectedSuggestionRowIdx, true);
-      // const suggestionRowBySortIdx = this.state.suggestionTableDataIdxBySort.indexOf(this.state.selectedSuggestionRowIdx);
-      // this.adjustSuggestionTableOffset(suggestionRowBySortIdx, true);
-      // console.log(`[post] this.state.selectedSuggestionRowIdx ${this.state.selectedSuggestionRowIdx}`);
-      // console.log(`[post] this.state.suggestionTableDataIdxBySort.indexOf(selectedSuggestionRowIdx) ${this.state.suggestionTableDataIdxBySort.indexOf(this.state.selectedSuggestionRowIdx)}`);
-
-      // this.adjustSuggestionTableOffset(this.state.selectedSuggestionRowIdx, true, true);
       this.shiftSuggestionTableOffset(this.state.selectedSuggestionRowIdx, "skip");
     })
   }
   
   updateSortOrderOfSimSearchTableDataIndices = (field, order) => {
-    // console.log("[updateSortOrderOfRoiTableDataIndices] field and order", field, order);
-    // console.log("[updateSortOrderOfRoiTableDataIndices] (before) this.state.roiTableDataIdxBySort", this.state.roiTableDataIdxBySort);
     let resortData = Array.from(this.state.simSearchTableDataCopy);
     switch(field) {
       case 'idx':
-        // console.log("[updateSortOrderOfSimSearchTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => (a.idx > b.idx) ? 1 : -1);
         }
@@ -3649,7 +3073,6 @@ class Viewer extends Component {
         }
         break;
       case 'element':
-        // console.log("[updateSortOrderOfSimSearchTableDataIndices] resorting data table field [" + field + "] in order [" + order + "]");
         if (order === "asc") {
           resortData.sort((a, b) => b.element.paddedPosition.localeCompare(a.element.paddedPosition));
         }
@@ -3687,15 +3110,10 @@ class Viewer extends Component {
     let resortedIndices = resortData.map((e) => parseInt(e.idx));
     this.setState({
       simSearchTableDataIdxBySort: resortedIndices,
-    }, () => {
-      // console.log("[updateSortOrderOfSimSearchTableDataIndices] (after) this.state.simSearchTableDataIdxBySort", this.state.simSearchTableDataIdxBySort);
-    })
+    }, () => {})
   }
   
   changeViewParams = (isDirty, tempHgViewParams, currentHgViewParams) => {
-    console.log(`changeViewParams | this.state.hgViewParams.sampleSet ${this.state.hgViewParams.sampleSet}`);
-    console.log(`changeViewParams | tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-
     // if switching between core sets, try to preserve the selections
     if (tempHgViewParams.sampleSet !== this.state.hgViewParams.sampleSet) {
       // If switching to locally-hosted core set from remotely-hosted core, then check if the genome, state model, group, and saliency are available. If not, set to defaults.
@@ -3715,7 +3133,6 @@ class Viewer extends Component {
           tempHgViewParams.complexity = Constants.reverseComplexities[tempHgViewParams.saliency];
           tempHgViewParams.group = Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.model][tempHgViewParams.saliency][0];
           tempHgViewParams.mode = (tempHgViewParams.group.includes("versus")) ? "paired" : "single";
-          // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
           const availableCoreGroups = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
           if (!availableCoreGroups.includes(tempHgViewParams.group)) {
             tempHgViewParams.group = availableCoreGroups[0];
@@ -3723,7 +3140,6 @@ class Viewer extends Component {
           console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
         }
       }
-      // else if (destinationIsRemoteCoreSet) {
       else {
         // if we are switching from Roadmap to Adsera, or vice versa, preserve the genome selection
         if (((tempHgViewParams.sampleSet === "vA") && (this.state.hgViewParams.sampleSet === "vC")) || ((tempHgViewParams.sampleSet === "vC") && (this.state.hgViewParams.sampleSet === "vA"))) {
@@ -3800,19 +3216,15 @@ class Viewer extends Component {
       //
       // adjust group
       //
-      // let availableGroupsForNewSampleSet = Object.keys(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
       let availableGroupsForNewSampleSet = Object.keys(Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome]);
       if (availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group) === -1) {
         if (this.state.hgViewParams.mode === "single") {
-          // tempHgViewParams.group = Constants.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
           tempHgViewParams.group = Manifest.defaultSingleGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
         }
         else if (this.state.hgViewParams.mode === "paired") {
-          // console.log(`availableGroupsForNewSampleSet | (${this.state.hgViewParams.group}) ${availableGroupsForNewSampleSet.indexOf(this.state.hgViewParams.group)} | ${JSON.stringify(availableGroupsForNewSampleSet)}`);
           //
           // it can be possible for an A_vs_B group name to have an according A_versus_B name (and vice versa)
           //
-          // tempHgViewParams.group = Constants.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
           tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
           if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
             tempHgViewParams.group = "Male_vs_Female";
@@ -3820,13 +3232,11 @@ class Viewer extends Component {
           const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
           const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
           if (substituteGroupNameVsToVersus !== this.state.hgViewParams.group) {
-            // console.log(`testing substituteGroupNameVsToVersus...`);
             if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVsToVersus) !== -1) {
               tempHgViewParams.group = substituteGroupNameVsToVersus;
             }
           }
           else if (substituteGroupNameVersusToVs !== this.state.hgViewParams.group) {
-            // console.log(`testing substituteGroupNameVersusToVs...`);
             if (availableGroupsForNewSampleSet.indexOf(substituteGroupNameVersusToVs) !== -1) {
               tempHgViewParams.group = substituteGroupNameVersusToVs;
             }
@@ -3837,30 +3247,17 @@ class Viewer extends Component {
       // adjust complexity
       //
       try {
-        // let availableComplexitiesForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
         let availableComplexitiesForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForComplexities;
-        // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-        // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
-        // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
-        // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
         if (availableComplexitiesForNewGroup.indexOf(this.state.hgViewParams.complexity) === -1) {
           tempHgViewParams.complexity = "KL"; // this should always be available
         }
       }
-      catch (error) {
-        // tempHgViewParams.complexity = "KL";
-        // console.log(`tempHgViewParams.sampleSet ${tempHgViewParams.sampleSet}`);
-        // console.log(`tempHgViewParams.genome ${tempHgViewParams.genome}`);
-        // console.log(`tempHgViewParams.group ${tempHgViewParams.group}`);
-        // console.log(`Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group] ${JSON.stringify(Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group])}`);
-      }
+      catch (error) {}
       //
       // adjust model
       //
       try {
-        // let availableModelsForNewGroup = Constants.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
         let availableModelsForNewGroup = Manifest.groupsByGenome[tempHgViewParams.sampleSet][tempHgViewParams.genome][tempHgViewParams.group].availableForModels;
-        // console.log(`availableModelsForNewGroup | (${tempHgViewParams.model}) ${availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model))} | ${JSON.stringify(availableModelsForNewGroup)}`);
         if (availableModelsForNewGroup.indexOf(parseInt(tempHgViewParams.model)) === -1) {
           tempHgViewParams.model = this.state.hgViewParams.model; // this might be available
           if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
@@ -3872,7 +3269,6 @@ class Viewer extends Component {
         }
       }
       catch (error) {
-        // console.log(`error ${JSON.stringify(error, null, 2)}`);
         tempHgViewParams.model = this.state.hgViewParams.model; // this should presumably be available
         if ((tempHgViewParams.sampleSet === "vC") && ((tempHgViewParams.mode === "single") || (tempHgViewParams.mode === "paired"))) {
           tempHgViewParams.model = "18";
@@ -3918,8 +3314,6 @@ class Viewer extends Component {
           tempHgViewParams: {...tempHgViewParams},
         }, () => {
           if (isDirty) {
-            // this.epilogosViewerContainerIntervalDropMain.style.opacity = 0;
-            // this.epilogosViewerContainerIntervalDropQuery.style.opacity = 0;
             this.setState({
               recommenderV3SearchInProgress: false,
               recommenderV3SearchIsVisible: this.recommenderV3SearchCanBeVisible(),
@@ -3931,20 +3325,7 @@ class Viewer extends Component {
               queryHgViewconf: {},
               mainRegionIndicatorContentTopOffset: Constants.defaultApplicationRegionIndicatorContentMainViewOnlyTopOffset,
               queryRegionIndicatorContentTopOffset: 0,
-              // selectedExemplarRowIdxOnLoad: Constants.defaultApplicationSerIdx,
-              // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
               mainHgViewHeight: Constants.viewerHgViewParameters.hgViewTrackEpilogosHeight + Constants.viewerHgViewParameters.hgViewTrackChromatinMarksHeight + Constants.viewerHgViewParameters.hgViewTrackChromosomeHeight + Constants.viewerHgViewParameters.hgViewTrackGeneAnnotationsHeight + Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight,
-              // roiTabTitle: Constants.drawerTitleByType.roi,
-              // roiEnabled: false,
-              // roiJumpActive: false,
-              // roiRegions: [],
-              // roiTableData: [],
-              // roiTableDataCopy: [],
-              // roiTableDataIdxBySort: [],
-              // roiTableDataLongestNameLength: Constants.defaultRoiTableDataLongestNameLength,
-              // roiTableDataLongestAllowedNameLength: Constants.defaultRoiTableDataLongestAllowedNameLength,
-              // roiEncodedURL: "",
-              // roiRawURL: "",
               selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
               selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
               selectedRoiRowIdxOnLoad: Constants.defaultApplicationSrrIdx,
@@ -3959,7 +3340,6 @@ class Viewer extends Component {
   }
   
   updateActiveTab = (newTab) => {
-    // console.log(`updateActiveTab ${newTab}`);
     let newRowIdx = -1;
     let newDrawerActiveRegionTab = this.state.drawerActiveRegionTab;
     let newSelectedExemplarRowIdx = this.state.selectedExemplarRowIdx;
@@ -3973,18 +3353,15 @@ class Viewer extends Component {
       case "exemplars": {
         if (this.state.exemplarTableData && this.state.exemplarTableData.length > 0) {
           newDrawerActiveRegionTab = newTab;
-          // newSelectedExemplarRowIdx = (this.state.selectedExemplarRowIdx !== Constants.defaultApplicationSerIdx) ? this.state.selectedExemplarRowIdx : 1;
           newRowIdx = newSelectedExemplarRowIdx;
           regionType = Constants.applicationRegionTypes.exemplars;
           position = this.state.exemplarTableData[0].position;
-          // console.log(`updateActiveTab ${newTab} | newSelectedExemplarRowIdx ${newSelectedExemplarRowIdx}`);
         }
         break;
       }
       case "roi": {
         if (this.state.roiTableData && this.state.roiTableData.length > 0) {
           newDrawerActiveRegionTab = newTab;
-          // newSelectedRoiRowIdx = (this.state.selectedRoiRowIdx !== Constants.defaultApplicationSrrIdx) ? this.state.selectedRoiRowIdx : 1;
           newRowIdx = newSelectedRoiRowIdx;
           // eslint-disable-next-line no-unused-vars
           regionType = Constants.applicationRegionTypes.roi;
@@ -3996,7 +3373,6 @@ class Viewer extends Component {
       case "simsearch": {
         if (this.state.simSearchTableData && this.state.simSearchTableData.length > 0) {
           newDrawerActiveRegionTab = newTab;
-          // newSelectedRoiRowIdx = (this.state.selectedRoiRowIdx !== Constants.defaultApplicationSrrIdx) ? this.state.selectedRoiRowIdx : 1;
           newRowIdx = newSelectedSimSearchRowIdx;
           // eslint-disable-next-line no-unused-vars
           regionType = Constants.applicationRegionTypes.simsearch;
@@ -4013,10 +3389,6 @@ class Viewer extends Component {
         return;
       }
     }
-    // this.fadeOutIntervalDrop();
-    // this.fadeOutSuggestionIntervalDrop();
-    // this.fadeOutRoiIntervalDrop();
-    // console.log(`setting newDrawerActiveRegionTab to ${newDrawerActiveRegionTab}`);
     this.setState({
       drawerActiveRegionTab: newDrawerActiveRegionTab,
       drawerActiveTabOnOpen: newTab,
@@ -4041,10 +3413,8 @@ class Viewer extends Component {
       this.setState({
         drawerContentKey: this.state.drawerContentKey + 1,
       }, () => {
-        // this.jumpToRegion(position, regionType, newRowIdx);
         switch (newTab) {
           case "exemplars": {
-            // console.log(`B`);
             this.updateExemplarRowIdxFromCurrentIdx("skip", newRowIdx);
             break;
           }
@@ -4100,11 +3470,9 @@ class Viewer extends Component {
     let group = this.state.tempHgViewParams.group;
     let groupText = null;
     try {
-      // groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
       groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
     }
     catch (err) {
-      // throw new Error(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group} | data ${JSON.stringify(Constants.groupsByGenome[sampleSet][genome][group])}`);
       throw new Error(`Error: Viewer.viewerUpdateNotice cannot set groupText for | sampleSet ${sampleSet} | genome ${genome} | group ${group} | data ${JSON.stringify(Manifest.groupsByGenome[sampleSet][genome], null, 2)}`);
     }
     let model = this.state.tempHgViewParams.model;
@@ -4133,18 +3501,14 @@ class Viewer extends Component {
       return <div className="viewer-overlay-notice"><div className="viewer-overlay-notice-header">{err.response.title}</div><div className="viewer-overlay-notice-body"><div>{errorMsg}</div><div className="viewer-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
     }
     else {
-      // console.log(`[viewerUpdateNotice] err ${JSON.stringify(err)}`);
       return <div className="viewer-overlay-notice"><div className="viewer-overlay-notice-header">{(err.response && err.response.status) || "500"} Error</div><div className="viewer-overlay-notice-body"><div>{errorMsg}</div><div className="viewer-overlay-notice-body-controls"><Button title={"Dismiss"} color="primary" size="sm" onClick={() => { this.fadeOutOverlay() }}>Dismiss</Button></div></div></div>;
     }
   }
   
   triggerUpdate = (updateMode, cf) => {
-    // if (!this.mainHgView) return;
-    console.log(`[triggerUpdate] <- ${cf} | ${updateMode}`);
     if (updateMode === "cancel") {
       this.closeDrawer();
       this.setState({
-        // showUpdateNotice: false,
         hideDrawerOverlay: true,
         drawerIsOpen: true,
         tempHgViewParams: {...this.state.hgViewParams},
@@ -4166,13 +3530,7 @@ class Viewer extends Component {
       let newGatt = this.state.tempHgViewParams.gatt;
       let newTrackServerBySampleSet = (Manifest.trackServerBySampleSet[newSampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
 
-      console.log(`newSampleSet ${newSampleSet}`);
-      console.log(`newTrackServerBySampleSet ${newTrackServerBySampleSet}`);
-
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, newGenome);
-      
-      // console.log(`[triggerUpdate] this.state.tempHgViewParams.mode ${this.state.tempHgViewParams.mode}`);
-      // console.log("[triggerUpdate] newSampleSet", newSampleSet);
       
       const queryObj = Helpers.getJsonFromUrl();
 
@@ -4197,7 +3555,6 @@ class Viewer extends Component {
         const hgUUIDQueryDefaultURL = `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}`;
         const hgUUIDQueryLocalHgServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}/api/v1/tilesets/?ac=${fn}`;
         const hgUUIDQueryURL = (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.uuidQueryPromise')) ? hgUUIDQueryLocalHgServerURL : hgUUIDQueryDefaultURL;
-        // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
         return axios.get(hgUUIDQueryURL).then((res) => {
           if (res.data && res.data.results && res.data.results[0]) {
             return res.data.results[0].uuid;
@@ -4207,7 +3564,6 @@ class Viewer extends Component {
             err.response = {};
             err.response.status = "404";
             err.response.statusText = "No tileset data found for specified UUID";
-            //throw {response:{status:"404", statusText:"No tileset data found for specified UUID"}};
             throw err;
           }
         })
@@ -4242,7 +3598,6 @@ class Viewer extends Component {
       let newChromsizesUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['chromsizes'];
       let newGenesUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['genes'];
       let newTranscriptsUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['transcripts'];
-      // let newMasterlistUUID = Constants.viewerHgViewconfGenomeAnnotationUUIDs[newGenome]['masterlist_20tpt_itB']; // ['masterlist_40tpt']; //['masterlist'];
 
       let uuidDelay = 0;
       function sleep(ms) {
@@ -4271,16 +3626,12 @@ class Viewer extends Component {
       // assigned to different (if related) chromatin states
       //
       let newColormap = Constants.viewerHgViewconfColormapsPatchedForDuplicates[newGenome][newModel];
-      // console.warn(`[triggerUpdate] newColormap ${newGenome} ${newModel} ${JSON.stringify(newColormap)}`);
       
       let newHgViewconfURL = Helpers.hgViewconfDownloadURL(
         this.state.hgViewParams.hgViewconfEndpointURL, 
         newViewconfUUID, 
         this.state.hgViewParams.hgViewconfEndpointURLSuffix);
 
-      // console.log("[triggerUpdate] newHgViewconfURL", newHgViewconfURL);
-      
-      // let newHgViewParams = {...this.state.hgViewParams};
       let newHgViewParams = {...this.state.tempHgViewParams};
       
       //
@@ -4290,7 +3641,6 @@ class Viewer extends Component {
       let newHgViewTrackGeneAnnotationsHeight = (this.state.isMobile && (this.state.isPortrait === false)) ? 0 : parseInt(newHgViewParams.hgViewTrackGeneAnnotationsHeight);
         
       if (newMode === "paired") {
-        // console.log("[triggerUpdate] paired");
         //
         // the "paired" template uses three epilogos tracks, the paths for which are constructed from the temporary hgview parameters object
         //
@@ -4303,19 +3653,10 @@ class Viewer extends Component {
         // in the general sample set condition ("Roadmap"), we use an old pattern for filenames
         // for other sample sets, we must use a different pattern to make it possible to retrieve their UUIDs
         //
-        // let splitResult = newGroup.split(/_vs_/);
-        // let newGroupA = splitResult[0];
-        // let newGroupB = splitResult[1];
-        // if (typeof newGroupB === "undefined") {
-        //   splitResult = newGroup.split(/_versus_/);
-        //   newGroupA = splitResult[0];
-        //   newGroupB = splitResult[1];
-        // }
 
         const groupSplit = Helpers.splitPairedGroupString(newGroup);
         const newGroupA = groupSplit.groupA;
         const newGroupB = groupSplit.groupB;
-        // console.log(`newGroupA ${JSON.stringify(newGroupA)} newGroupB ${JSON.stringify(newGroupB)}`);
 
         let pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
 
@@ -4326,30 +3667,6 @@ class Viewer extends Component {
         let newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
         let newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
         let newEpilogosTrackAvsBFilename = pairedEpilogosTrackFilenames.AvsB;     
-
-        // let newEpilogosTrackAFilename = `${newGenome}.${newModel}.${newGroupA}.${newComplexity}.epilogos.multires.mv5`;
-        // let newEpilogosTrackBFilename = `${newGenome}.${newModel}.${newGroupB}.${newComplexity}.epilogos.multires.mv5`;
-        // let newEpilogosTrackAvsBFilename = `${newGenome}.${newModel}.${newGroup}.${newComplexity}.epilogos.multires.mv5`;
-        // if (newSampleSet === "vC") {
-        //   newEpilogosTrackAFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackAvsBFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   if (newGroupA.includes("Male_donors") || newGroupA.includes("Female_donors")) {
-        //     newEpilogosTrackAFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[newComplexity]}.mv5`;
-        //     newEpilogosTrackBFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[newComplexity]}.mv5`;
-        //     newEpilogosTrackAvsBFilename = `${newSampleSet}.${newGenome}.${newModel}.${newGroup}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[newComplexity]}.mv5`;
-        //   }
-        // }
-        // else if (newSampleSet === "vF") {
-        //   const modSampleSet = "vE";
-        //   newEpilogosTrackAFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupA}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroupB}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newEpilogosTrackAvsBFilename = `833sample.${modSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
-
-        // console.log("[triggerUpdate] newEpilogosTrackAFilename", newEpilogosTrackAFilename);
-        // console.log("[triggerUpdate] newEpilogosTrackBFilename", newEpilogosTrackBFilename);
-        // console.log("[triggerUpdate] newEpilogosTrackAvsBFilename", newEpilogosTrackAvsBFilename);
 
         //
         // query for UUIDs
@@ -4368,20 +3685,11 @@ class Viewer extends Component {
         }).then((res) => {
           newEpilogosTrackAvsBUUID = res;
         }).then(() => {
-          // console.log("[triggerUpdate] newEpilogosTrackAUUID", newEpilogosTrackAUUID);
-          // console.log("[triggerUpdate] newEpilogosTrackBUUID", newEpilogosTrackBUUID);
-          // console.log("[triggerUpdate] newEpilogosTrackAvsBUUID", newEpilogosTrackAvsBUUID);
-          // console.log("[triggerUpdate] newChromsizesUUID", newChromsizesUUID);
-          // console.log("[triggerUpdate] newGenesUUID", newGenesUUID);
-          // console.log("[triggerUpdate] newColormap", newColormap);
-          // console.log("[triggerUpdate] newViewconfUUID", newViewconfUUID);
-          
           axios.get(newHgViewconfURL)
             .then((res) => {
               if (!res.data) {
                 throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
               }
-              // console.log("[triggerUpdate] res.data", res.data);
               
               // ensure that the template is not editable
               res.data.editable = false;
@@ -4392,7 +3700,6 @@ class Viewer extends Component {
               newHgViewParams.complexity = newComplexity;
               newHgViewParams.mode = newMode;
               newHgViewParams.gatt = newGatt;
-              // console.log("[triggerUpdate] newHgViewParams", newHgViewParams);
               
               let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
               let chrRight = queryObj.chrRight || this.state.currentPosition.chrRight;
@@ -4403,16 +3710,12 @@ class Viewer extends Component {
               // if the queryObj string contains malformed coordinates, we fix them here
               //
               if ((chrLeft === chrRight) && (start === stop)) {
-                // console.log("[update | paired] coordinates are equivalent");
-                // throw new TypeError();
                 chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
                 stop = Constants.defaultApplicationPositions[newSampleSet][newGenome].stop;
               }
               else if ((chrLeft === chrRight) && (start > stop)) {
-                // console.log("[update | paired] start greater than stop position");
-                // throw new TypeError();
                 chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 const tempStart = start;
@@ -4421,15 +3724,12 @@ class Viewer extends Component {
               }
 
               function updateViewerStateForPairedModeAndChromInfo(chromInfo, self) {
-                // console.log("[triggerUpdate] chromInfo", chromInfo);
                 //
                 // update viewconf views[0] initialXDomain and initialYDomain 
                 //
                 // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
                 //
                 if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-                  // console.log("[update | paired] chromosome not in chromLengths");
-                  // throw new TypeError();
                   chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                   chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                   start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
@@ -4443,8 +3743,6 @@ class Viewer extends Component {
                 }
                 let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
                 let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
-                // console.log("[triggerUpdate] position", chrLeft, start, absLeft);
-                // console.log("[triggerUpdate] position", chrRight, stop, absRight);
                 res.data.views[0].uid = uuid4();
                 res.data.views[0].initialXDomain = [absLeft, absRight];
                 res.data.views[0].initialYDomain = [absLeft, absRight];
@@ -4463,7 +3761,6 @@ class Viewer extends Component {
                 res.data.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
                 res.data.views[0].tracks.top[2].height = 0; // pairedEpilogosTrackHeight;
                 res.data.views[0].tracks.top[3].height = newHgViewTrackChromosomeHeight;
-                // res.data.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
                 // update track display options to fix label bug
                 res.data.views[0].tracks.top[0].options.labelPosition = "topLeft";
                 res.data.views[0].tracks.top[0].options.labelTextOpacity = 0.0;
@@ -4535,18 +3832,11 @@ class Viewer extends Component {
                     res.data.views[0].tracks.top[4].height = newHgViewTrackGeneAnnotationsHeight;
                     res.data.views[0].tracks.top[4].name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[4].options.name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
-                    // self.epilogosViewerTrackLabelPairedGeneAnnotation.style.bottom = "45px";
                     break;
                   }
                   case "ht": {
                     res.data.views[0].tracks.top[4].options.startCollapsed = false;
                     res.data.views[0].tracks.top[4].options.showToggleTranscriptsButton = false;
-                    // res.data.views[0].tracks.top[4].options.backgroundColor = "white";
-                    // res.data.views[0].tracks.top[4].options.labelStrokePlusStrandColor = "#0000ff";
-                    // res.data.views[0].tracks.top[4].options.labelStrokeMinusStrandColor = "#ff0000";
-                    // res.data.views[0].tracks.top[4].options.labelBackgroundPlusStrandColor = "#0000ff";
-                    // res.data.views[0].tracks.top[4].options.labelBackgroundMinusStrandColor = "#ff0000";
-                    // res.data.views[0].tracks.top[4].options.labelFontColor = "#ffffff";
                     res.data.views[0].tracks.top[4].tilesetUid = newTranscriptsUUID;
                     res.data.views[0].tracks.top[4].name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[4].options.name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
@@ -4555,8 +3845,6 @@ class Viewer extends Component {
                     res.data.views[0].tracks.top[4].options.highlightTranscriptTrackBackgroundColor = "#fdfdcf"; // "#fdfdaf"
                     res.data.views[0].tracks.top[4].options.showToggleTranscriptsButton = false;
                     res.data.views[0].tracks.top[4].options.utrColor = "#aFaFaF";
-                    // res.data.views[0].tracks.top[4].options.plusStrandColor = "#111111";
-                    // res.data.views[0].tracks.top[4].options.minusStrandColor = "#111111";
                     res.data.views[0].tracks.top[4].options.trackMargin = {top:10, bottom:10, left:0, right:0};
                     res.data.views[0].tracks.top[4].options.fontSize = 8;
                     res.data.views[0].tracks.top[4].options.labelFontSize = 11;
@@ -4607,22 +3895,9 @@ class Viewer extends Component {
                 //
                 res.data.views[0].tracks.top[2].options.symmetricRange = true;
                 //
-                // debug
-                //
-                // console.log(`${JSON.stringify(res.data, null, 2)}`);
-                //
                 // update Viewer application state and exemplars (in drawer)
                 //
-                // self.mainHgView.current.api.off("location", self.updateViewerLocation);
-                // if (self.state.locationHandles > 0) {
-                //   self.mainHgView.current.api.off("location", self.updateViewerLocation);
-                //   this.setState({
-                //     locationHandles: self.state.locationHandles - 1,
-                //   }, () => { console.log(`locationHandles ${self.state.locationHandles}`); });
-                // }
                 self.setState({
-                  // mainHgViewKey: self.state.mainHgViewKey + 1,
-                  // drawerContentKey: self.state.drawerContentKey + 1,
                   hgViewParams: newHgViewParams,
                   mainHgViewHeight: childViewHeightTotalPx,
                   mainHgViewconf: res.data,
@@ -4638,20 +3913,9 @@ class Viewer extends Component {
                   selectedExemplarRowIdx: newSerIdx,
                   selectedRoiRowIdx: newSrrIdx,
                 }, () => {
-                  // return;
-                  // if ((self.epilogosViewerContainerVerticalDropMain.style) && (self.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { self.fadeOutVerticalDrop() }
-                  // if ((self.epilogosViewerContainerIntervalDropMain.style) && (self.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { self.fadeOutIntervalDrop() }
-                  // if (newHgViewParams.sampleSet === 'vG') {
-                  //   self.updateViewportDimensions();
-                  // }
                   self.setState({
-                    // mainHgViewKey: self.state.mainHgViewKey + 1,
                     drawerContentKey: self.state.drawerContentKey + 1,
                   }, () => {
-                    // return;
-                    // console.log("[triggerUpdate] new main viewconf:", JSON.stringify(self.state.mainHgViewconf, null, 2));
-                    // update browser history (address bar URL)
-                    // console.log("[triggerUpdate] calling [updateViewerURL]", self.state.hgViewParams.mode);
                     const keepSuggestionInterval = true; // false;
                     self.updateViewerURL(self.state.hgViewParams.mode,
                                          self.state.hgViewParams.genome,
@@ -4666,29 +3930,12 @@ class Viewer extends Component {
                                          keepSuggestionInterval,
                                          "triggerUpdate");
                     // attach location event handler
-                    // self.mainHgView.api.on("location", (event) => { 
-                    //   self.updateViewerLocation(event, "triggerUpdate (paired)");
-                    // });
                     self.mainHgView.current.api.on("location", (event) => { 
                       self.updateViewerLocation(event, "triggerUpdate (paired)");
                     });
-                    // self.setState({
-                    //   locationHandles: self.state.locationHandles + 1,
-                    // }, () => {
-                    //   console.log(`locationHandles ${self.state.locationHandles}`);
-                    // });
                     // put in transcript track hooks
                     if (newHgViewParams.gatt === "ht") {
                       setTimeout(() => {
-                        //const self = this;
-                        // const chromatinStateTrackObj = this.mainHgView.api.getComponent().getTrackObject(
-                        //    res.data.views[0].uid,
-                        //    res.data.views[0].tracks.top[1].uid,
-                        // );
-                        // const transcriptsTrackObj = self.mainHgView.api.getComponent().getTrackObject(
-                        //     res.data.views[0].uid,
-                        //     res.data.views[0].tracks.top[4].uid,
-                        // );
                         const transcriptsTrackObj = self.mainHgView.current.api.getComponent().getTrackObject(
                           res.data.views[0].uid,
                           res.data.views[0].tracks.top[4].uid,
@@ -4698,11 +3945,9 @@ class Viewer extends Component {
                           self.setState({
                             transcriptsTrackHeight: parseInt(transcriptsTrackObj.trackHeight),
                           }, () => {
-                            // console.log(`trackDimensionsModified event sent ${self.state.transcriptsTrackHeight}px`);
                             setTimeout(() => {
                               self.updateViewportDimensions();
                               transcriptsTrackObj.pubSub.unsubscribe("trackDimensionsModified");
-                              // chromatinStateTrackObj.scheduleRerender();
                               try {
                                 if (self.epilogosViewerTrackLabelPairedGeneAnnotation && self.state.transcriptsTrackHeight) {
                                   self.epilogosViewerTrackLabelPairedGeneAnnotation.style.bottom = (self.state.transcriptsTrackHeight/2 - 11) + 'px';
@@ -4737,12 +3982,10 @@ class Viewer extends Component {
                     newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
                     newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
                     this.chromInfoCache[newGenome] = newChromInfo;
-                    // throw new Error(`Error - [triggerUpdate] could not retrieve chromosome information (paired mode) -  ${JSON.stringify(err)}`);
                   });
               }
             })
             .catch((err) => {
-              // console.log(err);
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
               this.setState({
                 overlayMessage: msg,
@@ -4755,7 +3998,6 @@ class Viewer extends Component {
         });
       }
       else if (newMode === "single") {
-        // console.log("single");
         //
         // the "single" template uses an epilogos track and the marks track, the paths for which are constructed from the temporary hgview parameters object
         //
@@ -4764,51 +4006,27 @@ class Viewer extends Component {
         if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.triggerUpdate')) {
           newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup, newComplexity);
           newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup);
-        }          
+        }
 
-        // console.log(`single`);
-        // console.log(`${[newSampleSet, newGenome, newModel, newGroup, newComplexity]}`);
-        // console.log(`newEpilogosTrackFilename ${newEpilogosTrackFilename}`);
-        // console.log(`newMarksTrackFilename ${newMarksTrackFilename}`);
-
-        // if ((newSampleSet === "vC") && (newGenome === "hg19") && (newGroup !== "all")) {
-        //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
-        // if (newSampleSet === "vE") {
-        //   newEpilogosTrackFilename = `833sample.${newSampleSet}.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        //   newMarksTrackFilename = `833sample.vC.${newGenome}.${newGroup}.${newModel}.${newComplexity}.epilogos.multires.mv5`;
-        // }
-        
         //
         // query for UUIDs
         //
         let newEpilogosTrackUUID = null;
         let newMarksTrackUUID = null;
-        // let newEpilogosTrackUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackFilename, this);
         
         sleep(uuidDelay).then(() => {
           return uuidQueryPromise(newEpilogosTrackFilename, this);
         }).then((res) => {
-        // newEpilogosTrackUUIDQueryPromise.then((res) => {
           newEpilogosTrackUUID = res;
           return uuidQueryPromise(newMarksTrackFilename, this);
         }).then((res) => {
           newMarksTrackUUID = res;
         }).then(() => {
-          // console.log("[triggerUpdate] newEpilogosTrackUUID", newEpilogosTrackUUID);
-          // console.log("[triggerUpdate] newMarksTrackUUID", newMarksTrackUUID);
-          // console.log("[triggerUpdate] newChromsizesUUID", newChromsizesUUID);
-          // console.log("[triggerUpdate] newGenesUUID", newGenesUUID);
-          // console.log("[triggerUpdate] newColormap", newColormap);
-          // console.log("[triggerUpdate] newViewconfUUID", newViewconfUUID);
-          
           axios.get(newHgViewconfURL)
             .then((res) => {
               if (!res.data) {
                 throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
               }
-              // console.log("[triggerUpdate] res.data", res.data);
-              
               // ensure that the template is not editable
               res.data.editable = false;
               
@@ -4819,26 +4037,19 @@ class Viewer extends Component {
               newHgViewParams.mode = newMode;
               newHgViewParams.sampleSet = newSampleSet;
               newHgViewParams.gatt = newGatt;
-              // console.log("[triggerUpdate] newHgViewParams", newHgViewParams);
-              
-              // console.log(`[triggerUpdate] within-update currentPosition ${JSON.stringify(this.state.currentPosition)}`);
-              
+
               let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
               let chrRight = queryObj.chrRight || this.state.currentPosition.chrRight;
               let start = parseInt(queryObj.start || this.state.currentPosition.startLeft);
               let stop = parseInt(queryObj.stop || this.state.currentPosition.stopRight);
               
               if ((chrLeft === chrRight) && (start === stop)) {
-                // console.log("[update | single] start and stop coordinates are equal");
-                // throw new TypeError();
                 chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
                 stop = Constants.defaultApplicationPositions[newSampleSet][newGenome].stop;
               }
               else if ((chrLeft === chrRight) && (start > stop)) {
-                // console.log("[update | single] start greater than stop coordinate");
-                // throw new TypeError();
                 chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                 const tempStart = start;
@@ -4847,14 +4058,12 @@ class Viewer extends Component {
               }
 
               function updateViewerStateForSingleModeAndChromInfo(chromInfo, self) {
-                // console.log("[triggerUpdate] chromInfo", chromInfo);
                 //
                 // update viewconf views[0] initialXDomain and initialYDomain 
                 //
                 // test bounds, in case we are outside the new genome's domain (wrong chromosome name, or outside genome bounds)
                 //
                 if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-                  // console.log(`[update | single] chromosome not in chromLengths ${JSON.stringify(chromInfo)}`);
                   chrLeft = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                   chrRight = Constants.defaultApplicationPositions[newSampleSet][newGenome].chr;
                   start = Constants.defaultApplicationPositions[newSampleSet][newGenome].start;
@@ -4868,14 +4077,11 @@ class Viewer extends Component {
                 }
                 let absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
                 let absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
-                // console.log("[triggerUpdate] position left", chrLeft, start, absLeft);
-                // console.log("[triggerUpdate] position right", chrRight, stop, absRight);
                 res.data.views[0].initialXDomain = [absLeft, absRight];
                 res.data.views[0].initialYDomain = [absLeft, absRight];
                 // update track heights -- requires preknowledge of track order from template
                 let windowInnerHeight = document.documentElement.clientHeight + "px";
                 res.data.views[0].tracks.top[0].height = Math.max(newHgViewParams.hgViewTrackEpilogosHeight, parseInt(parseInt(windowInnerHeight) / 2) - 3 * parseInt((newHgViewTrackChromosomeHeight + newHgViewTrackGeneAnnotationsHeight) / 4));
-                // console.log("[triggerUpdate] res.data.views[0].tracks.top[0].height", res.data.views[0].tracks.top[0].height);
                 if (res.data.views[0].tracks.top[0].height > parseInt(windowInnerHeight)/2) {
                   res.data.views[0].tracks.top[0].height = parseInt(windowInnerHeight)/2 - 50;
                 }
@@ -4925,10 +4131,8 @@ class Viewer extends Component {
                 res.data.views[0].tracks.top[0].tilesetUid = newEpilogosTrackUUID;
                 res.data.views[0].tracks.top[1].tilesetUid = newMarksTrackUUID;
                 res.data.views[0].tracks.top[2].tilesetUid = newChromsizesUUID;
-                //res.data.views[0].tracks.top[3].tilesetUid = newGenesUUID;
                 // update track colormaps
                 res.data.views[0].tracks.top[0].options.colorScale = newColormap;
-                //res.data.views[0].tracks.top[1].options.colorScale = newColormap;
                 // update track background colors
                 res.data.views[0].tracks.top[1].options.backgroundColor = "transparent";
                 res.data.views[0].tracks.top[2].options.backgroundColor = "white";
@@ -4955,11 +4159,9 @@ class Viewer extends Component {
                     res.data.views[0].tracks.top[3].height = newHgViewTrackGeneAnnotationsHeight;
                     res.data.views[0].tracks.top[3].name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[3].options.name = `annotations_${Constants.annotationsShortname[newHgViewParams.genome]}`;
-                    // self.epilogosViewerTrackLabelSingleGeneAnnotation.style.bottom = "45px";
                     break;
                   }
                   case "ht": {
-                    // res.data.views[0].tracks.top[3].tilesetUid = (newGenome !== "hg38") ? newTranscriptsUUID : newMasterlistUUID;
                     res.data.views[0].tracks.top[3].tilesetUid = newTranscriptsUUID;
                     res.data.views[0].tracks.top[3].name = `transcripts_${Constants.annotationsShortname[newHgViewParams.genome]}`;
                     res.data.views[0].tracks.top[1].height = 0; // parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(self.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
@@ -4998,8 +4200,6 @@ class Viewer extends Component {
                       default:
                         break;
                     }
-
-                    // console.log(`[triggerUpdate] res.data.views[0].tracks.top[3]`, JSON.stringify(res.data.views[0].tracks.top[3], null, 2));
                     break;
                   }
                   default: {
@@ -5014,14 +4214,12 @@ class Viewer extends Component {
                   res.data.views[0].tracks.top[1].type = res.data.views[0].tracks.top[0].type;
                   res.data.views[0].tracks.top[1].options = res.data.views[0].tracks.top[0].options;
                   res.data.views[0].tracks.top[1].resolutions = res.data.views[0].tracks.top[0].resolutions;
-                  // console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
                 }
                 else if (newSampleSet === "vF") {
                   let sampleSetVEHeightAllEpilogos = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                   let sampleSetVEHeightPerEpilogos = parseInt(sampleSetVEHeightAllEpilogos / 2);
                   res.data.views[0].tracks.top[0].height = sampleSetVEHeightPerEpilogos;
-                  res.data.views[0].tracks.top[1].height = 0; // sampleSetVEHeightPerEpilogos;
-                  // console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
+                  res.data.views[0].tracks.top[1].height = 0;
                 }
                 // get child view heights
                 const childViews = res.data.views[0].tracks.top;
@@ -5031,21 +4229,7 @@ class Viewer extends Component {
                 let childViewHeightTotalPx = childViewHeightTotal + "px";
                 //
                 
-                // console.log("[triggerUpdate] res.data", JSON.stringify(res.data));
-                
-                // update Viewer application state and exemplars (in drawer)
-                // self.mainHgView.current.api.off("location", self.updateViewerLocation);
-                // if (self.state.locationHandles > 0) {
-                //   self.mainHgView.current.api.off("location", self.updateViewerLocation);
-                //   this.setState({
-                //     locationHandles: self.state.locationHandles - 1,
-                //   }, () => {
-                //     console.log(`locationHandles ${self.state.locationHandles}`); 
-                //   });
-                // }
                 self.setState({
-                  // mainHgViewKey: self.state.mainHgViewKey + 1,
-                  // drawerContentKey: self.state.drawerContentKey + 1,
                   hgViewParams: newHgViewParams,
                   mainHgViewHeight: childViewHeightTotalPx,
                   mainHgViewconf: res.data,
@@ -5061,16 +4245,9 @@ class Viewer extends Component {
                   selectedExemplarRowIdx: newSerIdx,
                   selectedRoiRowIdx: newSrrIdx,
                 }, () => {
-                  // return;
-                  // if ((self.epilogosViewerContainerVerticalDropMain.style) && (self.epilogosViewerContainerVerticalDropMain.style.opacity !== 0)) { self.fadeOutVerticalDrop() }
-                  // if ((self.epilogosViewerContainerIntervalDropMain.style) && (self.epilogosViewerContainerIntervalDropMain.style.opacity !== 0)) { self.fadeOutIntervalDrop() }
                   self.setState({
-                    // mainHgViewKey: self.state.mainHgViewKey + 1,
                     drawerContentKey: self.state.drawerContentKey + 1,
                   }, () => {
-                    // return;
-                    // update browser history (address bar URL)
-                    // console.log("[triggerUpdate] calling [updateViewerURL]", JSON.stringify(self.state.hgViewParams, null, 2), JSON.stringify(self.state.currentPosition, null, 2));
                     const keepSuggestionInterval = true; // false;
                     self.updateViewerURL(self.state.hgViewParams.mode,
                                          self.state.hgViewParams.genome,
@@ -5084,54 +4261,13 @@ class Viewer extends Component {
                                          self.state.currentPosition.stopRight,
                                          keepSuggestionInterval,
                                          "triggerUpdate");
-                    // attach location event handler
-                    // self.mainHgView.api.on("location", (event) => { 
-                    //   self.updateViewerLocation(event, "triggerUpdate (single)");
-                    // });
                     self.mainHgView.current.api.on("location", (event) => { 
                       self.updateViewerLocation(event, "triggerUpdate (single)");
                     });
-                    // self.setState({
-                    //   locationHandles: self.state.locationHandles + 1,
-                    // }, () => { 
-                    //   console.log(`locationHandles ${self.state.locationHandles}`); 
-                    // });
-
-                    // test max-and-min
-                    // setTimeout(() => {
-                    //   const getMethods = (obj) => {
-                    //     let properties = new Set()
-                    //     let currentObj = obj
-                    //     do {
-                    //       Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-                    //     } while ((currentObj = Object.getPrototypeOf(currentObj)))
-                    //     return [...properties.keys()].filter(item => typeof obj[item] === 'function')
-                    //   }
-                    //   // console.log(`${JSON.stringify(getMethods(self.mainHgView.api.getTrackObject(
-                    //   //     res.data.views[0].uid,
-                    //   //     res.data.views[0].tracks.top[0].uid,
-                    //   // )))}`)
-                    //   const epilogosTrackObj = self.mainHgView.api.getTrackObject(
-                    //     res.data.views[0].uid,
-                    //     res.data.views[0].tracks.top[0].uid,
-                    //   );
-                    //   console.log(`${JSON.stringify(getMethods(epilogosTrackObj), null, 2)}`);
-                    //   console.log(`epilogosTrackObj.maxAndMin ${JSON.stringify(epilogosTrackObj.maxAndMin)}`);
-                    // }, 2000);
-
+                    
                     // add transcript event hook
-                    // console.log(`newHgViewParams.gatt ${newHgViewParams.gatt}`);
                     if (newHgViewParams.gatt === "ht") {
                       setTimeout(() => {
-                        // console.log(`trackDimensionsModified event triggered ${self.state.transcriptsTrackHeight}px`); 
-                        // const chromatinStateTrackObj = self.mainHgView.api.getComponent().getTrackObject(
-                        //     res.data.views[0].uid,
-                        //     res.data.views[0].tracks.top[1].uid
-                        // );
-                        // const transcriptsTrackObj = self.mainHgView.api.getComponent().getTrackObject(
-                        //     res.data.views[0].uid,
-                        //     res.data.views[0].tracks.top[3].uid
-                        // );
                         const chromatinStateTrackObj = self.mainHgView.current.api.getComponent().getTrackObject(
                           res.data.views[0].uid,
                           res.data.views[0].tracks.top[1].uid
@@ -5145,7 +4281,6 @@ class Viewer extends Component {
                           self.setState({
                             transcriptsTrackHeight: parseInt(transcriptsTrackObj.trackHeight),
                           }, () => {
-                            // console.log(`trackDimensionsModified event sent ${self.state.transcriptsTrackHeight}px`); 
                             setTimeout(() => {
                               self.updateViewportDimensions();
                               transcriptsTrackObj.pubSub.unsubscribe("trackDimensionsModified");
@@ -5165,12 +4300,6 @@ class Viewer extends Component {
                         self.updateViewportDimensions();
                       }, 500);
                     }
-
-                    // if (newHgViewParams.sampleSet === 'vG') {
-                    //   setTimeout(() => {
-                    //     self.updateViewportDimensions();
-                    //   }, 500);
-                    // }
                   })
                 })
               }
@@ -5190,18 +4319,10 @@ class Viewer extends Component {
                     newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
                     newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
                     this.chromInfoCache[newGenome] = newChromInfo;
-                    // let msg = this.errorMessage(err, `Could not retrieve chromosome information`, chromSizesURL);
-                    // this.setState({
-                    //   overlayMessage: msg,
-                    //   mainHgViewconf: {}
-                    // }, () => {
-                    //   this.fadeInOverlay();
-                    // });
                   });
               }
             })
             .catch((err) => {
-              // console.log("[triggerUpdate] err.response", err.response);
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
               this.setState({
                 overlayMessage: msg,
@@ -5215,32 +4336,9 @@ class Viewer extends Component {
       }
       
       else if (newMode === "qt") {
-        // const publication = Constants.sampleSetToPublication[newSampleSet];
-        // const assembly = newGenome;
-        // const model = newModel;
-        // const group = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
-        // const complexity = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[newComplexity];
-
-        // const trueQueryTargetGlobalMinMax = (Constants.globalEpilogosMinMaxRanges[publication][assembly][model][group][complexity]) ? Constants.globalEpilogosMinMaxRanges[publication][assembly][model][group][complexity] : Constants.defaultGlobalEpilogosMinMaxRange;
-        // const minMaxScaleFactor = Constants.applicationMinMaxScaleFactor;
-        // const adjustedLocalMin = this.state.queryTargetLocalMinMax.min * minMaxScaleFactor;
-        // const adjustedLocalMax = this.state.queryTargetLocalMinMax.max * minMaxScaleFactor;
-        // const newQueryTargetGlobalMinMax = {
-        //   "min": (adjustedLocalMin > trueQueryTargetGlobalMinMax.min) ? adjustedLocalMin : trueQueryTargetGlobalMinMax.min, 
-        //   "max": (adjustedLocalMax < trueQueryTargetGlobalMinMax.max) ? adjustedLocalMax : trueQueryTargetGlobalMinMax.max
-        // };
-        // console.log(`queryTargetLocalMinMax ${JSON.stringify(this.state.queryTargetLocalMinMax)}`);
-        // console.log(`trueQueryTargetGlobalMinMax ${JSON.stringify(trueQueryTargetGlobalMinMax)}`);
-        // console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
-
-        // console.log(`this.state.queryRegionIndicatorData ${JSON.stringify(this.state.queryRegionIndicatorData)}`);
         const newQueryTargetGlobalMinMax = { 'min': -this.state.queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': this.state.queryRegionIndicatorData.minMax['abs_val_sum'].max };
-        // console.log(`newQueryTargetGlobalMinMax ${JSON.stringify(newQueryTargetGlobalMinMax)}`);
 
         this.setState({
-          // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-          // selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
-          // selectedSimSearchRowIdx: Constants.defaultApplicationSsrIdx,
           drawerIsEnabled: false,
           simSearchQueryCountIsVisible: false,
           simSearchQueryCountIsEnabled: false,
@@ -5248,7 +4346,6 @@ class Viewer extends Component {
         });
       }
       else {
-        // throw new Error(`[triggerUpdate] Error - Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
         console.error(`[triggerUpdate] Error - Unknown mode specified in Viewer.triggerUpdate (${newMode})`);
         window.open(Helpers.stripQueryStringAndHashFromPath(window.location.href), "_self")
       }
@@ -5256,8 +4353,6 @@ class Viewer extends Component {
   }
   
   openViewerAtChrPosition = (pos, upstreamPadding, downstreamPadding, regionType, rowIndex, strand, skipJump) => {
-    // console.log("[openViewerAtChrPosition]", pos, upstreamPadding, downstreamPadding, regionType, rowIndex, strand, queryViewNeedsUpdate);
-    // console.log(`[openViewerAtChrPosition] rowIndex ${rowIndex}`);
     let chrLeft = pos[0];
     let chrRight = pos[0];
     let posnInt = parseInt(pos[1]);
@@ -5266,7 +4361,6 @@ class Viewer extends Component {
     // eslint-disable-next-line no-unused-vars
     let unpaddedStart = start;
     // eslint-disable-next-line no-unused-vars
-    // let unpaddedStop = stop;
     let upstreamRoiDrawerPadding = 0;
     let downstreamRoiDrawerPadding = 0;
     let drawerWidthPxUnits = parseInt(this.state.drawerWidth);
@@ -5278,20 +4372,6 @@ class Viewer extends Component {
       
       case Constants.applicationRegionTypes.exemplars:
         stop = parseInt(pos[2]);
-        // unpaddedStop = stop;
-
-        // if (strand === "+") {
-        //   start -= upstreamPadding;
-        //   stop += downstreamPadding;
-        // }
-        // else if (strand === "-") {
-        //   start -= downstreamPadding;
-        //   stop += upstreamPadding;
-        // }
-        // else {
-        //   start -= upstreamPadding;
-        //   stop += downstreamPadding;
-        // }
 
         fractionOfWindowWidthUsedByDrawerBaseUnits = parseInt(fractionOfWindowWidthUsedByDrawer * parseFloat(stop - start)) * 1.5;
         fractionOfWindowWidthUsedForDrawerPaddingBaseUnits = parseInt(0.075 * parseFloat(stop - start));
@@ -5309,7 +4389,6 @@ class Viewer extends Component {
           start -= 12500;
           stop += 12500;
         }
-        // console.log(`${chrLeft} ${chrRight} ${unpaddedStart} ${unpaddedStop} ${start} ${stop}`);
         break;
       
       case Constants.applicationRegionTypes.roi:
@@ -5319,7 +4398,6 @@ class Viewer extends Component {
             const intervalPaddingFraction = (queryObj.roiPaddingFractional) ? parseFloat(queryObj.roiPaddingFractional) : Constants.defaultApplicationRoiPaddingFraction;
             const intervalPaddingAbsolute = (queryObj.roiPaddingAbsolute) ? parseInt(queryObj.roiPaddingAbsolute) : Constants.defaultApplicationRoiPaddingAbsolute;
             stop = parseInt(pos[2]);
-            // unpaddedStop = stop;
             let roiPadding = (queryObj.roiPaddingFractional) ? parseInt(intervalPaddingFraction * (stop - start)) : intervalPaddingAbsolute;
             start -= roiPadding;
             stop += roiPadding;
@@ -5327,7 +4405,6 @@ class Viewer extends Component {
           }
           case Constants.applicationRoiModes.midpoint: {
             stop = parseInt(pos[2]);
-            // unpaddedStop = stop;
             let roiMidpoint = parseInt(start + ((stop - start) / 2));
             start = roiMidpoint - parseInt(this.state.roiPaddingAbsolute);
             stop = roiMidpoint + parseInt(this.state.roiPaddingAbsolute);
@@ -5335,25 +4412,12 @@ class Viewer extends Component {
           }
           case Constants.applicationRoiModes.drawer: {
             stop = parseInt(pos[2]);
-            // unpaddedStop = stop;
             fractionOfWindowWidthUsedByDrawerBaseUnits = parseInt(fractionOfWindowWidthUsedByDrawer * parseFloat(stop - start)) * 1.5;
             fractionOfWindowWidthUsedForDrawerPaddingBaseUnits = parseInt(0.075 * parseFloat(stop - start));
             upstreamRoiDrawerPadding = fractionOfWindowWidthUsedByDrawerBaseUnits + fractionOfWindowWidthUsedForDrawerPaddingBaseUnits;
             downstreamRoiDrawerPadding = fractionOfWindowWidthUsedForDrawerPaddingBaseUnits;
             start -= upstreamRoiDrawerPadding;
             stop += downstreamRoiDrawerPadding;
-
-            // console.log(`[openViewerAtChrPosition] drawerWidthPxUnits ${drawerWidthPxUnits}`);
-            // console.log(`[openViewerAtChrPosition] windowWidth ${windowWidth}`);
-            // console.log(`[openViewerAtChrPosition] fractionOfWindowWidthUsedByDrawer ${fractionOfWindowWidthUsedByDrawer}`);
-            // console.log(`[openViewerAtChrPosition] fractionOfWindowWidthUsedByDrawerBaseUnits ${fractionOfWindowWidthUsedByDrawerBaseUnits}`);
-            // console.log(`[openViewerAtChrPosition] upstreamRoiDrawerPadding ${upstreamRoiDrawerPadding}`);
-            // console.log(`[openViewerAtChrPosition] downstreamRoiDrawerPadding ${downstreamRoiDrawerPadding}`);
-            // console.log(`[openViewerAtChrPosition] unpadded start ${unpaddedStart}`);
-            // console.log(`[openViewerAtChrPosition] unpadded stop ${unpaddedStop}`);
-            // console.log(`[openViewerAtChrPosition] padded start ${start}`);
-            // console.log(`[openViewerAtChrPosition] padded stop ${stop}`);
-
             break;
           }
           default:
@@ -5365,31 +4429,7 @@ class Viewer extends Component {
         break;
     }
     
-    if (skipJump) {
-      // setTimeout(() => {
-      //   // console.log("[openViewerAtChrPosition] calling [hgViewUpdatePosition] for mainView");
-      //   this.hgViewUpdatePosition(this.state.hgViewParams, 
-      //                             chrLeft, 
-      //                             start, 
-      //                             stop, 
-      //                             chrRight, 
-      //                             start, 
-      //                             stop);
-      //   setTimeout(() => {
-      //     // console.log("[openViewerAtChrPosition] calling [hgViewUpdatePosition] for queryView");
-      //     this.hgViewUpdatePosition(this.state.hgViewParams, 
-      //                               this.state.queryRegionIndicatorData.chromosome, 
-      //                               this.state.queryRegionIndicatorData.start - upstreamRoiDrawerPadding, 
-      //                               this.state.queryRegionIndicatorData.stop + downstreamRoiDrawerPadding, 
-      //                               this.state.queryRegionIndicatorData.chromosome, 
-      //                               this.state.queryRegionIndicatorData.start - upstreamRoiDrawerPadding, 
-      //                               this.state.queryRegionIndicatorData.stop + downstreamRoiDrawerPadding, 
-      //                               queryViewNeedsUpdate);
-      //   }, 1000);
-      // }, 0);
-    } 
-    else {
-      // console.log("[openViewerAtChrPosition] calling [hgViewUpdatePosition] for mainView (zero-height queryView)", chrLeft, start, stop, chrRight, start, stop);
+    if (!skipJump) {
       this.hgViewUpdatePosition(this.state.hgViewParams, 
                                 chrLeft, 
                                 start, 
@@ -5411,7 +4451,6 @@ class Viewer extends Component {
           newCurrentPosition.stopLeft = start;
           newCurrentPosition.startRight = stop;
           newCurrentPosition.stopLeft = stop;
-          // console.log("[openViewerAtChrPosition] newCurrentPosition", newCurrentPosition);
           this.setState({
             selectedExemplarBeingUpdated: true,
             selectedExemplarRowIdx: parseInt(rowIndex),
@@ -5421,7 +4460,6 @@ class Viewer extends Component {
             selectedExemplarStop: parseInt(stop),
             currentPosition: newCurrentPosition,
           }, () => {
-            // console.log("[openViewerAtChrPosition] calling [updateViewerURL]");
             const keepSuggestionInterval = true; // false;
             this.updateViewerURL(this.state.hgViewParams.mode,
                                  this.state.hgViewParams.genome,
@@ -5435,14 +4473,6 @@ class Viewer extends Component {
                                  stop,
                                  keepSuggestionInterval,
                                  "openViewerAtChrPosition");
-            // console.log("[openViewerAtChrPosition] this.state.selectedExemplarRowIdx", this.state.selectedExemplarRowIdx);
-            
-            // if (this.state.selectedExemplarRowIdx !== -1) {
-            //   this.fadeOutIntervalDrop();
-            //   this.fadeOutVerticalDrop();
-            //   this.fadeInIntervalDrop(chrLeft, chrRight, unpaddedStart, unpaddedStop, start, stop);
-            // }
-
             this.setState({
               selectedExemplarBeingUpdated: false
             });
@@ -5459,7 +4489,6 @@ class Viewer extends Component {
             selectedRoiStart: parseInt(start),
             selectedRoiStop: parseInt(stop)
           }, () => {
-            // console.log("[openViewerAtChrPosition] calling [updateViewerURL]");
             const keepSuggestionInterval = true; // false;
             this.updateViewerURL(this.state.hgViewParams.mode,
                                  this.state.hgViewParams.genome,
@@ -5473,25 +4502,6 @@ class Viewer extends Component {
                                  stop,
                                  keepSuggestionInterval,
                                  "openViewerAtChrPosition");
-            // console.log("[openViewerAtChrPosition] this.state.selectedRoiRowIdx", this.state.selectedRoiRowIdx);
-            if (this.state.selectedRoiRowIdx !== -1) {
-
-              // IMPORTANT: HERE
-
-              // switch (this.state.roiMode) {
-              //   case Constants.applicationRoiModes.default: 
-              //     this.fadeInIntervalDrop(chrLeft, chrRight, unpaddedStart, unpaddedStop, start, stop);
-              //     break;
-              //   case Constants.applicationRoiModes.midpoint:
-              //     this.fadeInVerticalDrop();
-              //     break;
-              //   case Constants.applicationRoiModes.drawer:
-              //     this.fadeInIntervalDrop(chrLeft, chrRight, unpaddedStart, unpaddedStop, start, stop);
-              //     break;
-              //   default:
-              //     throw new URIError("Unknown ROI mode");
-              // }
-            }
             this.setState({
               selectedRoiBeingUpdated: false,
               roiButtonInProgress: false,
@@ -5510,7 +4520,6 @@ class Viewer extends Component {
             selectedSimSearchRegionStart: parseInt(start),
             selectedSimSearchRegionStop: parseInt(stop)
           }, () => {
-            // console.log("[openViewerAtChrPosition] calling [updateViewerURL]");
             const keepSuggestionInterval = true; // false;
             this.updateViewerURL(this.state.hgViewParams.mode,
                                  this.state.hgViewParams.genome,
@@ -5524,10 +4533,6 @@ class Viewer extends Component {
                                  stop,
                                  keepSuggestionInterval,
                                  "openViewerAtChrPosition");
-            // console.log("[openViewerAtChrPosition] this.state.selectedSimSearchRowIdx", this.state.selectedSimSearchRowIdx);
-            
-            // const currentTrackServerBySampleSet = (Manifest.trackServerBySampleSet[this.state.hgViewParams.sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
-
             this.setState({
               selectedSimSearchRegionBeingUpdated: false,
               simSearchQueryInProgress: false,
@@ -5555,10 +4560,7 @@ class Viewer extends Component {
       stop = ((stop + padding) < ub) ? (stop + padding) : ub;
     }
     
-    // console.log("[openViewerAtChrRange] calling [hgViewUpdatePosition] for mainView");
-
     this.hgViewUpdatePosition(params, chrLeft, start, stop, chrRight, start, stop);
-    // console.log("[openViewerAtChrRange] calling [updateViewerURL]");
     const keepSuggestionInterval = true; // false;
     this.updateViewerURL(params.mode,
                          params.genome,
@@ -5597,7 +4599,6 @@ class Viewer extends Component {
     }
     // regions represent raw lines from the incoming data
     // table data represent processed lines from regions, organized into fields
-    // console.log(`data ${JSON.stringify(data)}`);
     const dataRegions = data.split(/\r\n|\r|\n/);
     // we set up a template object to hold a row of BED6 data (with placeholders)
     const roiTableRow = {
@@ -5634,7 +4635,6 @@ class Viewer extends Component {
     // parse data
     //
     for (const line of dataRegions) {
-      // console.log("[roiRegionsUpdate] line", line);
       if (line.length === 0) { continue; }
       lineCount += 1;
       // we only add up to maximum number of elements
@@ -5645,7 +4645,6 @@ class Viewer extends Component {
       // not enough columns to make up a minimal BED file
       //
       if (columns < 3) {
-        // console.log(`[roiRegionsUpdate] input regions are missing columns (line ${lineCount})`);
         const err = {
           "response" : {
             "status" : 400,
@@ -5664,7 +4663,6 @@ class Viewer extends Component {
       // if the line does not have start or stop coordinates, then we send an error and return early
       //
       if (!isNormalInteger(elems[1]) || !isNormalInteger(elems[2])) {
-        // console.log(`[roiRegionsUpdate] input regions have non-coordinate data (line ${lineCount})`);
         const err = {
           "response" : {
             "status" : 400,
@@ -5683,7 +4681,6 @@ class Viewer extends Component {
       // if the first element in elems is not a valid chromosome name from selected genome, report error and return early
       //
       if (!validChroms.includes(elems[0])) {
-        // console.log(`[roiRegionsUpdate] input regions have bad chromosome names (line ${lineCount})`);
         const err = {
           "response" : {
             "status" : 400,
@@ -5731,7 +4728,6 @@ class Viewer extends Component {
       row.name = (columns > 3) ? elems[3] : '.';
       row.score = (columns > 4) ? elems[4] : 0.0;
       row.strand = (columns > 5) ? elems[5] : '.';
-      // console.log("row", row);
       //
       // add row object to table data array
       //
@@ -5748,14 +4744,11 @@ class Viewer extends Component {
   }
 
   roiRegionsUpdate = (data, cb, self) => {
-    // console.log("[roiRegionsUpdate] regions", JSON.stringify(data));
-    
     const [roiTableRows, roiTableRowsCopy, roiTableRowsIdxBySort, dataRegions, newRoiMaxColumns, newRoiTableDataLongestNameLength] = this.roiProcessData(data);
 
     //
     // update state
     //
-    // console.log("[roiRegionsUpdate] roiTableRows", roiTableRows);
     if (self) {
       self.state.roiTabTitle = Constants.drawerTitleByType.roi;
       self.state.roiEnabled = true;
@@ -5767,21 +4760,12 @@ class Viewer extends Component {
       self.state.roiTableDataLongestNameLength = newRoiTableDataLongestNameLength;
       const queryObj = Helpers.getJsonFromUrl();
       const activeTab = (queryObj.activeTab) ? queryObj.activeTab : "roi";
-      // const firstRoi = roiTableRows[(self.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) ? self.state.selectedRoiRowIdxOnLoad - 1 : 0];
-      // const region = firstRoi.position;
-      // const regionType = Constants.applicationRegionTypes.roi;
       const rowIndex = (self.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx && self.state.selectedRoiRowIdxOnLoad < roiTableRows.length) ? self.state.selectedRoiRowIdxOnLoad : Constants.defaultApplicationSrrIdx;
-      // const strand = firstRoi.strand;
       self.state.drawerActiveTabOnOpen = activeTab;
       self.state.selectedRoiRowIdx = rowIndex;
       if (cb) {
         cb(self);
       }
-      // setTimeout(() => {
-      //   if (cb) {
-      //     cb(self);
-      //   }
-      // }, 1000);
     }
     else {
       this.setState({
@@ -5800,26 +4784,15 @@ class Viewer extends Component {
         if (cb) {
           cb(this);
         }
-        // const queryObj = Helpers.getJsonFromUrl();
-        // console.log("[roiRegionsUpdate] queryObj", JSON.stringify(queryObj));
-        // const activeTab = queryObj.activeTab || Constants.drawerTypeByName.roi;
         setTimeout(() => {
           const firstRoi = roiTableRows[(this.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) ? this.state.selectedRoiRowIdxOnLoad - 1 : 0];
           try {
             const region = firstRoi.position;
             const regionType = Constants.applicationRegionTypes.roi;
             const rowIndex = (this.state.selectedRoiRowIdxOnLoad !== Constants.defaultApplicationSrrIdx) ? this.state.selectedRoiRowIdxOnLoad : 1;
-            // console.log("[roiRegionsUpdate] rowIndex", rowIndex);
             const strand = firstRoi.strand;
-            this.setState({
-              // drawerIsOpen: true,
-              // drawerActiveTabOnOpen: activeTab,
-              // drawerContentKey: this.state.drawerContentKey + 1,
-              // selectedRoiRowIdx: rowIndex
-            }, () => {
-              // if (this.state.roiTableIsVisible) {
+            this.setState({}, () => {
               if (true) {
-                // console.log("[roiRegionsUpdate] state", JSON.stringify(this.state));
                 setTimeout(() => {
                   this.jumpToRegion(region, regionType, rowIndex, strand, true);
                 }, 500);
@@ -5840,18 +4813,13 @@ class Viewer extends Component {
   updateRois = (roiEncodedURL, cb) => {
     // decode to test validity, re-encode to submit to proxy
     let roiRawURL = this.roiRawURL(roiEncodedURL);
-    // console.log(`Viewer > updateRois | roiRawURL ${roiRawURL} | ${validator.isURL(roiRawURL)}`);
     if (validator.isURL(roiRawURL)) {
-      // console.log(`A1`);
       let reencodedRoiURL = encodeURIComponent(roiRawURL);
       this.setState({
         roiEncodedURL: reencodedRoiURL,
         roiRawURL: roiRawURL
       }, () => {
-        // console.log(`A1`);
-        // console.log("[updateRois] this.state.roiEncodedURL", this.state.roiEncodedURL);
         let proxyRoiURL = `${Constants.urlProxyURL}/${this.state.roiEncodedURL}`;
-        // console.log("[updateRois] proxyRoiURL", proxyRoiURL);
         axios.get(proxyRoiURL)
           .then((res) => {
             if (res.data) { 
@@ -5859,7 +4827,6 @@ class Viewer extends Component {
             }
           })
           .catch((err) => {
-            // console.log("[updateRois] err", JSON.stringify(err, null, 2));
             const msg = this.errorMessage(err, `Regions-of-interest URL is invalid`, roiRawURL);
             this.setState({
               roiEnabled: false,
@@ -5896,15 +4863,11 @@ class Viewer extends Component {
   }
 
   simSearchRegionsUpdate = (data, cb, self) => {
-    // console.log("[simSearchRegionsUpdate] regions", JSON.stringify(data));
-    // return;
-
     const [simSearchTableRows, simSearchTableRowsCopy, simSearchTableRowsIdxBySort, dataRegions, newSimSearchMaxColumns, newSimSearchTableDataLongestNameLength] = this.roiProcessData(data);
 
     //
     // update state
     //
-    // console.log("[simSearchRegionsUpdate] simSearchTableRows", simSearchTableRows);
     if (self) {
       self.state.simSearchTabTitle = Constants.drawerTitleByType.simsearch;
       self.state.simSearchEnabled = true;
@@ -5917,19 +4880,11 @@ class Viewer extends Component {
       const queryObj = Helpers.getJsonFromUrl();
       const activeTab = (queryObj.activeTab) ? queryObj.activeTab : Constants.drawerTitleByType.simsearch;
       const rowIndex = (self.state.selectedSimSearchRowIdxOnLoad !== Constants.defaultApplicationSsrIdx) ? self.state.selectedSimSearchRowIdxOnLoad : 1;
-      // const strand = firstRoi.strand;
       self.state.drawerActiveTabOnOpen = activeTab;
       self.state.selectedSimSearchRowIdxOnLoad = rowIndex;
-      // console.log(`C > A > B | ${this.state.selectedRoiRowIdx} because of onload ${self.state.selectedSimSearchRowIdxOnLoad}`);
-      // return;
       if (cb) {
         cb(self);
       }
-      // setTimeout(() => {
-      //   if (cb) {
-      //     cb(self);
-      //   }
-      // }, 1000);
     }
     else {
       this.setState({
@@ -5948,26 +4903,17 @@ class Viewer extends Component {
         if (cb) {
           cb(this);
         }
-        // const queryObj = Helpers.getJsonFromUrl();
-        // console.log("[roiRegionsUpdate] queryObj", JSON.stringify(queryObj));
-        // const activeTab = queryObj.activeTab || Constants.drawerTypeByName.roi;
         setTimeout(() => {
           const firstSimSearchRegion = simSearchTableRows[(this.state.selectedSimSearchRowIdxOnLoad !== Constants.defaultApplicationSsrIdx) ? this.state.selectedSimSearchRowIdxOnLoad - 1 : 0];
           try {
             const region = firstSimSearchRegion.position;
             const regionType = Constants.applicationRegionTypes.simsearch;
             const rowIndex = (this.state.selectedSimSearchRowIdxOnLoad !== Constants.defaultApplicationSsrIdx) ? this.state.selectedSimSearchRowIdxOnLoad : 1;
-            // console.log("[simSearchRegionsUpdate] rowIndex", rowIndex);
             const strand = firstSimSearchRegion.strand;
             this.setState({
-              // drawerIsOpen: true,
-              // drawerActiveTabOnOpen: activeTab,
-              // drawerContentKey: this.state.drawerContentKey + 1,
               selectedSimSearchRowIdx: rowIndex
             }, () => {
-              // if (this.state.roiTableIsVisible) {
               if (true) {
-                // console.log("[roiRegionsUpdate] state", JSON.stringify(this.state));
                 setTimeout(() => {
                   this.jumpToRegion(region, regionType, rowIndex, strand, true);
                 }, 500);
@@ -5985,18 +4931,12 @@ class Viewer extends Component {
     }
   } 
   
-  onMouseEnterDownload = () => {
-    // console.log("[onMouseEnterDownload] start");
-    // console.log("[onMouseEnterDownload] finish");
-  }
+  onMouseEnterDownload = () => {}
   
   onMouseClickDownload = () => {
-    // console.log("[onMouseClickDownload] start");
     // get dimensions of download button (incl. padding and margin)
     let downloadButtonBoundingRect = document.getElementById('epilogos-viewer-navigation-summary-export-data').getBoundingClientRect();
     let downloadPopupBoundingRect = document.getElementById('epilogos-viewer-navigation-summary-export-data-popup').getBoundingClientRect();
-    // console.log("[onMouseClickDownload] downloadButtonBoundingRect", downloadButtonBoundingRect);
-    // console.log("[onMouseClickDownload] downloadPopupBoundingRect", downloadPopupBoundingRect);
     this.setState({
       downloadButtonBoundingRect: downloadButtonBoundingRect,
       downloadPopupBoundingRect: downloadPopupBoundingRect,
@@ -6009,21 +4949,15 @@ class Viewer extends Component {
   }
   
   onMouseLeaveDownload = () => {
-    // console.log("[onMouseLeaveDownload] start");
     this.setState({
       downloadIsVisible: false
-    }, () => {
-      // console.log("[onMouseLeaveDownload] finish");
-    });
+    }, () => {});
   }
   
   fadeInVerticalDrop = (leftOffsetPx, cb) => {
-    // console.log("[fadeInVerticalDrop] this.state.isMobile", this.state.isMobile);
     if (this.state.isMobile) return;
     this.epilogosViewerContainerVerticalDropMain.style.opacity = 1;
     this.epilogosViewerContainerVerticalDropMain.style.display = "contents";
-    // this.epilogosViewerContainerVerticalDropMain.style.left = leftOffsetPx;
-    // this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout(() => {
       if (cb) { cb(); }
       this.setState({
@@ -6042,14 +4976,12 @@ class Viewer extends Component {
     if (!this.epilogosViewerContainerVerticalDropMain) return;
     this.epilogosViewerContainerVerticalDropMain.style.opacity = 0;
     this.epilogosViewerContainerVerticalDropMain.style.display = "none";
-    //this.epilogosViewerContainerOverlay.style.transition = "opacity 1s 1s";
     setTimeout(() => {
       if (cb) { cb(); }
     }, 500);
   }
   
   fadeInIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    // console.log("[fadeInIntervalDrop]", chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
     const windowInnerWidth = document.documentElement.clientWidth + "px";
     const windowInnerHeight = document.documentElement.clientHeight + "px";
 
@@ -6100,10 +5032,7 @@ class Viewer extends Component {
         
         self.epilogosViewerContainerIntervalDropMainLeftTop.style.height = parseInt(windowInnerHeight) - parseInt(self.epilogosViewerContainerIntervalDropMainLeftTop.style.top) + 'px';
         self.epilogosViewerContainerIntervalDropMainRightTop.style.height = parseInt(windowInnerHeight) - parseInt(self.epilogosViewerContainerIntervalDropMainRightTop.style.top) + 'px';
-        
-        // console.log(`[fadeInIntervalDrop] query mode - this.epilogosViewerContainerIntervalDropMainRightTop.style.top ${JSON.stringify(this.epilogosViewerContainerIntervalDropMainRightTop.style.top)}`);
-        // console.log(`[fadeInIntervalDrop] query mode - this.epilogosViewerContainerIntervalDropMainRightTop.style.height ${JSON.stringify(this.epilogosViewerContainerIntervalDropMainRightTop.style.height)}`);
-        
+                
         self.epilogosViewerContainerIntervalDropQuery.style.opacity = 1;
       }
       else {
@@ -6157,7 +5086,6 @@ class Viewer extends Component {
           newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
           newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
           this.chromInfoCache[genome] = newChromInfo;
-          // throw new Error(`Error - [fadeInIntervalDrop] could not retrieve chromosome information - ${JSON.stringify(err)}`)
         });
     }
   }
@@ -6172,7 +5100,6 @@ class Viewer extends Component {
   }
 
   fadeInSuggestionIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    // console.log(`fadeInSuggestionIntervalDrop | ${chrLeft} ${chrRight} ${unpaddedStart} ${unpaddedStop} ${paddedStart} ${paddedStop}`);
     const indicatorWidth = paddedStop - paddedStart;
     let leftIndicatorFraction = (unpaddedStart - paddedStart) / indicatorWidth;
     let rightIndicatorFraction = 1 - (paddedStop - unpaddedStop) / indicatorWidth;
@@ -6185,7 +5112,6 @@ class Viewer extends Component {
     const windowInnerWidth = parseInt(document.documentElement.clientWidth);
     const leftIndicatorPx = parseInt(windowInnerWidth * leftIndicatorFraction);
     const rightIndicatorPx = parseInt(windowInnerWidth * rightIndicatorFraction);
-    // console.log(`${indicatorWidth} ${leftIndicatorFraction} ${rightIndicatorFraction} | ${windowInnerWidth} ${leftIndicatorPx} ${rightIndicatorPx}`);
     const newSuggestionIndicatorRegion = [chrLeft, unpaddedStart, unpaddedStop];
     this.setState({
       suggestionIndicatorIsVisible: true,
@@ -6196,7 +5122,6 @@ class Viewer extends Component {
   }
 
   fadeOutSuggestionIntervalDrop = (cb) => {
-    // console.log(`fadeOutSuggestionIntervalDrop`);
     this.setState({
       selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
       selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
@@ -6210,7 +5135,6 @@ class Viewer extends Component {
   }
 
   fadeInRoiIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    // console.log(`fadeInRoiIntervalDrop | ${chrLeft} ${chrRight} ${unpaddedStart} ${unpaddedStop} ${paddedStart} ${paddedStop}`);
     const indicatorWidth = paddedStop - paddedStart;
     let leftIndicatorFraction = (unpaddedStart - paddedStart) / indicatorWidth;
     let rightIndicatorFraction = 1 - (paddedStop - unpaddedStop) / indicatorWidth;
@@ -6224,7 +5148,6 @@ class Viewer extends Component {
     const windowInnerWidth = parseInt(document.documentElement.clientWidth);
     const leftIndicatorPx = parseInt(windowInnerWidth * leftIndicatorFraction);
     const rightIndicatorPx = parseInt(windowInnerWidth * rightIndicatorFraction);
-    // console.log(`${indicatorWidth} ${leftIndicatorFraction} ${rightIndicatorFraction} | ${windowInnerWidth} ${leftIndicatorPx} ${rightIndicatorPx}`);
     const newRoiIndicatorRegion = [chrLeft, unpaddedStart, unpaddedStop];
     this.setState({
       roiIndicatorIsVisible: newRoiIndicatorIsVisible,
@@ -6235,7 +5158,6 @@ class Viewer extends Component {
   }
 
   fadeOutRoiIntervalDrop = (cb) => {
-    // console.log(`fadeOutRoiIntervalDrop`);
     this.setState({
       roiTableKey: this.state.roiTableKey + 1,
       roiIndicatorIsVisible: false,
@@ -6248,7 +5170,6 @@ class Viewer extends Component {
   }
 
   fadeInSimSearchIntervalDrop = (chrLeft, chrRight, unpaddedStart, unpaddedStop, paddedStart, paddedStop, cb) => {
-    // console.log(`fadeInSimSearchIntervalDrop | ${chrLeft} ${chrRight} ${unpaddedStart} ${unpaddedStop} ${paddedStart} ${paddedStop}`);
     const indicatorWidth = paddedStop - paddedStart;
     let leftIndicatorFraction = (unpaddedStart - paddedStart) / indicatorWidth;
     let rightIndicatorFraction = 1 - (paddedStop - unpaddedStop) / indicatorWidth;
@@ -6262,7 +5183,6 @@ class Viewer extends Component {
     const windowInnerWidth = parseInt(document.documentElement.clientWidth);
     const leftIndicatorPx = parseInt(windowInnerWidth * leftIndicatorFraction);
     const rightIndicatorPx = parseInt(windowInnerWidth * rightIndicatorFraction);
-    // console.log(`${indicatorWidth} ${leftIndicatorFraction} ${rightIndicatorFraction} | ${windowInnerWidth} ${leftIndicatorPx} ${rightIndicatorPx}`);
     const newSimSearchIndicatorRegion = [chrLeft, unpaddedStart, unpaddedStop];
     this.setState({
       simSearchIndicatorIsVisible: newSimSearchIndicatorIsVisible,
@@ -6273,7 +5193,6 @@ class Viewer extends Component {
   }
 
   fadeOutSimSearchIntervalDrop = (cb) => {
-    // console.log(`fadeOutSimSearchIntervalDrop`);
     this.setState({
       simSearchTableKey: this.state.simSearchTableKey + 1,
       simSearchIndicatorIsVisible: false,
@@ -6318,9 +5237,7 @@ class Viewer extends Component {
         let complexity = params.complexity;
         let newComplexity = Constants.complexitiesForDataExport[complexity];
         
-        // let tabixURL = `${Constants.applicationTabixRootURL}/${sampleSet}/${genome}.${model}.${group}.${complexity}.gz`;
         let tabixURL = `${Constants.applicationTabixRootURL}/epilogos/${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.gz`;
-        // console.log(`tabixURL ${tabixURL}`);
         let tabixRange = "";
         // if chrs are equal, we can spit out a range directly
         if (coord.chrLeft === coord.chrRight) {
@@ -6361,7 +5278,6 @@ class Viewer extends Component {
         }, () => {
           // fade in container overlay
           this.fadeInContainerOverlay(() => { 
-            // console.log("faded in!"); 
             this.setState({
               tabixDataDownloadCommandVisible: true
             });
@@ -6369,43 +5285,6 @@ class Viewer extends Component {
         })
         break;
       }
-      
-      // case "svg": {
-      //   let hgViewApi = (this.state.hgViewParams.mode === "qt") ? this.queryTargetHgView.getApiRef() : this.mainHgView.api;
-      //   let svgStr = hgViewApi.exportAsSvg();
-      //   // cf. https://github.com/higlass/higlass/issues/651
-      //   let fixedSvgStr = svgStr.replace('xmlns="http://www.w3.org/1999/xhtml"', '');
-      //   //let fixedSvgStr = svgStr;
-      //   const svgFilename = ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "svg"].join(".")
-      //   let svgFile = new File([fixedSvgStr], svgFilename, {type: "image/svg+xml;charset=utf-8"});
-      //   saveAs(svgFile);
-      //   break;
-      // }
-
-      // case "png": {
-      //   let hgViewApi = (this.state.hgViewParams.mode === "qt") ? this.queryTargetHgView.getApiRef() : this.mainHgView.api;
-      //   let pngPromise = hgViewApi.exportAsPngBlobPromise();
-      //   pngPromise
-      //     .then((blob) => {
-      //       //console.log("[onClickDownloadItemSelect] blob", blob);
-      //       let reader = new FileReader(); 
-      //       reader.addEventListener("loadend", function() {
-      //         let array = new Uint8Array(reader.result);
-      //         //console.log("[onClickDownloadItemSelect]", new TextDecoder("iso-8859-2").decode(array));
-      //         let pngBlob = new Blob([array], {type: "image/png"});
-      //         const pngFilename = ["epilogos", params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "png"].join(".")
-      //         saveAs(pngBlob, pngFilename);
-      //       }); 
-      //       reader.readAsArrayBuffer(blob);
-      //     })
-      //     .catch(function(err) {
-      //       throw Error(err);
-      //     })
-      //     .finally(function() {
-      //       //console.log("PNG export attempt is complete");
-      //     });
-      //   break;
-      // }
 
       case "svg":
       case "png": {
@@ -6415,8 +5294,6 @@ class Viewer extends Component {
         // which causes an annoying "blink" 
         
         const hgViewMode = this.state.hgViewParams.mode;
-        // const hgViewApi = (hgViewMode === "qt") ? this.queryTargetHgView.getApiRef() : this.mainHgView.api;
-        // const hgViewApi = this.mainHgView.api;
         const qtTargetRegion = (hgViewMode === "qt") ? this.queryTargetHgView.getTargetRegion() : null;
         const queryObj = Helpers.getJsonFromUrl();
         let chrLeft = queryObj.chrLeft || this.state.currentPosition.chrLeft;
@@ -6428,10 +5305,7 @@ class Viewer extends Component {
         let currentSampleSet = queryObj.sampleSet || this.state.hgViewParams.sampleSet;
         ChromosomeInfo(chromSizesURL)
           .then((chromInfo) => {
-            // console.log("[onClickDownloadItemSelect] chromInfo", chromInfo);
             if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-              // console.log("[export SVG/PNG] chromosome not in chromLengths");
-              // throw new TypeError();
               chrLeft = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].chr;
               chrRight = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].chr;
               start = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].start;
@@ -6451,17 +5325,12 @@ class Viewer extends Component {
             this.setState({
               mainHgViewconf: newMainHgViewconf,
             }, () => {
-              this.setState({
-                // mainHgViewKey: this.state.mainHgViewKey + 1
-              }, () => {
+              this.setState({}, () => {
                 setTimeout(() => {
                   if (name === "svg") {
-                    // let svgStr = this.mainHgView.api.exportAsSvg();
                     let svgStr = this.mainHgView.current.api.exportAsSvg();
-                    // let svgStr = hgViewApi.exportAsSvg();
                     // cf. https://github.com/higlass/higlass/issues/651
                     let fixedSvgStr = svgStr.replace('xmlns="http://www.w3.org/1999/xhtml"', '');
-                    //let fixedSvgStr = svgStr;
                     let fileComponents = (hgViewMode === "qt") ? 
                       ["epilogos", params.sampleSet, params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "vs", qtTargetRegion.left.chr + "_" + qtTargetRegion.left.start + "-" + qtTargetRegion.right.chr + "_" + qtTargetRegion.right.stop, "svg"] 
                       : 
@@ -6475,16 +5344,12 @@ class Viewer extends Component {
                     saveAs(svgFile);  
                   }
                   else if (name === "png") {
-                    // const pngPromise = (hgViewMode === "qt") ? this.queryTargetHgView.getApiRef().exportAsPngBlobPromise() : this.mainHgView.api.exportAsPngBlobPromise();
                     const pngPromise = (hgViewMode === "qt") ? this.queryTargetHgView.getApiRef().exportAsPngBlobPromise() : this.mainHgView.current.api.exportAsPngBlobPromise();
-                    // let pngPromise = hgViewApi.exportAsPngBlobPromise();
                     pngPromise
                       .then((blob) => {
-                        // console.log("[onClickDownloadItemSelect] blob", blob);
                         let reader = new FileReader(); 
                         reader.addEventListener("loadend", function() {
                           let array = new Uint8Array(reader.result);
-                          // console.log("[onClickDownloadItemSelect]", new TextDecoder("iso-8859-2").decode(array));
                           let pngBlob = new Blob([array], {type: "image/png"});
                           let fileComponents = (hgViewMode === "qt") ? 
                             ["epilogos", params.sampleSet, params.genome, params.model, Constants.complexitiesForDataExport[params.complexity], params.group, coord.chrLeft + '_' + coord.startLeft + '-' + coord.chrRight + '_' + coord.stopRight, "vs", qtTargetRegion.left.chr + "_" + qtTargetRegion.left.start + "-" + qtTargetRegion.right.chr + "_" + qtTargetRegion.right.stop, "png"] 
@@ -6497,11 +5362,8 @@ class Viewer extends Component {
                       .catch(function(err) {
                         throw Error(err);
                       })
-                      .finally(function() {
-                        // console.log("PNG export attempt is complete");
-                      });
-                  }                  
-                // }, 4500);
+                      .finally(function() {});
+                  }
                 }, 100);
               });
             });
@@ -6538,16 +5400,13 @@ class Viewer extends Component {
 
   onClickCopyRegionCommand = (evt) => {
     if (evt) {
-      // console.log(`evt.clientX ${evt.clientX} | evt.clientY ${evt.clientY}`);
       this.setState({
         mousePosition: {x: evt.clientX, y: evt.clientY},
       }, () => {
-        // console.log(`mousePosition ${JSON.stringify(this.state.mousePosition)}`);
         setTimeout(() => {
           this.setState({
             showingClipboardCopiedAlert: true,
           }, () => {
-            //document.activeElement.blur();
             setTimeout(() => {
               this.setState({
                 showingClipboardCopiedAlert: false,
@@ -6572,17 +5431,11 @@ class Viewer extends Component {
   }
 
   recommenderV3SearchCanBeEnabled = () => {
-    // let params = this.state.tempHgViewParams;
     let params = this.state.hgViewParams;
     let test = true;
     if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
     else if (params.sampleSet === "vE") test = false;
-    // else if ((this.state.currentViewScale <= 0) || (this.state.currentViewScale > Constants.defaultApplicationRecommenderV3ButtonHideShowThreshold)) test = false;
     else if (params.mode === "qt") test = false;
-    // else if (params.mode === "paired") test = false;
-    // else if ((params.sampleSet === "vC") && (params.model !== "18")) test = false;
-    // else if ((params.sampleSet === "vC") && (params.model === "18")) test = true;
-    // console.log(`params.mode ${params.mode}`);
     return test;
   }
 
@@ -6595,7 +5448,6 @@ class Viewer extends Component {
   }
 
   recommenderV3ManageAnimation = (canAnimate, hasFinished, cb) => {
-    // console.log(`Viewer: recommenderV3ManageAnimation | canAnimate ${canAnimate} | hasFinished ${hasFinished}`);
     this.setState({
       recommenderV3CanAnimate: canAnimate
     }, () => {
@@ -6613,18 +5465,8 @@ class Viewer extends Component {
   }
 
   recommenderV3SearchOnClick = () => {
-    // console.log(`recommenderV3SearchOnClick()`);
-
     if (this.state.recommenderV3SearchInProgress || !this.state.recommenderV3SearchIsEnabled) return;
 
-    // if (this.state.simSearchQueryCount <= 0 && !this.state.suggestionTableIsVisible) {
-    //   this.suggestionTableMakeVisible();
-    //   return;
-    // }
-
-    // this.updateActiveTab(Constants.defaultDrawerTabOnOpen);
-    // this.fadeOutIntervalDrop();
-    // this.fadeOutSuggestionIntervalDrop();
     this.setState({
       drawerIsEnabled: false,
       drawerContentKey: this.state.drawerContentKey + 1,
@@ -6632,52 +5474,18 @@ class Viewer extends Component {
       this.closeDrawer();
       this.setState({
         recommenderVersion: "v3",
-        // selectedExemplarRowIdx: Constants.defaultApplicationSerIdx,
-        // selectedRoiRowIdx: Constants.defaultApplicationSrrIdx,
-        // selectedSimSearchRowIdx: Constants.defaultApplicationSsrIdx,
         recommenderV3SearchInProgress: true,
         recommenderV3SearchButtonLabel: RecommenderSearchButtonInProgressLabel,
         recommenderV3SearchLinkLabel: RecommenderSearchLinkInProgressLabel,
         recommenderV3ExpandIsEnabled: false,
         recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
       }, () => {
-        // this.queryTargetHgView.updateSelectedHitIdx(1);
-
         function updateWithSimSearchRegionsInMemory(self) {
-          // console.log("[recommenderV3SearchOnClick] queryRegionIndicatorData", JSON.stringify(self.state.queryRegionIndicatorData, null, 2));
           const firstSimSearchRegion = self.state.simSearchTableData[0];
-          // console.log("[recommenderV3SearchOnClick] firstSimSearchRegion", JSON.stringify(firstSimSearchRegion, null, 2));
-
           const queryObj = Helpers.getJsonFromUrl();
           const currentMode = self.state.hgViewParams.mode || queryObj.mode;
-          // console.log(`currentMode ${currentMode}`);
-
-          // const api = self.mainHgView.api;
           let newQueryTargetLocalMinMax = self.state.queryTargetLocalMinMax;
           let newQueryTargetGlobalMinMax = self.state.queryTargetGlobalMinMax;
-          // const publication = Constants.sampleSetToPublication[self.state.hgViewParams.sampleSet];
-          // const assembly = self.state.hgViewParams.genome;
-          // const model = self.state.hgViewParams.model;
-          // const group = Constants.groupsForRecommenderV3OptionGroup[self.state.hgViewParams.sampleSet][self.state.hgViewParams.genome][self.state.hgViewParams.group];
-          // const complexity = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[self.state.hgViewParams.complexity];
-          // const trueQueryTargetGlobalMinMax = (Constants.globalEpilogosMinMaxRanges[publication][assembly][model][group][complexity]) ? Constants.globalEpilogosMinMaxRanges[publication][assembly][model][group][complexity] : Constants.defaultGlobalEpilogosMinMaxRange;
-          // if (self.state.hgViewParams.mode === "single") {
-          //   const epilogosTrackObj = api.getTrackObject(
-          //     self.state.mainHgViewconf.views[0].uid,
-          //     self.state.mainHgViewconf.views[0].tracks.top[0].uid,
-          //   );
-          //   const epilogosTrackMaxAndMin = epilogosTrackObj.maxAndMin;
-          //   newQueryTargetLocalMinMax = {"min": -epilogosTrackMaxAndMin.min, "max": epilogosTrackMaxAndMin.max};
-          //   const minMaxScaleFactor = Constants.applicationMinMaxScaleFactor;
-          //   const adjustedLocalMin = newQueryTargetLocalMinMax.min * minMaxScaleFactor;
-          //   const adjustedLocalMax = newQueryTargetLocalMinMax.max * minMaxScaleFactor;
-          //   newQueryTargetGlobalMinMax = {
-          //     "min": (adjustedLocalMin > trueQueryTargetGlobalMinMax.min) ? adjustedLocalMin : trueQueryTargetGlobalMinMax.min, 
-          //     "max": (adjustedLocalMax < trueQueryTargetGlobalMinMax.max) ? adjustedLocalMax : trueQueryTargetGlobalMinMax.max
-          //   };
-          // }
-          // console.log(`newQueryTargetLocalMinMax ${JSON.stringify(newQueryTargetLocalMinMax)}`);
-
           let newCurrentPosition = self.state.currentPosition;
           newCurrentPosition.chrLeft = self.state.queryRegionIndicatorData.chromosome;
           newCurrentPosition.chrRight = self.state.queryRegionIndicatorData.chromosome;
@@ -6717,8 +5525,6 @@ class Viewer extends Component {
               'stop' : firstSimSearchRegion.chromEnd,
             },
           };
-          // console.log(`updateWithSimSearchRegionsInMemory | newTempHgViewParams ${JSON.stringify(newTempHgViewParams, null, 2)}`);
-          // return;
           self.setState({
             hgViewParams: newTempHgViewParams,
             tempHgViewParams: newTempHgViewParams,
@@ -6738,11 +5544,7 @@ class Viewer extends Component {
             genomeSelectIsActive: false,
             autocompleteInputDisabled: true,
           }, () => {
-            // return;
-            if (currentMode === "qt") {
-              // self.queryTargetHgView.updateForNewRecommendations();
-            }
-            else {
+            if (currentMode !== "qt") {
               if (self.state.suggestionTableIsVisible) {
                 self.suggestionTableMakeInvisible();
                 self.fadeOutSuggestionIntervalDrop();
@@ -6792,8 +5594,6 @@ class Viewer extends Component {
 
         function recommenderV3SearchOnClickForChromInfo(chromInfo, self) {
           if (!(chrLeft in chromInfo.chromLengths) || !(chrRight in chromInfo.chromLengths)) {
-            // console.log("[recommenderV3SearchOnClickForChromInfo] chromosome not in chromLengths");
-            // throw new TypeError();
             chrLeft = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].chr;
             chrRight = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].chr;
             start = Constants.defaultApplicationPositions[currentSampleSet][currentGenome].start;
@@ -6805,21 +5605,13 @@ class Viewer extends Component {
           if (stop > chromInfo.chromLengths[chrRight]) {
             stop = chromInfo.chromLengths[chrRight] - 1000;
           }
-          // const absLeft = chromInfo.chrToAbs([chrLeft, parseInt(start)]);
-          // const absRight = chromInfo.chrToAbs([chrRight, parseInt(stop)]);
           const queryChr = chrLeft;
           const queryStart = start;
           const queryEnd = stop;
           const queryWindowSize = parseInt(parseInt(self.state.currentViewScale) / 1000); // kb
-          
-          // console.log(`[recommenderV3SearchOnClick] starting region: ${queryChr} | ${queryStart} | ${queryEnd} | ${queryWindowSize}`);
 
           let newRecommenderV3Query = Helpers.recommenderV3QueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
           newRecommenderV3Query.then((res) => {
-            // console.log(`res ${JSON.stringify(res)}`);
-            if (!res.query) {
-              // console.log(`res ${JSON.stringify(res)}`);
-            }
             let queryRegionIndicatorData = {
               chromosome: res.query.chromosome,
               start: res.query.start,
@@ -6834,11 +5626,7 @@ class Viewer extends Component {
               hitEndDiff: res.query.hitEndDiff,
               minMax: JSON.parse(res.query.minmax),
             };
-            // console.log(`queryRegionIndicatorData ${JSON.stringify(queryRegionIndicatorData)}`);
-            // return;
             const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
-            // console.log(`newMinMax ${JSON.stringify(newMinMax)}`);
-            // console.log(`res.hits[0] ${JSON.stringify(res.hits[0])}`);
             self.setState({
               queryRegionIndicatorData: queryRegionIndicatorData,
               queryTargetLocalMinMax: newMinMax,
@@ -6848,7 +5636,6 @@ class Viewer extends Component {
             });
           })
           .catch((err) => {
-            // throw new Error(`Error - [recommenderV3SearchOnClick] could not retrieve recommender response for region query - ${JSON.stringify(err)}`);
             if (!err || !err.response || !err.response.status || !err.response.statusText) {
               err = {
                 response : {
@@ -6864,7 +5651,6 @@ class Viewer extends Component {
               drawerIsEnabled: true,
               overlayMessage: msg,
             }, () => {
-              // self.fadeInOverlay();
               self.setState({
                 recommenderV3SearchInProgress: false,
                 recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
@@ -6895,8 +5681,6 @@ class Viewer extends Component {
               newChromInfo.chrToAbs = ([chrName, chrPos] = []) => newChromInfo.chrPositions ? Helpers.chrToAbs(chrName, chrPos, newChromInfo) : null;
               newChromInfo.absToChr = (absPos) => newChromInfo.chrPositions ? Helpers.absToChr(absPos, newChromInfo) : null;
               this.chromInfoCache[currentGenome] = newChromInfo;
-              // throw new Error(`Error - [recommenderV3SearchOnClick] could not retrieve chromosome information - ${JSON.stringify(err)}`);
-              // console.log("Error - [recommenderV3SearchOnClick] could not retrieve chromosome information - ", err);
             });
         }
       });
@@ -6904,8 +5688,6 @@ class Viewer extends Component {
   }
 
   suggestionButtonCanBeEnabled = () => {
-    // let params = this.state.tempHgViewParams;
-    // let params = this.state.hgViewParams;
     let test = true;
     if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
     if (!this.state.suggestionsAreLoaded) test = false;
@@ -6917,7 +5699,6 @@ class Viewer extends Component {
   }
 
   suggestionButtonManageAnimation = (canAnimate, hasFinished, cb) => {
-    // console.log(`Viewer: suggestionButtonManageAnimation | canAnimate ${canAnimate} | hasFinished ${hasFinished}`);
     this.setState({
       suggestionButtonCanAnimate: canAnimate
     }, () => {
@@ -6935,7 +5716,6 @@ class Viewer extends Component {
   }
 
   suggestionButtonOnClick = (makeVisible) => {
-    // console.log(`suggestionButtonOnClick | old ${this.state.suggestionTableIsVisible} | new ${makeVisible}`);
     if (this.state.suggestionButtonInProgress) return;
     const newSuggestionTableKey = this.state.suggestionTableKey + 1;
     const newRoiTableIsVisible = false;
@@ -6944,8 +5724,7 @@ class Viewer extends Component {
     const newSuggestionIndicatorIsVisible = (newSuggestionTableIsVisible && this.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx);
     const newDrawerIsEnabled = !makeVisible;
     const newDrawerIsOpen = false;
-    const newSelectedSuggestionRowIdx = Constants.defaultApplicationSugIdx; // (newSuggestionTableIsVisible && this.state.selectedSuggestionRowIdx === Constants.defaultApplicationSugIdx && this.state.suggestionTableData.length > 0) ? 1 : this.state.selectedSuggestionRowIdx;
-    // console.log(`this.state.selectedSuggestionRowIdx before ${this.state.selectedSuggestionRowIdx} -> after ${newSelectedSuggestionRowIdx}`);
+    const newSelectedSuggestionRowIdx = Constants.defaultApplicationSugIdx;
     const newRecommenderV3CanAnimate = !newSuggestionTableIsVisible;
     this.setState({
       suggestionTableKey: newSuggestionTableKey,
@@ -6964,7 +5743,6 @@ class Viewer extends Component {
           this.jumpToSuggestionRow(null, this.state.selectedSuggestionRowIdx);
           this.adjustSuggestionTableOffset(this.suggestionTableRef.selectedIdx(), true, true);
           this.suggestionTableRef.refresh();
-          // console.log(`test | ${this.suggestionTableRef.selectedIdx()}`);
         }, 100);
       }
     });
@@ -6984,8 +5762,6 @@ class Viewer extends Component {
   }
 
   roiButtonToggle = (makeVisible, cf) => {
-    // console.log(`roiButtonToggle <- ${cf} | ${makeVisible} | ${this.state.selectedRoiRowIdx}`);
-    // console.log(`roiButtonToggle | old ${this.state.roiTableIsVisible} | new ${makeVisible}`);
     if (this.state.roiButtonInProgress) return;
     const newRoiTableKey = (makeVisible) ? this.state.roiTableKey + 1 : this.state.roitTableKey;
     const newSuggestionTableIsVisible = false;
@@ -6994,7 +5770,7 @@ class Viewer extends Component {
     const newRoiIndicatorIsVisible = (newRoiTableIsVisible && this.state.selectedRoiRowIdx !== Constants.defaultApplicationSrrIdx);
     const newDrawerIsEnabled = !makeVisible;
     const newDrawerIsOpen = false;
-    const newSelectedRoiRowIdx = this.state.selectedRoiRowIdx; // (newRoiTableIsVisible && this.state.selectedRoiRowIdx === Constants.defaultApplicationSrrIdx && this.state.roiTableData.length > 0) ? 1 : this.state.selectedRoiRowIdx;
+    const newSelectedRoiRowIdx = this.state.selectedRoiRowIdx;
     this.setState({
       roiTableKey: newRoiTableKey,
       suggestionTableIsVisible: newSuggestionTableIsVisible,
@@ -7029,7 +5805,6 @@ class Viewer extends Component {
     let genome = this.state.hgViewParams.genome;
     let genomeText = Constants.genomes[genome];
     let group = this.state.hgViewParams.group;
-    // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
     let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
     let model = this.state.hgViewParams.model;
     let modelText = Constants.models[model];
@@ -7040,13 +5815,11 @@ class Viewer extends Component {
   
   parameterSummaryAsElement = () => {
     let sampleSet = this.state.hgViewParams.sampleSet;
-    // let sampleSetText = Constants.sampleSetsForNavbar[sampleSet];
     let sampleSetText = Manifest.navbarDescriptionsBySampleSet[sampleSet];
     let genome = this.state.hgViewParams.genome;
     // eslint-disable-next-line no-unused-vars
     let genomeText = Constants.genomes[genome];
     let group = this.state.hgViewParams.group;
-    // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
     let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
     let model = this.state.hgViewParams.model;
     let modelText = Constants.models[model];
@@ -7076,7 +5849,6 @@ class Viewer extends Component {
       }
     }
     else {
-      // result = <div ref={(component) => this.epilogosViewerParameterSummary = component} key={this.state.parameterSummaryKey} id="navigation-summary-parameters" className="navigation-summary-parameters"><span style={{display:"inherit"}} title={this.parameterSummaryAsTitle()}><span dangerouslySetInnerHTML={{ __html: sampleSetText }} />{divider}{modelText}{divider}{groupText}{divider}<span dangerouslySetInnerHTML={{ __html: complexityText }} /></span>{recommenderV1SearchButton} {recommenderV3SearchButton}</div>;
       if (this.state.suggestionStyle === "leftGemRightPillB") {
         result.push(
           <div id="epilogos-viewer-recommender-input-parent" className="epilogos-viewer-recommender-input-parent-left-nopill-B" key="epilogos-viewer-recommender-input-parent-left-nopill-B">
@@ -7116,7 +5888,6 @@ class Viewer extends Component {
     let sampleSet = this.state.hgViewParams.sampleSet;  
     let genome = this.state.hgViewParams.genome;
     let group = this.state.hgViewParams.group;
-    // let groupText = Constants.groupsByGenome[sampleSet][genome][group].text;
     let groupText = Manifest.groupsByGenome[sampleSet][genome][group].text;
     let annotationText = Constants.annotations[genome];
     let mode = this.state.hgViewParams.mode;
@@ -7169,8 +5940,6 @@ class Viewer extends Component {
           });
         }
         // add gene annotation track label (e.g. "GENCODE vXYZ")
-        // results.push(<div ref={(component) => this.epilogosViewerTrackLabelSingleGeneAnnotation = component} key="single-track-label-annotation" className="epilogos-viewer-container-track-label" style={{top:parseInt(childViewHeights.reduce(add) - 20)+'px',right:'25px'}}>{annotationText}</div>);
-        //annotationText = "";
         switch (genome) {
           case "hg19":
           case "hg38":
@@ -7193,21 +5962,10 @@ class Viewer extends Component {
         }
         break;
       case "paired": {
-        // let splitResult = group.split(/_vs_/);
-        // let groupA = splitResult[0];
-        // let groupB = splitResult[1];
-        // if (typeof groupB === "undefined") {
-        //   splitResult = group.split(/_versus_/);
-        //   groupA = splitResult[0];
-        //   groupB = splitResult[1];
-        // }
         const groupSplit = Helpers.splitPairedGroupString(group);
         const groupA = groupSplit.groupA;
         const groupB = groupSplit.groupB;
-        // console.log(`[trackLabels] groups A ${groupA} | B ${groupB}`);
         try {
-          // let groupAText = Constants.groupsByGenome[sampleSet][genome][groupA].text;
-          // let groupBText = Constants.groupsByGenome[sampleSet][genome][groupB].text;
           let groupAText = Manifest.groupsByGenome[sampleSet][genome][groupA].text;
           let groupBText = Manifest.groupsByGenome[sampleSet][genome][groupB].text;
           if (!this.state.downloadIsVisible) {
@@ -7239,8 +5997,6 @@ class Viewer extends Component {
                 right: '35px',
               }}>{groupText}</div>
             );
-          // annotationText = "";
-          // results.push(<div ref={(component) => this.epilogosViewerTrackLabelPairedGeneAnnotation = component} key="paired-track-label-annotation" className="epilogos-viewer-container-track-label" style={{bottom:`${45 + Constants.applicationViewerHgViewPaddingBottom}px`,right:'35px'}}>{annotationText}</div>);
           switch (genome) {
             case "hg19":
             case "hg38":
@@ -7261,10 +6017,7 @@ class Viewer extends Component {
             default:
               break;
           }
-        } catch (error) {
-          // console.log(`sampleSet | genome | groupA > ${sampleSet} | ${genome} | ${groupA}`);
-          // console.log(`sampleSet | genome | groupB > ${sampleSet} | ${genome} | ${groupB}`);
-        }
+        } catch (error) {}
         break;
       }
       default:
@@ -7306,13 +6059,10 @@ class Viewer extends Component {
   }
 
   setGeneAnnotationTrackType = (newType) => {
-    // console.log(`setGeneAnnotationTrackType | ${newType}`);
     let newHgViewParams = {...this.state.hgViewParams};
     if ((newType !== "cv") && (newType !== "ht")) return;
     newHgViewParams.gatt = newType;
     this.changeViewParams(true, newHgViewParams);
-    // console.log(`newHgViewParams.gatt ${newHgViewParams.gatt}`);
-    // console.log(`newHgViewParams.mode ${newHgViewParams.mode}`);
     switch (newHgViewParams.gatt) {
       case "cv":
         switch (newHgViewParams.mode) {
@@ -7338,20 +6088,11 @@ class Viewer extends Component {
     }
   }
 
-  // simSearchQuery = Helpers.debounce((chrom, start, stop) => {
   simSearchQuery = (chrom, start, stop) => {
-    // if (start === 0 || stop === 0) return;
-    console.log(`[Viewer.simSearchQuery] | ${chrom}:${start}-${stop}`);
     const sampleSet = this.state.hgViewParams.sampleSet;
     const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
-    if (Helpers.trackServerPointsToLocalHgServer(trackServerBySampleSet, 'Viewer.simSearchQuery')) {
-      console.log(`[Viewer.simSearchQuery] local`);
-    //   console.log(`[Viewer.simSearchQuery] currently skipping simsearch query as tracksServer points to localhost`);
-    //   return; // skip simsearch support when serving tracks from local hg-server
-    }
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
-    // console.log(`simSearchQuery | ${chrom}:${start}-${stop}`);
     if (!chrom || start === 0 || stop === 0) {
       this.setState({
         simSearchQueryCount: -1,
@@ -7370,7 +6111,6 @@ class Viewer extends Component {
     simSearchQueryPromise.then((res) => {
       if (res && res.hits && res.hits.length > 0) {
         const newSimSearchQueryHits = (res.hits[0] !== "") ? res.hits[0].split('\n') : [];
-        // console.log(`newSimSearchQueryHits ${JSON.stringify(newSimSearchQueryHits, null, 2)}`);
         const newSimSearchQueryCount = newSimSearchQueryHits.length;
         const newSimSearchQueryCountIsVisible = (newSimSearchQueryCount > 0 && this.state.hgViewParams.mode !== 'qt');
         const newSimSearchQueryCountIsEnabled = (newSimSearchQueryCount > 0 && this.state.hgViewParams.mode !== 'qt');
@@ -7385,7 +6125,6 @@ class Viewer extends Component {
         });
       }
       else {
-        // console.error(`Could not query simsearch service | ${JSON.stringify(res)}`);
         throw new Error(`Could not query simsearch service | ${JSON.stringify(res)}`);
       }
     })
@@ -7402,7 +6141,6 @@ class Viewer extends Component {
       });
     });
   }
-  // }, 250); 
 
   roiButtonForStyle = (side) => {
     if ((this.isProductionSite) || (this.isProductionProxySite)) {
@@ -7436,7 +6174,6 @@ class Viewer extends Component {
         <span />
       )
     }
-    // console.log(`this.state.suggestionStyle ${this.state.suggestionStyle}`);
     switch (this.state.suggestionStyle) {
       case "overload":
         return (
@@ -7552,26 +6289,8 @@ class Viewer extends Component {
       || (this.state.mainHgViewconf && this.state.mainHgViewconf.views && this.state.mainHgViewconf.views[0] && !this.state.mainHgViewconf.views[0].tracks)
       ) return <div>...</div>;
 
-    // const epilogosViewerHeaderNavbarHeight = Constants.defaultApplicationNavbarHeight;
-    
-    // const hgEpilogosContentHeight = ((this.state.epilogosContentHeight) ? parseInt(this.state.epilogosContentHeight) + parseInt(epilogosViewerHeaderNavbarHeight) : 0) + "px";
-    
     const windowInnerHeight = document.documentElement.clientHeight + "px";
     const windowInnerWidth = document.documentElement.clientWidth + "px";
-    
-    // const hgNonEpilogosContentHeight = parseInt(windowInnerHeight) - parseInt(hgEpilogosContentHeight) + "px";
-    
-    // const hgNonEpilogosContentTop = (document.documentElement.clientHeight - parseInt(hgNonEpilogosContentHeight) - 1) + "px";
-    
-    //const hgEpilogosMidpoint = parseInt((document.documentElement.clientHeight)/2.0 + parseInt(epilogosViewerHeaderNavbarHeight)) + "px";
-    
-    //let hgVerticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-main-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-main-label").clientWidth/2.0) : 0) + "px";
-    
-    // let hgVerticalDropTopBorderLeft = "rgba(183, 183, 183, 0.75) 1px dashed";
-    
-    //let hgVerticalDropLabelClassNames = "epilogos-viewer-container-vertical-drop-main-label";
-        
-    //let hgIntervalDropLabelClassNames = "epilogos-viewer-container-interval-drop-main-label epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse";
     
     let viewconf = this.state.mainHgViewconf;
     
@@ -7581,23 +6300,6 @@ class Viewer extends Component {
     
     childViews.forEach((cv, i) => { childViewHeights[i] = cv.height; });
     
-    //let verticalDropLabelShift = ((document.getElementById("epilogos-viewer-container-vertical-drop-main-label")) ? parseInt(document.getElementById("epilogos-viewer-container-vertical-drop-main-label").clientWidth/2.0) : 0) + "px";
-
-    // const queryHgViewOptions = { 
-    //   bounded: true,
-    //   pixelPreciseMarginPadding: false,
-    //   containerPaddingX: 0,
-    //   containerPaddingY: 0,
-    //   viewMarginTop: 0,
-    //   viewMarginBottom: 0,
-    //   viewMarginLeft: 0,
-    //   viewMarginRight: 0,
-    //   viewPaddingTop: Constants.defaultApplicationQueryViewPaddingTop,
-    //   viewPaddingBottom: 0,
-    //   viewPaddingLeft: 0,
-    //   viewPaddingRight: 0
-    // };
-
     const mainHgViewOptions = { 
       bounded: true,
       pixelPreciseMarginPadding: false,
@@ -7693,7 +6395,6 @@ class Viewer extends Component {
                 jumpToRegion={this.jumpToRegion}
                 jumpToExemplar={this.updateExemplarRowIdxFromCurrentIdx}
                 jumpToRoi={this.updateRoiRowIdxFromCurrentIdx}
-                // expandToRegion={this.recommenderV3ExpandOnClick}
                 isProductionSite={this.isProductionSite}
                 isInternalProductionSite={this.isInternalProductionSite}
                 isMobile={false}
@@ -7701,18 +6402,6 @@ class Viewer extends Component {
             </div>
           </Drawer>
         </div>
-        
-        {/* <div 
-          ref={(component) => this.epilogosViewerUpdateNotice = component} 
-          id="epilogos-viewer-update-notice" 
-          className="epilogos-viewer-update-notice-parent" 
-          style={{position: 'absolute', top: '45%', zIndex:1000, textAlign:'center', width: '100%', backfaceVisibility: 'hidden', transform: 'translateZ(0) scale(1.0, 1.0)'}}>
-          <Collapse isOpen={this.state.showUpdateNotice}>
-            <div className="epilogos-viewer-update-notice-child" style={(this.isMobile && this.isPortrait)?{maxWidth:"320px"}:{}}>
-              {this.viewerUpdateNotice()}
-            </div>
-          </Collapse>
-        </div> */}
       
         <div id="epilogos-viewer-container" className="epilogos-viewer-container">
          
@@ -7756,7 +6445,6 @@ class Viewer extends Component {
                 </div>
                 <div id="epilogos-viewer-search-input-parent" className="epilogos-viewer-search-input-parent">
                   <GeneSearch
-                    // onFocus={this.onFocusSearchInput}
                     mode={this.state.hgViewParams.mode}
                     assembly={this.state.hgViewParams.genome}
                     onSelect={this.onChangeSearchInputLocationViaGeneSearch}
@@ -7774,7 +6462,6 @@ class Viewer extends Component {
               <div className="higlass-content higlass-main-content" style={{"height": this.state.mainHgViewHeight, "paddingTop": `${Constants.applicationViewerHgViewPaddingTop}px`, "paddingBottom": `${Constants.applicationViewerHgViewPaddingBottom}px`}}>
                 <HiGlassComponent
                   key={this.state.mainHgViewKey}
-                  // ref={(component) => this.mainHgView = component}
                   ref={this.mainHgView}
                   options={mainHgViewOptions}
                   viewConfig={this.state.mainHgViewconf}

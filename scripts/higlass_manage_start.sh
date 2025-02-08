@@ -132,3 +132,6 @@ REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING=$(docker ps -aqf "name=${REACT_APP_HG_M
 docker exec ${REACT_APP_HG_MANAGE_CONTAINER_ID_RUNNING} bash -c "pm2 resurrect; pm2 save; pm2 startup" >/dev/null 2>&1
 
 deactivate
+
+echo "Done"
+exit 0

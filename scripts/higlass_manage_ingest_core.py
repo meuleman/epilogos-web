@@ -566,6 +566,7 @@ def ingest_baseline_fixedBin_tracks():
 if __name__ == '__main__':
     if len(sys.argv) != 6:
         fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir> <simsearch_assets_dir>\n")
+    note(f"Note: Processing track metadata... (please wait)")
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_core_manifest_items()
     # note(str(candidate_urls_to_process) + '\n')
