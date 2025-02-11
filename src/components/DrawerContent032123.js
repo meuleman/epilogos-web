@@ -143,6 +143,7 @@ class DrawerContent extends Component {
         case "vA":
           newViewParams.group = "all";
           newViewParams.mode = "single";
+          newViewParams.model = "15";
           break;
         case "vC":
           newViewParams.group = "all";
@@ -353,11 +354,13 @@ class DrawerContent extends Component {
   }
 
   availableModelsForSampleSet = () => {
+    const mode = this.state.viewParams.mode;
     const sampleSet = this.state.viewParams.sampleSet;
     const coreModels = () => {
       const activeGenome = (sampleSet === 'vD') ? "mm10" : 'hg38'; // this.state.viewParams.genome;
       const activeGroup = this.state.viewParams.group;
-      const availableModels = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForModels;
+      const availableModels = (Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup]) ? Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForModels : null;
+      if (availableModels == null) return [];
       return availableModels;
     }
     const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;

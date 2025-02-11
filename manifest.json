@@ -41,7 +41,7 @@
           "defaultAssembly": "hg19",
           "defaultGroup": "all",
           "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
-          "defaultPairedGroup": {"hg19": "ESC_vs_NonES-like", "hg38": "ESC_vs_NonES-like"},
+          "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_vs_Female"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
           "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
