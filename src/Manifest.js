@@ -1888,7 +1888,7 @@ export const modelsByGenome = {
           "titleText": "18-state",
           "enabled": true,
           "visible": true,
-          "availableForProduction": false
+          "availableForProduction": true
         }
       },
       "paired": {
