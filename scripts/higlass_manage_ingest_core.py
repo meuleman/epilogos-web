@@ -44,11 +44,13 @@ session.mount("http://", adapter)
 session.mount("https://", adapter)
 
 '''
-Note: Comment out the 'allowed_datasets' block to ingest all available core datasets from the parent
-manifest. Otherwise, the 'allowed_datasets' block limits the candidate URL set to the specified datasets,
-where available from the parent manifest, which is specifically useful for testing and development purposes.
+Note: Comment out the 'allowed_datasets' block and uncomment the 'allowed_datasets = None' statement to ingest
+all available core datasets from the parent manifest. Otherwise, the 'allowed_datasets' block will limit the
+candidate URL set to the specified datasets, where available from the parent manifest, which is specifically
+useful for testing and development purposes.
 '''
 
+# allowed_datasets = None
 allowed_datasets = {
     "vA": {
         "hg38": {
@@ -147,30 +149,30 @@ def is_allowed_chromatin_dataset(setKey, assemblyKey, modelKey, mediaGroupKey):
     try:
         if allowed_datasets:
             pass
-    except NameError:
+        if setKey in allowed_datasets:
+            if assemblyKey in allowed_datasets[setKey]:
+                if mediaGroupKey in allowed_datasets[setKey][assemblyKey]:
+                    if modelKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['models']:
+                        return True
+    except (NameError, TypeError) as err:
         return True
-    if setKey in allowed_datasets:
-        if assemblyKey in allowed_datasets[setKey]:
-            if mediaGroupKey in allowed_datasets[setKey][assemblyKey]:
-                if modelKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['models']:
-                    return True
     return False
 
 def is_allowed_epilogos_dataset(setKey, assemblyKey, modelKey, mediaGroupKey, complexityKey):
     try:
         if allowed_datasets:
             pass
-    except NameError:
+        if setKey in allowed_datasets:
+            if assemblyKey in allowed_datasets[setKey]:
+                if mediaGroupKey in allowed_datasets[setKey][assemblyKey]:
+                    if modelKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['models']:
+                        saliencyKey = saliency_to_complexity[complexityKey]
+                        if saliencyKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['saliencies']:
+                            return True
+                        if complexityKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['saliencies']:
+                            return True
+    except (NameError, TypeError) as err:
         return True
-    if setKey in allowed_datasets:
-        if assemblyKey in allowed_datasets[setKey]:
-            if mediaGroupKey in allowed_datasets[setKey][assemblyKey]:
-                if modelKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['models']:
-                    saliencyKey = saliency_to_complexity[complexityKey]
-                    if saliencyKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['saliencies']:
-                        return True
-                    if complexityKey in allowed_datasets[setKey][assemblyKey][mediaGroupKey]['saliencies']:
-                        return True
     return False
 
 def download_hg_candidate_url(candidateUrl, uploadsDir):
@@ -451,7 +453,7 @@ def candidate_urls_for_core_manifest_items():
                                       fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
                                   # simsearch tracks are available for single subtype only
                                   for complexityKey in osGroupAvailableComplexityKeys:
-                                      if complexityKey not in allowed_datasets[orderedSetKey][assemblyKey][mediaGroupKey]['saliencies']: continue
+                                      if allowed_datasets and complexityKey not in allowed_datasets[orderedSetKey][assemblyKey][mediaGroupKey]['saliencies']: continue
                                       if osSsMediaServer:
                                           for (ssScale, ssWindow) in simsearch_scales_and_windows:
                                               ssRecUrlPrefix = f"{osSsMediaServer}/{orderedSetKey}/{assemblyKey}/{modelKey}/{mediaGroupKey}/{complexityKey}/{ssScale}/{ssWindow}"
