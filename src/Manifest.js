@@ -1570,7 +1570,7 @@ export const groupsByGenome = {
 export const applicationGroups = groupsByGenome;
 export const defaultApplicationGroup = "all";
 export const defaultSingleGroupKeys = {"vA": {"hg19": "all", "hg38": "all"}, "vC": {"hg19": "all", "hg38": "all"}, "vD": {"mm10": "all"}, "vG": {"hg38": "All_1698_biosamples"}};
-export const defaultPairedGroupKeys = {"vA": {"hg19": "ESC_vs_NonES-like", "hg38": "ESC_vs_NonES-like"}, "vC": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"}, "vD": {"mm10": "P0_vs_e11.5"}, "vG": {"hg38": "Male_vs_Female"}};
+export const defaultPairedGroupKeys = {"vA": {"hg19": "Male_vs_Female", "hg38": "Male_vs_Female"}, "vC": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"}, "vD": {"mm10": "P0_vs_e11.5"}, "vG": {"hg38": "Male_vs_Female"}};
 export const modelsByGenome = {
   "vA": {
     "hg19": {

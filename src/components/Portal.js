@@ -393,7 +393,7 @@ class Portal extends Component {
   }
   
   exemplarDownloadURL = (assembly, model, complexity, group, sampleSet) => {
-    const downloadURLPrefix = (document.location.href === "http://localhost:3000/") ? document.location.href : Helpers.getHrefPrefix(document.location.href);
+    const downloadURLPrefix = (Helpers.isLocalhost()) ? document.location.href : Helpers.getHrefPrefix(document.location.href);
     const downloadURL = downloadURLPrefix
       + "/assets/epilogos/" 
       + sampleSet 

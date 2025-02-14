@@ -368,7 +368,8 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
 }
 
 export const isLocalhost = () => {
-  return window.location.href.includes("localhost");
+  const url = new URL(window.location.href);
+  return url.hostname.includes("localhost") || url.port === process.env.REACT_APP_APPLICATION_PRODUCTION_DEVELOPMENT_PORT;
 }
 
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
@@ -603,12 +604,14 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
 }
 
 export const trackServerPointsToLocalHgServer = (trackServer, cf) => {
-  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
+  const url = new URL(window.location.href);
+  const localhost = `${url.hostname}:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
   return trackServer.includes(localhost);
 }
 
 export const trackServerPointsToLocalHgServerForDrawer = (trackServer, cf) => {
-  const localhost = `localhost:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
+  const url = new URL(window.location.href);
+  const localhost = `${url.hostname}:${process.env.REACT_APP_HG_MANAGE_PORT_RUNNING}`;
   return trackServer.includes(localhost);
 }
 
@@ -1139,7 +1142,8 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
   
   const recommenderV3QueryDefaultURL = Constants.recommenderProxyURL;
-  const recommenderV3QueryLocalServerURL = `http://localhost:${process.env.REACT_APP_HG_MANAGE_SIMSEARCH_PORT}`;
+  const url = new URL(window.location.href);
+  const recommenderV3QueryLocalServerURL = `http://${url.hostname}:${process.env.REACT_APP_HG_MANAGE_SIMSEARCH_PORT}`;
   const recommenderV3QueryURL = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')) ? recommenderV3QueryLocalServerURL : recommenderV3QueryDefaultURL;
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;

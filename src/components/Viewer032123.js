@@ -1490,13 +1490,13 @@ class Viewer extends Component {
       chromSizesURL = chromSizesURL.replace(/^https/, "http");
     }
     else {
-      if (this.currentURL.host !== "localhost:3000") {
+      if (!Helpers.isLocalhost()) {
         let port = parseInt(this.currentURL.port);
         if (isNaN(port)) { port = Constants.applicationProductionPort; }
         chromSizesURL = chromSizesURL.replace(":" + Constants.applicationDevelopmentPort, `:${port}`);
       }
       else {
-        chromSizesURL = chromSizesURL.replace("https://epilogos.altius.org:3001", "http://localhost:3000");
+        chromSizesURL = chromSizesURL.replace("https://epilogos.altius.org:3001", `http://${this.currentURL.hostname}:${this.currentURL.port}`);
       }
     }
     return chromSizesURL;
@@ -3568,15 +3568,15 @@ class Viewer extends Component {
           }
         })
         .catch((err) => {
-          console.log("[triggerUpdate] Error - ", JSON.stringify(err));
-          console.log(`[triggerUpdate] Could not retrieve UUID for track query (${fn})`);
-          let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
-          self.setState({
-            overlayMessage: msg,
-            mainHgViewconf: {}
-          }, () => {
-            self.fadeInOverlay();
-          });
+          console.error("[triggerUpdate] Error - ", JSON.stringify(err));
+          console.error(`[triggerUpdate] Could not retrieve UUID for track query (${fn} | ${hgUUIDQueryURL})`);
+          // let msg = self.errorMessage(err, `Could not retrieve UUID for track query (${fn})`, hgUUIDQueryURL);
+          // self.setState({
+          //   overlayMessage: msg,
+          //   mainHgViewconf: {}
+          // }, () => {
+          //   self.fadeInOverlay();
+          // });
         });
       }      
       
@@ -3987,12 +3987,13 @@ class Viewer extends Component {
             })
             .catch((err) => {
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
-              this.setState({
-                overlayMessage: msg,
-                mainHgViewconf: {}
-              }, () => {
-                this.fadeInOverlay();
-              });
+              console.error("[triggerUpdate] Error - ", JSON.stringify(msg));
+              // this.setState({
+              //   overlayMessage: msg,
+              //   mainHgViewconf: {}
+              // }, () => {
+              //   this.fadeInOverlay();
+              // });
             });
           
         });
@@ -4324,12 +4325,13 @@ class Viewer extends Component {
             })
             .catch((err) => {
               let msg = this.errorMessage(err, `Could not retrieve view configuration`, newHgViewconfURL);
-              this.setState({
-                overlayMessage: msg,
-                mainHgViewconf: {}
-              }, () => {
-                this.fadeInOverlay();
-              });
+              console.error("[triggerUpdate] Error - ", JSON.stringify(msg));
+              // this.setState({
+              //   overlayMessage: msg,
+              //   mainHgViewconf: {}
+              // }, () => {
+              //   this.fadeInOverlay();
+              // });
             });
         });
         
@@ -4593,7 +4595,8 @@ class Viewer extends Component {
         recommenderV3ExpandIsEnabled: this.recommenderV3ExpandCanBeEnabled(),
         recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
       }, () => {
-        this.fadeInOverlay();
+        // this.fadeInOverlay();
+        console.error("[roiProcessData] Error - ", JSON.stringify(msg));
       });      
       return;
     }
@@ -4655,8 +4658,9 @@ class Viewer extends Component {
         this.setState({
           overlayMessage: msg
         }, () => {
-          this.fadeInOverlay();
-        });      
+          // this.fadeInOverlay();
+          console.error("[roiProcessData] Error - ", JSON.stringify(msg));
+        });
         return;
       }
       //
@@ -4673,7 +4677,8 @@ class Viewer extends Component {
         this.setState({
           overlayMessage: msg
         }, () => {
-          this.fadeInOverlay();
+          // this.fadeInOverlay();
+          console.error("[roiProcessData] Error - ", JSON.stringify(msg));
         });       
         return;
       }
@@ -4691,7 +4696,8 @@ class Viewer extends Component {
         this.setState({
           overlayMessage: msg
         }, () => {
-          this.fadeInOverlay();
+          // this.fadeInOverlay();
+          console.error("[roiProcessData] Error - ", JSON.stringify(msg));
         }); 
         return;
       }
@@ -4832,7 +4838,8 @@ class Viewer extends Component {
               roiEnabled: false,
               overlayMessage: msg
             }, () => {
-              this.fadeInOverlay();
+              // this.fadeInOverlay();
+              console.error("[updateRois] Error - ", JSON.stringify(msg));
               if (cb) {
                 cb(this);
               }
@@ -4853,7 +4860,8 @@ class Viewer extends Component {
         roiEnabled: false,
         overlayMessage: msg
       }, () => {
-        this.fadeInOverlay();
+        // this.fadeInOverlay();
+        console.error("[updateRois] Error - ", JSON.stringify(msg));
         if (cb) {
           cb(this);
         }
@@ -5374,7 +5382,8 @@ class Viewer extends Component {
               overlayMessage: msg,
               mainHgViewconf: {}
             }, () => {
-              this.fadeInOverlay();
+              console.error("[onClickDownloadItemSelect] Error - ", JSON.stringify(msg));
+              // this.fadeInOverlay();
             });
           });
         break;
