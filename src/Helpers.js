@@ -1193,7 +1193,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 //
 export const uuidQueryPromise = function(fn, self, endpointURL) {
   const hgUUIDQueryURL = (!endpointURL) ? `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}` : `${endpointURL}/tilesets?ac=${fn}`;
-  console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
   return axios.get(hgUUIDQueryURL).then((res) => {
     if (res.data && res.data.results && res.data.results[0]) {
       return res.data.results[0].uuid;
@@ -1231,8 +1231,8 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
         uuidQueryPromise(singleMarksTrackFn, this, endpointURL),
       ];
       arePromisesValid = Promise.all(promiseArraySingle).then((uuidArray) => {
-        console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
-        console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
+        // console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
+        // console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
         // if either or both UUIDs are undefined, return false
         if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined")) {
           return false;
@@ -1256,9 +1256,9 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
         uuidQueryPromise(pairedEpilogosTrackFns.AvsB, this, endpointURL),
       ];
       arePromisesValid = Promise.all(promiseArrayPaired).then((uuidArray) => {
-        console.log(`pairedEpilogosTrackFns.A ${pairedEpilogosTrackFns.A} | uuid ${uuidArray[0]}`);
-        console.log(`pairedEpilogosTrackFns.B ${pairedEpilogosTrackFns.B} | uuid ${uuidArray[1]}`);
-        console.log(`pairedEpilogosTrackFns.AvsB ${pairedEpilogosTrackFns.AvsB} | uuid ${uuidArray[2]}`);
+        // console.log(`pairedEpilogosTrackFns.A ${pairedEpilogosTrackFns.A} | uuid ${uuidArray[0]}`);
+        // console.log(`pairedEpilogosTrackFns.B ${pairedEpilogosTrackFns.B} | uuid ${uuidArray[1]}`);
+        // console.log(`pairedEpilogosTrackFns.AvsB ${pairedEpilogosTrackFns.AvsB} | uuid ${uuidArray[2]}`);
         // if any of the UUIDs are undefined, return false
         if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined") || (typeof uuidArray[2] === "undefined")) {
           return false;

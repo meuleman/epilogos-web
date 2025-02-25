@@ -3119,8 +3119,8 @@ class Viewer extends Component {
       // If switching to locally-hosted core set from remotely-hosted core, then check if the genome, state model, group, and saliency are available. If not, set to defaults.
       const destinationIsLocalCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(tempHgViewParams.sampleSet);
       const destinationIsRemoteCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(this.state.hgViewParams.sampleSet);
-      console.log(`destinationIsLocalCoreSet ${destinationIsLocalCoreSet}`);
-      console.log(`destinationIsRemoteCoreSet ${destinationIsRemoteCoreSet}`);
+      // console.log(`destinationIsLocalCoreSet ${destinationIsLocalCoreSet}`);
+      // console.log(`destinationIsRemoteCoreSet ${destinationIsRemoteCoreSet}`);
       if (destinationIsLocalCoreSet) {
         const isGenomeAvailable = Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet]).includes(tempHgViewParams.genome);
         const isStateModelAvailable = (isGenomeAvailable) ? Object.keys(Manifest.availableOverriddenSampleSet[tempHgViewParams.sampleSet][tempHgViewParams.genome]).includes(tempHgViewParams.model) : false;
@@ -3137,7 +3137,7 @@ class Viewer extends Component {
           if (!availableCoreGroups.includes(tempHgViewParams.group)) {
             tempHgViewParams.group = availableCoreGroups[0];
           }
-          console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
+          // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams)}`);
         }
       }
       else {
@@ -3160,7 +3160,7 @@ class Viewer extends Component {
         }
         // if we are switching from Roadmap/Adsera to Gorkin, or vice versa, switch genome to useful default
         if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC") || (this.state.hgViewParams.sampleSet === "vG"))) {
-          console.log(`vA,vC,vG => vD`);
+          // console.log(`vA,vC,vG => vD`);
           tempHgViewParams.genome = "mm10";
           tempHgViewParams.model = "15";
           tempHgViewParams.complexity = "KL";
@@ -3168,7 +3168,7 @@ class Viewer extends Component {
           tempHgViewParams.mode = "single";
         }
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vC")) {
-          console.log(`vD => vC`);
+          // console.log(`vD => vC`);
           tempHgViewParams.genome = "hg38";
           tempHgViewParams.model = "18";
           tempHgViewParams.complexity = "KL";
@@ -3176,7 +3176,7 @@ class Viewer extends Component {
           tempHgViewParams.mode = "single";
         }
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vG")) {
-          console.log(`vD => vG`);
+          // console.log(`vD => vG`);
           tempHgViewParams.genome = "hg38";
           tempHgViewParams.model = "18";
           tempHgViewParams.complexity = "KL";
@@ -3294,14 +3294,14 @@ class Viewer extends Component {
       }
     }
 
-    console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
+    // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
 
     const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
 
-    console.log(`isHgViewParamsObjectValidPromise ${isHgViewParamsObjectValidPromise}`);
+    // console.log(`isHgViewParamsObjectValidPromise ${isHgViewParamsObjectValidPromise}`);
 
     isHgViewParamsObjectValidPromise.then((isHgViewParamsObjectValid) => {
-      console.log(`isHgViewParamsObjectValid ${isHgViewParamsObjectValid}`);
+      // console.log(`isHgViewParamsObjectValid ${isHgViewParamsObjectValid}`);
       if (!isHgViewParamsObjectValid) {
         this.setState({
           tempHgViewParams: {...currentHgViewParams},
