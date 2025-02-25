@@ -21,10 +21,11 @@ defined in application documentation.
 '''
 
 manifest_fn = sys.argv[1]
-root_dir = sys.argv[2]
-hg_name = sys.argv[3]
-hg_uploads_dir = sys.argv[4]
-simsearch_uploads_dir = sys.argv[5]
+candidate_urls_fn = sys.argv[2]
+root_dir = sys.argv[3]
+hg_name = sys.argv[4]
+hg_uploads_dir = sys.argv[5]
+simsearch_uploads_dir = sys.argv[6]
 
 hg_name_running = f"{hg_name}-running"
 
@@ -50,49 +51,49 @@ candidate URL set to the specified datasets, where available from the parent man
 useful for testing and development purposes.
 '''
 
-# allowed_datasets = None
-allowed_datasets = {
-    "vA": {
-        "hg38": {
-            "All_127_Roadmap_epigenomes": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-            "Male_donors_versus_Female_donors": {
-                "models": [
-                    15,
-                    18,
-                ],
-                "saliencies": [
-                    "S1",
-                ],
-            },
-        },
-    }
-}
+allowed_datasets = None
+# allowed_datasets = {
+#     "vA": {
+#         "hg38": {
+#             "All_127_Roadmap_epigenomes": {
+#                 "models": [
+#                     15,
+#                     18,
+#                 ],
+#                 "saliencies": [
+#                     "S1",
+#                 ],
+#             },
+#             "Male_donors": {
+#                 "models": [
+#                     15,
+#                     18,
+#                 ],
+#                 "saliencies": [
+#                     "S1",
+#                 ],
+#             },
+#             "Female_donors": {
+#                 "models": [
+#                     15,
+#                     18,
+#                 ],
+#                 "saliencies": [
+#                     "S1",
+#                 ],
+#             },
+#             "Male_donors_versus_Female_donors": {
+#                 "models": [
+#                     15,
+#                     18,
+#                 ],
+#                 "saliencies": [
+#                     "S1",
+#                 ],
+#             },
+#         },
+#     }
+# }
 
 '''
 The core_overrides object is used to store properties of the ingested tracks, as well as provide
@@ -566,11 +567,13 @@ def ingest_baseline_fixedBin_tracks():
     return
 
 if __name__ == '__main__':
-    if len(sys.argv) != 6:
-        fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir> <simsearch_assets_dir>\n")
+    if len(sys.argv) != 7:
+        fatal_error(f"Usage: higlass_manage_ingest_local.py <epilogos_manifest_fn> <epilogos_candidate_json_fn> <epilogos_scripts_dir> <higlass_container_name> <higlass_uploads_dir> <simsearch_assets_dir>\n")
     note(f"Note: Processing track metadata... (please wait)")
     ingest_baseline_fixedBin_tracks()
     candidate_urls_to_process = candidate_urls_for_core_manifest_items()
+    with open(candidate_urls_fn, 'w') as ofh:
+        json.dump(candidate_urls_to_process, ofh, indent=4)
     # note(str(candidate_urls_to_process) + '\n')
     required_disk_space = required_disk_space_for_candidate_urls(candidate_urls_to_process, hg_uploads_dir)
     note(f"Note: Required disk space for candidate URLs [{required_disk_space / (1024 ** 3):.2f}] GB\n")
