@@ -1643,12 +1643,12 @@
                   "KLss"
                 ]
               },
-              "P0_vs_e11.5": {
+              "e11.5_vs_P0": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "P0_vs_e11.5",
-                "text": "Day-of-birth vs. Embryonic day 11.5",
-                "mediaKey": "Day-of-birth_versus_Embryonic_day_11.5",
+                "value": "e11.5_vs_P0",
+                "text": "Embryonic day 11.5 vs. Day-of-birth",
+                "mediaKey": "Embryonic_day_11.5_versus_Day-of-birth",
                 "enabled": true,
                 "preferred": true,
                 "availableForModels": [
