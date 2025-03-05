@@ -91,6 +91,117 @@ class DrawerContent extends Component {
       }
     }, 1000);
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !this.deepCompare(this.props, nextProps) || !this.deepCompare(this.state, nextState);
+  }
+
+  deepCompare() {
+    var i, l, leftChain, rightChain;
+  
+    function compare2Objects (x, y) {
+      var p;
+  
+      // remember that NaN === NaN returns false
+      // and isNaN(undefined) returns true
+      if (isNaN(x) && isNaN(y) && typeof x === 'number' && typeof y === 'number') {
+          return true;
+      }
+  
+      // Compare primitives and functions.     
+      // Check if both arguments link to the same object.
+      // Especially useful on the step where we compare prototypes
+      if (x === y) {
+        return true;
+      }
+  
+      // Works in case when functions are created in constructor.
+      // Comparing dates is a common scenario. Another built-ins?
+      // We can even handle functions passed across iframes
+      if ((typeof x === 'function' && typeof y === 'function') ||
+         (x instanceof Date && y instanceof Date) ||
+         (x instanceof RegExp && y instanceof RegExp) ||
+         (x instanceof String && y instanceof String) ||
+         (x instanceof Number && y instanceof Number)) {
+        return x.toString() === y.toString();
+      }
+  
+      // At last checking prototypes as good as we can
+      if (!(x instanceof Object && y instanceof Object)) {
+        return false;
+      }
+  
+      if (x.isPrototypeOf(y) || y.isPrototypeOf(x)) {
+        return false;
+      }
+  
+      if (x.constructor !== y.constructor) {
+        return false;
+      }
+  
+      if (x.prototype !== y.prototype) {
+        return false;
+      }
+  
+      // Check for infinitive linking loops
+      if (leftChain.indexOf(x) > -1 || rightChain.indexOf(y) > -1) {
+        return false;
+      }
+  
+      // Quick checking of one object being a subset of another.
+      // todo: cache the structure of arguments[0] for performance
+      for (p in y) {
+        if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
+          return false;
+        }
+        else if (typeof y[p] !== typeof x[p]) {
+          return false;
+        }
+      }
+  
+      for (p in x) {
+        if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
+          return false;
+        }
+        else if (typeof y[p] !== typeof x[p]) {
+          return false;
+        }
+        switch (typeof (x[p])) {
+          case 'object':
+          case 'function':
+            leftChain.push(x);
+            rightChain.push(y);
+            if (!compare2Objects (x[p], y[p])) {
+                return false;
+            }
+            leftChain.pop();
+            rightChain.pop();
+            break;
+          default:
+            if (x[p] !== y[p]) {
+              return false;
+            }
+            break;
+        }
+      }
+  
+      return true;
+    }
+  
+    if (arguments.length < 1) {
+      return true;
+    }
+  
+    for (i = 1, l = arguments.length; i < l; i++) {
+      leftChain = [];
+      rightChain = [];
+      if (!compare2Objects(arguments[0], arguments[i])) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
   
   toggle = (tab) => {
     if (this.state.activeTab !== tab) {
@@ -269,7 +380,7 @@ class DrawerContent extends Component {
     let pairedMode = false;
     for (let i = 0; i < availableOverriddenSampleSetMetadataByAssemblyModelComplexity.length; i++) {
       const group = availableOverriddenSampleSetMetadataByAssemblyModelComplexity[i];
-      if (group.includes('versus')) pairedMode = true; else singleMode = true;
+      if (group.includes('versus') || group.includes('vs')) pairedMode = true; else singleMode = true;
       if (singleMode && pairedMode) break;
     }
     return !(singleMode && pairedMode);
@@ -385,6 +496,7 @@ class DrawerContent extends Component {
     const kButtonParentPrefix = 'model-bg-parent-btn-';
     const kButtonLabelPrefix = 'model-bg-btn-label-';
     let kButtonIdx = 0;
+    // console.log(`modelSectionBody -> activeSampleSet ${activeSampleSet} activeGenome ${activeGenome} activeMode ${activeMode} activeModel ${activeModel} activeGroup ${activeGroup}`);
     let activeObj = (Manifest.modelsByGenome[activeSampleSet][activeGenome]) ? Manifest.modelsByGenome[activeSampleSet][activeGenome][activeMode] : null;
     if (!activeObj) {
       return result;
@@ -398,19 +510,21 @@ class DrawerContent extends Component {
     }
     Object.keys(activeObj).forEach(k => {
       if (activeObj[k].visible) {
+        // console.log(`activeObj[${k}] ${JSON.stringify(activeObj[k])}`);
         const isActive = (activeModel === k);
-        const isInactiveForModel = activeGenomeAvailability[activeGroup] && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
-        const isDisabled = !activeObj[k].enabled || isInactiveForModel || !availableModels.includes(parseInt(activeObj[k].value));
+        const isInactiveForModel = Object.hasOwn(activeGenomeAvailability, activeGroup) && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
+        // const isDisabled = !activeObj[k].enabled || isInactiveForModel || !availableModels.includes(parseInt(activeObj[k].value));
+        const isDisabled = false;
         const kLabel = activeObj[k].titleText;
         const kValue = activeObj[k].value;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
         let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
         let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-        if (!isDisabled) {
+        // if (!isDisabled) {
           kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={isDisabled} name="model" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
           kButtonIdx++;
-        }
+        // }
       }
     });
     const kButtonGroupPrefix = 'model-bg-';
@@ -567,9 +681,11 @@ class DrawerContent extends Component {
 
   availableComplexitiesForSampleSet = () => {
     const sampleSet = this.state.viewParams.sampleSet;
+    const activeMode = this.state.viewParams.mode;
     const coreComplexities = () => {
       const activeGenome = (sampleSet === 'vD') ? "mm10" : "hg38"; // this.state.viewParams.genome;
-      const activeGroup = this.state.viewParams.group;
+      const activeGroup = (sampleSet === 'vC' && activeMode === 'paired' && activeGenome === 'hg38') ? 'Male_donors_versus_Female_donors' : this.state.viewParams.group;
+      // console.log(`coreComplexities -> sampleSet ${sampleSet} activeGenome ${activeGenome} activeGroup ${activeGroup}`);
       const availableComplexities = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForComplexities;
       return availableComplexities;
     }

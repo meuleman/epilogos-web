@@ -492,26 +492,58 @@ def candidate_urls_for_core_manifest_items():
                               for complexityKey in osGroupAvailableComplexityKeys:
                                   allowedEpilogosDataset = is_allowed_epilogos_dataset(orderedSetKey, assemblyKey, modelKey, mediaGroupKey, complexityKey)
                                   if allowedEpilogosDataset:
-                                    hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
-                                    if urlparse(hgCandidateUrl):
-                                        note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
-                                        response = session.head(hgCandidateUrl)
-                                        candidateFileSize = response.headers.get('content-length')
-                                        if not candidateFileSize:
-                                            fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
-                                        candidateUrls.append({
-                                            'url': hgCandidateUrl,
-                                            'type': 'epilogos',
-                                            'subtype': subtypeKey,
-                                            'content-length': candidateFileSize,
-                                            'set': orderedSetKey,
-                                            'assembly': assemblyKey,
-                                            'model': modelKey,
-                                            'group': mediaGroupKey,
-                                            'complexity': complexityKey,
-                                        })
-                                    else:
-                                        fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
+                                      if subtypeKey == 'single':
+                                          hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{mediaGroupKey}.{complexityKey}.mv5"
+                                          if urlparse(hgCandidateUrl):
+                                              note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                              response = session.head(hgCandidateUrl)
+                                              candidateFileSize = response.headers.get('content-length')
+                                              if not candidateFileSize:
+                                                  fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
+                                              candidateUrls.append({
+                                                  'url': hgCandidateUrl,
+                                                  'type': 'epilogos',
+                                                  'subtype': subtypeKey,
+                                                  'content-length': candidateFileSize,
+                                                  'set': orderedSetKey,
+                                                  'assembly': assemblyKey,
+                                                  'model': modelKey,
+                                                  'group': mediaGroupKey,
+                                                  'complexity': complexityKey,
+                                              })
+                                          else:
+                                              fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
+                                      else:
+                                          pairedDelimiter = None
+                                          if '_vs_' in mediaGroupKey:
+                                              pairedDelimiter = '_vs_'
+                                          elif '_versus_' in mediaGroupKey:
+                                              pairedDelimiter = '_versus_'
+                                          if pairedDelimiter:
+                                              pairedMediaGroupKeys = mediaGroupKey.split(pairedDelimiter)
+                                              for pairedMediaGroupKey in pairedMediaGroupKeys:
+                                                  hgCandidateUrl = f"{osHgMediaServer}/{orderedSetKey}.{assemblyKey}.{modelKey}.{pairedMediaGroupKey}.{complexityKey}.mv5"
+                                                  if urlparse(hgCandidateUrl):
+                                                      note(f"Note: Retrieving file size for [{hgCandidateUrl}]\n")
+                                                      response = session.head(hgCandidateUrl)
+                                                      candidateFileSize = response.headers.get('content-length')
+                                                      if not candidateFileSize:
+                                                          fatal_error(f"Error: No file size available for URL [{hgCandidateUrl}]\n")
+                                                      candidateUrls.append({
+                                                          'url': hgCandidateUrl,
+                                                          'type': 'epilogos',
+                                                          'subtype': subtypeKey,
+                                                          'content-length': candidateFileSize,
+                                                          'set': orderedSetKey,
+                                                          'assembly': assemblyKey,
+                                                          'model': modelKey,
+                                                          'group': pairedMediaGroupKey,
+                                                          'complexity': complexityKey,
+                                                      })
+                                                  else:
+                                                      fatal_error(f"Error: URL invalid [{hgCandidateUrl}]\n")
+                                          else:
+                                              fatal_error(f"Error: Invalid paired group key [{mediaGroupKey}]\n")
             except Exception as err:
                 fatal_error(repr(err))
     except KeyError as err:

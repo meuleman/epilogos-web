@@ -3202,8 +3202,11 @@ class Viewer extends Component {
         tempHgViewParams.group = (tempHgViewParams.sampleSet !== "vG") ? "all" : "All_1698_biosamples";
       }
       else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
-        if ((tempHgViewParams.sampleSet === "vA") || (tempHgViewParams.sampleSet === "vC")) {
+        if (tempHgViewParams.sampleSet === "vA") {
           tempHgViewParams.group = "Male_vs_Female";
+        }
+        if (tempHgViewParams.sampleSet === "vC") {
+          tempHgViewParams.group = "Male_donors_versus_Female_donors";
         }
         if (tempHgViewParams.sampleSet === "vD") {
           tempHgViewParams.group = "P0_vs_e11.5";
@@ -3294,7 +3297,7 @@ class Viewer extends Component {
       }
     }
 
-    // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
+    console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
 
     const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
 
@@ -3675,6 +3678,10 @@ class Viewer extends Component {
         let newEpilogosTrackBUUID = null;
         let newEpilogosTrackAvsBUUID = null;
         let newEpilogosTrackAUUIDQueryPromise = uuidQueryPromise(newEpilogosTrackAFilename, this);
+
+        // console.log(`paired -- newEpilogosTrackAFilename:       ${newEpilogosTrackAFilename}`);
+        // console.log(`paired -- newEpilogosTrackBFilename:       ${newEpilogosTrackBFilename}`);
+        // console.log(`paired -- newEpilogosTrackAvsBFilename:    ${newEpilogosTrackAvsBFilename}`);
         
         newEpilogosTrackAUUIDQueryPromise.then((res) => {
           newEpilogosTrackAUUID = res;
@@ -4007,7 +4014,7 @@ class Viewer extends Component {
         if (Helpers.trackServerPointsToLocalHgServer(newTrackServerBySampleSet, 'Viewer.triggerUpdate')) {
           newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup, newComplexity);
           newMarksTrackFilename = Helpers.marksTrackFilenameForSingleSampleSetViaLocalHgServer(newSampleSet, newGenome, newModel, newGroup);
-        }
+        }        
 
         //
         // query for UUIDs
@@ -6379,7 +6386,7 @@ class Viewer extends Component {
                 activeTab={this.state.drawerActiveTabOnOpen}
                 type={this.state.drawerSelection} 
                 title={this.state.drawerTitle}
-                //viewParams={this.state.hgViewParams}
+                // viewParams={this.state.hgViewParams}
                 viewParams={this.state.tempHgViewParams}
                 currentCoordIdx={0}
                 drawerWidth={this.state.drawerWidth}
