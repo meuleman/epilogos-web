@@ -3300,7 +3300,7 @@ class Viewer extends Component {
       }
     }
 
-    console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
+    // console.log(`tempHgViewParams ${JSON.stringify(tempHgViewParams, null, 2)}`);
 
     const isHgViewParamsObjectValidPromise = Helpers.isHgViewParamsObjectValidPromise(tempHgViewParams);
 
