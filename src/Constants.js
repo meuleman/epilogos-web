@@ -979,6 +979,25 @@ export const groupsForRecommenderV1OptionGroup = {
       "partImpSix": "partImpSix",
     },
   },
+  "vH": {
+    "hg38": {
+      "All_1698_biosamples": "All_1698_biosamples",
+      "AcuteMyeloidLeukemia": "AcuteMyeloidLeukemia",
+      "BrainCerebellum": "BrainCerebellum",
+      "BrainFrontalLobeBA9": "BrainFrontalLobeBA9",
+      "Brain": "Brain",
+      "BrainTemporalLobeBA22d41d42": "BrainTemporalLobeBA22d41d42",
+      "CancerCellLine": "CancerCellLine",
+      "ChronicLymphocyticLeukemia": "ChronicLymphocyticLeukemia",
+      "Colon": "Colon",
+      "Macrophage": "Macrophage",
+      "Monocyte": "Monocyte",
+      "Muscle": "Muscle",
+      "Neutrophil": "Neutrophil",
+      "TCellCd4Helper": "TCellCd4Helper",
+      "TCellNaiveCd4Helper": "TCellNaiveCd4Helper",
+    },
+  },
 };
 
 export const groupsForRecommenderV3OptionGroup = {
@@ -1129,6 +1148,25 @@ export const groupsForRecommenderV3OptionGroup = {
       "Immune": "Immune",
       "Male": "Male",
       "Neural": "Neural",
+    },
+  },
+  "vH": {
+    "hg38": {
+      "All_1698_biosamples": "All_1698_biosamples",
+      "AcuteMyeloidLeukemia": "AcuteMyeloidLeukemia",
+      "BrainCerebellum": "BrainCerebellum",
+      "BrainFrontalLobeBA9": "BrainFrontalLobeBA9",
+      "Brain": "Brain",
+      "BrainTemporalLobeBA22d41d42": "BrainTemporalLobeBA22d41d42",
+      "CancerCellLine": "CancerCellLine",
+      "ChronicLymphocyticLeukemia": "ChronicLymphocyticLeukemia",
+      "Colon": "Colon",
+      "Macrophage": "Macrophage",
+      "Monocyte": "Monocyte",
+      "Muscle": "Muscle",
+      "Neutrophil": "Neutrophil",
+      "TCellCd4Helper": "TCellCd4Helper",
+      "TCellNaiveCd4Helper": "TCellNaiveCd4Helper",
     },
   },
 };
@@ -1285,6 +1323,25 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
       "partImpSix": "10k",
     },
   },
+  "vH": {
+    "hg38": {
+      "All_1698_biosamples": "10k",
+      "AcuteMyeloidLeukemia": "10k",
+      "BrainCerebellum": "10k",
+      "BrainFrontalLobeBA9": "10k",
+      "Brain": "10k",
+      "BrainTemporalLobeBA22d41d42": "10k",
+      "CancerCellLine": "10k",
+      "ChronicLymphocyticLeukemia": "10k",
+      "Colon": "10k",
+      "Macrophage": "10k",
+      "Monocyte": "10k",
+      "Muscle": "10k",
+      "Neutrophil": "10k",
+      "TCellCd4Helper": "10k",
+      "TCellNaiveCd4Helper": "10k",
+    },
+  },
 };
 
 export const defaultSingleGroupKeys = {
@@ -1311,6 +1368,9 @@ export const defaultSingleGroupKeys = {
   "vG": {
     "hg38": "All_1698_biosamples",
   },
+  "vH": {
+    "hg38": "All_1698_biosamples",
+  },
 };
 
 export const defaultPairedGroupKeys = {
@@ -1334,7 +1394,10 @@ export const defaultPairedGroupKeys = {
   },
   "vG": {
     "hg38": "Male_vs_Female",
-  }
+  },
+  "vH": {
+    "hg38": "Male_vs_Female",
+  },
 };
 
 export const defaultSingleModelKeys = {

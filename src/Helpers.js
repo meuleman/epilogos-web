@@ -1147,7 +1147,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   const recommenderV3QueryURL = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')) ? recommenderV3QueryLocalServerURL : recommenderV3QueryDefaultURL;
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
-  
+
   return axios.get(recommenderV3URL).then((res) => {
     if (res.data) {
       if (res.data.hits && res.data.hits.length > 0 && res.data.hits[0].length > 0) {

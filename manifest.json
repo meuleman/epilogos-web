@@ -21,7 +21,7 @@
     },
     "version": "2024-12-17T00:00:00+0000",
     "data": {
-      "orderedSets": ["vA", "vC", "vD", "vG"],
+      "orderedSets": ["vA", "vC", "vD", "vG", "vH"],
       "defaultSet": "vA",
       "defaultGenome": "hg19",
       "modernComplexities": {
@@ -1808,7 +1808,7 @@
         },
         {
           "sampleSet": "vG",
-          "formattedDescription": "IHEC (1698-sample human)",
+          "formattedDescription": "IHEC (2024, 1698-sample human)",
           "navbarDescription": "IHEC",
           "visible": true,
           "enabled": true,
@@ -2094,6 +2094,365 @@
                 "sortValue": "005",
                 "text": "Observed vs. 1-5 imputed marks",
                 "mediaKey": "partImpSix_vs_Not_partImpSix",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg38": {
+              "single": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              },
+              "paired": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg38": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg38"
+              ]
+            }
+          }
+        },
+        {
+          "sampleSet": "vH",
+          "formattedDescription": "IHEC (2025, 1698-sample human)",
+          "navbarDescription": "IHEC",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single"],
+          "availableAssemblies": ["hg38"],
+          "defaultAssembly": "hg38",
+          "defaultGroup": "All_1698_biosamples",
+          "defaultSingleGroup": {"hg38": "All_1698_biosamples"},
+          "defaultPairedGroup": {"hg38": null},
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
+          "setMetadataByGenome": {
+            "hg38": {
+              "All_1698_biosamples": {
+                "type": "group",
+                "subtype": "single",
+                "value": "All_1698_biosamples",
+                "sortValue": "000",
+                "text": "All 1698 biosamples",
+                "mediaKey": "All_1698_biosamples",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "AcuteMyeloidLeukemia": {
+                "type": "group",
+                "subtype": "single",
+                "value": "AcuteMyeloidLeukemia",
+                "sortValue": "001",
+                "text": "Acute Myeloid Leukemia",
+                "mediaKey": "AcuteMyeloidLeukemia",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "BrainCerebellum": {
+                "type": "group",
+                "subtype": "single",
+                "value": "BrainCerebellum",
+                "sortValue": "002",
+                "text": "Brain Cerebellum",
+                "mediaKey": "BrainCerebellum",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "BrainFrontalLobeBA9": {
+                "type": "group",
+                "subtype": "single",
+                "value": "BrainFrontalLobeBA9",
+                "sortValue": "003",
+                "text": "Brain Frontal Lobe (BA9)",
+                "mediaKey": "BrainFrontalLobeBA9",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Brain": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Brain",
+                "sortValue": "004",
+                "text": "Brain",
+                "mediaKey": "Brain",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "BrainTemporalLobeBA22d41d42": {
+                "type": "group",
+                "subtype": "single",
+                "value": "BrainTemporalLobeBA22d41d42",
+                "sortValue": "005",
+                "text": "Brain Temporal Lobe (BA22-41-42)",
+                "mediaKey": "BrainTemporalLobeBA22d41d42",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "CancerCellLine": {
+                "type": "group",
+                "subtype": "single",
+                "value": "CancerCellLine",
+                "sortValue": "006",
+                "text": "Cancer Cell Line",
+                "mediaKey": "CancerCellLine",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "ChronicLymphocyticLeukemia": {
+                "type": "group",
+                "subtype": "single",
+                "value": "ChronicLymphocyticLeukemia",
+                "sortValue": "007",
+                "text": "Chronic Lymphocytic Leukemia",
+                "mediaKey": "ChronicLymphocyticLeukemia",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Colon": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Colon",
+                "sortValue": "008",
+                "text": "Colon",
+                "mediaKey": "Colon",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Macrophage": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Macrophage",
+                "sortValue": "009",
+                "text": "Macrophage",
+                "mediaKey": "Macrophage",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Monocyte": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Monocyte",
+                "sortValue": "010",
+                "text": "Monocyte",
+                "mediaKey": "Monocyte",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Muscle": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Muscle",
+                "sortValue": "011",
+                "text": "Muscle",
+                "mediaKey": "Muscle",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "Neutrophil": {
+                "type": "group",
+                "subtype": "single",
+                "value": "Neutrophil",
+                "sortValue": "012",
+                "text": "Neutrophil",
+                "mediaKey": "Neutrophil",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "TCellCd4Helper": {
+                "type": "group",
+                "subtype": "single",
+                "value": "TCellCd4Helper",
+                "sortValue": "013",
+                "text": "T Cell CD4 Helper",
+                "mediaKey": "TCellCd4Helper",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "TCellNaiveCd4Helper": {
+                "type": "group",
+                "subtype": "single",
+                "value": "TCellNaiveCd4Helper",
+                "sortValue": "014",
+                "text": "T Cell Naive CD4 Helper",
+                "mediaKey": "TCellNaiveCd4Helper",
                 "enabled": true,
                 "preferred": true,
                 "visibleInDev": true,

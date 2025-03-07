@@ -363,7 +363,7 @@ class DrawerContent extends Component {
     return equal(a, b);
   }
 
-  isSampleSetModeSwitchDisabled = () => {
+  isSampleSetModeSwitchDisabledViaOverrides = () => {
     const sampleSet = this.state.viewParams.sampleSet;
     const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
     if (availableOverriddenSampleSetMetadata == null) return false;
@@ -385,10 +385,21 @@ class DrawerContent extends Component {
     }
     return !(singleMode && pairedMode);
   }
+
+  isSampleSetModeSwitchDisabledViaCore = () => {
+    const sampleSet = this.state.viewParams.sampleSet;
+    const assembly = this.state.viewParams.genome;
+    let isDisabled = true;
+    Object.keys(Manifest.groupsByGenome[sampleSet][assembly]).forEach((group) => {
+      if (group.includes('versus') || group.includes('vs')) isDisabled = false;
+    });
+    return isDisabled;
+  }
   
   modeSectionBody = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
-    const isSampleSetModeSwitchDisabled = this.isSampleSetModeSwitchDisabled();
+    const isSampleSetModeSwitchDisabledViaOverrides = this.isSampleSetModeSwitchDisabledViaOverrides();
+    const isSampleSetModeSwitchDisabledViaCore = this.isSampleSetModeSwitchDisabledViaCore();
     let result = [];
     let modeIcons = [];
     let modeIconIdx = 0;
@@ -411,7 +422,7 @@ class DrawerContent extends Component {
     });
     const modeIconGroupPrefix = 'mode-bg-';
     let modeIconGroupIdx = 0;
-    let modeToggleDisabled = isSampleSetModeSwitchDisabled;
+    let modeToggleDisabled = isSampleSetModeSwitchDisabledViaOverrides || isSampleSetModeSwitchDisabledViaCore;
     if (activeSampleSet === 'vG' && (this.props.isProductionSite || this.props.isInternalProductionSite)) modeToggleDisabled = true;
     const modeIconGroupKey = modeIconGroupPrefix + modeIconGroupIdx;
     result.push(<label key={modeIconGroupKey}><span className={(this.state.viewParams.mode === "single") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[0]}</span><Toggle defaultChecked={(this.state.viewParams.mode === "paired")} disabled={modeToggleDisabled} icons={false} name="mode" onChange={this.onClickSettingsButton} /><span className={(this.state.viewParams.mode === "paired") ? "drawer-settings-mode-label-active" : "drawer-settings-mode-label-not-active"}>{modeIcons[1]}</span></label>);
@@ -684,10 +695,15 @@ class DrawerContent extends Component {
     const activeMode = this.state.viewParams.mode;
     const coreComplexities = () => {
       const activeGenome = (sampleSet === 'vD') ? "mm10" : "hg38"; // this.state.viewParams.genome;
-      const activeGroup = (sampleSet === 'vC' && activeMode === 'paired' && activeGenome === 'hg38') ? 'Male_donors_versus_Female_donors' : this.state.viewParams.group;
+      const activeGroup = (sampleSet === 'vC' && activeMode === 'paired' && activeGenome === 'hg38') ? 'Male_donors_versus_Female_donors' : ((sampleSet === 'vG' || sampleSet === 'vH') && activeMode === 'single' && activeGenome === 'hg38' && this.state.viewParams.group === 'all') ? "All_1698_biosamples" : this.state.viewParams.group;
       // console.log(`coreComplexities -> sampleSet ${sampleSet} activeGenome ${activeGenome} activeGroup ${activeGroup}`);
-      const availableComplexities = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForComplexities;
-      return availableComplexities;
+      try {
+        const availableComplexities = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForComplexities;
+        return availableComplexities;
+      }
+      catch (e) {
+        return ['KL', 'KLs', 'KLss'];
+      }
     }
     const availableOverriddenSampleSetMetadata = Object.hasOwn(Manifest.availableOverriddenSampleSet, sampleSet) ? Manifest.availableOverriddenSampleSet[sampleSet] : null;
     if (availableOverriddenSampleSetMetadata == null) return coreComplexities();

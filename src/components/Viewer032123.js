@@ -2034,7 +2034,7 @@ class Viewer extends Component {
         deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(allEpilogosTracksHeight / 2);
       }
 
-      if (this.state.hgViewParams.sampleSet === "vG") {
+      if ((this.state.hgViewParams.sampleSet === "vG" || this.state.hgViewParams.sampleSet === "vH") && this.state.hgViewParams.group === "All_1698_biosamples") {
         deepCopyMainHgViewconf.views[0].tracks.top[1].height += 2 * deepCopyMainHgViewconf.views[0].tracks.top[0].height / 3;
         deepCopyMainHgViewconf.views[0].tracks.top[0].height /= 3;
       }
@@ -3114,6 +3114,7 @@ class Viewer extends Component {
   }
   
   changeViewParams = (isDirty, tempHgViewParams, currentHgViewParams) => {
+    // console.log(`changeViewParams isDirty ${isDirty} | tempHgViewParams ${JSON.stringify(tempHgViewParams)} | currentHgViewParams ${JSON.stringify(currentHgViewParams)}`);
     // if switching between core sets, try to preserve the selections
     if (tempHgViewParams.sampleSet !== this.state.hgViewParams.sampleSet) {
       // If switching to locally-hosted core set from remotely-hosted core, then check if the genome, state model, group, and saliency are available. If not, set to defaults.
@@ -3187,10 +3188,12 @@ class Viewer extends Component {
           tempHgViewParams.genome = "hg19";
           tempHgViewParams.model = "18";
         }
-        if (tempHgViewParams.sampleSet === "vG") {
+        if ((tempHgViewParams.sampleSet === "vG") || (tempHgViewParams.sampleSet === "vH")) {
           tempHgViewParams.genome = "hg38";
           tempHgViewParams.model = "18";
+          tempHgViewParams.complexity = "KL";
           tempHgViewParams.group = "All_1698_biosamples";
+          tempHgViewParams.mode = "single";
         }
       }
     }
@@ -3211,7 +3214,7 @@ class Viewer extends Component {
         if (tempHgViewParams.sampleSet === "vD") {
           tempHgViewParams.group = "P0_vs_e11.5";
         }
-        if (tempHgViewParams.sampleSet === "vG") {
+        if ((tempHgViewParams.sampleSet === "vG") || (tempHgViewParams.sampleSet === "vH")) {
           tempHgViewParams.group = "Male_vs_Female";
         }
       }
