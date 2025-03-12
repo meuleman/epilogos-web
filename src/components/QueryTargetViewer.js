@@ -472,7 +472,7 @@ class QueryTargetViewer extends Component {
         initializeQueryTargetLockedHgViewconf(this.chromInfoCache[genome], this);
       }
       else {
-        initializeQueryTargetUnlockedHgViewconf(this.chromInfoCache[genome], this);
+        // initializeQueryTargetUnlockedHgViewconf(this.chromInfoCache[genome], this);
       }
       initializeRegionIntervalIndicatorDimensions(this);
     }
@@ -485,7 +485,7 @@ class QueryTargetViewer extends Component {
             initializeQueryTargetLockedHgViewconf(chromInfo, this);
           }
           else {
-            initializeQueryTargetUnlockedHgViewconf(chromInfo, this);
+            // initializeQueryTargetUnlockedHgViewconf(chromInfo, this);
           }
           initializeRegionIntervalIndicatorDimensions(this);
         })

@@ -1190,8 +1190,6 @@ class ViewerMobile extends Component {
       let newSampleSet = this.state.tempHgViewParams.sampleSet;
       let newSerIdx = this.state.selectedExemplarRowIdx;
       let newSrrIdx = this.state.selectedRoiRowIdx;
-
-      console.log(`this.state.tempHgViewParams = ${JSON.stringify(this.state.tempHgViewParams, null, 2)}`);
       
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, newGenome);
 
