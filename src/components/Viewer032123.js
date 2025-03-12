@@ -3119,7 +3119,7 @@ class Viewer extends Component {
     if (tempHgViewParams.sampleSet !== this.state.hgViewParams.sampleSet) {
       // If switching to locally-hosted core set from remotely-hosted core, then check if the genome, state model, group, and saliency are available. If not, set to defaults.
       const destinationIsLocalCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(tempHgViewParams.sampleSet);
-      const destinationIsRemoteCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(this.state.hgViewParams.sampleSet);
+      // const destinationIsRemoteCoreSet = Object.keys(Manifest.availableOverriddenSampleSet).includes(this.state.hgViewParams.sampleSet);
       // console.log(`destinationIsLocalCoreSet ${destinationIsLocalCoreSet}`);
       // console.log(`destinationIsRemoteCoreSet ${destinationIsRemoteCoreSet}`);
       if (destinationIsLocalCoreSet) {
@@ -3870,7 +3870,7 @@ class Viewer extends Component {
                     res.data.views[0].tracks.top[4].options.showTooltip = true;
                     allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(self.state.transcriptsTrackHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                     singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
-                    pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
+                    // pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
                     res.data.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
                     res.data.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
                     res.data.views[0].tracks.top[2].height = 0; // pairedEpilogosTrackHeight;
@@ -6112,7 +6112,7 @@ class Viewer extends Component {
 
   simSearchQuery = (chrom, start, stop) => {
     const sampleSet = this.state.hgViewParams.sampleSet;
-    const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
+    // const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
     if (!chrom || start === 0 || stop === 0) {

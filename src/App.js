@@ -23,7 +23,6 @@ class App extends Component {
       application: Constants.defaultApplication
     };
     let obj = this.getJsonFromUrl();
-    let passed = true;
     if (obj) {
       let qKeys = Object.keys(obj);
       if (qKeys.length > 0) {
@@ -34,7 +33,6 @@ class App extends Component {
         // console.log(qSet, allowedParameterSet, qDifferenceSet, qDifference.length);
         if (qDifference.length > 0) {
           window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
-          passed = false;
         }
       }
       if (obj.application && obj.application.length > 0) {
@@ -48,9 +46,6 @@ class App extends Component {
       else {
         this.state.application = Constants.applicationPortal;
       }
-      // if (passed) {
-      //   this.setState(newState);
-      // }
     }
   }
   

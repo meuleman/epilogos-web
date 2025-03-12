@@ -2323,7 +2323,7 @@ class ViewerMobile extends Component {
     const childViews = viewconf.views[0].tracks.top;
     let childViewHeights = [];
     childViews.forEach((cv, i) => { childViewHeights[i] = cv.height; });
-    const add = (a, b) => a + b;
+    // const add = (a, b) => a + b;
     
     let results = [];
     switch (mode) {
