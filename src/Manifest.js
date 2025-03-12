@@ -1834,6 +1834,101 @@ export const groupsByGenome = {
           "KL",
           "KLs"
         ]
+      },
+      "MalePaired_versus_FemalePaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired_versus_FemalePaired",
+        "sortValue": "001",
+        "text": "Male vs Female (768-sample, balanced)",
+        "mediaKey": "MalePaired_versus_FemalePaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "MalePaired25_versus_FemalePaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired25_versus_FemalePaired25",
+        "sortValue": "002",
+        "text": "Male vs Female (25-sample)",
+        "mediaKey": "MalePaired25_versus_FemalePaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "MalePaired50_versus_FemalePaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired50_versus_FemalePaired50",
+        "sortValue": "003",
+        "text": "Male vs Female (50-sample)",
+        "mediaKey": "MalePaired50_versus_FemalePaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "MalePaired100_versus_FemalePaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired100_versus_FemalePaired100",
+        "sortValue": "004",
+        "text": "Male vs Female (100-sample)",
+        "mediaKey": "MalePaired100_versus_FemalePaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "NeuralPaired_versus_NonNeuralPaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "NeuralPaired_versus_NonNeuralPaired",
+        "sortValue": "005",
+        "text": "Neural vs Non-Neural (328-sample, balanced)",
+        "mediaKey": "NeuralPaired_versus_NonNeuralPaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
       }
     }
   }
@@ -1841,7 +1936,7 @@ export const groupsByGenome = {
 export const applicationGroups = groupsByGenome;
 export const defaultApplicationGroup = "all";
 export const defaultSingleGroupKeys = {"vA": {"hg19": "all", "hg38": "all"}, "vC": {"hg19": "all", "hg38": "all"}, "vD": {"mm10": "all"}, "vG": {"hg38": "All_1698_biosamples"}, "vH": {"hg38": "All_1698_biosamples"}};
-export const defaultPairedGroupKeys = {"vA": {"hg19": "Male_vs_Female", "hg38": "Male_vs_Female"}, "vC": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"}, "vD": {"mm10": "P0_vs_e11.5"}, "vG": {"hg38": "Male_vs_Female"}, "vH": {"hg38": null}};
+export const defaultPairedGroupKeys = {"vA": {"hg19": "Male_vs_Female", "hg38": "Male_vs_Female"}, "vC": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"}, "vD": {"mm10": "P0_vs_e11.5"}, "vG": {"hg38": "Male_vs_Female"}, "vH": {"hg38": "MalePaired_versus_FemalePaired"}};
 export const modelsByGenome = {
   "vA": {
     "hg19": {
@@ -2435,6 +2530,11 @@ export const assembliesByMode = {
   },
   "vH": {
     "single": {
+      "Human": [
+        "hg38"
+      ]
+    },
+    "paired": {
       "Human": [
         "hg38"
       ]

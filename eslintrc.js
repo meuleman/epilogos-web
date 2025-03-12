@@ -12,10 +12,13 @@ module.exports = {
   "extends": [
       "plugin:react/recommended",
       "plugin:react/jsx-runtime",
-      "plugin:testing-library/react",
+      "plugin:testing-library/react"
   ],
   "parserOptions": {
       "sourceType": "module"
   },
-  "rules": {}
+  "rules": {
+    "no-console": 0,
+    "no-debugger": 0
+  }
 };

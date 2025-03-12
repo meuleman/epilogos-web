@@ -594,12 +594,18 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
       result.B = `${sampleSet}.${genome}.${model}.${groupB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
       result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
       break;
+    case "vH":
+      result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+      result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+      result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+      break;
     default:
       break;
   }
   if (errorRaised) {
     throw new Error(errorMessage);
   }
+  // console.log(`result ${JSON.stringify(result)}`);
   return result;
 }
 
@@ -1247,9 +1253,11 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
       const groupSplit = splitPairedGroupString(hgViewParams.group);
       const newGroupA = groupSplit.groupA;
       const newGroupB = groupSplit.groupB;
+      // console.log(`trackServerPointsToLocalHgServer(${endpointURL}, 'Helpers.isHgViewParamsObjectValidPromise') ${trackServerPointsToLocalHgServer(endpointURL, 'Helpers.isHgViewParamsObjectValidPromise')}`);
       const pairedEpilogosTrackFns = (trackServerPointsToLocalHgServer(endpointURL, 'Helpers.isHgViewParamsObjectValidPromise'))
         ? epilogosTrackFilenamesForPairedSampleSetViaLocalHgServer(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity)
         : epilogosTrackFilenamesForPairedSampleSet(hgViewParams.sampleSet, hgViewParams.genome, hgViewParams.model, newGroupA, newGroupB, hgViewParams.group, hgViewParams.complexity);
+      // console.log(`pairedEpilogosTrackFns ${JSON.stringify(pairedEpilogosTrackFns)}`);
       const promiseArrayPaired = [
         uuidQueryPromise(pairedEpilogosTrackFns.A, this, endpointURL),
         uuidQueryPromise(pairedEpilogosTrackFns.B, this, endpointURL),

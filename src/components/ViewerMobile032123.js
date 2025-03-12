@@ -1190,6 +1190,8 @@ class ViewerMobile extends Component {
       let newSampleSet = this.state.tempHgViewParams.sampleSet;
       let newSerIdx = this.state.selectedExemplarRowIdx;
       let newSrrIdx = this.state.selectedRoiRowIdx;
+
+      console.log(`this.state.tempHgViewParams = ${JSON.stringify(this.state.tempHgViewParams, null, 2)}`);
       
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, newGenome);
 
@@ -1323,6 +1325,9 @@ class ViewerMobile extends Component {
         const newGroupB = groupSplit.groupB;
 
         const pairedEpilogosTrackFilenames = Helpers.epilogosTrackFilenamesForPairedSampleSet(newSampleSet, newGenome, newModel, newGroupA, newGroupB, newGroup, newComplexity);
+
+        // eslint-disable-next-line no-console
+        console.log(`pairedEpilogosTrackFilenames ${JSON.stringify(pairedEpilogosTrackFilenames, null, 2)}`);
 
         const newEpilogosTrackAFilename = pairedEpilogosTrackFilenames.A;
         const newEpilogosTrackBFilename = pairedEpilogosTrackFilenames.B;
@@ -1912,6 +1917,9 @@ class ViewerMobile extends Component {
   
   changeViewParams = (isDirty, tempHgViewParams) => {
 
+    // eslint-disable-next-line no-console
+    console.log(`isDirty: ${isDirty}`);
+
     //
     // to preserve as much of the old view parameter combination as possible, we look at
     // what is available in the new view parameters and keep that, where possible, or attempt
@@ -1962,6 +1970,7 @@ class ViewerMobile extends Component {
         }
       }
     }
+    
     //
     // adjust complexity
     //

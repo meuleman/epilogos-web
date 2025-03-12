@@ -276,6 +276,7 @@ class DrawerContent extends Component {
     if (targetName === "mode") {
       // get toggle value from event.target.checked
       event.target.value = (!event.target.checked) ? "single" : "paired";
+      // console.log(`event.target.value ${event.target.value}`);
       newViewParams.mode = event.target.value;
       if (event.target.value === "single") {
         newViewParams.group = Manifest.defaultSingleGroupKeys[newViewParams.sampleSet][newViewParams.genome];
@@ -347,6 +348,7 @@ class DrawerContent extends Component {
     // back to generic business...
     //
     let newViewParamsAreEqual = this.compareViewParams(newViewParams, this.props.viewParams);
+    // console.log(`newViewParamsAreEqual ${newViewParamsAreEqual}`);
     let newTabs = {...this.state.tabs};
     newTabs.exemplars = newViewParamsAreEqual;
     this.setState({
@@ -476,7 +478,7 @@ class DrawerContent extends Component {
   }
 
   availableModelsForSampleSet = () => {
-    const mode = this.state.viewParams.mode;
+    // const mode = this.state.viewParams.mode;
     const sampleSet = this.state.viewParams.sampleSet;
     const coreModels = () => {
       const activeGenome = (sampleSet === 'vD') ? "mm10" : 'hg38'; // this.state.viewParams.genome;
@@ -494,13 +496,13 @@ class DrawerContent extends Component {
   }
   
   modelSectionBody = () => {
-    const availableModels = this.availableModelsForSampleSet();
+    // const availableModels = this.availableModelsForSampleSet();
     const activeGenome = this.state.viewParams.genome;
     const activeMode = this.state.viewParams.mode;
     const activeModel = this.state.viewParams.model;
     const activeSampleSet = this.state.viewParams.sampleSet;
-    const activeGroup = this.state.viewParams.group;
-    const activeGenomeAvailability = Manifest.groupsByGenome[activeSampleSet][activeGenome];
+    // const activeGroup = this.state.viewParams.group;
+    // const activeGenomeAvailability = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     let result = [];
     let kButtons = [];
     const kButtonPrefix = 'model-bg-btn-';
@@ -523,7 +525,7 @@ class DrawerContent extends Component {
       if (activeObj[k].visible) {
         // console.log(`activeObj[${k}] ${JSON.stringify(activeObj[k])}`);
         const isActive = (activeModel === k);
-        const isInactiveForModel = Object.hasOwn(activeGenomeAvailability, activeGroup) && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
+        // const isInactiveForModel = Object.hasOwn(activeGenomeAvailability, activeGroup) && (activeGenomeAvailability[activeGroup].availableForModels.indexOf(parseInt(activeObj[k].value)) === -1);
         // const isDisabled = !activeObj[k].enabled || isInactiveForModel || !availableModels.includes(parseInt(activeObj[k].value));
         const isDisabled = false;
         const kLabel = activeObj[k].titleText;

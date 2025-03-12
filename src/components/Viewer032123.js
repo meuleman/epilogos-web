@@ -3202,7 +3202,7 @@ class Viewer extends Component {
       // adjust by mode
       //
       if ((tempHgViewParams.mode === "single") && (this.state.hgViewParams.mode === "paired")) {
-        tempHgViewParams.group = (tempHgViewParams.sampleSet !== "vG") ? "all" : "All_1698_biosamples";
+        tempHgViewParams.group = ((tempHgViewParams.sampleSet !== "vG") && (tempHgViewParams.sampleSet !== "vH")) ? "all" : "All_1698_biosamples";
       }
       else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
         if (tempHgViewParams.sampleSet === "vA") {
@@ -3214,8 +3214,11 @@ class Viewer extends Component {
         if (tempHgViewParams.sampleSet === "vD") {
           tempHgViewParams.group = "P0_vs_e11.5";
         }
-        if ((tempHgViewParams.sampleSet === "vG") || (tempHgViewParams.sampleSet === "vH")) {
+        if (tempHgViewParams.sampleSet === "vG") {
           tempHgViewParams.group = "Male_vs_Female";
+        }
+        if (tempHgViewParams.sampleSet === "vH") {
+          tempHgViewParams.group = "MalePaired_versus_FemalePaired";
         }
       }
 
