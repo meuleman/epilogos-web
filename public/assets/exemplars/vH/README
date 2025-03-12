@@ -1,0 +1,1 @@
+$ s=2; factor=100; scp areynolds@tools0.altiusinstitute.org:/net/seq/data/projects/Epilogos/IHEC-2025/results/scores/paired/S${s}/ImmunePaired${factor}_versus_NonImmunePaired${factor}/regionsOfInterest_18_18_s${s}.txt ImmunePaired${factor}_versus_NonImmunePaired${factor}/S${s}/10k/top100.raw

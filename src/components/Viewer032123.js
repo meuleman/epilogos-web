@@ -3769,7 +3769,7 @@ class Viewer extends Component {
                 let windowInnerHeight = document.documentElement.clientHeight + "px";
                 let allEpilogosTracksHeight = parseInt(windowInnerHeight) - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                 let singleEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 4.0);
-                let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
+                // let pairedEpilogosTrackHeight = parseInt(allEpilogosTracksHeight / 2.0);
                 res.data.views[0].tracks.top[0].height = singleEpilogosTrackHeight;
                 res.data.views[0].tracks.top[1].height = singleEpilogosTrackHeight;
                 res.data.views[0].tracks.top[2].height = 0; // pairedEpilogosTrackHeight;
@@ -6111,7 +6111,7 @@ class Viewer extends Component {
   }
 
   simSearchQuery = (chrom, start, stop) => {
-    const sampleSet = this.state.hgViewParams.sampleSet;
+    // const sampleSet = this.state.hgViewParams.sampleSet;
     // const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
     const mode = this.state.hgViewParams.mode;
     if (mode === "paired") return;
