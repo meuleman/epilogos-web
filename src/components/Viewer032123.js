@@ -6191,12 +6191,12 @@ class Viewer extends Component {
   }
 
   suggestionSearchButtonForStyle = (side) => {
-    // if ((this.isProductionSite) || (this.isProductionProxySite)) {
-    //   return (
-    //     <span />
-    //   )
-    // }
-    console.log(`this.state.suggestionStyle ${this.state.suggestionStyle} | side ${side}`);
+    if ((this.isProductionSite) || (this.isProductionProxySite)) {
+      return (
+        <span />
+      )
+    }
+    // console.log(`this.state.suggestionStyle ${this.state.suggestionStyle} | side ${side}`);
     switch (this.state.suggestionStyle) {
       case "overload":
         return (
