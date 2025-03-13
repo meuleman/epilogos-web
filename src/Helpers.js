@@ -267,6 +267,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   */
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+  console.log(`exemplarV2URL ${exemplarV2URL}`);
   
   function updateExemplarRegionsWithResponse(res, cb) {
     const newExemplarRegions = res.data.split('\n');
@@ -389,7 +390,11 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   */
   if (!Constants.groupsForRecommenderV3OptionGroup[newSampleSet]) return;
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
-  let suggestionURL = (newGroupV2) ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+  let suggestionURL = (newGroupV2) 
+    ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) 
+    : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+
+  // console.log(`suggestionURL ${suggestionURL}`);
   
   function updateSuggestionRegionsWithResponse(res, cb) {
     const newSuggestionRegions = res.data.split('\n');
@@ -485,7 +490,30 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
         axios.get(suggestionURL)
           .then((res) => {
             if (!res.data || res.data.startsWith("<!doctype html>")) {
-              handleNoSuggestionsFound(self);
+              // handleNoSuggestionsFound(self);
+              const zeroDataSuggestionURL = exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, 'na');
+              axios.head(zeroDataSuggestionURL)
+                // eslint-disable-next-line no-unused-vars
+                .then((res) => {
+                  // handle V2 exemplar as normal
+                  axios.get(zeroDataSuggestionURL)
+                    .then((res) => {
+                      if (!res.data || res.data.startsWith("<!doctype html>")) {
+                        handleNoSuggestionsFound(self);
+                      }
+                      else {
+                        updateSuggestionRegionsWithResponse(res, cb);
+                      }
+                    })
+                    // eslint-disable-next-line no-unused-vars
+                    .catch((err) => {
+                      handleNoSuggestionsFound(self);
+                    });
+                })
+                // eslint-disable-next-line no-unused-vars
+                .catch((err) => {
+                  handleNoSuggestionsFound(self);
+                });
             }
             else {
               updateSuggestionRegionsWithResponse(res, cb);
@@ -499,7 +527,30 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
       // eslint-disable-next-line no-unused-vars
       .catch((err) => {
         // fall back to trying V1 exemplar URL
-        handleNoSuggestionsFound(self);
+        // handleNoSuggestionsFound(self);
+        const naSuggestionURL = exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, 'na');
+        axios.head(naSuggestionURL)
+          // eslint-disable-next-line no-unused-vars
+          .then((res) => {
+            // handle V2 exemplar as normal
+            axios.get(naSuggestionURL)
+              .then((res) => {
+                if (!res.data || res.data.startsWith("<!doctype html>")) {
+                  handleNoSuggestionsFound(self);
+                }
+                else {
+                  updateSuggestionRegionsWithResponse(res, cb);
+                }
+              })
+              // eslint-disable-next-line no-unused-vars
+              .catch((err) => {
+                handleNoSuggestionsFound(self);
+              });
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch((err) => {
+            handleNoSuggestionsFound(self);
+          });
       });
   }
   else {
