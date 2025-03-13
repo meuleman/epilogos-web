@@ -24,4 +24,9 @@ do
 	    exit -1
 	fi
     fi
+    if [[ ! -e ${na_dir}/../10k/top100.txt ]]
+    then
+        mkdir -p ${na_dir}/../10k
+	cp ${na_dir}/top100.txt ${na_dir}/../10k/top100.txt
+    fi
 done

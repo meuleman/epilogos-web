@@ -13,6 +13,7 @@ for in_line in sys.stdin:
     elems = in_line.rstrip().split('\t')
     elems[1] = str(int(elems[1]) - window_size)
     elems[2] = str(int(elems[2]) + window_size)
-    out_line = '\t'.join(elems)
-    sys.stdout.write(f'{out_line}\n')
+    out_line = '\t'.join(elems)	+ '\n'
+    sys.stdout.write(out_line)
+    
 
