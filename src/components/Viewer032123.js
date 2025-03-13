@@ -88,6 +88,9 @@ export const uuid4 = require("uuid4");
 // cf. https://www.npmjs.com/package/jsonpath-lite
 export const jp = require("jsonpath");
 
+// Deep object comparison
+export const diff = require('recursive-diff');
+
 higlassRegister(
   {
     dataFetcher: TabixDataFetcher,
@@ -852,6 +855,12 @@ class Viewer extends Component {
   
   UNSAFE_componentWillMount() {
     document.body.style.overflow = "hidden";
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const stateDelta = diff.getDiff(this.state, nextState);
+    if (stateDelta.length === 0) return false;
+    return true; 
   }
   
   componentDidMount() {
@@ -2033,6 +2042,11 @@ class Viewer extends Component {
         deepCopyMainHgViewconf.views[0].tracks.top[0].height = parseInt(allEpilogosTracksHeight / 2);
         deepCopyMainHgViewconf.views[0].tracks.top[1].height = parseInt(allEpilogosTracksHeight / 2);
       }
+
+      // if ((this.state.hgViewParams.sampleSet === "vC") && this.state.hgViewParams.group === "all") {
+      //   deepCopyMainHgViewconf.views[0].tracks.top[1].height += 2 * deepCopyMainHgViewconf.views[0].tracks.top[0].height / 3;
+      //   deepCopyMainHgViewconf.views[0].tracks.top[0].height /= 3;
+      // }
 
       if ((this.state.hgViewParams.sampleSet === "vG" || this.state.hgViewParams.sampleSet === "vH") && this.state.hgViewParams.group === "All_1698_biosamples") {
         deepCopyMainHgViewconf.views[0].tracks.top[1].height += 2 * deepCopyMainHgViewconf.views[0].tracks.top[0].height / 3;
@@ -5455,8 +5469,8 @@ class Viewer extends Component {
   recommenderV3SearchCanBeEnabled = () => {
     let params = this.state.hgViewParams;
     let test = true;
-    if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
-    else if (params.sampleSet === "vE") test = false;
+    // if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
+    if (params.sampleSet === "vE") test = false;
     else if (params.mode === "qt") test = false;
     return test;
   }
@@ -5874,7 +5888,27 @@ class Viewer extends Component {
       if (this.state.suggestionStyle === "leftGemRightPillB") {
         result.push(
           <div id="epilogos-viewer-recommender-input-parent" className="epilogos-viewer-recommender-input-parent-left-nopill-B" key="epilogos-viewer-recommender-input-parent-left-nopill-B">
-            { this.suggestionSearchButtonForStyle("left") }
+            {/* { this.suggestionSearchButtonForStyle("left") } */}
+            <RecommenderSearchButton
+              ref={(component) => this.epilogosViewerRecommenderV3Button = component}
+              onClick={this.suggestionTableToggleVisibility}
+              inProgress={false}
+              isVisible={this.state.recommenderV3SearchIsVisible}
+              isEnabled={this.state.recommenderV3SearchIsEnabled}
+              label={this.state.recommenderV3SearchButtonLabel}
+              activeClass={"epilogos-recommender-element epilogos-recommender-element-no-margin"}
+              manageAnimation={this.recommenderV3ManageAnimation}
+              canAnimate={this.state.recommenderV3CanAnimate}
+              hasFinishedAnimating={this.state.recommenderV3AnimationHasFinished}
+              enabledColor={"rgb(255,215,0)"}
+              disabledColor={"rgb(120,120,120)"}
+              size={22}
+              loopAnimation={false}
+              searchCount={0}
+              searchCountIsVisible={false}
+              searchCountIsEnabled={false}
+              isActivated={this.state.suggestionTableIsVisible}
+              />
           </div>
         );
       }
@@ -5887,7 +5921,27 @@ class Viewer extends Component {
             id="epilogos-viewer-recommender-input-parent" 
             className="epilogos-viewer-recommender-input-parent-left-nopill-A" 
             key="epilogos-viewer-recommender-input-parent-left-nopill-A">
-            { this.suggestionSearchButtonForStyle("left") }
+            {/* { this.suggestionSearchButtonForStyle("left") } */}
+            <RecommenderSearchButton
+              ref={(component) => this.epilogosViewerRecommenderV3Button = component}
+              onClick={this.suggestionTableToggleVisibility}
+              inProgress={false}
+              isVisible={this.state.recommenderV3SearchIsVisible}
+              isEnabled={this.state.recommenderV3SearchIsEnabled}
+              label={this.state.recommenderV3SearchButtonLabel}
+              activeClass={"epilogos-recommender-element epilogos-recommender-element-no-margin"}
+              manageAnimation={this.recommenderV3ManageAnimation}
+              canAnimate={this.state.recommenderV3CanAnimate}
+              hasFinishedAnimating={this.state.recommenderV3AnimationHasFinished}
+              enabledColor={"rgb(255,215,0)"}
+              disabledColor={"rgb(120,120,120)"}
+              size={22}
+              loopAnimation={false}
+              searchCount={0}
+              searchCountIsVisible={false}
+              searchCountIsEnabled={false}
+              isActivated={this.state.suggestionTableIsVisible}
+              />
           </div>
         );
       }
