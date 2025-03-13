@@ -6196,7 +6196,6 @@ class Viewer extends Component {
         <span />
       )
     }
-    // console.log(`this.state.suggestionStyle ${this.state.suggestionStyle} | side ${side}`);
     switch (this.state.suggestionStyle) {
       case "overload":
         return (
@@ -6247,7 +6246,7 @@ class Viewer extends Component {
               />
           );
         }
-        else if ((side === "right") && !(this.isProductionSite || this.isProductionProxySite)) {
+        else if (side === "right") {
           return (
             <SimsearchPill 
               ref={(component) => this.epilogosViewerSuggestionPill = component}
