@@ -125,7 +125,7 @@ class Portal extends Component {
       Constants.portalHgViewParameters.sampleSet
     );
 
-    console.log("exemplarURL", exemplarURL);
+    // console.log("exemplarURL", exemplarURL);
     if (exemplarURL) {
       axios.get(exemplarURL)
         .then((res) => {

@@ -13,7 +13,9 @@ declare -a saliencies=("S1" "S2")
 
 #declare -a groups=("MalePaired_versus_FemalePaired" "MalePaired25_versus_FemalePaired25" "MalePaired50_versus_FemalePaired50" "MalePaired100_versus_FemalePaired100")
 
-declare -a groups=("NeuralPaired_versus_NonNeuralPaired" "NeuralPaired25_versus_NonNeuralPaired25" "NeuralPaired50_versus_NonNeuralPaired50" "NeuralPaired100_versus_NonNeuralPaired100" "ImmunePaired_versus_NonImmunePaired" "ImmunePaired25_versus_NonImmunePaired25" "ImmunePaired50_versus_NonImmunePaired50" "ImmunePaired100_versus_NonImmunePaired100")
+#declare -a groups=("NeuralPaired_versus_NonNeuralPaired" "NeuralPaired25_versus_NonNeuralPaired25" "NeuralPaired50_versus_NonNeuralPaired50" "NeuralPaired100_versus_NonNeuralPaired100" "ImmunePaired_versus_NonImmunePaired" "ImmunePaired25_versus_NonImmunePaired25" "ImmunePaired50_versus_NonImmunePaired50" "ImmunePaired100_versus_NonImmunePaired100")
+
+declare -a groups=("MalePaired150_versus_FemalePaired150" "MalePaired200_versus_FemalePaired200" "MalePaired250_versus_FemalePaired250")
 
 for saliency in "${saliencies[@]}"
 do

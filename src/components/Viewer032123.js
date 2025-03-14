@@ -866,6 +866,7 @@ class Viewer extends Component {
   componentDidMount() {
     setTimeout(() => { 
       this.updateViewportDimensions();
+      this.addCanvasWebGLContextLossEventListener();
       setTimeout(() => {
         this.setState({
           parameterSummaryKey: this.state.parameterSummaryKey + 1,
@@ -5973,7 +5974,6 @@ class Viewer extends Component {
     const childViews = viewconf.views[0].tracks.top;
     let childViewHeights = [];
     childViews.forEach((cv, i) => { childViewHeights[i] = cv.height; });
-    //const add = (a, b) => a + b;
     
     let results = [];
     switch (mode) {
@@ -6041,59 +6041,68 @@ class Viewer extends Component {
         const groupSplit = Helpers.splitPairedGroupString(group);
         const groupA = groupSplit.groupA;
         const groupB = groupSplit.groupB;
+        let groupAText = "";
+        let groupBText = "";
         try {
-          let groupAText = Manifest.groupsByGenome[sampleSet][genome][groupA].text;
-          let groupBText = Manifest.groupsByGenome[sampleSet][genome][groupB].text;
-          if (!this.state.downloadIsVisible) {
-            results.push(
-              <div 
-                key="paired-track-label-A" 
-                className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
-                style={{
-                  top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 10)+'px',
-                  right: '25px',
-                }}>{groupAText}</div>
-              );
-          }
+          groupAText = Manifest.groupsByGenome[sampleSet][genome][groupA].text;
+          groupBText = Manifest.groupsByGenome[sampleSet][genome][groupB].text;
+        } catch (error) {
+          groupAText = groupA.replace("Paired", "");
+          groupAText = groupAText.replace(/\d+$/, "");
+          groupBText = groupB.replace("Paired", "");
+          groupBText = groupBText.replace("-", "");
+          groupBText = groupBText.replace("Non", "Non-");
+          groupBText = groupBText.replace(/\d+$/, "");
+        }
+        if (!this.state.downloadIsVisible) {
           results.push(
             <div 
-              key="paired-track-label-B" 
-              className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse"
-              style={{
-                top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 45)+'px',
-                right: '25px',
-              }}>{groupBText}</div>
-            );
-          results.push(
-            <div 
-              key="paired-track-label-AB" 
+              key="paired-track-label-A" 
               className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
               style={{
-                top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 45)+'px',
+                top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + 10)+'px',
                 right: '35px',
-              }}>{groupText}</div>
+              }}>{groupAText}</div>
             );
-          switch (genome) {
-            case "hg19":
-            case "hg38":
-            case "mm10":
-              if (this.state.hgViewParams.gatt === "ht") {
-                annotationText = Constants.higlassTranscriptsURLsByGenome[genome].trackLabel;
-              }
-              results.push(
-                <div 
-                  ref={(component) => this.epilogosViewerTrackLabelPairedGeneAnnotation = component} 
-                  key="paired-track-label-annotation" 
-                  className="epilogos-viewer-container-track-label" 
-                  style={{bottom:`${35 + Constants.applicationViewerHgViewPaddingBottom}px`, right:'25px'}}>
-                  {annotationText}
-                </div>
-              );
-              break;
-            default:
-              break;
-          }
-        } catch (error) {}
+        }
+        results.push(
+          <div 
+            key="paired-track-label-B" 
+            className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse"
+            style={{
+              top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + 45)+'px',
+              right: '35px',
+            }}>{groupBText}</div>
+          );
+        results.push(
+          <div 
+            key="paired-track-label-AB" 
+            className="epilogos-viewer-container-track-label epilogos-viewer-container-track-label-inverse" 
+            style={{
+              top: parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight + childViewHeights[0] + childViewHeights[1] + 45)+'px',
+              right: '35px',
+            }}>{groupText}</div>
+          );
+        switch (genome) {
+          case "hg19":
+          case "hg38":
+          case "mm10":
+            if (this.state.hgViewParams.gatt === "ht") {
+              annotationText = Constants.higlassTranscriptsURLsByGenome[genome].trackLabel;
+            }
+            results.push(
+              <div 
+                ref={(component) => this.epilogosViewerTrackLabelPairedGeneAnnotation = component} 
+                key="paired-track-label-annotation" 
+                className="epilogos-viewer-container-track-label" 
+                style={{bottom:`${35 + Constants.applicationViewerHgViewPaddingBottom}px`, right:'25px'}}>
+                {annotationText}
+              </div>
+            );
+            break;
+          default:
+            break;
+        }
         break;
       }
       default:
@@ -6217,8 +6226,8 @@ class Viewer extends Component {
       });
     });
   }
-
   roiButtonForStyle = (side) => {
+
     if ((this.isProductionSite) || (this.isProductionProxySite)) {
       return (
         <span />

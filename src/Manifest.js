@@ -1911,11 +1911,68 @@ export const groupsByGenome = {
           "KLs"
         ]
       },
+      "MalePaired150_versus_FemalePaired150": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired150_versus_FemalePaired150",
+        "sortValue": "005",
+        "text": "Male vs Female (150-subsample)",
+        "mediaKey": "MalePaired150_versus_FemalePaired150",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "MalePaired200_versus_FemalePaired200": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired200_versus_FemalePaired200",
+        "sortValue": "006",
+        "text": "Male vs Female (200-subsample)",
+        "mediaKey": "MalePaired200_versus_FemalePaired200",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "MalePaired250_versus_FemalePaired250": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "MalePaired250_versus_FemalePaired250",
+        "sortValue": "007",
+        "text": "Male vs Female (250-subsample)",
+        "mediaKey": "MalePaired250_versus_FemalePaired250",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
       "NeuralPaired_versus_NonNeuralPaired": {
         "type": "group",
         "subtype": "paired",
         "value": "NeuralPaired_versus_NonNeuralPaired",
-        "sortValue": "005",
+        "sortValue": "008",
         "text": "Neural vs Non-Neural (328-sample, balanced)",
         "mediaKey": "NeuralPaired_versus_NonNeuralPaired",
         "enabled": true,
@@ -1934,7 +1991,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "NeuralPaired25_versus_NonNeuralPaired25",
-        "sortValue": "006",
+        "sortValue": "009",
         "text": "Neural vs Non-Neural (25-subsample)",
         "mediaKey": "NeuralPaired25_versus_NonNeuralPaired25",
         "enabled": true,
@@ -1953,7 +2010,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "NeuralPaired50_versus_NonNeuralPaired50",
-        "sortValue": "007",
+        "sortValue": "010",
         "text": "Neural vs Non-Neural (50-subsample)",
         "mediaKey": "NeuralPaired50_versus_NonNeuralPaired50",
         "enabled": true,
@@ -1972,7 +2029,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "NeuralPaired100_versus_NonNeuralPaired100",
-        "sortValue": "008",
+        "sortValue": "011",
         "text": "Neural vs Non-Neural (100-subsample)",
         "mediaKey": "NeuralPaired100_versus_NonNeuralPaired100",
         "enabled": true,
@@ -1991,7 +2048,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "ImmunePaired_versus_NonImmunePaired",
-        "sortValue": "009",
+        "sortValue": "012",
         "text": "Immune vs Non-Immune (835-sample, balanced)",
         "mediaKey": "ImmunePaired_versus_NonImmunePaired",
         "enabled": true,
@@ -2010,7 +2067,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "ImmunePaired25_versus_NonImmunePaired25",
-        "sortValue": "010",
+        "sortValue": "013",
         "text": "Immune vs Non-Immune (25-subsample)",
         "mediaKey": "ImmunePaired25_versus_NonImmunePaired25",
         "enabled": true,
@@ -2029,7 +2086,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "ImmunePaired50_versus_NonImmunePaired50",
-        "sortValue": "011",
+        "sortValue": "014",
         "text": "Immune vs Non-Immune (50-subsample)",
         "mediaKey": "ImmunePaired50_versus_NonImmunePaired50",
         "enabled": true,
@@ -2048,7 +2105,7 @@ export const groupsByGenome = {
         "type": "group",
         "subtype": "paired",
         "value": "ImmunePaired100_versus_NonImmunePaired100",
-        "sortValue": "012",
+        "sortValue": "015",
         "text": "Immune vs Non-Immune (100-subsample)",
         "mediaKey": "ImmunePaired100_versus_NonImmunePaired100",
         "enabled": true,

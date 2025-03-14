@@ -6,12 +6,12 @@ import { AutoComplete } from 'antd';
 
 import './GeneSearch.css';
 
-// import { gencode } from '../lib/Genes';
 import gencodeHg38Raw from "./gencode.hg38.json";
 import gencodeHg19Raw from "./gencode.hg19.json";
 import gencodeMm10Raw from "./gencode.mm10.json";
 
 const genomicPositionRegex = /^chr(\d{1,2}|X|Y):(\d+)-(\d+)$/;
+const genomicPositionRegex2 = /^chr(\d{1,2}|X|Y)(\s+)(\d+)(\s+)(\d+)$/;
 
 // const gencode = gencodeRaw; // gencodeRaw.filter(d => d.type === "protein_coding");
 
@@ -23,7 +23,7 @@ const GeneSearch = memo(({
   onSelect = () => {},
 }) => {
 
-  const ref = useRef(null);
+  const autocompleteRef = useRef(null);
 
   const [searchValue, setSearchValue] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -56,13 +56,23 @@ const GeneSearch = memo(({
         },
         ...geneOptions
       ];
+    } else if (genomicPositionRegex2.test(searchValue)) {
+      return [
+        {
+          value: searchValue,
+          label: `Genomic Position: ${searchValue}`,
+          isGenomicPosition: true
+        },
+        ...geneOptions,
+        // ...factorOptions
+      ];
     }
 
     return geneOptions;
   }, [assembly, searchValue]);
 
   const handleSearch = (value) => {
-    console.log(`[GeneSearch.handleSearch] value ${value}`);
+    // console.log(`[GeneSearch.handleSearch] value ${value}`);
     setSearchValue(value);
     setInputValue(value);
   };
@@ -76,7 +86,21 @@ const GeneSearch = memo(({
         start: +value.split(':')[1].split('-')[0], 
         end: +value.split(':')[1].split('-')[1]
       });
-      setInputValue(value);
+      // setInputValue(value);
+      setSearchValue('');
+      setInputValue('');
+      return;
+    } else if (genomicPositionRegex2.test(value)) {
+      let matches = genomicPositionRegex2.exec(value)
+      onSelect({
+        value: value,
+        chromosome: "chr" + matches[1],
+        start: +matches[3],
+        end: +matches[5]
+      });
+      // setInputValue(value);
+      setSearchValue('');
+      setInputValue('');
       return;
     }
     const selectedOption = filteredOptions.find(option => option.value === value);
@@ -87,19 +111,7 @@ const GeneSearch = memo(({
 
   const handleOnDropdownVisibleChange = () => {
     setDropdownVisible(!dropdownVisible);
-    // setTimeout(() => {
-    //   console.log(`handleOnDropdownVisibleChange | dropdownVisible ${dropdownVisible} | inputValue [${inputValue}]`);
-    //   if (!dropdownVisible && inputValue.length === 0) {
-    //     console.log(`handleOnDropdownVisibleChange | blur`);
-    //     ref.current.blur();
-    //   }
-    // }, 1500);
   }
-
-  // const handleClear = () => {
-  //   onSelect(null);
-  //   setInputValue('');
-  // };
 
   return (
     <div
@@ -108,7 +120,7 @@ const GeneSearch = memo(({
         pointerEvents: (mode === 'qt') ? 'none' : 'all',
       }}>
       <AutoComplete
-        ref={ref}
+        ref={autocompleteRef}
         options={filteredOptions}
         value={inputValue}
         // onBlur={handleOnBlur}
