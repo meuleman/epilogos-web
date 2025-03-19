@@ -267,7 +267,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
   */
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
   let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
-  console.log(`exemplarV2URL ${exemplarV2URL}`);
+  // console.log(`exemplarV2URL ${exemplarV2URL}`);
   
   function updateExemplarRegionsWithResponse(res, cb) {
     const newExemplarRegions = res.data.split('\n');
@@ -458,6 +458,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
           selectedSuggestionChrLeft: newSelectedSuggestionChrLeft,
           selectedSuggestionStart: newSelectedSuggestionStart,
           selectedSuggestionStop: newSelectedSuggestionStop,
+          recommenderV3SearchIsVisible: true,
         }, () => {
           if (cb) cb();
           self.setState({
@@ -477,6 +478,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
       suggestionTableData: [],
       suggestionTableDataCopy: [],
       suggestionTableDataIdxBySort: [],
+      recommenderV3SearchIsVisible: false,
     }, () => {
       self.updateViewerURLForCurrentState();
     });

@@ -21,7 +21,8 @@
     },
     "version": "2024-12-17T00:00:00+0000",
     "data": {
-      "orderedSets": ["vA", "vC", "vD", "vG", "vH"],
+      "orderedSets": ["vA", "vC", "vD", "vH"],
+      "disabledSets": ["vG"],
       "defaultSet": "vA",
       "defaultGenome": "hg19",
       "modernComplexities": {
@@ -2738,6 +2739,139 @@
                 "sortValue": "015",
                 "text": "Immune vs Non-Immune (100-subsample)",
                 "mediaKey": "ImmunePaired100_versus_NonImmunePaired100",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "NeuralMalePaired_versus_NeuralFemalePaired": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "NeuralMalePaired_versus_NeuralFemalePaired",
+                "sortValue": "016",
+                "text": "Neural Male vs Female (76-sample, balanced)",
+                "mediaKey": "NeuralMalePaired_versus_NeuralFemalePaired",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "NeuralMalePaired25_versus_NeuralFemalePaired25": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "NeuralMalePaired25_versus_NeuralFemalePaired25",
+                "sortValue": "017",
+                "text": "Neural Male vs Female (25-subsample)",
+                "mediaKey": "NeuralMalePaired25_versus_NeuralFemalePaired25",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "NeuralMalePaired50_versus_NeuralFemalePaired50": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "NeuralMalePaired50_versus_NeuralFemalePaired50",
+                "sortValue": "018",
+                "text": "Neural Male vs Female (50-subsample)",
+                "mediaKey": "NeuralMalePaired50_versus_NeuralFemalePaired50",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "ImmuneMalePaired_versus_ImmuneFemalePaired": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "ImmuneMalePaired_versus_ImmuneFemalePaired",
+                "sortValue": "019",
+                "text": "Immune Male vs Female (406-sample, balanced)",
+                "mediaKey": "ImmuneMalePaired_versus_ImmuneFemalePaired",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "ImmuneMalePaired25_versus_ImmuneFemalePaired25": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "ImmuneMalePaired25_versus_ImmuneFemalePaired25",
+                "sortValue": "020",
+                "text": "Immune Male vs Female (25-subsample)",
+                "mediaKey": "ImmuneMalePaired25_versus_ImmuneFemalePaired25",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "ImmuneMalePaired50_versus_ImmuneFemalePaired50": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "ImmuneMalePaired50_versus_ImmuneFemalePaired50",
+                "sortValue": "021",
+                "text": "Immune Male vs Female (50-subsample)",
+                "mediaKey": "ImmuneMalePaired50_versus_ImmuneFemalePaired50",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              },
+              "ImmuneMalePaired100_versus_ImmuneFemalePaired100": {
+                "type": "group",
+                "subtype": "paired",
+                "value": "ImmuneMalePaired100_versus_ImmuneFemalePaired100",
+                "sortValue": "022",
+                "text": "Immune Male vs Female (100-subsample)",
+                "mediaKey": "ImmuneMalePaired100_versus_ImmuneFemalePaired100",
                 "enabled": true,
                 "preferred": true,
                 "visibleInDev": true,

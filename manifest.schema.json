@@ -228,6 +228,14 @@
               "minItems": 1,
               "uniqueItems": true
             },
+            "disabledSets": {
+              "description": "Ordered list of epilogos dataset keys of disabled sets",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
             "defaultSet": {
               "description": "Default epilogos dataset key, which should be from orderedSets",
               "type": "string"

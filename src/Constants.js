@@ -2499,6 +2499,17 @@ export const applicationDefaultQueryParameters = {
     'start': defaultApplicationStartVG,
     'stop': defaultApplicationStopVG,
   },
+  'vH': {
+    'mode': defaultApplicationMode,
+    'genome': applicationGenomeHg38,
+    'model': applicationModel18,
+    'complexity': defaultApplicationComplexity,
+    'group': defaultApplicationGroupVG,
+    'chrLeft': defaultApplicationChrVG,
+    'chrRight': defaultApplicationChrVG,
+    'start': defaultApplicationStartVG,
+    'stop': defaultApplicationStopVG,
+  },
 }
 
 // ?highlightBehavior=xyz
@@ -2558,6 +2569,13 @@ export const defaultApplicationPositions = {
     },
   },
   'vG': {
+    'hg38': {
+      'chr': defaultApplicationChrVG,
+      'start': defaultApplicationStartVG,
+      'stop': defaultApplicationStopVG,
+    },
+  },
+  'vH': {
     'hg38': {
       'chr': defaultApplicationChrVG,
       'start': defaultApplicationStartVG,

@@ -111,6 +111,7 @@ class Viewer extends Component {
     this.state = {
       height: 0, 
       width: 0,
+      locationHandlerCount: 0,
       contactEmail: "info@altius.org",
       twitterHref: "https://twitter.com/AltiusInst",
       linkedInHref: "https://www.linkedin.com/company/altius-institute-for-biomedical-sciences",
@@ -866,7 +867,6 @@ class Viewer extends Component {
   componentDidMount() {
     setTimeout(() => { 
       this.updateViewportDimensions();
-      this.addCanvasWebGLContextLossEventListener();
       setTimeout(() => {
         this.setState({
           parameterSummaryKey: this.state.parameterSummaryKey + 1,
@@ -883,6 +883,11 @@ class Viewer extends Component {
     window.addEventListener("resize", this.updateViewportDimensions);
     document.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("popstate", (e) => this.handlePopState(e));
+    if (this.state.hgViewParams.mode === "paired") {
+      setTimeout(() => {
+        this.updateViewportDimensions();
+      }, 1000);
+    }
   }
   
   // eslint-disable-next-line no-unused-vars
@@ -1017,10 +1022,10 @@ class Viewer extends Component {
     const S_KEY = 83;
     switch (event.keyCode) {
       case ESCAPE_KEY: 
-        if (this.state.drawerIsOpen) {
-          this.triggerUpdate("cancel", "handleKeyDown");
-        }
-        else if (this.state.autocompleteInputEntered) {
+        // if (this.state.drawerIsOpen) {
+        //   this.triggerUpdate("cancel", "handleKeyDown");
+        // }
+        if (this.state.autocompleteInputEntered) {
           this.autocompleteInputRef.clearUserInput();
         }
         if (this.state.tabixDataDownloadCommandVisible) {
@@ -1798,6 +1803,7 @@ class Viewer extends Component {
       });
     }
     else {
+      this.removeLocationHandler(this.mainHgView);
       const newHgViewParams = {...this.state.hgViewParams};
       newHgViewParams.mode = 'single';
       this.setState({
@@ -1823,11 +1829,33 @@ class Viewer extends Component {
           region.right.stop,
         ];
         this.openViewerAtChrRange(range, false, this.state.hgViewParams);
-        this.mainHgView.current.api.on("location", (event) => { 
-          this.updateViewerLocation(event, "expandViewerToRegion");
-        });
+        this.addLocationHandler(this.mainHgView, "expandViewerToRegion");
       });
     }
+  }
+
+  locationHandlerUpdateViewerLocation = (event, callingFn) => { 
+    this.updateViewerLocation(event, callingFn);
+  }
+
+  addLocationHandler = (hgv, callingFn) => {
+    if (this.state.locationHandlerCount !== 0) return;
+    this.setState({
+      locationHandlerCount: this.state.locationHandlerCount + 1,
+    }, () => {
+      // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
+      hgv.current.api.on("location", (event, callingFn) => this.locationHandlerUpdateViewerLocation(event, callingFn));
+    })
+  }
+
+  removeLocationHandler = (hgv) => {
+    if (this.state.locationHandlerCount === 0) return;
+    this.setState({
+      locationHandlerCount: this.state.locationHandlerCount - 1,
+    }, () => {
+      // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
+      hgv.current.api.off("location", this.locationHandlerUpdateViewerLocation);
+    })
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -3925,6 +3953,7 @@ class Viewer extends Component {
                 //
                 // update Viewer application state and exemplars (in drawer)
                 //
+                self.removeLocationHandler(self.mainHgView);
                 self.setState({
                   hgViewParams: newHgViewParams,
                   mainHgViewHeight: childViewHeightTotalPx,
@@ -3957,10 +3986,6 @@ class Viewer extends Component {
                                          self.state.currentPosition.stopRight,
                                          keepSuggestionInterval,
                                          "triggerUpdate");
-                    // attach location event handler
-                    self.mainHgView.current.api.on("location", (event) => { 
-                      self.updateViewerLocation(event, "triggerUpdate (paired)");
-                    });
                     // put in transcript track hooks
                     if (newHgViewParams.gatt === "ht") {
                       setTimeout(() => {
@@ -3981,6 +4006,8 @@ class Viewer extends Component {
                                   self.epilogosViewerTrackLabelPairedGeneAnnotation.style.bottom = (self.state.transcriptsTrackHeight/2 - 11) + 'px';
                                 }
                               } catch (err) {}
+                              // attach location event handler
+                              self.addLocationHandler(self.mainHgView, "triggerUpdate (paired)");
                             }, 250);
                           });
                         });
@@ -3989,6 +4016,8 @@ class Viewer extends Component {
                     else {
                       setTimeout(() => {
                         self.updateViewportDimensions();
+                        // attach location event handler
+                        self.addLocationHandler(self.mainHgView, "triggerUpdate (paired)");
                       }, 500);
                     }
                   })
@@ -4256,8 +4285,7 @@ class Viewer extends Component {
                 childViews.forEach((cv) => { childViewHeightTotal += cv.height });
                 childViewHeightTotal += 10;
                 let childViewHeightTotalPx = childViewHeightTotal + "px";
-                //
-                
+                self.removeLocationHandler(self.mainHgView);
                 self.setState({
                   hgViewParams: newHgViewParams,
                   mainHgViewHeight: childViewHeightTotalPx,
@@ -4290,9 +4318,6 @@ class Viewer extends Component {
                                          self.state.currentPosition.stopRight,
                                          keepSuggestionInterval,
                                          "triggerUpdate");
-                    self.mainHgView.current.api.on("location", (event) => { 
-                      self.updateViewerLocation(event, "triggerUpdate (single)");
-                    });
                     
                     // add transcript event hook
                     if (newHgViewParams.gatt === "ht") {
@@ -4318,6 +4343,7 @@ class Viewer extends Component {
                                 if (self.epilogosViewerTrackLabelSingleGeneAnnotation && self.state.transcriptsTrackHeight) {
                                   self.epilogosViewerTrackLabelSingleGeneAnnotation.style.bottom = (self.state.transcriptsTrackHeight/2 - 11) + 'px';
                                 }
+                                self.addLocationHandler(self.mainHgView, "triggerUpdate (single)");
                               } catch (err) {}
                             }, 250);
                           });
@@ -4327,6 +4353,7 @@ class Viewer extends Component {
                     else {
                       setTimeout(() => {
                         self.updateViewportDimensions();
+                        self.addLocationHandler(self.mainHgView, "triggerUpdate (single)");
                       }, 500);
                     }
                   })
@@ -5473,6 +5500,7 @@ class Viewer extends Component {
     // if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
     if (params.sampleSet === "vE") test = false;
     else if (params.mode === "qt") test = false;
+    // if (this.state.suggestionTableData.length === 0) test = false;
     return test;
   }
 
@@ -5733,6 +5761,8 @@ class Viewer extends Component {
 
   suggestionButtonCanBeVisible = () => {
     return true;
+    // console.log(`this.state.suggestionTableData = ${JSON.stringify(this.state.suggestionTableData)}`);
+    // return this.state.suggestionTableData.length > 0;
   }
 
   suggestionButtonManageAnimation = (canAnimate, hasFinished, cb) => {
