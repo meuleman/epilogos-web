@@ -1963,6 +1963,25 @@ export const groupsByGenome = {
           "KL",
           "KLs"
         ]
+      },
+      "CancerMalePaired_versus_CancerFemalePaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerMalePaired_versus_CancerFemalePaired",
+        "sortValue": "023",
+        "text": "Cancer Male vs Female (138-sample, balanced)",
+        "mediaKey": "CancerMalePaired_versus_CancerFemalePaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
       }
     }
   }

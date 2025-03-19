@@ -17,7 +17,9 @@ declare -a saliencies=("S1" "S2")
 
 #declare -a groups=("MalePaired150_versus_FemalePaired150" "MalePaired200_versus_FemalePaired200" "MalePaired250_versus_FemalePaired250")
 
-declare -a groups=("ImmuneMalePaired_versus_ImmuneFemalePaired")
+#declare -a groups=("ImmuneMalePaired_versus_ImmuneFemalePaired")
+
+declare -a groups=("CancerMalePaired_versus_CancerFemalePaired")
 
 for saliency in "${saliencies[@]}"
 do
