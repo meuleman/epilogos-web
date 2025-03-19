@@ -1982,6 +1982,139 @@ export const groupsByGenome = {
           "KL",
           "KLs"
         ]
+      },
+      "CancerMalePaired25_versus_CancerFemalePaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerMalePaired25_versus_CancerFemalePaired25",
+        "sortValue": "024",
+        "text": "Cancer Male vs Female (25-subsample)",
+        "mediaKey": "CancerMalePaired25_versus_CancerFemalePaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerMalePaired50_versus_CancerFemalePaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerMalePaired50_versus_CancerFemalePaired50",
+        "sortValue": "025",
+        "text": "Cancer Male vs Female (50-subsample)",
+        "mediaKey": "CancerMalePaired50_versus_CancerFemalePaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerMalePaired100_versus_CancerFemalePaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerMalePaired100_versus_CancerFemalePaired100",
+        "sortValue": "026",
+        "text": "Cancer Male vs Female (100-subsample)",
+        "mediaKey": "CancerMalePaired100_versus_CancerFemalePaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyMalePaired_versus_HealthyFemalePaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyMalePaired_versus_HealthyFemalePaired",
+        "sortValue": "027",
+        "text": "Healthy Male vs Female (587-sample, balanced)",
+        "mediaKey": "HealthyMalePaired_versus_HealthyFemalePaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyMalePaired25_versus_HealthyFemalePaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyMalePaired25_versus_HealthyFemalePaired25",
+        "sortValue": "028",
+        "text": "Healthy Male vs Female (25-subsample)",
+        "mediaKey": "HealthyMalePaired25_versus_HealthyFemalePaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyMalePaired50_versus_HealthyFemalePaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyMalePaired50_versus_HealthyFemalePaired50",
+        "sortValue": "029",
+        "text": "Healthy Male vs Female (50-subsample)",
+        "mediaKey": "HealthyMalePaired50_versus_HealthyFemalePaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyMalePaired100_versus_HealthyFemalePaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyMalePaired100_versus_HealthyFemalePaired100",
+        "sortValue": "030",
+        "text": "Healthy Male vs Female (100-subsample)",
+        "mediaKey": "HealthyMalePaired100_versus_HealthyFemalePaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
       }
     }
   }

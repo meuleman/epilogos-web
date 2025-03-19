@@ -19,7 +19,7 @@ declare -a saliencies=("S1" "S2")
 
 #declare -a groups=("ImmuneMalePaired_versus_ImmuneFemalePaired")
 
-declare -a groups=("CancerMalePaired_versus_CancerFemalePaired")
+declare -a groups=("HealthyMalePaired_versus_HealthyFemalePaired" "HealthyMalePaired100_versus_HealthyFemalePaired100")
 
 for saliency in "${saliencies[@]}"
 do
@@ -28,6 +28,9 @@ do
 	echo "${saliency} -> $group"
 	in_fn=${PWD}/${assembly}/${model}/${group}/${saliency}/${window_size}/top100.raw
 	out_fn=${PWD}/${assembly}/${model}/${group}/${saliency}/${window_size}/top100.txt
-	${PWD}/reformat_greatest_hits_to_top100k.py ${states_fn} ${in_fn} ${out_fn} ${padding}
+	if [[ -e ${in_fn} ]]
+	then
+	    ${PWD}/reformat_greatest_hits_to_top100k.py ${states_fn} ${in_fn} ${out_fn} ${padding}
+	fi
     done
 done
