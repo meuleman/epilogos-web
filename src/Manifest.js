@@ -2115,6 +2115,234 @@ export const groupsByGenome = {
           "KL",
           "KLs"
         ]
+      },
+      "HealthyNeuralPaired_versus_HealthyNonNeuralPaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyNeuralPaired_versus_HealthyNonNeuralPaired",
+        "sortValue": "031",
+        "text": "Healthy Neural vs Non-Neural (180-sample, balanced)",
+        "mediaKey": "HealthyNeuralPaired_versus_HealthyNonNeuralPaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyNeuralPaired25_versus_HealthyNonNeuralPaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyNeuralPaired25_versus_HealthyNonNeuralPaired25",
+        "sortValue": "032",
+        "text": "Healthy Neural vs Non-Neural (25-subsample)",
+        "mediaKey": "HealthyNeuralPaired25_versus_HealthyNonNeuralPaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyNeuralPaired50_versus_HealthyNonNeuralPaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyNeuralPaired50_versus_HealthyNonNeuralPaired50",
+        "sortValue": "033",
+        "text": "Healthy Neural vs Non-Neural (50-subsample)",
+        "mediaKey": "HealthyNeuralPaired50_versus_HealthyNonNeuralPaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyNeuralPaired100_versus_HealthyNonNeuralPaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyNeuralPaired100_versus_HealthyNonNeuralPaired100",
+        "sortValue": "034",
+        "text": "Healthy Neural vs Non-Neural (100-subsample)",
+        "mediaKey": "HealthyNeuralPaired100_versus_HealthyNonNeuralPaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerImmunePaired_versus_CancerNonImmunePaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerImmunePaired_versus_CancerNonImmunePaired",
+        "sortValue": "035",
+        "text": "Cancer Immune vs Non-Immune (106-sample, balanced)",
+        "mediaKey": "CancerImmunePaired_versus_CancerNonImmunePaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerImmunePaired25_versus_CancerNonImmunePaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerImmunePaired25_versus_CancerNonImmunePaired25",
+        "sortValue": "036",
+        "text": "Cancer Immune vs Non-Immune (25-subsample)",
+        "mediaKey": "CancerImmunePaired25_versus_CancerNonImmunePaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerImmunePaired50_versus_CancerNonImmunePaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerImmunePaired50_versus_CancerNonImmunePaired50",
+        "sortValue": "037",
+        "text": "Cancer Immune vs Non-Immune (50-subsample)",
+        "mediaKey": "CancerImmunePaired50_versus_CancerNonImmunePaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "CancerImmunePaired100_versus_CancerNonImmunePaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "CancerImmunePaired100_versus_CancerNonImmunePaired100",
+        "sortValue": "038",
+        "text": "Cancer Immune vs Non-Immune (100-subsample)",
+        "mediaKey": "CancerImmunePaired100_versus_CancerNonImmunePaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyImmunePaired_versus_HealthyNonImmunePaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyImmunePaired_versus_HealthyNonImmunePaired",
+        "sortValue": "039",
+        "text": "Healthy Immune vs Non-Immune (749-sample, balanced)",
+        "mediaKey": "HealthyImmunePaired_versus_HealthyNonImmunePaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyImmunePaired25_versus_HealthyNonImmunePaired25": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyImmunePaired25_versus_HealthyNonImmunePaired25",
+        "sortValue": "040",
+        "text": "Healthy Immune vs Non-Immune (25-subsample)",
+        "mediaKey": "HealthyImmunePaired25_versus_HealthyNonImmunePaired25",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyImmunePaired50_versus_HealthyNonImmunePaired50": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyImmunePaired50_versus_HealthyNonImmunePaired50",
+        "sortValue": "041",
+        "text": "Healthy Immune vs Non-Immune (50-subsample)",
+        "mediaKey": "HealthyImmunePaired50_versus_HealthyNonImmunePaired50",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
+      },
+      "HealthyImmunePaired100_versus_HealthyNonImmunePaired100": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "HealthyImmunePaired100_versus_HealthyNonImmunePaired100",
+        "sortValue": "042",
+        "text": "Healthy Immune vs Non-Immune (100-subsample)",
+        "mediaKey": "HealthyImmunePaired100_versus_HealthyNonImmunePaired100",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
       }
     }
   }
