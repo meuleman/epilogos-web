@@ -34,8 +34,7 @@ import GeneSearch from './GeneSearch/GeneSearch';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
 // Drawer content
-// import DrawerContent from "./DrawerContent";
-import DrawerContent from "./DrawerContent032123";
+import DrawerContent from "./Drawer/DrawerContent.js";
 import { slide as Drawer } from 'react-burger-menu';
 
 // Validate strings (URLs etc.)

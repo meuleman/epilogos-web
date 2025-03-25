@@ -11,10 +11,13 @@ import {
   Input,
 } from 'reactstrap';
 
+import Samples from './Samples.js';
+import PreferredSamples from './PreferredSamples.js';
+
 // Application constants
-import * as Constants from '../Constants.js'; 
-import * as Helpers from '../Helpers.js'; 
-import * as Manifest from '../Manifest.js';
+import * as Constants from '../../Constants.js'; 
+import * as Helpers from '../../Helpers.js'; 
+import * as Manifest from '../../Manifest.js';
 
 import { FaCogs, FaPlus, FaMinus, FaChevronCircleDown, FaChevronCircleUp } from 'react-icons/fa';
 
@@ -34,6 +37,9 @@ export const jp = require("jsonpath");
 
 // Compare JSON objects for equality
 export const equal = require("deep-equal");
+
+// Deep object comparison
+export const diff = require('recursive-diff');
 
 class DrawerContent extends Component {
 
@@ -93,13 +99,25 @@ class DrawerContent extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    const stateDelta = diff.getDiff(this.state, nextState);
+    const propsDelta = diff.getDiff(this.props, nextProps);
+    if (stateDelta.length === 0 && propsDelta.length === 0) return false;
+    if (stateDelta.length > 0) {
+      let stateDeltaTestResult = true;
+      stateDelta.forEach((d) => {
+        if (d.path[0] === 'enteredSettingsButtonValue') {
+          stateDeltaTestResult = false;
+        }
+      });
+      if (!stateDeltaTestResult) return false;
+    }
     return !this.deepCompare(this.props, nextProps) || !this.deepCompare(this.state, nextState);
   }
 
   deepCompare() {
     var i, l, leftChain, rightChain;
   
-    function compare2Objects (x, y) {
+    function compareObjectPair (x, y) {
       var p;
   
       // remember that NaN === NaN returns false
@@ -108,7 +126,7 @@ class DrawerContent extends Component {
           return true;
       }
   
-      // Compare primitives and functions.     
+      // Compare primitives and functions.
       // Check if both arguments link to the same object.
       // Especially useful on the step where we compare prototypes
       if (x === y) {
@@ -143,7 +161,7 @@ class DrawerContent extends Component {
         return false;
       }
   
-      // Check for infinitive linking loops
+      // Check for infinite linking loops
       if (leftChain.indexOf(x) > -1 || rightChain.indexOf(y) > -1) {
         return false;
       }
@@ -171,7 +189,7 @@ class DrawerContent extends Component {
           case 'function':
             leftChain.push(x);
             rightChain.push(y);
-            if (!compare2Objects (x[p], y[p])) {
+            if (!compareObjectPair(x[p], y[p])) {
                 return false;
             }
             leftChain.pop();
@@ -195,7 +213,7 @@ class DrawerContent extends Component {
     for (i = 1, l = arguments.length; i < l; i++) {
       leftChain = [];
       rightChain = [];
-      if (!compare2Objects(arguments[0], arguments[i])) {
+      if (!compareObjectPair(arguments[0], arguments[i])) {
         return false;
       }
     }
@@ -243,6 +261,17 @@ class DrawerContent extends Component {
       });
     }
   }
+
+  onSelectSample = (selectedSample) => {
+    const newViewParams = {...this.state.viewParams};
+    if (newViewParams.group === selectedSample) return;
+    newViewParams.group = selectedSample;
+    this.setState({
+      viewParams: newViewParams
+    }, () => {
+      this.props.changeViewParams(true, newViewParams, this.props.viewParams);
+    });
+  }
   
   onClickSettingsButton = (event) => {
     let newViewParams = {...this.state.viewParams};
@@ -255,18 +284,26 @@ class DrawerContent extends Component {
           newViewParams.group = "all";
           newViewParams.mode = "single";
           newViewParams.model = "15";
+          newViewParams.genome = "hg38";
           break;
         case "vC":
           newViewParams.group = "all";
           newViewParams.mode = "single";
+          newViewParams.model = "18";
+          newViewParams.genome = "hg38";
           break;
         case "vD":
           newViewParams.group = "all";
           newViewParams.mode = "single";
+          newViewParams.model = "15";
+          newViewParams.genome = "mm10";
           break;
         case "vG":
+        case "vH":
           newViewParams.group = "All_1698_biosamples";
           newViewParams.mode = "single";
+          newViewParams.model = "18";
+          newViewParams.genome = "hg38";
           break;
         default:
           break;
@@ -392,9 +429,13 @@ class DrawerContent extends Component {
     const sampleSet = this.state.viewParams.sampleSet;
     const assembly = this.state.viewParams.genome;
     let isDisabled = true;
-    Object.keys(Manifest.groupsByGenome[sampleSet][assembly]).forEach((group) => {
-      if (group.includes('versus') || group.includes('vs')) isDisabled = false;
-    });
+    try {
+      Object.keys(Manifest.groupsByGenome[sampleSet][assembly]).forEach((group) => {
+        if (group.includes('versus') || group.includes('vs')) isDisabled = false;
+      });
+    } catch (e) {
+      console.log(`isSampleSetModeSwitchDisabledViaCore error ${e} | ${sampleSet} | ${assembly}`);
+    }
     return isDisabled;
   }
   
@@ -783,43 +824,6 @@ class DrawerContent extends Component {
     if (availableOverriddenSampleSetMetadataByAssemblyModelComplexity == null) return coreSamples();
     return availableOverriddenSampleSetMetadataByAssemblyModelComplexity;
   }
-
-  preferredSamplesSectionBody = () => {
-    const availableSamples = this.availableSamplesForSampleSet();
-    let result = [];
-    let kButtons = [];
-    const kButtonPrefix = 'preferred-samples-bg-btn-';
-    const kButtonParentPrefix = 'preferred-samples-bg-parent-btn-';
-    const kButtonLabelPrefix = 'preferred-samples-bg-btn-label-';
-    let kButtonIdx = 0;
-    const preferredSamples = this.preferredSampleItems();
-    if (!preferredSamples) return <div />;
-    function compareOnSortValue(a, b) { if ( a.sortValue < b.sortValue ) { return -1; } if (a.sortValue > b.sortValue) { return 1; } return 0; }
-    preferredSamples.sort(compareOnSortValue);
-    Object.keys(preferredSamples).forEach(k => {
-      let kSample = preferredSamples[k];
-      let kLabel = kSample.label;
-      let kValue = kSample.value;
-      let kMediaKey = kSample.mediaKey;
-      const isActive = (this.state.viewParams.group === kValue);
-      let isDisabled = !availableSamples.includes(kMediaKey);
-      if (isDisabled) isDisabled = !availableSamples.includes(kValue);
-      let kButtonKey = kButtonPrefix + kButtonIdx;
-      let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
-      let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
-      let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-      if (!isDisabled) {
-        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="preferred-groups" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-        kButtonIdx++;
-      }
-    });
-    const kButtonGroupPrefix = 'preferred-samples-bg-';
-    let kButtonGroupIdx = 0;
-    const kButtonGroupKey = kButtonGroupPrefix + kButtonGroupIdx;
-    result.push(<span key={kButtonGroupKey}>{kButtons}</span>);
-    const kSectionBodyKey = 'preferred-samples-sb';
-    return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
-  }
   
   preferredSampleItems = () => {
     let activeSampleSet = this.state.viewParams.sampleSet;
@@ -850,41 +854,41 @@ class DrawerContent extends Component {
     });
   }
   
-  samplesSectionBody = () => {
-    const availableSamples = this.availableSamplesForSampleSet();
-    let result = [];
-    let kButtons = [];
-    const kButtonPrefix = 'samples-bg-btn-';
-    const kButtonParentPrefix = 'samples-bg-parent-btn-';
-    const kButtonLabelPrefix = 'samples-bg-btn-label-';
-    let kButtonIdx = 0;
-    const samples = this.sampleItems();
-    if (!samples) return <div />;
-    function compareOnSortValue(a, b) { if ( a.sortValue < b.sortValue ) { return -1; } if (a.sortValue > b.sortValue) { return 1; } return 0; }
-    samples.sort(compareOnSortValue);
-    Object.keys(samples).forEach(k => {
-      let kSample = samples[k];
-      let kLabel = kSample.label;
-      let kValue = kSample.value;
-      let kMediaKey = kSample.mediaKey;
-      const isActive = (this.state.viewParams.group === kValue);
-      let isDisabled = !availableSamples.includes(kMediaKey);
-      let kButtonKey = kButtonPrefix + kButtonIdx;
-      let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
-      let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
-      let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
-      if (!isDisabled) {
-        kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="group" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
-        kButtonIdx++;
-      }
-    });
-    const kButtonGroupPrefix = 'samples-bg-';
-    let kButtonGroupIdx = 0;
-    const kButtonGroupKey = kButtonGroupPrefix + kButtonGroupIdx;
-    result.push(<span key={kButtonGroupKey}>{kButtons}</span>);
-    const kSectionBodyKey = 'samples-sb';
-    return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
-  }
+  // samplesSectionBody = () => {
+  //   const availableSamples = this.availableSamplesForSampleSet();
+  //   let result = [];
+  //   let kButtons = [];
+  //   const kButtonPrefix = 'samples-bg-btn-';
+  //   const kButtonParentPrefix = 'samples-bg-parent-btn-';
+  //   const kButtonLabelPrefix = 'samples-bg-btn-label-';
+  //   let kButtonIdx = 0;
+  //   const samples = this.sampleItems();
+  //   if (!samples) return <div />;
+  //   function compareOnSortValue(a, b) { if ( a.sortValue < b.sortValue ) { return -1; } if (a.sortValue > b.sortValue) { return 1; } return 0; }
+  //   samples.sort(compareOnSortValue);
+  //   Object.keys(samples).forEach(k => {
+  //     let kSample = samples[k];
+  //     let kLabel = kSample.label;
+  //     let kValue = kSample.value;
+  //     let kMediaKey = kSample.mediaKey;
+  //     const isActive = (this.state.viewParams.group === kValue);
+  //     let isDisabled = !availableSamples.includes(kMediaKey);
+  //     let kButtonKey = kButtonPrefix + kButtonIdx;
+  //     let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
+  //     let kButtonLabelKey = kButtonLabelPrefix + kButtonIdx;
+  //     let formattedKLabel = <span style={{fontWeight:(isActive)?600:100}}>{kLabel}</span>;
+  //     if (!isDisabled) {
+  //       kButtons.push(<div key={kButtonParentKey} className="pretty p-default p-round"><Input key={kButtonKey} className="btn-xs btn-epilogos" type="radio" checked={isActive} readOnly={true} disabled={false} name="group" value={kValue} onMouseEnter={this.onMouseEnterSettingsButton} onMouseLeave={this.onMouseLeaveSettingsButton} onClick={this.onClickSettingsButton} />{' '}<div key={kButtonLabelKey} className="state p-warning"><i className="icon mdi mdi-check"></i><Label check><span className="radio-label-text">{formattedKLabel}</span></Label></div></div>);
+  //       kButtonIdx++;
+  //     }
+  //   });
+  //   const kButtonGroupPrefix = 'samples-bg-';
+  //   let kButtonGroupIdx = 0;
+  //   const kButtonGroupKey = kButtonGroupPrefix + kButtonGroupIdx;
+  //   result.push(<span key={kButtonGroupKey}>{kButtons}</span>);
+  //   const kSectionBodyKey = 'samples-sb';
+  //   return <div className="drawer-settings-section-body-content"><FormGroup key={kSectionBodyKey} check>{result}</FormGroup></div>;
+  // }
   
   sampleItems = () => {
     const activeSampleSet = this.state.viewParams.sampleSet;
@@ -1017,7 +1021,6 @@ class DrawerContent extends Component {
           content.push(modelSection);
           
           // biosamples (preferred)
-          let preferredSamplesSectionBody = self.preferredSamplesSectionBody();
           let preferredSamplesSection = (
             <div key="viewer-preferred-samples-section" className="drawer-settings-section drawer-settings-section-middle" style={{display:(self.props.advancedOptionsVisible)?"none":"block"}}>
               <div key="viewer-preferred-samples-section-header" className="drawer-settings-section-header">
@@ -1026,7 +1029,12 @@ class DrawerContent extends Component {
               </div>
               <div key="viewer-preferred-samples-section-body" className="drawer-settings-section-body">
                 <Collapse isOpen={self.state.hideshow.preferredSamples}>
-                  {preferredSamplesSectionBody}
+                  <PreferredSamples
+                    samples={self.preferredSampleItems()}
+                    selectedSample={self.state.viewParams.group}
+                    availableSamples={self.availableSamplesForSampleSet()}
+                    onSelectSample={self.onSelectSample}
+                    />
                 </Collapse>
               </div>
             </div>);
@@ -1036,7 +1044,6 @@ class DrawerContent extends Component {
           let advancedOptionsSectionBody = [];
 
           // biosamples (all)
-          let samplesSectionBody = self.samplesSectionBody();
           let samplesSection = (
             <div key="viewer-samples-section" className="drawer-settings-section drawer-settings-section-ao">
               <div key="viewer-samples-section-header" className="drawer-settings-section-header">
@@ -1045,7 +1052,12 @@ class DrawerContent extends Component {
               </div>
               <div key="viewer-samples-section-body" className="drawer-settings-section-body">
                 <Collapse isOpen={self.state.hideshow.samples}>
-                  {samplesSectionBody}
+                <Samples
+                    samples={self.sampleItems()}
+                    selectedSample={self.state.viewParams.group}
+                    availableSamples={self.availableSamplesForSampleSet()}
+                    onSelectSample={self.onSelectSample}
+                    />
                 </Collapse>
               </div>
             </div>);
