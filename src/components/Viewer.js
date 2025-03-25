@@ -6086,10 +6086,21 @@ class Viewer extends Component {
         } catch (error) {
           groupAText = groupA.replace("Paired", "");
           groupAText = groupAText.replace(/\d+$/, "");
+          const groupATextElems = groupAText.split(/(?=[A-Z])/);
+          if (groupATextElems.length > 1) {
+            groupAText = `${groupATextElems[0]} ${groupATextElems[1]}`;
+          }
           groupBText = groupB.replace("Paired", "");
           groupBText = groupBText.replace("-", "");
           groupBText = groupBText.replace("Non", "Non-");
           groupBText = groupBText.replace(/\d+$/, "");
+          const groupBTextElems = groupBText.split(/(?=[A-Z])/);
+          if (groupBTextElems.length === 2) {
+            groupBText = `${groupBTextElems[0]} ${groupBTextElems[1]}`;
+          }
+          else if (groupBTextElems.length === 3) {
+            groupBText = `${groupBTextElems[0]} ${groupBTextElems[1]}${groupBTextElems[2]}`;
+          }
         }
         if (!this.state.downloadIsVisible) {
           results.push(
