@@ -404,9 +404,10 @@ export const isLocalhost = () => {
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
   // console.log(`suggestionDownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet} ${windowSize}`);
   let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
-  const downloadURLPrefix = (isLocalhost) 
-    ? `https://${Constants.applicationHost}` 
-    : stripQueryStringAndHashFromPath(document.location.href);
+  // const downloadURLPrefix = (isLocalhost)
+  //   ? `https://${Constants.applicationHost}` 
+  //   : stripQueryStringAndHashFromPath(document.location.href);
+  const downloadURLPrefix = getHrefPrefix(document.location.href);
   const result = downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
   // console.log(`suggestionDownloadURL ${result}`);
   return result;
