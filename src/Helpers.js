@@ -15,6 +15,20 @@ import { RecommenderV3SearchButtonDefaultLabel } from "./components/RecommenderS
 import { RecommenderSearchLinkDefaultLabel } from "./components/RecommenderSearchLink";
 import { RecommenderExpandLinkDefaultLabel } from "./components/RecommenderExpandLink";
 
+export const debounce = (fn, time) => {
+  let timeoutId
+  return wrapper
+  function wrapper (...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(() => {
+      timeoutId = null
+      fn(...args)
+    }, time)
+  }
+}
+
 export const log10 = (val) => {
   return Math.log(val) / Math.LN10;
 }
@@ -42,17 +56,27 @@ export const getJsonFromUrl = () => {
 }
 
 export const getHrefPrefix = (uri) => {
-  let urlObj = null;
+  // let urlObj = null;
   try {
-    urlObj = new URL(uri);
-    return (urlObj.port.length > 0) ? `${urlObj.protocol}://${urlObj.hostname}:${urlObj.port}` : `${urlObj.protocol}://${urlObj.hostname}`;
+    const a = document.createElement('a');
+    a.href = uri;
+    // ['href', 'protocol', 'host', 'hostname', 'port', 'pathname', 'search', 'hash'].forEach((k) => {
+    //   console.log(`k: ${a[k]}`);
+    // });
+    // urlObj = new URL(uri);
+    // Object.keys(urlObj).forEach((prop) => console.log(prop, urlObj[prop]));
+    // return (urlObj.port.length > 0) ? `${urlObj.protocol}://${urlObj.hostname}:${urlObj.port}` : `${urlObj.protocol}://${urlObj.hostname}`;
+    return (a.port.length > 0) ? `${a.protocol}//${a.hostname}:${a.port}` : `${a.protocol}//${a.hostname}`;
   }
   catch (error) {}
   return null;
 }
 
 export const stripQueryStringAndHashFromPath = (url) => { 
-  return url.split("?")[0].split("#")[0];
+  // console.log(`stripQueryStringAndHashFromPath | url ${url}`);
+  const result = url.split("?")[0].split("#")[0];
+  // console.log(`stripQueryStringAndHashFromPath | result ${result}`);
+  return result;
 }
 
 export const chrToAbs = (chrom, chromPos, chromInfo) => chromInfo.chrPositions[chrom].pos + chromPos;
@@ -250,12 +274,16 @@ export const calculateScale = (leftChr, rightChr, start, stop, self, includeAsse
 export const hgViewconfDownloadURL = (url, id, suffix) => { return url + suffix + id; }
 
 export const exemplarV1DownloadURL = (assembly, model, complexity, group, sampleSet) => {
+  // console.log(`exemplarV1DownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet}`);
   return stripQueryStringAndHashFromPath(document.location.href) + "/assets/epilogos/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + complexity + "/exemplar/top100.txt";
 }
 
 export const exemplarV2DownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  // console.log(`exemplarV2DownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet} ${windowSize}`);
   let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
-  return stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  // const result = stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  const result = getHrefPrefix(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  return result;
 }
 
 export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
@@ -266,7 +294,7 @@ export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, ne
     - V1 URLs are derived from Eric R analyses, pre-higlass
   */
   const newGroupV2 = Constants.groupsForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup];
-  let exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+  const exemplarV2URL = (newGroupV2) ? exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
   // console.log(`exemplarV2URL ${exemplarV2URL}`);
   
   function updateExemplarRegionsWithResponse(res, cb) {
@@ -374,11 +402,14 @@ export const isLocalhost = () => {
 }
 
 export const suggestionDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  // console.log(`suggestionDownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet} ${windowSize}`);
   let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
   const downloadURLPrefix = (isLocalhost) 
     ? `https://${Constants.applicationHost}` 
     : stripQueryStringAndHashFromPath(document.location.href);
-  return downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  const result = downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  // console.log(`suggestionDownloadURL ${result}`);
+  return result;
 }
 
 export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
@@ -1151,20 +1182,6 @@ export const adjustHgViewParamsForNewGenome = (oldHgViewParams, newGenome) => {
 
 export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self) => {
   return simSearchQueryPromise(qChr, qStart, qEnd, qWindowSizeKb, self, false);
-}
-
-export const debounce = (fn, time) => {
-  let timeoutId
-  return wrapper
-  function wrapper (...args) {
-    if (timeoutId) {
-      clearTimeout(timeoutId)
-    }
-    timeoutId = setTimeout(() => {
-      timeoutId = null
-      fn(...args)
-    }, time)
-  }
 }
 
 export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
