@@ -5554,6 +5554,7 @@ class Viewer extends Component {
       }, () => {
         function updateWithSimSearchRegionsInMemory(self) {
           const firstSimSearchRegion = self.state.simSearchTableData[0];
+          console.log(`firstSimSearchRegion: ${JSON.stringify(firstSimSearchRegion)}`);
           const queryObj = Helpers.getJsonFromUrl();
           const currentMode = self.state.hgViewParams.mode || queryObj.mode;
           let newQueryTargetLocalMinMax = self.state.queryTargetLocalMinMax;
@@ -5682,60 +5683,121 @@ class Viewer extends Component {
           const queryEnd = stop;
           const queryWindowSize = parseInt(parseInt(self.state.currentViewScale) / 1000); // kb
 
-          let newRecommenderV3Query = Helpers.recommenderV3QueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
-          newRecommenderV3Query.then((res) => {
-            let queryRegionIndicatorData = {
-              chromosome: res.query.chromosome,
-              start: res.query.start,
-              stop: res.query.end,
-              midpoint: res.query.midpoint,
-              sizeKey: res.query.sizeKey,
-              regionLabel: `${res.query.chromosome}:${res.query.start}-${res.query.end}`,
-              hitCount: res.query.hitCount,
-              hitDistance: res.query.hitDistance,
-              hitFirstInterval: res.query.hitFirstInterval,
-              hitStartDiff: res.query.hitStartDiff,
-              hitEndDiff: res.query.hitEndDiff,
-              minMax: JSON.parse(res.query.minmax),
-            };
-            const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
-            self.setState({
-              queryRegionIndicatorData: queryRegionIndicatorData,
-              queryTargetLocalMinMax: newMinMax,
-              queryTargetGlobalMinMax: newMinMax,
-            }, () => {
-              self.simSearchRegionsUpdate(res.hits[0], updateWithSimSearchRegionsInMemory, self);
-            });
-          })
-          .catch((err) => {
-            if (!err || !err.response || !err.response.status || !err.response.statusText) {
-              err = {
-                response : {
-                  status : 404,
-                  statusText : "No results found",
-                  title : "Please try again",
-                }
+          const simsearchStaticOverlapsQueryPromise = Helpers.simsearchStaticOverlapsQueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
+
+          simsearchStaticOverlapsQueryPromise
+            .then((res) => {
+              if (!res.overlaps || res.overlaps.length === 0) return;
+              const queryRegionDiff = parseInt(Math.abs(queryStart - queryEnd));
+              // const queryRegionDiffAsWindowSize = parseInt(parseFloat(Math.abs(queryStart - queryEnd)) / 1000);
+              const queryWindowSizeRawBases = res.windowSize * 1000;
+              const queryMidpoint = parseInt(Math.floor((queryStart + queryEnd) / 2));
+              const queryHitPadding = parseInt(parseFloat(queryRegionDiff - queryWindowSizeRawBases) / 2);
+              const processedTabixObject = {
+                "query": {
+                  "chromosome": queryChr,
+                  "start": queryStart,
+                  "end": queryEnd,
+                  "midpoint": queryMidpoint,
+                  "sizeKey": `${res.scaleLevel}k`,
+                  "windowSize": `${res.windowSize}k`,
+                  "tabixPath": res.tabixPath,
+                  "hitPadding": queryHitPadding,
+                  "hitCount": res.overlaps.length,
+                  "hitDistance": -1,
+                  "hitFirstInterval": [],
+                  "hitFirstStartDiff": -1,
+                  "hitFirstEndDiff": -1,
+                  "minmax": null,
+                },
+                "hits": [],
               };
-            }
-            err.response.title = "Please try again";
-            let msg = self.errorMessage(err, "Could not retrieve recommendations for region query. Please try another region.");
-            self.setState({
-              drawerIsEnabled: true,
-              overlayMessage: msg,
-            }, () => {
-              self.setState({
-                recommenderV3SearchInProgress: false,
-                recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
-                recommenderV3SearchIsEnabled: self.recommenderV3SearchCanBeEnabled(),
-                recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
-                recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
-                recommenderV3ExpandIsEnabled: self.recommenderV3ExpandCanBeEnabled(),
-                recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
-                genomeSelectIsActive: true,
-                autocompleteInputDisabled: false,
-              });
+              const tabixLineCountZi = res.overlaps.length - 1;
+              processedTabixObject.query.hitCount = res.overlaps.length;
+              let tabixLCZiMid = (tabixLineCountZi === 0) ? 0 : parseInt(tabixLineCountZi / 2);
+              let tabixLines = [];
+              if (processedTabixObject.query.hitCount > 1) {
+                const distances = [];
+                res.overlaps.forEach((overlap) => {
+                  const overlapStart = parseInt(overlap.segment.start);
+                  const overlapEnd = parseInt(overlap.segment.end);
+                  const overlapMidpoint = parseInt(Math.floor((overlapStart + overlapEnd) / 2));
+                  distances.push(Math.abs(queryMidpoint - overlapMidpoint));
+                });
+                const minDistance = Math.min(...distances);
+                const minDistanceIdx = distances.indexOf(minDistance);
+                tabixLCZiMid = 0;
+                tabixLines = [res.overlaps[minDistanceIdx]];
+                processedTabixObject.query.hitCount = 1;
+                processedTabixObject.query.hitDistance = minDistance;
+              }
+              
+              if (processedTabixObject.query.hitCount === 1) {
+                tabixLines.forEach((r, i) => {
+                  if (r && i === tabixLCZiMid) {
+                    processedTabixObject.query.hitFirstInterval = [r.segment.chrName, r.segment.start, r.segment.end];
+                    processedTabixObject.query.hitFirstStartDiff = parseInt(processedTabixObject.query.hitFirstInterval[1]) - queryStart;
+                    processedTabixObject.query.hitFirstEndDiff = queryEnd - parseInt(processedTabixObject.query.hitFirstInterval[2]);
+                    let tabixHits = r.segment.hits;
+                    processedTabixObject.query.midpoint = processedTabixObject.query.start + Math.abs(Math.floor((processedTabixObject.query.end - processedTabixObject.query.start) / 2));
+                    let postPaddedHits = tabixHits.slice(1).join('\n').replace(/:/g, '\t');
+                    processedTabixObject.hits.push(postPaddedHits);
+                    processedTabixObject.query.hitStartDiff = processedTabixObject.query.hitFirstStartDiff;
+                    processedTabixObject.query.hitEndDiff = processedTabixObject.query.hitFirstEndDiff;
+                    console.log(`res = ${JSON.stringify(res, null, 2)}`);
+                    const tabixMinmaxUrl = Helpers.simsearchStaticMinmaxQueryUrl(res.scaleLevel, res.windowSize, self);
+                    console.log(`tabixMinmaxUrl = ${tabixMinmaxUrl}`);
+                    const tabixMinmaxRange = {
+                      'chromosome': processedTabixObject.query.hitFirstInterval[0],
+                      'start': processedTabixObject.query.hitFirstInterval[1],
+                      'end': processedTabixObject.query.hitFirstInterval[2],
+                    };
+                    const simsearchStaticMinmaxQueryPromise = Helpers.simsearchStaticMinmaxQueryPromise(tabixMinmaxUrl, tabixMinmaxRange);
+                    simsearchStaticMinmaxQueryPromise
+                      .then((minmaxRes) => {
+                        processedTabixObject.query.minMax = minmaxRes.minmax[0].hits;
+                        const queryRegionIndicatorData = {
+                          chromosome: processedTabixObject.query.chromosome,
+                          start: processedTabixObject.query.start,
+                          stop: processedTabixObject.query.end,
+                          midpoint: processedTabixObject.query.midpoint,
+                          sizeKey: processedTabixObject.query.sizeKey,
+                          regionLabel: `${processedTabixObject.query.chromosome}:${processedTabixObject.query.start}-${processedTabixObject.query.end}`,
+                          hitCount: processedTabixObject.query.hitCount,
+                          hitDistance: processedTabixObject.query.hitDistance,
+                          hitFirstInterval: processedTabixObject.query.hitFirstInterval,
+                          hitStartDiff: processedTabixObject.query.hitStartDiff,
+                          hitEndDiff: processedTabixObject.query.hitEndDiff,
+                          minMax: processedTabixObject.query.minMax,
+                        };
+                        const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
+                        self.setState({
+                          queryRegionIndicatorData: queryRegionIndicatorData,
+                          queryTargetLocalMinMax: newMinMax,
+                          queryTargetGlobalMinMax: newMinMax,
+                        }, () => {
+                          self.simSearchRegionsUpdate(processedTabixObject.hits[0], updateWithSimSearchRegionsInMemory, self);
+                        });
+                      })
+                      .catch((err) => {
+                        console.log(`error = ${JSON.stringify(err, null, 2)}`);
+                        // 404
+                        self.setState({
+                          recommenderV3SearchInProgress: false,
+                          recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
+                          recommenderV3SearchIsEnabled: self.recommenderV3SearchCanBeEnabled(),
+                          recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+                          recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+                          recommenderV3ExpandIsEnabled: self.recommenderV3ExpandCanBeEnabled(),
+                          recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+                          genomeSelectIsActive: true,
+                          autocompleteInputDisabled: false,
+                        });
+                      });
+                  }
+                });
+              }
             });
-          });
         }
 
         if (chromInfoCacheExists) {

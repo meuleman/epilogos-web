@@ -4,6 +4,8 @@ import axios from "axios";
 
 import { bisector } from 'd3-array';
 
+// import { TabixIndexedFile } from '@gmod/tabix';
+
 // Copy data to clipboard
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
@@ -14,6 +16,8 @@ import * as Manifest from './Manifest.js';
 import { RecommenderV3SearchButtonDefaultLabel } from "./components/RecommenderSearchButton";
 import { RecommenderSearchLinkDefaultLabel } from "./components/RecommenderSearchLink";
 import { RecommenderExpandLinkDefaultLabel } from "./components/RecommenderExpandLink";
+
+export const { TabixIndexedFile } = window.gmodTABIX;
 
 export const debounce = (fn, time) => {
   let timeoutId
@@ -1185,6 +1189,103 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, sel
   return simSearchQueryPromise(qChr, qStart, qEnd, qWindowSizeKb, self, false);
 }
 
+export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self) => {
+  const params = self.state.tempHgViewParams;
+  const tabixUrlRoot = Constants.applicationTabixRootURL;
+  const tabixDatasetAltname = params.sampleSet;
+  const tabixAssembly = params.genome;
+  const tabixStateModel = params.model;
+  const tabixGroup = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[tabixDatasetAltname], 'Helper.simSearchQueryPromise')) ? Manifest.groupsByGenome[params.sampleSet][params.genome][params.group].mediaKey : Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][params.genome][params.group];
+  const tabixSaliency = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[params.complexity];
+  const tabixWindowSizeKb = parseInt(qWindowSizeKb);
+  const tabixWindowSize = (tabixWindowSizeKb < 10 + 8) ? 5 :
+                          (tabixWindowSizeKb < 25 + 13) ? 10 :
+                          (tabixWindowSizeKb < 50 + 13) ? 25 :
+                          (tabixWindowSizeKb < 75 + 13) ? 50 :
+                          (tabixWindowSizeKb < 100 + 50) ? 75 : 
+                          (tabixWindowSizeKb < 150 + 50) ? 100 : null;
+  const tabixScaleLevel = parseInt(tabixWindowSize / 5);
+  const tabixUrl = `${tabixUrlRoot}/${tabixDatasetAltname}/${tabixAssembly}/${tabixStateModel}/${tabixGroup}/${tabixSaliency}/${tabixScaleLevel}/${tabixWindowSize}/recommendations.bed.gz`;
+  // /usr/bin/tabix https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025/vC/hg38/18/All_833_biosamples/S1/10/50/recommendations.bed.gz chr19:54620800-54689200
+  // console.log(`tabixUrl ${tabixUrl}`);
+  const ti = new TabixIndexedFile({
+    url: tabixUrl,
+    tbiUrl: `${tabixUrl}.tbi`,
+  });
+  const rangeChrom = qChr;
+  const range = {
+    left: {
+      start: qStart,
+      stop: qEnd,
+    },  
+    right: {
+      start: qStart,
+      stop: qEnd,
+    },
+  };
+  const tabixCall = async () => { 
+    const overlaps = { overlaps: [], windowSize: tabixWindowSize, windowSizeKb: tabixWindowSizeKb, scaleLevel: tabixScaleLevel, tabixUrl: tabixUrl };
+    await ti.getLines(rangeChrom, range.left.start, range.right.stop, (line, fileOffset) => {
+      const fields = line.split('\t');
+      const feature = {
+        chrom: fields[0],
+        start: parseInt(fields[1], 10),
+        end: parseInt(fields[2], 10),
+        hits: JSON.parse(fields[3]),
+      };
+      const overlap = {
+        segment: {
+          chrName: rangeChrom,
+          start: feature.start,
+          end: feature.end,
+          hits: feature.hits,
+        },
+      };
+      overlaps.overlaps.push(overlap);
+    });
+    return overlaps;
+  }
+  return tabixCall();
+}
+
+export const simsearchStaticMinmaxQueryPromise = (tabixUrl, range) => {
+  // /usr/bin/tabix https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025/vC/hg38/18/All_833_biosamples/S1/5/25/recommendations.minmax.bed.gz chr19:54645951-54671949
+  console.log(`simsearchStaticMinmaxQueryPromise | tabixUrl ${tabixUrl} | range ${JSON.stringify(range)}`);
+  const ti = new TabixIndexedFile({
+    url: tabixUrl,
+    tbiUrl: `${tabixUrl}.tbi`,
+  });
+  const tabixCall = async () => { 
+    const results = { minmax: [] };
+    await ti.getLines(range.chromosome, range.start, range.end, (line, fileOffset) => {
+      const fields = line.split('\t');
+      const feature = {
+        chrom: fields[0],
+        start: parseInt(fields[1], 10),
+        end: parseInt(fields[2], 10),
+        hits: JSON.parse(fields[3]),
+      };
+      results.minmax.push(feature);
+    });
+    return results;
+  }
+  return tabixCall();
+}
+
+export const simsearchStaticMinmaxQueryUrl = (scaleLevel, windowSize, self) => {
+  const params = self.state.tempHgViewParams;
+  const tabixUrlRoot = Constants.applicationTabixRootURL;
+  const tabixDatasetAltname = params.sampleSet;
+  const tabixAssembly = params.genome;
+  const tabixStateModel = params.model;
+  const tabixGroup = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[tabixDatasetAltname], 'Helper.simSearchQueryPromise')) ? Manifest.groupsByGenome[params.sampleSet][params.genome][params.group].mediaKey : Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][params.genome][params.group];
+  const tabixSaliency = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[params.complexity];
+  const tabixWindowSize = windowSize;
+  const tabixScaleLevel = scaleLevel;
+  const tabixUrl = `${tabixUrlRoot}/${tabixDatasetAltname}/${tabixAssembly}/${tabixStateModel}/${tabixGroup}/${tabixSaliency}/${tabixScaleLevel}/${tabixWindowSize}/recommendations.minmax.bed.gz`;
+  return tabixUrl;
+}
+
 export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
   if (qWindowSizeKb === 0) return Promise.reject(new Error('Invalid window size')).then(
     (result) => { return {'resolved': true} }, (result) => { return {'rejected': true} }
@@ -1224,6 +1325,8 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   const recommenderV3QueryURL = (trackServerPointsToLocalHgServer(Manifest.trackServerBySampleSet[datasetAltname], 'Helper.simSearchQueryPromise')) ? recommenderV3QueryLocalServerURL : recommenderV3QueryDefaultURL;
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
+
+  console.log(`recommenderV3URL | ${recommenderV3URL}`);
 
   return axios.get(recommenderV3URL).then((res) => {
     if (res.data) {
