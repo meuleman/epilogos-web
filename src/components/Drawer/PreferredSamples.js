@@ -29,7 +29,7 @@ class PreferredSamples extends Component {
     this.props.onSelectSample(selectedSample);
   }
 
-  executeScroll = () => this.selectedRef.current.scrollIntoView()
+  executeScroll = () => this.selectedRef && this.selectedRef.current && this.selectedRef.current.scrollIntoView()
 
   preferredSamplesSectionBody = () => {
     const availableSamples = this.state.availableSamples;

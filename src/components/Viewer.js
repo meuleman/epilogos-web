@@ -1981,7 +1981,9 @@ class Viewer extends Component {
             this.setState({
               simSearchQueryInProgress: true,
             }, () => {
-              this.simSearchQuery(this.state.currentPosition.chrLeft, this.state.currentPosition.startLeft, this.state.currentPosition.stopLeft);
+              // this.simSearchProxyQuery(this.state.currentPosition.chrLeft, this.state.currentPosition.startLeft, this.state.currentPosition.stopLeft);
+              // console.log(`this.state.currentPosition: ${JSON.stringify(this.state.currentPosition, null, 2)}`);
+              this.simSearchClientQuery(this.state.currentPosition.chrLeft, this.state.currentPosition.startLeft, this.state.currentPosition.stopLeft);
             })
           }
         }, 0);
@@ -5536,6 +5538,24 @@ class Viewer extends Component {
     });
   }
 
+  simsearchPillOnClick = () => {
+    const simsearchMode = 'qt';
+    const simsearchUrl = Helpers.constructViewerURL(
+      simsearchMode,
+      this.state.hgViewParams.genome,
+      this.state.hgViewParams.model,
+      this.state.hgViewParams.complexity,
+      this.state.hgViewParams.group,
+      this.state.hgViewParams.sampleSet,
+      this.state.currentPosition.chrLeft,
+      this.state.currentPosition.chrRight,
+      this.state.currentPosition.startLeft,
+      this.state.currentPosition.stopRight,
+      this.state,
+    );
+    window.open(simsearchUrl, "_self");
+  }
+
   recommenderV3SearchOnClick = () => {
     if (this.state.recommenderV3SearchInProgress || !this.state.recommenderV3SearchIsEnabled) return;
 
@@ -5554,7 +5574,7 @@ class Viewer extends Component {
       }, () => {
         function updateWithSimSearchRegionsInMemory(self) {
           const firstSimSearchRegion = self.state.simSearchTableData[0];
-          console.log(`firstSimSearchRegion: ${JSON.stringify(firstSimSearchRegion)}`);
+          // console.log(`firstSimSearchRegion: ${JSON.stringify(firstSimSearchRegion)}`);
           const queryObj = Helpers.getJsonFromUrl();
           const currentMode = self.state.hgViewParams.mode || queryObj.mode;
           let newQueryTargetLocalMinMax = self.state.queryTargetLocalMinMax;
@@ -5687,6 +5707,7 @@ class Viewer extends Component {
 
           simsearchStaticOverlapsQueryPromise
             .then((res) => {
+              console.log(`res = ${JSON.stringify(res, null, 2)}`);
               if (!res.overlaps || res.overlaps.length === 0) return;
               const queryRegionDiff = parseInt(Math.abs(queryStart - queryEnd));
               // const queryRegionDiffAsWindowSize = parseInt(parseFloat(Math.abs(queryStart - queryEnd)) / 1000);
@@ -5716,7 +5737,7 @@ class Viewer extends Component {
               processedTabixObject.query.hitCount = res.overlaps.length;
               let tabixLCZiMid = (tabixLineCountZi === 0) ? 0 : parseInt(tabixLineCountZi / 2);
               let tabixLines = [];
-              if (processedTabixObject.query.hitCount > 1) {
+              if (processedTabixObject.query.hitCount >= 1) {
                 const distances = [];
                 res.overlaps.forEach((overlap) => {
                   const overlapStart = parseInt(overlap.segment.start);
@@ -5744,9 +5765,9 @@ class Viewer extends Component {
                     processedTabixObject.hits.push(postPaddedHits);
                     processedTabixObject.query.hitStartDiff = processedTabixObject.query.hitFirstStartDiff;
                     processedTabixObject.query.hitEndDiff = processedTabixObject.query.hitFirstEndDiff;
-                    console.log(`res = ${JSON.stringify(res, null, 2)}`);
+                    // console.log(`res = ${JSON.stringify(res, null, 2)}`);
                     const tabixMinmaxUrl = Helpers.simsearchStaticMinmaxQueryUrl(res.scaleLevel, res.windowSize, self);
-                    console.log(`tabixMinmaxUrl = ${tabixMinmaxUrl}`);
+                    // console.log(`tabixMinmaxUrl = ${tabixMinmaxUrl}`);
                     const tabixMinmaxRange = {
                       'chromosome': processedTabixObject.query.hitFirstInterval[0],
                       'start': processedTabixObject.query.hitFirstInterval[1],
@@ -5780,7 +5801,7 @@ class Viewer extends Component {
                         });
                       })
                       .catch((err) => {
-                        console.log(`error = ${JSON.stringify(err, null, 2)}`);
+                        console.error(`error = ${JSON.stringify(err, null, 2)}`);
                         // 404
                         self.setState({
                           recommenderV3SearchInProgress: false,
@@ -5792,11 +5813,28 @@ class Viewer extends Component {
                           recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
                           genomeSelectIsActive: true,
                           autocompleteInputDisabled: false,
+                          simSearchQueryInProgress: false,
                         });
                       });
                   }
                 });
               }
+            })
+            .catch((err) => {
+              console.error(`error = ${JSON.stringify(err, null, 2)}`);
+              // 404
+              self.setState({
+                recommenderV3SearchInProgress: false,
+                recommenderV3SearchIsVisible: self.recommenderV3SearchCanBeVisible(),
+                recommenderV3SearchIsEnabled: self.recommenderV3SearchCanBeEnabled(),
+                recommenderV3SearchButtonLabel: RecommenderV3SearchButtonDefaultLabel,
+                recommenderV3SearchLinkLabel: RecommenderSearchLinkDefaultLabel,
+                recommenderV3ExpandIsEnabled: self.recommenderV3ExpandCanBeEnabled(),
+                recommenderV3ExpandLinkLabel: RecommenderExpandLinkDefaultLabel,
+                genomeSelectIsActive: true,
+                autocompleteInputDisabled: false,
+                simSearchQueryInProgress: false,
+              });
             });
         }
 
@@ -6283,7 +6321,108 @@ class Viewer extends Component {
     }
   }
 
-  simSearchQuery = (chrom, start, stop) => {
+  simSearchClientQuery = (chrom, start, stop) => {
+    // console.log(`simSearchClientQuery: ${chrom} : ${start} - ${stop}`);
+    const mode = this.state.hgViewParams.mode;
+    if (mode === "paired") return;
+    if (!chrom || start === 0 || stop === 0) {
+      this.setState({
+        simSearchQueryCount: -1,
+        simSearchQueryCountIsVisible: false,
+        simSearchQueryCountIsEnabled: false,
+        simSearchQueryInProgress: false,
+      });
+      return;
+    }
+    const queryChr = chrom;
+    const queryStart = start;
+    const queryEnd = stop;
+    const queryScale = Helpers.calculateScale(queryChr, queryChr, queryStart, queryEnd, this, false);
+    const queryWindowSize = parseInt(parseInt(queryScale.diff) / 1000); // kb
+    const simSearchQueryPromise = Helpers.simsearchStaticOverlapsQueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, this, true);
+    simSearchQueryPromise.then((res) => {
+      // console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
+      if (!res.overlaps || res.overlaps.length === 0) {
+        this.setState({
+          simSearchQueryCount: -1,
+          simSearchQueryCountIsVisible: false,
+          simSearchQueryCountIsEnabled: false,
+          simSearchQueryInProgress: false,
+        });
+        return;
+      }
+      const queryRegionDiff = parseInt(Math.abs(queryStart - queryEnd));
+      // const queryRegionDiffAsWindowSize = parseInt(parseFloat(Math.abs(queryStart - queryEnd)) / 1000);
+      const queryWindowSizeRawBases = res.windowSize * 1000;
+      const queryMidpoint = parseInt(Math.floor((queryStart + queryEnd) / 2));
+      const queryHitPadding = parseInt(parseFloat(queryRegionDiff - queryWindowSizeRawBases) / 2);
+      const processedTabixObject = {
+        "query": {
+          "chromosome": queryChr,
+          "start": queryStart,
+          "end": queryEnd,
+          "midpoint": queryMidpoint,
+          "sizeKey": `${res.scaleLevel}k`,
+          "windowSize": `${res.windowSize}k`,
+          "tabixPath": res.tabixPath,
+          "hitPadding": queryHitPadding,
+          "hitCount": res.overlaps.length,
+          "hitDistance": -1,
+          "hitFirstInterval": [],
+          "hitFirstStartDiff": -1,
+          "hitFirstEndDiff": -1,
+          "minmax": null,
+        },
+        "hits": [],
+      };
+      processedTabixObject.query.hitCount = res.overlaps.length;
+      // console.log(`tabixLCZiMid = ${tabixLCZiMid}`);
+      // console.log(`processedTabixObject.query.hitCount = ${processedTabixObject.query.hitCount}`);
+      let tabixLines = [];
+      if (processedTabixObject.query.hitCount >= 1) {
+        const distances = [];
+        res.overlaps.forEach((overlap) => {
+          const overlapStart = parseInt(overlap.segment.start);
+          const overlapEnd = parseInt(overlap.segment.end);
+          const overlapMidpoint = parseInt(Math.floor((overlapStart + overlapEnd) / 2));
+          distances.push(Math.abs(queryMidpoint - overlapMidpoint));
+        });
+        const minDistance = Math.min(...distances);
+        const minDistanceIdx = distances.indexOf(minDistance);
+        tabixLines = res.overlaps[minDistanceIdx];
+        processedTabixObject.query.hitCount = 1;
+        processedTabixObject.query.hitDistance = minDistance;
+        // console.log(`processedTabixObject = ${JSON.stringify(processedTabixObject, null, 2)}`);
+        // console.log(`tabixLines = ${JSON.stringify(tabixLines, null, 2)}`);
+      }
+
+      const newSimSearchQueryCount = (tabixLines && tabixLines.segment && tabixLines.segment.hits) ? tabixLines.segment.hits.length - 1 : 0;
+      
+      if (processedTabixObject.query.hitCount === 1 && newSimSearchQueryCount > 0) {
+        const newSimSearchQueryCountIsVisible = (this.state.hgViewParams.mode !== 'qt');
+        const newSimSearchQueryCountIsEnabled = (this.state.hgViewParams.mode !== 'qt');
+        this.setState({
+          simSearchQueryCount: newSimSearchQueryCount,
+          simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
+          simSearchQueryCountIsEnabled: newSimSearchQueryCountIsEnabled,
+        }, () => {
+          this.setState({
+            simSearchQueryInProgress: false,
+          });
+        });
+      }
+      else {
+        this.setState({
+          simSearchQueryCount: -1,
+          simSearchQueryCountIsVisible: false,
+          simSearchQueryCountIsEnabled: false,
+          simSearchQueryInProgress: false,
+        });
+      }
+    });
+  }
+
+  simSearchProxyQuery = (chrom, start, stop) => {
     // const sampleSet = this.state.hgViewParams.sampleSet;
     // const trackServerBySampleSet = (Manifest.trackServerBySampleSet[sampleSet] ?? Constants.applicationHiGlassServerEndpointRootURL);
     const mode = this.state.hgViewParams.mode;
@@ -6423,7 +6562,7 @@ class Viewer extends Component {
           return (
             <SimsearchPill 
               ref={(component) => this.epilogosViewerSuggestionPill = component}
-              onClick={this.recommenderV3SearchOnClick}
+              onClick={this.simsearchPillOnClick}
               count={this.state.simSearchQueryCount}
               isVisible={this.state.simSearchQueryCountIsVisible}
               isEnabled={this.state.simSearchQueryCountIsEnabled}
@@ -6437,7 +6576,7 @@ class Viewer extends Component {
           <div style={{display:"flex"}}>
             <SimsearchPill 
               ref={(component) => this.epilogosViewerSuggestionPill = component}
-              onClick={this.recommenderV3SearchOnClick}
+              onClick={this.simsearchPillOnClick}
               count={this.state.simSearchQueryCount}
               isVisible={this.state.simSearchQueryCountIsVisible}
               isEnabled={this.state.simSearchQueryCountIsEnabled}

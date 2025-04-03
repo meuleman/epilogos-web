@@ -1190,7 +1190,7 @@ export const recommenderV3QueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, sel
 }
 
 export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self) => {
-  const params = self.state.tempHgViewParams;
+  const params = self.state.hgViewParams;
   const tabixUrlRoot = Constants.applicationTabixRootURL;
   const tabixDatasetAltname = params.sampleSet;
   const tabixAssembly = params.genome;
@@ -1223,26 +1223,32 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
       stop: qEnd,
     },
   };
-  const tabixCall = async () => { 
-    const overlaps = { overlaps: [], windowSize: tabixWindowSize, windowSizeKb: tabixWindowSizeKb, scaleLevel: tabixScaleLevel, tabixUrl: tabixUrl };
-    await ti.getLines(rangeChrom, range.left.start, range.right.stop, (line, fileOffset) => {
-      const fields = line.split('\t');
-      const feature = {
-        chrom: fields[0],
-        start: parseInt(fields[1], 10),
-        end: parseInt(fields[2], 10),
-        hits: JSON.parse(fields[3]),
-      };
-      const overlap = {
-        segment: {
-          chrName: rangeChrom,
-          start: feature.start,
-          end: feature.end,
-          hits: feature.hits,
-        },
-      };
-      overlaps.overlaps.push(overlap);
-    });
+  const overlaps = { overlaps: [], windowSize: tabixWindowSize, windowSizeKb: tabixWindowSizeKb, scaleLevel: tabixScaleLevel, tabixUrl: tabixUrl };
+  const handleError = (error) => {
+    console.error(`Error fetching simsearch static overlaps: ${error}`);
+    return overlaps;
+  }
+  const tabixCall = async () => {
+    await ti.getLines(rangeChrom, range.left.start, range.right.stop, 
+      (line, fileOffset) => {
+        const fields = line.split('\t');
+        const feature = {
+          chrom: fields[0],
+          start: parseInt(fields[1], 10),
+          end: parseInt(fields[2], 10),
+          hits: JSON.parse(fields[3]),
+        };
+        const overlap = {
+          segment: {
+            chrName: rangeChrom,
+            start: feature.start,
+            end: feature.end,
+            hits: feature.hits,
+          },
+        };
+        overlaps.overlaps.push(overlap);
+      })
+      .catch(handleError);
     return overlaps;
   }
   return tabixCall();
@@ -1250,30 +1256,36 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
 
 export const simsearchStaticMinmaxQueryPromise = (tabixUrl, range) => {
   // /usr/bin/tabix https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025/vC/hg38/18/All_833_biosamples/S1/5/25/recommendations.minmax.bed.gz chr19:54645951-54671949
-  console.log(`simsearchStaticMinmaxQueryPromise | tabixUrl ${tabixUrl} | range ${JSON.stringify(range)}`);
+  // console.log(`simsearchStaticMinmaxQueryPromise | tabixUrl ${tabixUrl} | range ${JSON.stringify(range)}`);
   const ti = new TabixIndexedFile({
     url: tabixUrl,
     tbiUrl: `${tabixUrl}.tbi`,
   });
-  const tabixCall = async () => { 
-    const results = { minmax: [] };
-    await ti.getLines(range.chromosome, range.start, range.end, (line, fileOffset) => {
-      const fields = line.split('\t');
-      const feature = {
-        chrom: fields[0],
-        start: parseInt(fields[1], 10),
-        end: parseInt(fields[2], 10),
-        hits: JSON.parse(fields[3]),
-      };
-      results.minmax.push(feature);
-    });
+  const results = { minmax: [] };
+  const handleError = (error) => {
+    console.error(`Error fetching simsearch static minmax: ${error}`);
+    return results;
+  }
+  const tabixCall = async () => {
+    await ti.getLines(range.chromosome, range.start, range.end, 
+      (line, fileOffset) => {
+        const fields = line.split('\t');
+        const feature = {
+          chrom: fields[0],
+          start: parseInt(fields[1], 10),
+          end: parseInt(fields[2], 10),
+          hits: JSON.parse(fields[3]),
+        };
+        results.minmax.push(feature);
+      })
+      .catch(handleError);
     return results;
   }
   return tabixCall();
 }
 
 export const simsearchStaticMinmaxQueryUrl = (scaleLevel, windowSize, self) => {
-  const params = self.state.tempHgViewParams;
+  const params = self.state.hgViewParams;
   const tabixUrlRoot = Constants.applicationTabixRootURL;
   const tabixDatasetAltname = params.sampleSet;
   const tabixAssembly = params.genome;
@@ -1326,7 +1338,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
 
-  console.log(`recommenderV3URL | ${recommenderV3URL}`);
+  // console.log(`recommenderV3URL | ${recommenderV3URL}`);
 
   return axios.get(recommenderV3URL).then((res) => {
     if (res.data) {
