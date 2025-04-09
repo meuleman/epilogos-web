@@ -105,6 +105,11 @@ class QueryTargetViewer extends Component {
       stripHeight: 22,
       leftIndicatorPx: null,
       rightIndicatorPx: null,
+      currentPosition: this.props.currentPosition,
+      updateCurrentPosition: true,
+      initialQueryRegionLabel: null,
+      initialQueryRegionLabelDiff: 0,
+      showQueryRegionIndicator: true,
     };
 
     this.state.hitsPanelWidth = parseInt(this.props.drawerWidth) - 68 + 26;
@@ -304,32 +309,6 @@ class QueryTargetViewer extends Component {
       }
     }
 
-    // this.adjustTargetRegionTableOffset = (newHitIdx, smooth) => {
-    //   // console.log(`this.adjustTargetRegionTableOffset | newHitIdx ${newHitIdx}`);
-    //   const targetHitsWrapper = document.getElementById(`target_hits_table_content`);
-    //   const targetHitsTable = document.getElementById(`target_hits_table`);
-    //   const targetHitsThead =  (targetHitsTable) ? targetHitsTable.tHead : null;
-    //   // const targetHitsTbody =  (targetHitsTable) ? targetHitsTable.tBodies[0] : null;
-    //   const targetEl = document.getElementById(`target_idx_${newHitIdx}`);
-    //   if (targetEl) {
-    //     // console.log(`targetEl ${targetEl} | target_idx_${newHitIdx}`);
-    //     const theadOffsetHeight = targetHitsThead.offsetHeight;
-    //     // console.log(`theadOffsetHeight ${theadOffsetHeight}`);
-    //     const newTopOffset = (((parseFloat(targetEl.offsetHeight)) * (newHitIdx - 1)) > 0) ? targetEl.offsetHeight * (newHitIdx - 1) : 0;
-    //     // console.log(`newTopOffset ${newTopOffset}`);
-    //     if (!smooth) {
-    //       targetHitsWrapper.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
-    //     }
-    //     else {
-    //       targetHitsWrapper.scroll({
-    //         top: newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight,
-    //         behavior: 'smooth'
-    //       });
-    //     }
-    //     // targetHitsTable.scrollTop = newTopOffset - (this.state.hitsPanelHeight / 2) + theadOffsetHeight;
-    //   }
-    // }
-
     this.jumpToTargetRegionByIdx = this.debounce((hitIdx) => {
       try {
         const position = this.props.hits[hitIdx].position;
@@ -345,7 +324,7 @@ class QueryTargetViewer extends Component {
     }, 50);
 
     this.updateQueryRegionLabel = this.debounce((newLeft, newRight) => {
-      // console.log(`updateQueryRegionLabel ${newLeft} ${newRight}`);
+      console.log(`updateQueryRegionLabel ${newLeft} ${newRight}`);
       // console.log(`updateQueryRegionLabel > this.props.queryRegionIndicatorData.hitFirstInterval ${JSON.stringify(this.props.queryRegionIndicatorData.hitFirstInterval)}`);
       // newLeft = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[1]];
       // newRight = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[2]];
@@ -374,6 +353,26 @@ class QueryTargetViewer extends Component {
       const searchQueryEnabledFlag = (this.state.viewAdjusted && (newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold));
       const searchTargetEnabledFlag = (newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold);
       // console.log(`this.state.viewAdjusted ${this.state.viewAdjusted} diffTest ${(newQueryScale.diff < Constants.defaultApplicationRecommenderButtonHideShowThreshold)}`);
+
+      if (!this.state.initialQueryRegionLabel) {
+        setTimeout(() => {
+          this.setState({ 
+            initialQueryRegionLabel: newQueryRegionLabel,
+            initialQueryRegionLabelDiff: newQueryRegion.left.start - unadjustedLeft[1],
+            showQueryRegionIndicator: true,
+          });
+        }, 1000);
+      }
+      else {
+        // if (this.state.initialQueryRegionLabel !== this.state.queryRegionLabel) {
+        //   this.setState({ initialQueryRegionLabel: this.state.queryRegionLabel });
+        // }
+        const qrlDiff = newQueryRegion.left.start - unadjustedLeft[1];
+        if (qrlDiff !== this.state.initialQueryRegionLabelDiff) {
+          this.setState({ showQueryRegionIndicator: false });
+        }
+      }
+
       this.setState({
         queryScale: newQueryScale,
         queryRegionLabel: newQueryRegionLabel,
@@ -1018,6 +1017,14 @@ class QueryTargetViewer extends Component {
         // setTimeout(() => {
         //   this.jumpToTargetRegionByIdx(this.state.selectedHitIdx - 1);
         // }, 5000);
+        if (this.state.updateCurrentPosition) {
+          setTimeout(() => {
+            this.setState({
+              updateCurrentPosition: false,
+              currentPosition: this.props.currentPosition,
+            });
+          }, 1000);
+        }
       }
       else {
         if (this.queryTargetUnlockedHgView && this.state.queryTargetUnlockedHgViewconf && this.state.queryTargetUnlockedHgViewconf.views && this.queryTargetUnlockedHgView.api) {
@@ -1472,6 +1479,7 @@ class QueryTargetViewer extends Component {
   }
 
   updateRegionLabel = (event, panel) => {
+    console.log(`updateRegionLabel`);
     const genome = this.props.hgViewParams.genome;
     const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, genome);
 
@@ -1502,7 +1510,13 @@ class QueryTargetViewer extends Component {
       if ((Math.abs(currentPosition.left.start - newLeft[1]) >= 100) && (Math.abs(currentPosition.right.stop - newRight[1]) >= 100)) {
         switch (panel) {
           case "query": {
-            self.updateQueryRegionLabel(newLeft, newRight);
+            self.setState({
+              initialQueryRegionLabel: null,
+              initialQueryRegionLabelDiff: 0,
+              showQueryRegionIndicator: false,
+            }, () => {
+              self.updateQueryRegionLabel(newLeft, newRight);
+            })
             break;
           }
           case "target": {
@@ -1589,7 +1603,7 @@ class QueryTargetViewer extends Component {
       const animationTime = 10;
       // self.queryTargetLockedHgView.api.off('location', this.onQueryLocationChange);
       // self.queryTargetLockedHgView.api.off('location', this.onTargetLocationChange);
-      self.queryTargetLockedHgView.current.zoomTo(
+      self.queryTargetLockedHgView.zoomTo(
         self.state.queryTargetLockedHgViewconf.views[0].uid,
         chromInfo.chrToAbs([chrLeft, startLeft]),
         chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -1597,6 +1611,11 @@ class QueryTargetViewer extends Component {
         chromInfo.chrToAbs([chrRight, stopRight]),
         animationTime,
       );
+      setTimeout(() => {
+        self.setState({
+          showQueryRegionIndicator: true,
+        }); 
+      }, 1000);
       // setTimeout(() => {
       //   self.queryTargetLockedHgView.api.on('location', (event) => { self.onQueryLocationChange(event); }, self.state.queryTargetLockedHgViewconf.views[0].uid);
       //   self.queryTargetLockedHgView.api.on('location', (event) => { self.onTargetLocationChange(event); }, self.state.queryTargetLockedHgViewconf.views[1].uid);
@@ -1608,7 +1627,7 @@ class QueryTargetViewer extends Component {
       const animationTime = 10;
       // self.queryTargetUnlockedHgView.api.off('location', this.onQueryLocationChange);
       // self.queryTargetUnlockedHgView.api.off('location', this.onTargetLocationChange);
-      self.queryTargetUnlockedHgView.current.zoomTo(
+      self.queryTargetUnlockedHgView.zoomTo(
         self.state.queryTargetUnlockedHgViewconf.views[0].uid,
         chromInfo.chrToAbs([chrLeft, startLeft]),
         chromInfo.chrToAbs([chrLeft, stopLeft]),
@@ -1624,7 +1643,7 @@ class QueryTargetViewer extends Component {
   }
 
   jumpToTargetRegion = (position, rowIndex) => {
-    // console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
+    console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
     if (rowIndex && rowIndex !== this.state.selectedHitIdx) {
       // console.log(`jumpToTargetRegion > rowIndex ${rowIndex}`);
       // console.log(`jumpToTargetRegion > old ${this.state.selectedHitIdx}`);
@@ -1730,7 +1749,7 @@ class QueryTargetViewer extends Component {
         queryTargetLockedHgViewconf: newHgViewconf,
       }, () => {
         if ((self.state.queryRegion.left.chr !== self.props.queryRegion.left.chr) || ((self.state.queryRegion.left.chr === self.props.queryRegion.left.chr) && ((self.state.queryRegion.left.start !== self.props.queryRegion.left.start) || (self.state.queryRegion.right.stop !== self.props.queryRegion.right.stop)))) {
-          // console.log(`queryRegion changed | self.state.queryRegion ${JSON.stringify(self.state.queryRegion)} | self.props.queryRegion ${JSON.stringify(self.props.queryRegion)}`);
+          console.log(`queryRegion changed | self.state.queryRegion ${JSON.stringify(self.state.queryRegion)} | self.props.queryRegion ${JSON.stringify(self.props.queryRegion)}`);
           const newLeftQuery = [queryChromosome, queryStart];
           const newRightQuery = [queryChromosome, queryEnd];
           self.updateRegionLabelWithoutEvent(newLeftQuery, newRightQuery, 'query');
@@ -1753,6 +1772,14 @@ class QueryTargetViewer extends Component {
             // queryTargetLockedHgViewKey: self.state.queryTargetLockedHgViewKey + 1, // `qt-locked-${self.state.queryTargetLockedHgViewKey + 1}`,
             queryRegion: newQueryRegion,
           }, () => {
+            self.jumpToQueryRegion([
+              self.props.queryRegion.left.chr, 
+              self.props.queryRegion.right.chr,
+              self.props.queryRegion.left.start,
+              self.props.queryRegion.left.stop,
+              self.props.queryRegion.right.start,
+              self.props.queryRegion.right.stop]
+            );
             setTimeout(() => {
               self.queryTargetLockedHgView.api.on('location', (event) => {
                 self.updateRegionLabel(event, 'query');
@@ -2214,23 +2241,16 @@ class QueryTargetViewer extends Component {
       pointerEvents: 'none',
     };
 
-    // console.log(`this.props.contentWidth ${JSON.stringify(this.props.contentWidth)}`);
-    // console.log(`this.state.panelWidth ${JSON.stringify(this.state.panelWidth)}`);
-    // console.log(`this.props.queryRegionIndicatorData ${JSON.stringify(this.props.queryRegionIndicatorData)}`);
-    // console.log(`this.props.targetRegion ${JSON.stringify(this.props.targetRegion)}`);
-    // console.log(`this.state.targetRegion ${JSON.stringify(this.state.targetRegion)}`);
-
     function formatRegionIndicatorText(reg, self) {
       const regionScale = Helpers.calculateScale(reg[0], reg[0], reg[1], reg[2], self);
       return `${reg[0]}:${reg[1]}-${reg[2]} ${regionScale.scaleAsStr}`;
     }
 
     const targetRegionIndicatorLabelOffset = 2;
+
     function showRegionIndicatorLabels(l, r, w) {
       const lo = l / w;
       const ro = r / w;
-      // console.log(`${self.state.queryRegion.left.chr}:${self.state.queryRegion.left.start}-${self.state.queryRegion.right.stop}`);
-      // console.log(`${self.props.queryRegionIndicatorData.chromosome}:${self.props.queryRegionIndicatorData.start}-${self.props.queryRegionIndicatorData.stop}`);
       // console.log(`l ${l} | r ${r} | w ${w} | lo ${lo} | ro ${ro}`);
       return ((lo > 0) && (ro < 1)) || ((lo <= 0) && (ro >= 0.2)) || ((lo <= 0.8) && (ro >= 1.0));
     }
@@ -2336,6 +2356,8 @@ class QueryTargetViewer extends Component {
               showRegionIndicatorLabels(this.state.leftIndicatorPx - this.props.drawerWidth,
                                         this.state.rightIndicatorPx - this.props.drawerWidth, 
                                         this.state.panelWidth)
+              &&
+              this.state.showQueryRegionIndicator
             ) && 
             <div className="region-interval-indicator-content query-region-interval-indicator-content" style={genericRegionIndicatorStyle}>
               

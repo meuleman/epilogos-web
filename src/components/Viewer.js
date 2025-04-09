@@ -649,6 +649,7 @@ class Viewer extends Component {
 
       self.triggerUpdate("update", "constructor");
       const keepSuggestionInterval = true;
+
       self.updateViewerURL(
         self.state.hgViewParams.mode,
         self.state.hgViewParams.genome,
@@ -1902,6 +1903,7 @@ class Viewer extends Component {
         },
         queryTargetLocalMinMax: queryTargetLocalMinMax,
       }, () => {
+        // console.log(`currentPosition: ${JSON.stringify(self.state.currentPosition, null, 2)}`);
         const keepSuggestionInterval = false;
         self.updateViewerURL(self.state.hgViewParams.mode,
                              self.state.hgViewParams.genome,
@@ -5305,7 +5307,7 @@ class Viewer extends Component {
         let model = params.model;
         let group = params.group;
         let sampleSet = params.sampleSet;
-        let newGroup = Constants.groupsForRecommenderV1OptionGroup[sampleSet][genome][group];
+        let newGroup = (Constants.groupsForRecommenderV1OptionGroup[sampleSet][genome][group]) ? Constants.groupsForRecommenderV1OptionGroup[sampleSet][genome][group] : group;
         let complexity = params.complexity;
         let newComplexity = Constants.complexitiesForDataExport[complexity];
         
@@ -6789,22 +6791,7 @@ class Viewer extends Component {
             
           </Navbar>
 
-          {(["single", "paired"].includes(this.state.hgViewParams.mode)) ? 
-          
-            <div>                
-              <div className="higlass-content higlass-main-content" style={{"height": this.state.mainHgViewHeight, "paddingTop": `${Constants.applicationViewerHgViewPaddingTop}px`, "paddingBottom": `${Constants.applicationViewerHgViewPaddingBottom}px`}}>
-                <HiGlassComponent
-                  key={this.state.mainHgViewKey}
-                  ref={this.mainHgView}
-                  options={mainHgViewOptions}
-                  viewConfig={this.state.mainHgViewconf}
-                  />
-              </div>
-            </div>
-
-          :
-
-            (this.state.hgViewParams.mode === "qt") ?
+          {(["qt"].includes(this.state.hgViewParams.mode)) ? 
 
               <div className="higlass-content higlass-target-content" style={{"height": this.state.mainHgViewHeight}}>
                 <QueryTargetViewer
@@ -6847,10 +6834,27 @@ class Viewer extends Component {
                   globalMinMax={this.state.queryTargetGlobalMinMax}
                   copyClipboardText={this.onClickCopyRegionCommand}
                   epilogosContentHeight={this.state.epilogosContentHeight}
+                  currentPositionKey={this.state.currentPositionKey}
+                  currentPosition={this.state.currentPosition}
                   />
               </div>
             
             :
+
+            (["single", "paired"].includes(this.state.hgViewParams.mode)) ?
+
+            <div>                
+              <div className="higlass-content higlass-main-content" style={{"height": this.state.mainHgViewHeight, "paddingTop": `${Constants.applicationViewerHgViewPaddingTop}px`, "paddingBottom": `${Constants.applicationViewerHgViewPaddingBottom}px`}}>
+                <HiGlassComponent
+                  key={this.state.mainHgViewKey}
+                  ref={this.mainHgView}
+                  options={mainHgViewOptions}
+                  viewConfig={this.state.mainHgViewconf}
+                  />
+              </div>
+            </div>
+
+          :
 
               <div></div>
 

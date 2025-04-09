@@ -847,7 +847,6 @@
                 "preferred": true,
                 "sortValue": "001",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -880,7 +879,6 @@
                 "preferred": true,
                 "sortValue": "002",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -945,7 +943,6 @@
                 "preferred": true,
                 "sortValue": "004",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -996,7 +993,6 @@
                 "preferred": true,
                 "sortValue": "000",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -1043,7 +1039,6 @@
                 "preferred": true,
                 "sortValue": "001",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -1075,7 +1070,6 @@
                 "preferred": true,
                 "sortValue": "002",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -1138,7 +1132,6 @@
                 "preferred": true,
                 "sortValue": "004",
                 "availableForModels": [
-                  15,
                   18
                 ],
                 "availableForComplexities": [
@@ -1176,15 +1169,6 @@
                 }
               },
               "paired": {
-                "15": {
-                  "type": "stateModel",
-                  "value": "15",
-                  "text": "15-state (observed)",
-                  "titleText": "15-state",
-                  "enabled": false,
-                  "visible": false,
-                  "availableForProduction": false
-                },
                 "18": {
                   "type": "stateModel",
                   "value": "18",
@@ -1209,15 +1193,6 @@
                 }
               },
               "paired": {
-                "15": {
-                  "type": "stateModel",
-                  "value": "15",
-                  "text": "15-state (observed)",
-                  "titleText": "15-state",
-                  "enabled": false,
-                  "visible": false,
-                  "availableForProduction": false
-                },
                 "18": {
                   "type": "stateModel",
                   "value": "18",
