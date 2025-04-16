@@ -14,7 +14,7 @@
     "chromatin-modeling"
   ],
   "dependencies": {
-    "@apr144/higlass": "^1.13.5-022725-002",
+    "@apr144/higlass": "^1.13.5-022725-003",
     "@apr144/higlass-multivec": "0.3.3-021325-002",
     "@apr144/higlass-tabix-datafetcher": "^0.1.0",
     "@apr144/higlass-transcripts": "^0.3.8",

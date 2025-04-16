@@ -716,6 +716,7 @@ export const epilogosTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSe
 }
 
 export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model, group, complexity) => {
+  console.log("epilogosTrackFilenameForSingleSampleSet:", sampleSet, genome, model, group, complexity);
   let result = null;
   let errorRaised = false;
   let errorMessage = null;

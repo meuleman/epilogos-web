@@ -21,7 +21,7 @@
     },
     "version": "2024-12-17T00:00:00+0000",
     "data": {
-      "orderedSets": ["vA", "vC", "vD", "vH"],
+      "orderedSets": ["vA", "vC", "vD", "vH", "vI"],
       "disabledSets": ["vG"],
       "defaultSet": "vA",
       "defaultGenome": "hg19",
@@ -3227,6 +3227,104 @@
                 "sortValue": "042",
                 "text": "Healthy Immune vs Non-Immune (100-subsample)",
                 "mediaKey": "HealthyImmunePaired100_versus_HealthyNonImmunePaired100",
+                "enabled": true,
+                "preferred": true,
+                "visibleInDev": true,
+                "visibleInProd": false,
+                "availableForModels": [
+                  18
+                ],
+                "availableForComplexities": [
+                  "KL",
+                  "KLs"
+                ]
+              }
+            }
+          },
+          "modelMetadataByGenome": {
+            "hg38": {
+              "single": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              },
+              "paired": {
+                "18": {
+                  "type": "stateModel",
+                  "value": "18",
+                  "text": "18-state (observed, aux.)",
+                  "titleText": "18-state",
+                  "enabled": true,
+                  "visible": true,
+                  "availableForProduction": true
+                }
+              }
+            }
+          },
+          "complexitiesMetadataByGenome": {
+            "hg38": {
+              "KL": {
+                "value": "KL",
+                "text": "KL",
+                "titleText": "S<sub>1</sub>",
+                "mediaKey": "S1",
+                "enabled": true,
+                "visible": true
+              },
+              "KLs": {
+                "value": "KLs",
+                "text": "KL*",
+                "titleText": "S<sub>2</sub>",
+                "mediaKey": "S2",
+                "enabled": true,
+                "visible": true
+              }
+            }
+          },
+          "assembliesMetadataByMode": {
+            "single": {
+              "Human": [
+                "hg38"
+              ]
+            },
+            "paired": {
+              "Human": [
+                "hg38"
+              ]
+            }
+          }
+        },
+        {
+          "sampleSet": "vI",
+          "formattedDescription": "Hirst (2025, 52-sample human)",
+          "navbarDescription": "Hirst",
+          "visible": true,
+          "enabled": true,
+          "availableModes": ["single"],
+          "availableAssemblies": ["hg38"],
+          "defaultAssembly": "hg38",
+          "defaultGroup": "All_52_biosamples",
+          "defaultSingleGroup": {"hg38": "All_52_biosamples"},
+          "defaultPairedGroup": {"hg38": ""},
+          "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
+          "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
+          "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
+          "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
+          "setMetadataByGenome": {
+            "hg38": {
+              "All_52_biosamples": {
+                "type": "group",
+                "subtype": "single",
+                "value": "All_52_biosamples",
+                "sortValue": "000",
+                "text": "All 52 biosamples",
+                "mediaKey": "All_52_biosamples",
                 "enabled": true,
                 "preferred": true,
                 "visibleInDev": true,

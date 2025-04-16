@@ -998,6 +998,11 @@ export const groupsForRecommenderV1OptionGroup = {
       "TCellNaiveCd4Helper": "TCellNaiveCd4Helper",
     },
   },
+  "vI": {
+    "hg38": {
+      "All_52_biosamples": "All_52_biosamples",
+    },
+  },
 };
 
 export const groupsForRecommenderV3OptionGroup = {
@@ -1167,6 +1172,11 @@ export const groupsForRecommenderV3OptionGroup = {
       "Neutrophil": "Neutrophil",
       "TCellCd4Helper": "TCellCd4Helper",
       "TCellNaiveCd4Helper": "TCellNaiveCd4Helper",
+    },
+  },
+  "vI": {
+    "hg38": {
+      "All_52_biosamples": "All_52_biosamples",
     },
   },
 };
@@ -1342,6 +1352,11 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
       "TCellNaiveCd4Helper": "10k",
     },
   },
+  "vI": {
+    "hg38": {
+      "All_52_biosamples": "10k",
+    },
+  },
 };
 
 export const defaultSingleGroupKeys = {
@@ -1371,6 +1386,9 @@ export const defaultSingleGroupKeys = {
   "vH": {
     "hg38": "All_1698_biosamples",
   },
+  "vI": {
+    "hg38": "All_52_biosamples",
+  },
 };
 
 export const defaultPairedGroupKeys = {
@@ -1397,6 +1415,8 @@ export const defaultPairedGroupKeys = {
   },
   "vH": {
     "hg38": "Male_vs_Female",
+  },
+  "vI": {
   },
 };
 

@@ -3249,6 +3249,13 @@ class Viewer extends Component {
           tempHgViewParams.group = "All_1698_biosamples";
           tempHgViewParams.mode = "single";
         }
+        if (tempHgViewParams.sampleSet === "vI") {
+          tempHgViewParams.genome = "hg38";
+          tempHgViewParams.model = "18";
+          tempHgViewParams.complexity = "KL";
+          tempHgViewParams.group = "All_52_biosamples";
+          tempHgViewParams.mode = "single";
+        }
       }
     }
     else {
