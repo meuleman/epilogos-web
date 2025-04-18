@@ -324,7 +324,7 @@ class QueryTargetViewer extends Component {
     }, 50);
 
     this.updateQueryRegionLabel = this.debounce((newLeft, newRight) => {
-      console.log(`updateQueryRegionLabel ${newLeft} ${newRight}`);
+      // console.log(`updateQueryRegionLabel ${newLeft} ${newRight}`);
       // console.log(`updateQueryRegionLabel > this.props.queryRegionIndicatorData.hitFirstInterval ${JSON.stringify(this.props.queryRegionIndicatorData.hitFirstInterval)}`);
       // newLeft = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[1]];
       // newRight = [this.props.queryRegionIndicatorData.hitFirstInterval[0], this.props.queryRegionIndicatorData.hitFirstInterval[2]];
@@ -1479,7 +1479,7 @@ class QueryTargetViewer extends Component {
   }
 
   updateRegionLabel = (event, panel) => {
-    console.log(`updateRegionLabel`);
+    // console.log(`updateRegionLabel`);
     const genome = this.props.hgViewParams.genome;
     const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, genome);
 
@@ -1643,7 +1643,7 @@ class QueryTargetViewer extends Component {
   }
 
   jumpToTargetRegion = (position, rowIndex) => {
-    console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
+    // console.log(`jumpToTargetRegion > position ${position} | rowIndex ${rowIndex}`);
     if (rowIndex && rowIndex !== this.state.selectedHitIdx) {
       // console.log(`jumpToTargetRegion > rowIndex ${rowIndex}`);
       // console.log(`jumpToTargetRegion > old ${this.state.selectedHitIdx}`);
