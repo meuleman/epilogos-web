@@ -2140,7 +2140,7 @@
         },
         {
           "sampleSet": "vH",
-          "formattedDescription": "IHEC (2025, 1698-sample human)",
+          "formattedDescription": "IHEC (1698-sample human)",
           "navbarDescription": "IHEC",
           "visible": true,
           "enabled": true,
@@ -3302,8 +3302,8 @@
         },
         {
           "sampleSet": "vI",
-          "formattedDescription": "Hirst (2025, 52-sample human)",
-          "navbarDescription": "Hirst",
+          "formattedDescription": "SyS (52-sample human)",
+          "navbarDescription": "SyS",
           "visible": true,
           "enabled": true,
           "availableModes": ["single"],
