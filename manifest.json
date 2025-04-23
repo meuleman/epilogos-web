@@ -21,8 +21,8 @@
     },
     "version": "2024-12-17T00:00:00+0000",
     "data": {
-      "orderedSets": ["vA", "vC", "vD", "vG", "vH", "vI"],
-      "disabledSets": [],
+      "orderedSets": ["vA", "vC", "vD", "vH", "vI"],
+      "disabledSets": ["vG"],
       "defaultSet": "vA",
       "defaultGenome": "hg19",
       "modernComplexities": {

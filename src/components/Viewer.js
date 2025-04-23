@@ -462,6 +462,8 @@ class Viewer extends Component {
     //
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
 
+    console.log(`newTempHgViewParams.sampleSet ${newTempHgViewParams.sampleSet} | ${Manifest.orderedSampleSetKeys.includes(newTempHgViewParams.sampleSet)}`)
+
     //
     // set defaults by sample set identifier
     //
@@ -474,6 +476,19 @@ class Viewer extends Component {
     newTempHgViewParams.chrRight = queryObj.chrRight || Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].chrRight;
     newTempHgViewParams.start = parseInt(queryObj.start || Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].start);
     newTempHgViewParams.stop = parseInt(queryObj.stop || Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].stop);
+
+    if (!Manifest.orderedSampleSetKeys.includes(newTempHgViewParams.sampleSet)) {
+      newTempHgViewParams.sampleSet = Constants.defaultApplicationSampleSet;
+      newTempHgViewParams.group = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].group;
+      newTempHgViewParams.mode = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].mode;
+      newTempHgViewParams.genome = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].genome;
+      newTempHgViewParams.model = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].model;
+      newTempHgViewParams.complexity = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].complexity;
+      newTempHgViewParams.chrLeft = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].chrLeft;
+      newTempHgViewParams.chrRight = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].chrRight;
+      newTempHgViewParams.start = parseInt(Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].start);
+      newTempHgViewParams.stop = parseInt(Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].stop);
+    }
 
     this.state.selectedExemplarRowIdxOnLoad = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
     this.state.selectedExemplarRowIdx = parseInt(queryObj.serIdx || Constants.defaultApplicationSerIdx);
