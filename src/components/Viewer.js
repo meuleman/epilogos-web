@@ -462,8 +462,6 @@ class Viewer extends Component {
     //
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
 
-    console.log(`newTempHgViewParams.sampleSet ${newTempHgViewParams.sampleSet} | ${Manifest.orderedSampleSetKeys.includes(newTempHgViewParams.sampleSet)}`)
-
     //
     // set defaults by sample set identifier
     //
