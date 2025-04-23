@@ -463,16 +463,8 @@ class Viewer extends Component {
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
 
     if (newTempHgViewParams.sampleSet === 'vG') {
-      newTempHgViewParams.sampleSet = 'vH';
-      newTempHgViewParams.group = 'All_1698_biosamples';
-      newTempHgViewParams.mode = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].mode;
-      newTempHgViewParams.genome = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].genome;
-      newTempHgViewParams.model = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].model;
-      newTempHgViewParams.complexity = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].complexity;
-      newTempHgViewParams.chrLeft = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].chrLeft;
-      newTempHgViewParams.chrRight = Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].chrRight;
-      newTempHgViewParams.start = parseInt(Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].start);
-      newTempHgViewParams.stop = parseInt(Constants.applicationDefaultQueryParameters[newTempHgViewParams.sampleSet].stop);
+      const redirectURL = `${this.currentURL.protocol}//${this.currentURL.hostname}:${this.currentURL.port}/?application=viewer&sampleSet=vH`;
+      window.location.href = redirectURL;
     }
 
     //
