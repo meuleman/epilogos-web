@@ -463,6 +463,8 @@ class Viewer extends Component {
     newTempHgViewParams.sampleSet = queryObj.sampleSet || Constants.defaultApplicationSampleSet;
 
     if (newTempHgViewParams.sampleSet === 'vG') {
+      newTempHgViewParams.sampleSet = 'vH';
+      this.state.tempHgViewParams.sampleSet = 'vH';
       const redirectURL = `${this.currentURL.protocol}//${this.currentURL.hostname}:${this.currentURL.port}/?application=viewer&sampleSet=vH`;
       window.location.href = redirectURL;
     }
@@ -3233,7 +3235,7 @@ class Viewer extends Component {
           }
         }
         // if we are switching from Roadmap/Adsera to Gorkin, or vice versa, switch genome to useful default
-        if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC") || (this.state.hgViewParams.sampleSet === "vG"))) {
+        if ((tempHgViewParams.sampleSet === "vD") && ((this.state.hgViewParams.sampleSet === "vA") || (this.state.hgViewParams.sampleSet === "vC") || (this.state.hgViewParams.sampleSet === "vG") || (this.state.hgViewParams.sampleSet === "vH"))) {
           // console.log(`vA,vC,vG => vD`);
           tempHgViewParams.genome = "mm10";
           tempHgViewParams.model = "15";
@@ -3249,8 +3251,8 @@ class Viewer extends Component {
           tempHgViewParams.group = "all";
           tempHgViewParams.mode = "single";
         }
-        if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vG")) {
-          // console.log(`vD => vG`);
+        if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vH")) {
+          // console.log(`vD => vH`);
           tempHgViewParams.genome = "hg38";
           tempHgViewParams.model = "18";
           tempHgViewParams.complexity = "KL";
@@ -3378,6 +3380,12 @@ class Viewer extends Component {
       // revert to single mode, if visiting internal production site
       //
       if (tempHgViewParams.sampleSet === "vG" && this.isInternalProductionSite && this.state.hgViewParams.mode === "paired") {
+        tempHgViewParams.sampleSet = "vH";
+        tempHgViewParams.group = "All_1698_biosamples";
+        tempHgViewParams.mode = "single";
+      }
+      if (tempHgViewParams.sampleSet === "vG" && this.isInternalProductionSite && this.state.hgViewParams.mode === "single") {
+        tempHgViewParams.sampleSet = "vH";
         tempHgViewParams.group = "All_1698_biosamples";
         tempHgViewParams.mode = "single";
       }
@@ -4183,8 +4191,8 @@ class Viewer extends Component {
                 res.data.views[0].tracks.top[1].height = 0; // parseInt(windowInnerHeight) - res.data.views[0].tracks.top[0].height - parseInt(newHgViewTrackChromosomeHeight) - parseInt(newHgViewTrackGeneAnnotationsHeight) - parseInt(Constants.viewerHgViewParameters.epilogosHeaderNavbarHeight);
                 res.data.views[0].tracks.top[2].height = newHgViewTrackChromosomeHeight;
 
-                // update for vG
-                if (newSampleSet === "vG") {
+                // update for vG/vH
+                if ((newSampleSet === "vG") || (newSampleSet === "vH")) {
                   res.data.views[0].tracks.top[1].height += 0; // 2 * res.data.views[0].tracks.top[0].height / 3;
                   res.data.views[0].tracks.top[0].height /= 3;
                 }
