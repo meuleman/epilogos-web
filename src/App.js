@@ -49,7 +49,7 @@ class App extends Component {
   }
   
   componentDidMount() {
-    // this.parseQueryParameters();
+    this.parseQueryParameters();
   }
   
   componentWillUnmount() {}
@@ -88,18 +88,25 @@ class App extends Component {
           window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
           passed = false;
         }
+        console.log(`query string: ${JSON.stringify(obj)}`);
       }
-      if (obj.application && obj.application.length > 0) {
-        if (Constants.applicationKeys.includes(obj.application)) {
-          newState.application = obj.application;
-        }
-        else {
-          window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
-        }
+      if (obj.sampleSet && obj.sampleSet === 'vG' && obj.application) {
+        const currentURL = document.createElement('a');
+        currentURL.setAttribute('href', window.location.href);
+        const redirectURL = `${currentURL.protocol}//${currentURL.hostname}:${currentURL.port}/?application=${obj.application}&sampleSet=vH`;
+        window.location.href = redirectURL;
       }
-      else {
-        newState.application = Constants.applicationPortal;
-      }
+      // if (obj.application && obj.application.length > 0) {
+      //   if (Constants.applicationKeys.includes(obj.application)) {
+      //     newState.application = obj.application;
+      //   }
+      //   else {
+      //     window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
+      //   }
+      // }
+      // else {
+      //   newState.application = Constants.applicationPortal;
+      // }
       if (passed)
         this.setState(newState);
     }
