@@ -88,7 +88,7 @@ class App extends Component {
           window.location.href = this.stripQueryStringAndHashFromPath(document.location.href);
           passed = false;
         }
-        console.log(`query string: ${JSON.stringify(obj)}`);
+        // console.log(`query string: ${JSON.stringify(obj)}`);
       }
       if (obj.sampleSet && obj.sampleSet === 'vG' && obj.application) {
         const currentURL = document.createElement('a');

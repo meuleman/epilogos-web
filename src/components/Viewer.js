@@ -6025,6 +6025,12 @@ class Viewer extends Component {
   
   parameterSummaryAsElement = () => {
     let sampleSet = this.state.hgViewParams.sampleSet;
+    if (sampleSet === 'vG') {
+      const currentURL = document.createElement('a');
+      currentURL.setAttribute('href', window.location.href);
+      const redirectURL = `${currentURL.protocol}//${currentURL.hostname}:${currentURL.port}/?application=viewer&sampleSet=vH`;
+      window.location.href = redirectURL;
+    }
     let sampleSetText = Manifest.navbarDescriptionsBySampleSet[sampleSet];
     let genome = this.state.hgViewParams.genome;
     // eslint-disable-next-line no-unused-vars
