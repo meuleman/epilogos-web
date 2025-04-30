@@ -5554,6 +5554,7 @@ class Viewer extends Component {
   }
 
   recommenderV3SearchCanBeVisible = () => {
+    if (this.state.hgViewParams.mode === "paired") return false;
     return true;
   }
 

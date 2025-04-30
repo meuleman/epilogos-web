@@ -2339,6 +2339,25 @@ export const groupsByGenome = {
           "KL",
           "KLs"
         ]
+      },
+      "PrenatalPaired_versus_PostnatalPaired": {
+        "type": "group",
+        "subtype": "paired",
+        "value": "PrenatalPaired_versus_PostnatalPaired",
+        "sortValue": "043",
+        "text": "Prenatal vs Postnatal (75-sample, balanced, no-cancer)",
+        "mediaKey": "PrenatalPaired_versus_PostnatalPaired",
+        "enabled": true,
+        "preferred": true,
+        "visibleInDev": true,
+        "visibleInProd": false,
+        "availableForModels": [
+          18
+        ],
+        "availableForComplexities": [
+          "KL",
+          "KLs"
+        ]
       }
     }
   },
