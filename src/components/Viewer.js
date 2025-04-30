@@ -1703,7 +1703,23 @@ class Viewer extends Component {
     }, 100);
     setTimeout(() => {
       this.updateViewerHistory(viewerUrl);
+      this.updateSimSearchPillVisibility(mode);
     }, 500);
+  }
+
+  updateSimSearchPillVisibility = (mode) => {
+    if ((mode === "qt") || (mode === "paired")) {
+      this.setState({
+        simSearchQueryCountIsVisible: false,
+        simSearchQueryCountIsEnabled: false,
+      });
+    }
+    else {
+      this.setState({
+        simSearchQueryCountIsVisible: true,
+        simSearchQueryCountIsEnabled: true,
+      });
+    }
   }
 
   updateViewerURLForQueryTargetMode = (mode, genome, model, complexity, group, sampleSet, chrLeft, chrRight, start, stop) => {
@@ -6619,7 +6635,7 @@ class Viewer extends Component {
           <div style={{display:"flex"}}>
             <SimsearchPill 
               ref={(component) => this.epilogosViewerSuggestionPill = component}
-              onClick={this.simsearchPillOnClick}
+              onClick={this.simSearchQueryCountIsVisible}
               count={this.state.simSearchQueryCount}
               isVisible={this.state.simSearchQueryCountIsVisible}
               isEnabled={this.state.simSearchQueryCountIsEnabled}
