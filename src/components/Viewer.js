@@ -1712,13 +1712,23 @@ class Viewer extends Component {
       this.setState({
         simSearchQueryCountIsVisible: false,
         simSearchQueryCountIsEnabled: false,
+        simSearchQueryInProgress: false,
       });
     }
-    else {
-      this.setState({
-        simSearchQueryCountIsVisible: true,
-        simSearchQueryCountIsEnabled: true,
-      });
+    else if (mode === "single") {
+      // console.log(`this.state.simSearchQueryCount: ${this.state.simSearchQueryCount}`);
+      if (this.state.simSearchQueryCount > 0) {
+        this.setState({
+          simSearchQueryCountIsVisible: true,
+          simSearchQueryCountIsEnabled: true,
+          simSearchQueryInProgress: false,
+        }, () => {
+          this.updateScale(false, "updateSimSearchPillVisibility");
+        });
+      }
+      else {
+        this.updateScale(false, "updateSimSearchPillVisibility");
+      }
     }
   }
 
@@ -6458,8 +6468,8 @@ class Viewer extends Component {
       const newSimSearchQueryCount = (tabixLines && tabixLines.segment && tabixLines.segment.hits) ? tabixLines.segment.hits.length - 1 : 0;
       
       if (processedTabixObject.query.hitCount === 1 && newSimSearchQueryCount > 0) {
-        const newSimSearchQueryCountIsVisible = (this.state.hgViewParams.mode !== 'qt');
-        const newSimSearchQueryCountIsEnabled = (this.state.hgViewParams.mode !== 'qt');
+        const newSimSearchQueryCountIsVisible = ((this.state.hgViewParams.mode !== 'qt') || (this.state.hgViewParams.mode !== 'paired'));
+        const newSimSearchQueryCountIsEnabled = ((this.state.hgViewParams.mode !== 'qt') || (this.state.hgViewParams.mode !== 'paired'));
         this.setState({
           simSearchQueryCount: newSimSearchQueryCount,
           simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
