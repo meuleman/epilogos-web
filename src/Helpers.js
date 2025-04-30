@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { bisector } from 'd3-array';
 
-// import { TabixIndexedFile } from '@gmod/tabix';
+import { TabixIndexedFile } from '@gmod/tabix';
 
 // Copy data to clipboard
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -17,7 +17,7 @@ import { RecommenderV3SearchButtonDefaultLabel } from "./components/RecommenderS
 import { RecommenderSearchLinkDefaultLabel } from "./components/RecommenderSearchLink";
 import { RecommenderExpandLinkDefaultLabel } from "./components/RecommenderExpandLink";
 
-export const { TabixIndexedFile } = window.gmodTABIX;
+// export const { TabixIndexedFile } = window.gmodTABIX;
 
 export const debounce = (fn, time) => {
   let timeoutId
