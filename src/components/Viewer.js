@@ -1368,6 +1368,7 @@ class Viewer extends Component {
   }
  
   updateSuggestionRowIdxFromCurrentIdx = (direction, overrideNewRowIdx) => {
+    // console.log(`updateSuggestionRowIdxFromCurrentIdx: ${direction} ${overrideNewRowIdx}`);
     let currentIdx = parseInt(this.state.selectedSuggestionRowIdx);
     let indexOfCurrentIdx = parseInt(this.state.suggestionTableDataIdxBySort.indexOf(currentIdx));
     let newRowIdx = currentIdx;
@@ -1725,11 +1726,11 @@ class Viewer extends Component {
           simSearchQueryCountIsEnabled: true,
           simSearchQueryInProgress: false,
         }, () => {
-          this.updateScale(false, "updateSimSearchPillVisibility");
+          this.updateScale(true, "updateSimSearchPillVisibility");
         });
       }
       else {
-        this.updateScale(false, "updateSimSearchPillVisibility");
+        this.updateScale(true, "updateSimSearchPillVisibility");
       }
     }
   }
@@ -1894,7 +1895,7 @@ class Viewer extends Component {
       locationHandlerCount: this.state.locationHandlerCount + 1,
     }, () => {
       // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
-      hgv.current && hgv.current.api.on("location", (event, callingFn) => this.locationHandlerUpdateViewerLocation(event, callingFn));
+      hgv.current.api.on("location", (event, callingFn) => this.locationHandlerUpdateViewerLocation(event, callingFn));
     })
   }
 
@@ -1907,7 +1908,7 @@ class Viewer extends Component {
       locationHandlerCount: this.state.locationHandlerCount - 1,
     }, () => {
       // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
-      hgv.current && hgv.current.api.off("location", this.locationHandlerUpdateViewerLocation);
+      hgv.current.api.off("location", this.locationHandlerUpdateViewerLocation);
       if (cb) cb();
     })
   }
@@ -2429,7 +2430,9 @@ class Viewer extends Component {
         );
         self.updateScale(true, "hgViewUpdateSuggestionPosition");
         self.updateViewerURLForCurrentState(null, true);
-        self.fadeInSuggestionIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
+        setTimeout(() => {
+          self.fadeInSuggestionIntervalDrop(unpaddedChromosome, unpaddedChromosome, unpaddedStart, unpaddedStop, paddedStart, paddedStop);
+        }, 0);
       });
     }
 
@@ -5258,6 +5261,7 @@ class Viewer extends Component {
   }
 
   fadeOutSuggestionIntervalDrop = (cb) => {
+    // return;
     this.setState({
       selectedSuggestionRowIdxOnLoad: Constants.defaultApplicationSugIdx,
       selectedSuggestionRowIdx: Constants.defaultApplicationSugIdx,
@@ -5803,7 +5807,7 @@ class Viewer extends Component {
 
           simsearchStaticOverlapsQueryPromise
             .then((res) => {
-              console.log(`res = ${JSON.stringify(res, null, 2)}`);
+              // console.log(`res = ${JSON.stringify(res, null, 2)}`);
               if (!res.overlaps || res.overlaps.length === 0) return;
               const queryRegionDiff = parseInt(Math.abs(queryStart - queryEnd));
               // const queryRegionDiffAsWindowSize = parseInt(parseFloat(Math.abs(queryStart - queryEnd)) / 1000);
