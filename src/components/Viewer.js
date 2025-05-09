@@ -52,7 +52,7 @@ import * as Manifest from '../Manifest.js';
 import { slide as Drawer } from 'react-burger-menu';
 
 // Icons
-import { FaTimesCircle, FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard } from 'react-icons/fa';
+import { FaTimesCircle, FaBars, FaTimes, FaArrowAltCircleDown, FaClipboard, FaDownload } from 'react-icons/fa';
 
 // Recommender
 import RecommenderSearchButton from "./RecommenderSearchButton";
@@ -284,6 +284,8 @@ class Viewer extends Component {
       queryTargetModeWillRequireFullExpand: false,
       queryTargetLocalMinMax: {},
       autocompleteSuggestionListShown: false,
+
+      suggestionURL: null,
       suggestionButtonInProgress: false,
       suggestionButtonIsVisible: false,
       suggestionButtonIsEnabled: false,
@@ -1054,7 +1056,7 @@ class Viewer extends Component {
           this.fadeOutContainerOverlay(() => { this.setState({ tabixDataDownloadCommandVisible: false }); });
         }
         if (this.state.suggestionTableIsVisible) {
-          this.suggestionButtonOnClick();
+          this.suggestionVisibilityButtonOnClick();
         }
         break;
       case RETURN_KEY:
@@ -1100,14 +1102,14 @@ class Viewer extends Component {
         break;
       case R_KEY:
         if ((this.state.hgViewParams.mode !== "qt") && (this.state.roiRawURL)) {
-          if (this.state.suggestionTableIsVisible) this.suggestionButtonOnClick(false);
+          if (this.state.suggestionTableIsVisible) this.suggestionVisibilityButtonOnClick(false);
           this.roiButtonOnClick(!this.state.roiTableIsVisible);
         }
         break;
       case S_KEY:
         if (this.state.hgViewParams.mode !== "qt") {
           if (this.state.roiTableIsVisible) this.roiButtonOnClick(false);
-          this.suggestionButtonOnClick(!this.state.suggestionTableIsVisible);
+          this.suggestionVisibilityButtonOnClick(!this.state.suggestionTableIsVisible);
         }
         break;
       case FORWARD_SLASH_KEY: {
@@ -1892,7 +1894,7 @@ class Viewer extends Component {
       locationHandlerCount: this.state.locationHandlerCount + 1,
     }, () => {
       // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
-      hgv.current.api.on("location", (event, callingFn) => this.locationHandlerUpdateViewerLocation(event, callingFn));
+      hgv.current && hgv.current.api.on("location", (event, callingFn) => this.locationHandlerUpdateViewerLocation(event, callingFn));
     })
   }
 
@@ -1905,7 +1907,7 @@ class Viewer extends Component {
       locationHandlerCount: this.state.locationHandlerCount - 1,
     }, () => {
       // console.log(`locationHandlerCount: ${this.state.locationHandlerCount}`);
-      hgv.current.api.off("location", this.locationHandlerUpdateViewerLocation);
+      hgv.current && hgv.current.api.off("location", this.locationHandlerUpdateViewerLocation);
       if (cb) cb();
     })
   }
@@ -2766,7 +2768,7 @@ class Viewer extends Component {
     }
     if (state.isOpen) { // open
       if (this.state.suggestionTableIsVisible) {
-        this.suggestionButtonOnClick(!this.state.suggestionTableIsVisible);
+        this.suggestionVisibilityButtonOnClick(!this.state.suggestionTableIsVisible);
       }
       let windowInnerHeight = document.documentElement.clientHeight + "px";
       let epilogosViewerHeaderNavbarHeight = parseInt(document.getElementById("epilogos-viewer-container-navbar").clientHeight) + "px";
@@ -5362,6 +5364,37 @@ class Viewer extends Component {
     let coord = this.state.currentPosition;
     let params = this.state.hgViewParams;
     switch (name) {
+      case "suggestions": {
+        let genome = params.genome;
+        let model = params.model;
+        let group = params.group;
+        let sampleSet = Manifest.navbarDescriptionsBySampleSet[params.sampleSet].split(' ')[0];
+        let newGroup = (Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group]) ? Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group] : group;
+        let complexity = params.complexity;
+        let newComplexity = Constants.complexitiesForDataExport[complexity];
+        const suggestionFn = `suggestions.${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.txt`;
+        const suggestionTableData = this.state.suggestionTableData;
+        const suggestionTextLines = [];
+        for (const suggestion in suggestionTableData) {
+          const suggestionRow = suggestionTableData[suggestion];
+          const chr = suggestionRow.element.chrom;
+          const start = suggestionRow.element.start;
+          const stop = suggestionRow.element.stop;
+          const stateAsLabel = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
+          const stateAsInteger = suggestionRow.state.numerical;
+          let lineText = `${chr}\t${start}\t${stop}\t${stateAsLabel}\t${stateAsInteger}`;
+          suggestionTextLines.push(lineText);
+        }
+        const suggestionText = suggestionTextLines.join("\n");        
+        let suggestionFile = new File(
+          [suggestionText], 
+          suggestionFn,
+          {
+            type: "text/plain;charset=utf-8"
+          });
+        saveAs(suggestionFile);  
+        break;
+      }
       case "tabix": {
         let genome = params.genome;
         let model = params.model;
@@ -5952,7 +5985,12 @@ class Viewer extends Component {
     });
   }
 
-  suggestionButtonOnClick = (makeVisible) => {
+  suggestionDownloadButtonOnClick = () => {
+    
+    this.onClickDownloadItemSelect("suggestions");
+  }
+
+  suggestionVisibilityButtonOnClick = (makeVisible) => {
     if (this.state.suggestionButtonInProgress) return;
     const newSuggestionTableKey = this.state.suggestionTableKey + 1;
     const newRoiTableIsVisible = false;
@@ -5986,16 +6024,16 @@ class Viewer extends Component {
   }
 
   suggestionTableMakeVisible = () => {
-    this.suggestionButtonOnClick(true);
+    this.suggestionVisibilityButtonOnClick(true);
   }
 
   suggestionTableMakeInvisible = () => {
     this.fadeOutSuggestionIntervalDrop();
-    this.suggestionButtonOnClick(false);
+    this.suggestionVisibilityButtonOnClick(false);
   }
 
   suggestionTableToggleVisibility = () => {
-    this.suggestionButtonOnClick(!this.state.suggestionTableIsVisible);
+    this.suggestionVisibilityButtonOnClick(!this.state.suggestionTableIsVisible);
   }
 
   roiButtonToggle = (makeVisible, cf) => {
@@ -6690,7 +6728,11 @@ class Viewer extends Component {
       || (this.state.mainHgViewconf && !this.state.mainHgViewconf.views)
       || (this.state.mainHgViewconf && this.state.mainHgViewconf.views && !this.state.mainHgViewconf.views[0]) 
       || (this.state.mainHgViewconf && this.state.mainHgViewconf.views && this.state.mainHgViewconf.views[0] && !this.state.mainHgViewconf.views[0].tracks)
-      ) return <div>...</div>;
+      ) return (
+        <div style={{height:'calc(100vh)',width:'100vw',margin:'0px',padding:'0px',backgroundColor:'black',textAlign:'center',color:'white',display:'flex',justifyContent:'center',alignItems:'center'}}>
+          <div class="loader"></div>
+        </div>
+      );
 
     const windowInnerHeight = document.documentElement.clientHeight + "px";
     const windowInnerWidth = document.documentElement.clientWidth + "px";
@@ -6929,6 +6971,8 @@ class Viewer extends Component {
 
           {(["single", "query", "paired"].includes(this.state.hgViewParams.mode)) ? 
           
+            (this.state.suggestionTableData.length > 0) ?
+              
             <div 
               className={'navigation-summary-download-popup'} 
               id="epilogos-viewer-navigation-summary-export-data-popup" 
@@ -6943,7 +6987,34 @@ class Viewer extends Component {
               <div>
                 <div className="download-route-label">download</div>
                 <div>
-                  <span className="download-route-link" name="tabix" onClick={() => this.onClickDownloadItemSelect("tabix")}>DATA</span>
+                  <span className="download-route-link" name="suggestions" onClick={() => this.onClickDownloadItemSelect("suggestions")}>SUGGESTIONS</span>
+                  {"\u00a0"}|{"\u00a0"}
+                  <span className="download-route-link" name="tabix" onClick={() => this.onClickDownloadItemSelect("tabix")}>SCORES</span>
+                  {"\u00a0"}|{"\u00a0"}
+                  <span className="download-route-link" name="png" onClick={() => this.onClickDownloadItemSelect("png")}>PNG</span>
+                  {"\u00a0"}|{"\u00a0"}
+                  <span className="download-route-link" name="svg" onClick={() => this.onClickDownloadItemSelect("svg")}>SVG</span>
+                </div>
+              </div>
+            </div>
+
+              :
+            
+            <div 
+              className={'navigation-summary-download-popup'} 
+              id="epilogos-viewer-navigation-summary-export-data-popup" 
+              onMouseEnter={this.onMouseEnterDownload} 
+              onMouseLeave={this.onMouseLeaveDownload} 
+              style={{
+                visibility: ((this.state.downloadIsVisible)?"visible":"hidden"), 
+                position: "absolute", 
+                zIndex: "10002",
+                top: this.state.downloadButtonBoundingRect.bottom
+                }}>
+              <div>
+                <div className="download-route-label">download</div>
+                <div>
+                  <span className="download-route-link" name="tabix" onClick={() => this.onClickDownloadItemSelect("tabix")}>SCORES</span>
                   {"\u00a0"}|{"\u00a0"}
                   <span className="download-route-link" name="png" onClick={() => this.onClickDownloadItemSelect("png")}>PNG</span>
                   {"\u00a0"}|{"\u00a0"}
@@ -7009,12 +7080,13 @@ class Viewer extends Component {
                   <div>
                     Suggestions
                   </div>
-                  <div 
-                    style={{marginLeft: 'auto', position: 'relative', bottom: '1px', cursor: 'pointer'}} 
-                    onClick={(e) => this.suggestionButtonOnClick(false)}
-                    title={'Hide suggestions'}
-                    >
-                    <FaTimesCircle size="0.9em" onClick={(e) => this.suggestionButtonOnClick(false)} />
+                  <div style={{marginLeft: 'auto', position: 'relative', bottom: '1px', cursor: 'pointer'}}>
+                    <div style={{display: 'inline-block'}} title={'Download suggestions'}>
+                      <FaDownload size="0.9em" onClick={(e) => this.suggestionDownloadButtonOnClick()} />
+                    </div>
+                    <div style={{display: 'inline-block', marginLeft: '10px'}} title={'Hide suggestions'}>
+                      <FaTimesCircle size="0.9em" onClick={(e) => this.suggestionVisibilityButtonOnClick(false)} />
+                    </div>
                   </div>
                 </div>
                 <SuggestionTable

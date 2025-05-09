@@ -432,7 +432,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
 
   // console.log(`suggestionURL ${suggestionURL}`);
   
-  function updateSuggestionRegionsWithResponse(res, cb) {
+  function updateSuggestionRegionsWithResponse(res, genome, cb) {
     const newSuggestionRegions = res.data.split('\n');
     const newSelectedSuggestionRowIdx = (self.state.selectedSuggestionRowIdx !== Constants.defaultApplicationSugIdx) ? ((newSuggestionRegions.length > self.state.selectedSuggestionRowIdx) ? self.state.selectedSuggestionRowIdx : Constants.defaultApplicationSugIdx) : Constants.defaultApplicationSugIdx;
     self.setState({
@@ -446,9 +446,17 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
       self.state.suggestionRegions.forEach((val, idx) => {
         let elem = val.split('\t');
         let chrom = elem[0];
-        let start = elem[1];
-        let stop = elem[2];
+        if (!chrom || typeof chrom === "undefined") return;
+        let start = parseInt(elem[1]);
+        let stop = parseInt(elem[2]);
         let state = elem[3];
+        start = (start >= 0) ? start : 0;
+        stop = (stop <= Constants.assemblyBounds[genome][chrom]['ub']) ? stop : Constants.assemblyBounds[genome][chrom]['ub'];
+        if (stop < start) {
+          let temp = start;
+          start = stop;
+          stop = temp;
+        }
         if (!chrom) return;
         let paddedPosition = zeroPad(chrom.replace(/chr/, ''), 3) + ':' + zeroPad(parseInt(start), 12) + '-' + zeroPad(parseInt(stop), 12);
         if (isNaN(chrom.replace(/chr/, ''))) {
@@ -485,6 +493,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
       setTimeout(() => {
         self.updateViewportDimensions();
         self.setState({
+          suggestionURL: suggestionURL,
           suggestionButtonInProgress: false,
           suggestionsAreLoaded: true,
           suggestionTableData: data,
@@ -540,7 +549,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                         handleNoSuggestionsFound(self);
                       }
                       else {
-                        updateSuggestionRegionsWithResponse(res, cb);
+                        updateSuggestionRegionsWithResponse(res, newGenome, cb);
                       }
                     })
                     // eslint-disable-next-line no-unused-vars
@@ -554,7 +563,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                 });
             }
             else {
-              updateSuggestionRegionsWithResponse(res, cb);
+              updateSuggestionRegionsWithResponse(res, newGenome, cb);
             }
           })
           // eslint-disable-next-line no-unused-vars
@@ -577,7 +586,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                   handleNoSuggestionsFound(self);
                 }
                 else {
-                  updateSuggestionRegionsWithResponse(res, cb);
+                  updateSuggestionRegionsWithResponse(res, newGenome,cb);
                 }
               })
               // eslint-disable-next-line no-unused-vars

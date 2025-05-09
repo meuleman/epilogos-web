@@ -1,9 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
 
 #root {
-  height: calc(100vh - 56px);
+  /* height: calc(100vh - 56px); */
+  height: calc(100vh);
   width: calc(100vw);
   overflow: hidden;
+  background-color: #000000;
+}
+
+#epilogos-container {
+  background-color: #000000;
 }
 
 body {
@@ -2198,3 +2204,14 @@ div.track-mouseover-menu-table>div:nth-of-type(even) {
   position: relative;
   bottom: 2px;
 }
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #ffffff #ffffff00;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}
