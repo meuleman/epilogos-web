@@ -554,7 +554,6 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
         let score = parseFloat(elem[4]);
         let strand = elem[5];
         start = (start >= 0) ? start : 0;
-        stop = (stop <= Constants.assemblyBounds[genome][chrom]['ub']) ? stop : Constants.assemblyBounds[genome][chrom]['ub'];
         if (stop < start) {
           let temp = start;
           start = stop;
