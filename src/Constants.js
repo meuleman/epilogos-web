@@ -17,8 +17,8 @@ export const applicationContactEmail = "areynolds@altius.org";
 export const applicationEndpointRootURL = `${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}`;
 
 export const applicationHiGlassServerEndpointRootURL = `${process.env.REACT_APP_HIGLASS_SERVICE_PROTOCOL}://${process.env.REACT_APP_HIGLASS_SERVICE_HOSTNAME}/api/v1`;
-// export const applicationTabixRootURL = `${process.env.REACT_APP_TABIX_SERVICE_PROTOCOL}://${process.env.REACT_APP_TABIX_SERVICE_HOSTNAME}/tabix`;
-export const applicationTabixRootURL = 'https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025';
+export const applicationTabixRootURL = `${process.env.REACT_APP_TABIX_SERVICE_PROTOCOL}://${process.env.REACT_APP_TABIX_SERVICE_HOSTNAME}`;
+// export const applicationTabixRootURL = 'https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025';
 export const applicationRecommenderV1DatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
 
 export const urlProxyURL = `${process.env.REACT_APP_URL_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_URL_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_URL_PROXY_SERVICE_PORT}`;
