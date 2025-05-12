@@ -5382,18 +5382,23 @@ class Viewer extends Component {
           const suggestionFn = `suggestions.${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.txt`;
           const suggestionMinimumTableData = this.state.suggestionTableData;
           const suggestionRawTableData = this.state.suggestionRawTableData;
-          const suggestionRawTableDataIsAvailable = (this.state.suggestionRawTableData.length > 0);
+          // const suggestionRawTableDataIsAvailable = (this.state.suggestionRawTableData.length > 0);
           const suggestionTableData = suggestionMinimumTableData;
           const suggestionTextLines = [];
           for (const suggestion in suggestionMinimumTableData) {
             const suggestionRow = suggestionTableData[suggestion];
-            const suggestionRawRow = (suggestionRawTableDataIsAvailable) ? suggestionRawTableData[suggestion] : null;
+            let suggestionRawTableDataIsAvailable = (suggestionRawTableData.length > 0);
+            let suggestionRawRow = suggestionRawTableData[suggestion];
+            if (typeof suggestionRawRow === "undefined") {
+              suggestionRawRow = null;
+              suggestionRawTableDataIsAvailable = false;
+            }
             const chr = suggestionRow.element.chrom;
             const start = suggestionRow.element.start;
             const stop = suggestionRow.element.stop;
             const state = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
-            const score = (!suggestionRawTableDataIsAvailable) ? null : (suggestionRawRow.element && suggestionRawRow.element.score) ? suggestionRawRow.element.score : 0.0;
-            let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : (suggestionRawRow.element && suggestionRawRow.element.score) ? `${chr}\t${start}\t${stop}\t${state}\t${score}` : `${chr}\t${start}\t${stop}\t${state}`;
+            const score = (!suggestionRawTableDataIsAvailable) ? null : (suggestionRawRow && suggestionRawRow.element && suggestionRawRow.element.score) ? suggestionRawRow.element.score : 0.0;
+            let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : (suggestionRawRow && suggestionRawRow.element && suggestionRawRow.element.score) ? `${chr}\t${start}\t${stop}\t${state}\t${score}` : `${chr}\t${start}\t${stop}\t${state}`;
             suggestionTextLines.push(lineText);
           }
           const suggestionText = suggestionTextLines.join("\n");        
