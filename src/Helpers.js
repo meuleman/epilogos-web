@@ -539,8 +539,14 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   }
 
   function updateSuggestionRawRegionsWithResponse(res, genome, cb) {
+    if (!res || !res.data || res.data.startsWith("<!doctype html>")) {
+      self.setState({
+        suggestionRawURL: suggestionRawURL,
+        suggestionRawRegions: [],
+        suggestionRawTableData: [],
+      });
+    }
     const newSuggestionRegions = res.data.split('\n');
-    console.log(`newSuggestionRegions ${newSuggestionRegions}`);
     self.setState({
       suggestionRawRegions: newSuggestionRegions,
     }, () => {

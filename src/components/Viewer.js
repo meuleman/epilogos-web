@@ -5387,13 +5387,13 @@ class Viewer extends Component {
           const suggestionTextLines = [];
           for (const suggestion in suggestionMinimumTableData) {
             const suggestionRow = suggestionTableData[suggestion];
-            const suggestionRawRow = (suggestionRawTableData) ? suggestionRawTableData[suggestion] : null;
+            const suggestionRawRow = (suggestionRawTableDataIsAvailable) ? suggestionRawTableData[suggestion] : null;
             const chr = suggestionRow.element.chrom;
             const start = suggestionRow.element.start;
             const stop = suggestionRow.element.stop;
             const state = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
-            const score = (!suggestionRawTableDataIsAvailable) ? null : suggestionRawRow.element.score;
-            let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : `${chr}\t${start}\t${stop}\t${state}\t${score}`;
+            const score = (!suggestionRawTableDataIsAvailable) ? null : (suggestionRawRow.element && suggestionRawRow.element.score) ? suggestionRawRow.element.score : 0.0;
+            let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : (suggestionRawRow.element && suggestionRawRow.element.score) ? `${chr}\t${start}\t${stop}\t${state}\t${score}` : `${chr}\t${start}\t${stop}\t${state}`;
             suggestionTextLines.push(lineText);
           }
           const suggestionText = suggestionTextLines.join("\n");        
