@@ -290,6 +290,14 @@ export const exemplarV2DownloadURL = (assembly, model, complexity, group, sample
   return result;
 }
 
+export const exemplarV2RawDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  // console.log(`exemplarV2RawDownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet} ${windowSize}`);
+  let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
+  // const result = stripQueryStringAndHashFromPath(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.txt";
+  const result = getHrefPrefix(document.location.href) + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.raw";
+  return result;
+}
+
 export const updateExemplars = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
   /*
     This function reads exemplar regions into memory:
@@ -417,6 +425,18 @@ export const suggestionDownloadURL = (assembly, model, complexity, group, sample
   return result;
 }
 
+export const suggestionRawDataDownloadURL = (assembly, model, complexity, group, sampleSet, windowSize) => {
+  // console.log(`suggestionRawDataDownloadURL ${assembly} ${model} ${complexity} ${group} ${sampleSet} ${windowSize}`);
+  let saliencyLevel = Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity];
+  // const downloadURLPrefix = (isLocalhost)
+  //   ? `https://${Constants.applicationHost}` 
+  //   : stripQueryStringAndHashFromPath(document.location.href);
+  const downloadURLPrefix = getHrefPrefix(document.location.href);
+  const result = downloadURLPrefix + "/assets/exemplars/" + sampleSet + "/" + assembly + "/" + model + "/" + group + "/" + saliencyLevel + "/" + windowSize + "/top100.raw";
+  // console.log(`suggestionDownloadURL ${result}`);
+  return result;
+}
+
 export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, newSampleSet, self, cb) => {
   /*
     This function reads suggestion regions into memory:
@@ -429,6 +449,10 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
   let suggestionURL = (newGroupV2) 
     ? suggestionDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup]) 
     : exemplarV2DownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
+
+  let suggestionRawURL = (newGroupV2)
+    ? suggestionRawDataDownloadURL(newGenome, newModel, newComplexity, newGroupV2, newSampleSet, Constants.windowSizeKeyForRecommenderV3OptionGroup[newSampleSet][newGenome][newGroup])
+    : exemplarV2RawDownloadURL(newGenome, newModel, newComplexity, newGroup, newSampleSet, Constants.defaultApplicationGenericExemplarKey);
 
   // console.log(`suggestionURL ${suggestionURL}`);
   
@@ -514,6 +538,50 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
     });
   }
 
+  function updateSuggestionRawRegionsWithResponse(res, genome, cb) {
+    const newSuggestionRegions = res.data.split('\n');
+    self.setState({
+      suggestionRawRegions: newSuggestionRegions,
+    }, () => {
+      let data = [];
+      self.state.suggestionRawRegions.forEach((val, idx) => {
+        let elem = val.split('\t');
+        let chrom = elem[0];
+        if (!chrom || typeof chrom === "undefined") return;
+        let start = parseInt(elem[1]);
+        let stop = parseInt(elem[2]);
+        let state = elem[3];
+        let score = parseFloat(elem[4]);
+        let strand = elem[5];
+        start = (start >= 0) ? start : 0;
+        stop = (stop <= Constants.assemblyBounds[genome][chrom]['ub']) ? stop : Constants.assemblyBounds[genome][chrom]['ub'];
+        if (stop < start) {
+          let temp = start;
+          start = stop;
+          stop = temp;
+        }
+        data.push({ 
+          'idx' : idx + 1,
+          'element' : {
+            'state' : state,
+            'chrom' : chrom,
+            'start' : start,
+            'stop' : stop,
+            'score' : score,
+            'strand' : strand,
+          },
+        });
+      });
+      setTimeout(() => {
+        self.updateViewportDimensions();
+        self.setState({
+          suggestionRawURL: suggestionRawURL,
+          suggestionRawTableData: data,
+        });
+      }, 0);
+    });
+  }
+
   function handleNoSuggestionsFound(self) {
     self.setState({
       suggestionTableKey: self.state.suggestionTableKey + 1,
@@ -550,6 +618,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                       }
                       else {
                         updateSuggestionRegionsWithResponse(res, newGenome, cb);
+                        axios.get(suggestionRawURL)
+                          .then((res) => {
+                            updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                          })
+                          .catch((err) => {
+                            handleNoSuggestionsFound(self);
+                          });
                       }
                     })
                     // eslint-disable-next-line no-unused-vars
@@ -564,6 +639,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
             }
             else {
               updateSuggestionRegionsWithResponse(res, newGenome, cb);
+              axios.get(suggestionRawURL)
+                .then((res) => {
+                  updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                })
+                .catch((err) => {
+                  handleNoSuggestionsFound(self);
+                });
             }
           })
           // eslint-disable-next-line no-unused-vars
@@ -587,6 +669,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                 }
                 else {
                   updateSuggestionRegionsWithResponse(res, newGenome,cb);
+                  axios.get(suggestionRawURL)
+                    .then((res) => {
+                      updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                    })
+                    .catch((err) => {
+                      handleNoSuggestionsFound(self);
+                    });
                 }
               })
               // eslint-disable-next-line no-unused-vars

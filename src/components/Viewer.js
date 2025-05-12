@@ -286,6 +286,8 @@ class Viewer extends Component {
       autocompleteSuggestionListShown: false,
 
       suggestionURL: null,
+      suggestionRawURL: null,
+      suggestionRawTableData: [],
       suggestionButtonInProgress: false,
       suggestionButtonIsVisible: false,
       suggestionButtonIsEnabled: false,
@@ -5377,17 +5379,23 @@ class Viewer extends Component {
         let complexity = params.complexity;
         let newComplexity = Constants.complexitiesForDataExport[complexity];
         const suggestionFn = `suggestions.${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.txt`;
-        const suggestionTableData = this.state.suggestionTableData;
+        const suggestionMinimumTableData = this.state.suggestionTableData;
+        const suggestionRawTableData = this.state.suggestionRawTableData;
+        const suggestionRawTableDataIsAvailable = (this.state.suggestionRawTableData.length > 0);
+        const suggestionTableData = suggestionMinimumTableData;
         const suggestionTextLines = [];
-        for (const suggestion in suggestionTableData) {
+        let idx = 0;
+        for (const suggestion in suggestionMinimumTableData) {
           const suggestionRow = suggestionTableData[suggestion];
+          const suggestionRawRow = (suggestionRawTableData) ? suggestionRawTableData[idx] : null;
           const chr = suggestionRow.element.chrom;
           const start = suggestionRow.element.start;
           const stop = suggestionRow.element.stop;
-          const stateAsLabel = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
-          const stateAsInteger = suggestionRow.state.numerical;
-          let lineText = `${chr}\t${start}\t${stop}\t${stateAsLabel}\t${stateAsInteger}`;
+          const state = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
+          const score = (!suggestionRawTableDataIsAvailable) ? null : suggestionRawRow.element.score;
+          let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : `${chr}\t${start}\t${stop}\t${state}\t${score}`;
           suggestionTextLines.push(lineText);
+          idx += 1;
         }
         const suggestionText = suggestionTextLines.join("\n");        
         let suggestionFile = new File(
