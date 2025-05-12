@@ -5371,40 +5371,40 @@ class Viewer extends Component {
     let params = this.state.hgViewParams;
     switch (name) {
       case "suggestions": {
-        let genome = params.genome;
-        let model = params.model;
-        let group = params.group;
-        let sampleSet = Manifest.navbarDescriptionsBySampleSet[params.sampleSet].split(' ')[0];
-        let newGroup = (Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group]) ? Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group] : group;
-        let complexity = params.complexity;
-        let newComplexity = Constants.complexitiesForDataExport[complexity];
-        const suggestionFn = `suggestions.${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.txt`;
-        const suggestionMinimumTableData = this.state.suggestionTableData;
-        const suggestionRawTableData = this.state.suggestionRawTableData;
-        const suggestionRawTableDataIsAvailable = (this.state.suggestionRawTableData.length > 0);
-        const suggestionTableData = suggestionMinimumTableData;
-        const suggestionTextLines = [];
-        let idx = 0;
-        for (const suggestion in suggestionMinimumTableData) {
-          const suggestionRow = suggestionTableData[suggestion];
-          const suggestionRawRow = (suggestionRawTableData) ? suggestionRawTableData[idx] : null;
-          const chr = suggestionRow.element.chrom;
-          const start = suggestionRow.element.start;
-          const stop = suggestionRow.element.stop;
-          const state = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
-          const score = (!suggestionRawTableDataIsAvailable) ? null : suggestionRawRow.element.score;
-          let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : `${chr}\t${start}\t${stop}\t${state}\t${score}`;
-          suggestionTextLines.push(lineText);
-          idx += 1;
-        }
-        const suggestionText = suggestionTextLines.join("\n");        
-        let suggestionFile = new File(
-          [suggestionText], 
-          suggestionFn,
-          {
-            type: "text/plain;charset=utf-8"
-          });
-        saveAs(suggestionFile);  
+        setTimeout(() => {
+          let genome = params.genome;
+          let model = params.model;
+          let group = params.group;
+          let sampleSet = Manifest.navbarDescriptionsBySampleSet[params.sampleSet].split(' ')[0];
+          let newGroup = (Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group]) ? Constants.groupsForRecommenderV1OptionGroup[params.sampleSet][genome][group] : group;
+          let complexity = params.complexity;
+          let newComplexity = Constants.complexitiesForDataExport[complexity];
+          const suggestionFn = `suggestions.${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.txt`;
+          const suggestionMinimumTableData = this.state.suggestionTableData;
+          const suggestionRawTableData = this.state.suggestionRawTableData;
+          const suggestionRawTableDataIsAvailable = (this.state.suggestionRawTableData.length > 0);
+          const suggestionTableData = suggestionMinimumTableData;
+          const suggestionTextLines = [];
+          for (const suggestion in suggestionMinimumTableData) {
+            const suggestionRow = suggestionTableData[suggestion];
+            const suggestionRawRow = (suggestionRawTableData) ? suggestionRawTableData[suggestion] : null;
+            const chr = suggestionRow.element.chrom;
+            const start = suggestionRow.element.start;
+            const stop = suggestionRow.element.stop;
+            const state = Constants.stateColorPalettes[genome][model][suggestionRow.state.numerical][0];
+            const score = (!suggestionRawTableDataIsAvailable) ? null : suggestionRawRow.element.score;
+            let lineText = (!suggestionRawTableDataIsAvailable) ? `${chr}\t${start}\t${stop}\t${state}` : `${chr}\t${start}\t${stop}\t${state}\t${score}`;
+            suggestionTextLines.push(lineText);
+          }
+          const suggestionText = suggestionTextLines.join("\n");        
+          let suggestionFile = new File(
+            [suggestionText], 
+            suggestionFn,
+            {
+              type: "text/plain;charset=utf-8"
+            });
+          saveAs(suggestionFile);  
+        }, 0);
         break;
       }
       case "tabix": {

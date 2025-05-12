@@ -540,6 +540,7 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
 
   function updateSuggestionRawRegionsWithResponse(res, genome, cb) {
     const newSuggestionRegions = res.data.split('\n');
+    console.log(`newSuggestionRegions ${newSuggestionRegions}`);
     self.setState({
       suggestionRawRegions: newSuggestionRegions,
     }, () => {
@@ -616,12 +617,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                         handleNoSuggestionsFound(self);
                       }
                       else {
-                        updateSuggestionRegionsWithResponse(res, newGenome, cb);
                         axios.get(suggestionRawURL)
-                          .then((res) => {
-                            updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                          .then((rawRes) => {
+                            updateSuggestionRawRegionsWithResponse(rawRes, newGenome, cb);
+                            updateSuggestionRegionsWithResponse(res, newGenome, cb);
                           })
-                          .catch((err) => {
+                          .catch((rawErr) => {
+                            updateSuggestionRegionsWithResponse(res, newGenome, cb);
                             handleNoSuggestionsFound(self);
                           });
                       }
@@ -637,12 +639,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                 });
             }
             else {
-              updateSuggestionRegionsWithResponse(res, newGenome, cb);
               axios.get(suggestionRawURL)
-                .then((res) => {
-                  updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                .then((rawRes) => {
+                  updateSuggestionRawRegionsWithResponse(rawRes, newGenome, cb);
+                  updateSuggestionRegionsWithResponse(res, newGenome, cb);
                 })
-                .catch((err) => {
+                .catch((rawErr) => {
+                  updateSuggestionRegionsWithResponse(res, newGenome, cb);
                   handleNoSuggestionsFound(self);
                 });
             }
@@ -667,12 +670,13 @@ export const updateSuggestions = (newGenome, newModel, newComplexity, newGroup, 
                   handleNoSuggestionsFound(self);
                 }
                 else {
-                  updateSuggestionRegionsWithResponse(res, newGenome,cb);
                   axios.get(suggestionRawURL)
-                    .then((res) => {
-                      updateSuggestionRawRegionsWithResponse(res, newGenome, cb);
+                    .then((rawRes) => {
+                      updateSuggestionRawRegionsWithResponse(rawRes, newGenome, cb);
+                      updateSuggestionRegionsWithResponse(res, newGenome,cb);
                     })
                     .catch((err) => {
+                      updateSuggestionRegionsWithResponse(res, newGenome,cb);
                       handleNoSuggestionsFound(self);
                     });
                 }
