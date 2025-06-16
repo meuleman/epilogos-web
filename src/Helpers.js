@@ -832,6 +832,36 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
   let errorMessage = null;
   const newComplexity = Constants.complexitiesForDataExport[complexity];
   result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+  switch (sampleSet) {
+    case "vC":
+      switch (genome) {
+        case "hg19":
+          switch (group) {
+            case "all":
+              const newHg19vCAllGroup = "All_833_biosamples";
+              result = `${sampleSet}.${genome}.${model}.${newHg19vCAllGroup}.${newComplexity}.mv5`;
+              break;
+            default:
+              break;
+          }
+          break;
+        case "hg38":
+          switch (group) {
+            case "all":
+              const newHg38vCAllGroup = "All_833_biosamples";
+              result = `${sampleSet}.${genome}.${model}.${newHg38vCAllGroup}.${newComplexity}.mv5`;
+              break;
+            default:
+              break;
+          }
+          break;
+        default:
+          break;
+      }
+      break;
+    default:
+      break;
+  }
   if (errorRaised) {
     throw new Error(errorMessage);
   }
