@@ -724,80 +724,83 @@ export const epilogosTrackFilenamesForPairedSampleSet = (sampleSet, genome, mode
   let result = { A : null, B : null, AvsB : null };
   let errorRaised = false;
   let errorMessage = null;
-  switch (sampleSet) {
-    case "vA":
-    case "vB":
-    case "vD":
-      switch (groupAvsB) {
-        case "Cancer_versus_Non-cancer":
-        case "Immune_versus_Non-immune":
-        case "Neural_versus_Non-neural":
-        case "Stem_versus_Non-stem":
-          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-          break;
-        default: {
-          result.A = `${genome}.${model}.${groupA}.${complexity}.epilogos.multires.mv5`;
-          result.B = `${genome}.${model}.${groupB}.${complexity}.epilogos.multires.mv5`;
-          result.AvsB = `${genome}.${model}.${groupAvsB}.${complexity}.epilogos.multires.mv5`;
-          break;
-        }
-      }
-      break;
-    case "vC":
-      switch (genome) {
-        case "hg19": {
-          if (( groupA === "Male" ) && ( groupB === "Female" ) && ( model === '15' )) {
-            groupA = "Male_donors";
-            groupB = "Female_donors";
-          }
-          if (
-            (( groupA === "Adult" ) && ( groupB === "Embryonic" )) ||
-            (( groupA === "Male_donors" ) && ( groupB === "Female_donors" )) ||
-            (( groupA === "Cancer" ) && ( groupB === "Non-cancer" )) ||
-            (( groupA === "Immune" ) && ( groupB === "Non-immune" )) ||
-            (( groupA === "Neural" ) && ( groupB === "Non-neural" ))
-           ) {
-            groupAvsB = `${groupA}_versus_${groupB}`;
-          }
-          if ( groupA.includes("Adult") || groupA.includes("Cancer") || groupA.includes("Immune") || groupA.includes("Neural") || groupA.includes("Male_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
-            result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-            result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-            result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-          }
-          else {
-            result.A = `833sample.${sampleSet}.${genome}.${groupA}.${model}.${complexity}.epilogos.multires.mv5`;
-            result.B = `833sample.${sampleSet}.${genome}.${groupB}.${model}.${complexity}.epilogos.multires.mv5`;
-            result.AvsB = `833sample.${sampleSet}.${genome}.${groupAvsB}.${model}.${complexity}.epilogos.multires.mv5`;
-          }
-          break;
-        }
-        case "hg38": {
-          result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-          result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-          result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-          break;
-        }
-        default:
-          errorRaised = true;
-          errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`;
-          break;
-      }
-      break;
-    case "vG":
-      result.A = `${sampleSet}.${genome}.${model}.${groupA}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      result.B = `${sampleSet}.${genome}.${model}.${groupB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      break;
-    case "vH":
-      result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
-      break;
-    default:
-      break;
-  }
+  // switch (sampleSet) {
+  //   case "vA":
+  //   case "vB":
+  //   case "vD":
+  //     switch (groupAvsB) {
+  //       case "Cancer_versus_Non-cancer":
+  //       case "Immune_versus_Non-immune":
+  //       case "Neural_versus_Non-neural":
+  //       case "Stem_versus_Non-stem":
+  //         result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  //         result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  //         result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  //         break;
+  //       default: {
+  //         result.A = `${genome}.${model}.${groupA}.${complexity}.epilogos.multires.mv5`;
+  //         result.B = `${genome}.${model}.${groupB}.${complexity}.epilogos.multires.mv5`;
+  //         result.AvsB = `${genome}.${model}.${groupAvsB}.${complexity}.epilogos.multires.mv5`;
+  //         break;
+  //       }
+  //     }
+  //     break;
+  //   case "vC":
+  //     switch (genome) {
+  //       case "hg19": {
+  //         if (( groupA === "Male" ) && ( groupB === "Female" ) && ( model === '15' )) {
+  //           groupA = "Male_donors";
+  //           groupB = "Female_donors";
+  //         }
+  //         if (
+  //           (( groupA === "Adult" ) && ( groupB === "Embryonic" )) ||
+  //           (( groupA === "Male_donors" ) && ( groupB === "Female_donors" )) ||
+  //           (( groupA === "Cancer" ) && ( groupB === "Non-cancer" )) ||
+  //           (( groupA === "Immune" ) && ( groupB === "Non-immune" )) ||
+  //           (( groupA === "Neural" ) && ( groupB === "Non-neural" ))
+  //          ) {
+  //           groupAvsB = `${groupA}_versus_${groupB}`;
+  //         }
+  //         if ( groupA.includes("Adult") || groupA.includes("Cancer") || groupA.includes("Immune") || groupA.includes("Neural") || groupA.includes("Male_donors") || groupA.includes("All_833_biosamples_mostly_imputed") || groupA.includes("All_833_biosamples_mostly_observed") ) {
+  //           result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //           result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //           result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //         }
+  //         else {
+  //           result.A = `833sample.${sampleSet}.${genome}.${groupA}.${model}.${complexity}.epilogos.multires.mv5`;
+  //           result.B = `833sample.${sampleSet}.${genome}.${groupB}.${model}.${complexity}.epilogos.multires.mv5`;
+  //           result.AvsB = `833sample.${sampleSet}.${genome}.${groupAvsB}.${model}.${complexity}.epilogos.multires.mv5`;
+  //         }
+  //         break;
+  //       }
+  //       case "hg38": {
+  //         result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //         result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //         result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //         break;
+  //       }
+  //       default:
+  //         errorRaised = true;
+  //         errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenamesForPairedSampleSet ${genome} ${sampleSet}`;
+  //         break;
+  //     }
+  //     break;
+  //   case "vG":
+  //     result.A = `${sampleSet}.${genome}.${model}.${groupA}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     result.B = `${sampleSet}.${genome}.${model}.${groupB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.paired.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     break;
+  //   case "vH":
+  //     result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  //     break;
+  //   default:
+  //     break;
+  // }
+  result.A = `${sampleSet}.${genome}.${model}.${groupA}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  result.B = `${sampleSet}.${genome}.${model}.${groupB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
+  result.AvsB = `${sampleSet}.${genome}.${model}.${groupAvsB}.${Constants.complexitiesForRecommenderV1OptionSaliencyLevel[complexity]}.mv5`;
   if (errorRaised) {
     throw new Error(errorMessage);
   }
@@ -827,148 +830,154 @@ export const epilogosTrackFilenameForSingleSampleSet = (sampleSet, genome, model
   let result = null;
   let errorRaised = false;
   let errorMessage = null;
-  switch (sampleSet) {
-    case "vA":
-      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      
-      switch (genome) {
-        case "hg19": {
-          switch (group) {
-            case "Male_donors":
-            case "Female_donors":
-            case "Stem":
-            case "Non-stem":
-            case "Cancer":
-            case "Non-cancer":
-            case "Immune":
-            case "Non-immune":
-            case "Neural":
-            case "Non-neural":
-              result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-              break;
-            default: {
-              result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
-              break;
-            }
-          }
-          break;
-        }
-        case "hg38": {
-          switch (group) {
-            case "Male_donors":
-            case "Female_donors":
-            case "Stem":
-            case "Non-stem":
-            case "Cancer":
-            case "Non-cancer":
-            case "Immune":
-            case "Non-immune":
-            case "Neural":
-            case "Non-neural":
-              result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-              break;
-            default: {
-              result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
-              break;
-            }
-          }
-          break;
-        }
-        default: {
-          result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
-          break;
-        }
-      }
-      break;
-    case "vB":
-      // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-      // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
-      result = `833sample.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
-      break;
-    case "vC":
-      switch (genome) {
-        case "hg19":
-          switch (group) {
-            case "all":
-              result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
-              break;
-            case "Blood_T-cell":
-            case "Cancer":
-            case "Female":
-            case "HSC_B-cell":
-            case "Immune":
-            case "Male":
-            case "Neural":
-            case "Non-cancer":
-            case "Non-immune":
-            case "Non-neural":
-            case "Non-stem":
-            case "Stem":
-              result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
-              break;
-            default: {
-              const newComplexity = Constants.complexitiesForDataExport[complexity];
-              result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
-              break;
-            }
-          }
-          break;
-        case "hg38":
-          switch (group) {
-            case "all":
-              result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
-              break;
-            case "Female":
-            case "Male":
-              result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
-              break;
-            case "Blood_T-cell":
-            case "Cancer":
-            case "HSC_B-cell":
-            case "Immune":
-            case "Neural":
-            case "Non-cancer":
-            case "Non-immune":
-            case "Non-neural":
-            case "Non-stem":
-            case "Stem":
-            default: {
-              const newComplexity = Constants.complexitiesForDataExport[complexity];
-              result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
-              break;
-            }
-          }
-          break;
-        default:
-          errorRaised = true;
-          errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
-          break;
-      }
-      break;
-    case "vD":
-      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
-      break;
-    case "vE":
-      result = `833sample.${sampleSet}.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
-      break;
-    case "vF":
-      result = `833sample.vE.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
-      break;
-    case "vG":
-      const newComplexity = Constants.complexitiesForDataExport[complexity];
-      result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
-      break;
-    default:
-      result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
-      break;
-  }
+  const newComplexity = Constants.complexitiesForDataExport[complexity];
+  result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
   if (errorRaised) {
     throw new Error(errorMessage);
   }
   return result;
+  // switch (sampleSet) {
+    // case "vA":
+      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+      
+      // switch (genome) {
+      //   case "hg19": {
+      //     switch (group) {
+      //       case "Male_donors":
+      //       case "Female_donors":
+      //       case "Stem":
+      //       case "Non-stem":
+      //       case "Cancer":
+      //       case "Non-cancer":
+      //       case "Immune":
+      //       case "Non-immune":
+      //       case "Neural":
+      //       case "Non-neural":
+      //         result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+      //         break;
+      //       default: {
+      //         result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      //         break;
+      //       }
+      //     }
+      //     break;
+      //   }
+      //   case "hg38": {
+      //     switch (group) {
+      //       case "Male_donors":
+      //       case "Female_donors":
+      //       case "Stem":
+      //       case "Non-stem":
+      //       case "Cancer":
+      //       case "Non-cancer":
+      //       case "Immune":
+      //       case "Non-immune":
+      //       case "Neural":
+      //       case "Non-neural":
+      //         result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+      //         break;
+      //       default: {
+      //         result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      //         break;
+      //       }
+      //     }
+      //     break;
+      //   }
+      //   default: {
+      //     result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+      //     break;
+      //   }
+      // }
+      // break;
+    // case "vB":
+      // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+      // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
+      // result = `833sample.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+      // break;
+  //   case "vC":
+  //     switch (genome) {
+  //       case "hg19":
+  //         switch (group) {
+  //           case "all":
+  //             result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+  //             break;
+  //           case "Blood_T-cell":
+  //           case "Cancer":
+  //           case "Female":
+  //           case "HSC_B-cell":
+  //           case "Immune":
+  //           case "Male":
+  //           case "Neural":
+  //           case "Non-cancer":
+  //           case "Non-immune":
+  //           case "Non-neural":
+  //           case "Non-stem":
+  //           case "Stem":
+  //             result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+  //             break;
+  //           default: {
+  //             const newComplexity = Constants.complexitiesForDataExport[complexity];
+  //             result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+  //             break;
+  //           }
+  //         }
+  //         break;
+  //       case "hg38":
+  //         switch (group) {
+  //           case "all":
+  //             result = `833sample.vC.${group}.${genome}.${model}.${complexity}.gz.bed.reorder.multires.mv5`;
+  //             break;
+  //           case "Female":
+  //           case "Male":
+  //             result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+  //             break;
+  //           case "Blood_T-cell":
+  //           case "Cancer":
+  //           case "HSC_B-cell":
+  //           case "Immune":
+  //           case "Neural":
+  //           case "Non-cancer":
+  //           case "Non-immune":
+  //           case "Non-neural":
+  //           case "Non-stem":
+  //           case "Stem":
+  //           default: {
+  //             const newComplexity = Constants.complexitiesForDataExport[complexity];
+  //             result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+  //             break;
+  //           }
+  //         }
+  //         break;
+  //       default:
+  //         errorRaised = true;
+  //         errorMessage = `Error: Unknown genome specified for Helpers.epilogosTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
+  //         break;
+  //     }
+  //     break;
+  //   case "vD":
+  //     // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+  //     // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+  //     result = `${genome}.${model}.${group}.${complexity}.epilogos.multires.mv5`;
+  //     break;
+  //   case "vE":
+  //     result = `833sample.${sampleSet}.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+  //     break;
+  //   case "vF":
+  //     result = `833sample.vE.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+  //     break;
+  //   case "vG":
+  //     const newComplexity = Constants.complexitiesForDataExport[complexity];
+  //     result = `${sampleSet}.${genome}.${model}.${group}.${newComplexity}.mv5`;
+  //     break;
+  //   default:
+  //     result = `${sampleSet}.${genome}.${model}.${group}.${Constants.complexitiesForDataExport[complexity]}.mv5`;
+  //     break;
+  // }
+  // if (errorRaised) {
+  //   throw new Error(errorMessage);
+  // }
+  // return result;
 }
 
 export const marksTrackFilenameForSingleSampleSetViaLocalHgServer = (sampleSet, genome, model, group) => {
@@ -980,139 +989,140 @@ export const marksTrackFilenameForSingleSampleSet = (sampleSet, genome, model, g
   let result = null;
   let errorRaised = false;
   let errorMessage = null;
-  switch (sampleSet) {
-    case "vA": {
-      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      switch (genome) {
-        case "hg19": {
-          switch (group) {
-            case "Male_donors":
-            case "Female_donors":
-            case "Stem":
-            case "Non-stem":
-            case "Cancer":
-            case "Non-cancer":
-            case "Immune":
-            case "Non-immune":
-            case "Neural":
-            case "Non-neural":
-              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-              break;
-            default: {
-              result = `${genome}.${model}.${group}.marks.multires.mv5`;
-              break;
-            }
-          }
-          break;
-        }
-        case "hg38": {
-          switch (group) {
-            case "Male_donors":
-            case "Female_donors":
-            case "Stem":
-            case "Non-stem":
-            case "Cancer":
-            case "Non-cancer":
-            case "Immune":
-            case "Non-immune":
-            case "Neural":
-            case "Non-neural":
-              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-              break;
-            default: {
-              result = `${genome}.${model}.${group}.marks.multires.mv5`;
-              break;
-            }
-          }
-          break;
-        }
-        default: {
-          result = `${genome}.${model}.${group}.marks.multires.mv5`;
-          break;
-        }
-      }
-      break;
-    }
-    case "vB":
-      // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
-      // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
-      result = `833sample.${group}.${genome}.${model}.marks.multires.mv5`;
-      break;
-    case "vC":
-      switch (genome) {
-        case "hg19":
-          switch (group) {
-            case "all":
-            case "Blood_T-cell":
-            case "Cancer":
-            case "Female":
-            case "HSC_B-cell":
-            case "Immune":
-            case "Male":
-            case "Neural":
-            case "Non-cancer":
-            case "Non-immune":
-            case "Non-neural":
-            case "Non-stem":
-            case "Stem":
-              result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
-              break;
-            default:
-              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-              break;
-          }
-          break;
-        case "hg38":
-          switch (group) {
-            case "all":
-            case "Female":
-            case "Male":
-              result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
-              break;
-            case "Blood_T-cell":
-            case "Cancer":
-            case "HSC_B-cell":
-            case "Immune":
-            case "Neural":
-            case "Non-cancer":
-            case "Non-immune":
-            case "Non-neural":
-            case "Non-stem":
-            case "Stem":
-            default:
-              result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-              break;
-          }
-          break;
-        default: {
-          errorRaised = true;
-          errorMessage = `Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
-          break;
-        }
-      }
-      break;
-    case "vD":
-      // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
-      // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
-      result = `${genome}.${model}.${group}.marks.multires.mv5`;
-      break;
-    case "vE": {
-      const complexity = 'KL';
-      result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
-      break;
-    }
-    case "vF":
-      result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
-      break;
-    case "vG":
-      result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-      break;
-    default: {
-      result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
-      break;
-    }
-  }
+  // switch (sampleSet) {
+  //   case "vA": {
+  //     // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+  //     // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+  //     switch (genome) {
+  //       case "hg19": {
+  //         switch (group) {
+  //           case "Male_donors":
+  //           case "Female_donors":
+  //           case "Stem":
+  //           case "Non-stem":
+  //           case "Cancer":
+  //           case "Non-cancer":
+  //           case "Immune":
+  //           case "Non-immune":
+  //           case "Neural":
+  //           case "Non-neural":
+  //             result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //             break;
+  //           default: {
+  //             result = `${genome}.${model}.${group}.marks.multires.mv5`;
+  //             break;
+  //           }
+  //         }
+  //         break;
+  //       }
+  //       case "hg38": {
+  //         switch (group) {
+  //           case "Male_donors":
+  //           case "Female_donors":
+  //           case "Stem":
+  //           case "Non-stem":
+  //           case "Cancer":
+  //           case "Non-cancer":
+  //           case "Immune":
+  //           case "Non-immune":
+  //           case "Neural":
+  //           case "Non-neural":
+  //             result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //             break;
+  //           default: {
+  //             result = `${genome}.${model}.${group}.marks.multires.mv5`;
+  //             break;
+  //           }
+  //         }
+  //         break;
+  //       }
+  //       default: {
+  //         result = `${genome}.${model}.${group}.marks.multires.mv5`;
+  //         break;
+  //       }
+  //     }
+  //     break;
+  //   }
+  //   case "vB":
+  //     // epilogos example: "833sample.all.hg19.15.KL.gz.bed.reorder.multires.mv5"
+  //     // marks example:    "833sample.all.hg19.15.marks.multires.mv5"
+  //     result = `833sample.${group}.${genome}.${model}.marks.multires.mv5`;
+  //     break;
+  //   case "vC":
+  //     switch (genome) {
+  //       case "hg19":
+  //         switch (group) {
+  //           case "all":
+  //           case "Blood_T-cell":
+  //           case "Cancer":
+  //           case "Female":
+  //           case "HSC_B-cell":
+  //           case "Immune":
+  //           case "Male":
+  //           case "Neural":
+  //           case "Non-cancer":
+  //           case "Non-immune":
+  //           case "Non-neural":
+  //           case "Non-stem":
+  //           case "Stem":
+  //             result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+  //             break;
+  //           default:
+  //             result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //             break;
+  //         }
+  //         break;
+  //       case "hg38":
+  //         switch (group) {
+  //           case "all":
+  //           case "Female":
+  //           case "Male":
+  //             result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+  //             break;
+  //           case "Blood_T-cell":
+  //           case "Cancer":
+  //           case "HSC_B-cell":
+  //           case "Immune":
+  //           case "Neural":
+  //           case "Non-cancer":
+  //           case "Non-immune":
+  //           case "Non-neural":
+  //           case "Non-stem":
+  //           case "Stem":
+  //           default:
+  //             result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //             break;
+  //         }
+  //         break;
+  //       default: {
+  //         errorRaised = true;
+  //         errorMessage = `Error: Unknown genome specified for Helpers.marksTrackFilenameForSingleSampleSet ${genome} ${sampleSet}`;
+  //         break;
+  //       }
+  //     }
+  //     break;
+  //   case "vD":
+  //     // epilogos example: "hg19.25.adult_blood_reference.KLs.epilogos.multires.mv5"
+  //     // marks example:    "hg19.25.adult_blood_reference.marks.multires.mv5"
+  //     result = `${genome}.${model}.${group}.marks.multires.mv5`;
+  //     break;
+  //   case "vE": {
+  //     const complexity = 'KL';
+  //     result = `833sample.vC.${genome}.${group}.${model}.${complexity}.epilogos.multires.mv5`;
+  //     break;
+  //   }
+  //   case "vF":
+  //     result = `833sample.vC.${group}.${genome}.${model}.marks.multires.mv5`;
+  //     break;
+  //   case "vG":
+  //     result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //     break;
+  //   default: {
+  //     result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
+  //     break;
+  //   }
+  // }
+  result = `${sampleSet}.${genome}.${model}.${group}.mv5`;
   if (errorRaised) {
     throw new Error(errorMessage);
   }
