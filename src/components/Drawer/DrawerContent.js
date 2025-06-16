@@ -600,7 +600,8 @@ class DrawerContent extends Component {
     // const orderedSampleSetKeys = Constants.sampleSetsForSettingsDrawerOrderedKeys;
     const orderedSampleSetKeys = Manifest.orderedSampleSetKeys;
     orderedSampleSetKeys.forEach(k => {
-      if (((k === "vB") || (k === "vE") || (k === "vF") || (k === "vG") || (k === "vH") || (k === "vI")) && (this.props.isProductionSite)) return;
+      // if (((k === "vB") || (k === "vE") || (k === "vF") || (k === "vG") || (k === "vH") || (k === "vI")) && (this.props.isProductionSite)) return;
+      if (((k === "vB") || (k === "vE") || (k === "vF") || (k === "vG") || (k === "vI")) && (this.props.isProductionSite)) return;
       const endpointURL = Manifest.trackServerBySampleSet[k];
       if (Manifest.formattedDescriptionsBySampleSet[k]) {
         const kLabel = Manifest.formattedDescriptionsBySampleSet[k];
