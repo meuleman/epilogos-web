@@ -1048,7 +1048,8 @@ class Portal extends Component {
           </Container>
             
         </div>
-        
+ 
+<!--       
         <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsContent = ref}>
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-tools"><span className="epilogos-content-column-header-emphasis">tools</span></div>
         </div>
@@ -1077,7 +1078,7 @@ class Portal extends Component {
             </Row>
             
         </Container>
-        
+-->       
         
         <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsCreditsContent = ref}>
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-credits"><span className="epilogos-content-column-header-emphasis">credits</span></div>
@@ -1090,14 +1091,13 @@ class Portal extends Component {
                 <div className="epilogos-offscreen-content-placeholder-text-center">
                   <div style={{textAlign:"left", paddingBottom:"10px", paddingLeft:"20px", paddingRight:"20px"}}>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line epilogos-offscreen-content-placeholder-table-container-item-line-header">
-                      Altius Institute for Biomedical Sciences
+                      Epilogos team
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line">
                       <div>▪ <em>Wouter Meuleman</em> (concept, project lead)</div>
                       <div>▪ <em>Alex Reynolds</em> (website design and implementation)</div>
                       <div>▪ <em>Jacob Quon</em> (software implementation)</div>
                       <div>▪ <em>Eric Rynes</em> (software implementation)</div>
-                      <div>▪ <em>Chad Lundberg</em> (UI/UX design)</div>
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line epilogos-offscreen-content-placeholder-table-container-item-line-header" style={{paddingTop:"10px"}}>
                       HiGlass team
@@ -1112,12 +1112,12 @@ class Portal extends Component {
                 <div className="epilogos-offscreen-content-placeholder-text-center">
                   <div style={{textAlign:"left", paddingBottom:"10px", paddingLeft:"20px", paddingRight:"20px"}}>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line epilogos-offscreen-content-placeholder-table-container-item-line-header">
-                      citation
+                      Manuscript
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line">
-                      <div>Meuleman et al.</div>
+                      <div>Quon, Reynolds, et al.</div>
                       <div><em>Epilogos: information-theoretic navigation of multi-tissue functional genomic annotations.</em></div> 
-                      <div>Manuscript in preparation.</div>
+                      <div>bioRxiv (2025)</div>
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line epilogos-offscreen-content-placeholder-table-container-item-line-header" style={{paddingTop:"10px"}}>
                       source code
@@ -1125,6 +1125,7 @@ class Portal extends Component {
                     <div className="">
                       <div>Code is available from GitHub:</div>
                       <div><FaGithub /> <span style={{fontSize:"0.85em"}}>Core: <a href="https://github.com/meuleman/epilogos" onClick={this.onClick} data-id="https://github.com/meuleman/epilogos" data-target="_blank">https://github.com/meuleman/epilogos</a></span></div>
+                      <div><FaGithub /> <span style={{fontSize:"0.85em"}}>Web front-end: <a href="https://github.com/meuleman/epilogos-web" onClick={this.onClick} data-id="https://github.com/meuleman/epilogos-web" data-target="_blank">https://github.com/meuleman/epilogos-web</a></span></div>
                     </div>
                   </div>
                 </div>
