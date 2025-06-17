@@ -810,7 +810,7 @@ export const groupsForRecommenderV1OptionGroup = {
     "hg19": {
       "adult_blood_sample": "Adult_Blood_Sample",
       "adult_blood_reference": "Adult_Blood_Reference",
-      "all": "All_127_Roadmap_epigenomes",
+      "All_127_Roadmap_epigenomes": "All_127_Roadmap_epigenomes",
       "Blood_T-cell": "Blood_and_T-cells",
       "Brain": "Brain",
       "CellLine": "Cell_Line",
@@ -857,7 +857,7 @@ export const groupsForRecommenderV1OptionGroup = {
     "hg38": {
       "adult_blood_sample": "Adult_Blood_Sample",
       "adult_blood_reference": "Adult_Blood_Reference",
-      "all": "All_127_Roadmap_epigenomes",
+      "All_127_Roadmap_epigenomes": "All_127_Roadmap_epigenomes",
       "Blood_T-cell": "Blood_and_T-cells",
       "Brain": "Brain",
       "CellLine": "Cell_Line",
@@ -904,7 +904,7 @@ export const groupsForRecommenderV1OptionGroup = {
   },
   "vD": {
     "mm10": {
-      "all": "All_65_epigenomes",
+      "All_65_epigenomes": "All_65_epigenomes",
       "digestiveSystem": "Digestive_System",
       "e11.5": "Embryonic_day_11.5",
       "e11.5_vs_P0": "Embryonic_day_11.5_versus_Day-of-birth",
@@ -931,12 +931,12 @@ export const groupsForRecommenderV1OptionGroup = {
   },
   "vB": {
     "hg19": {
-      "all": "All_833_biosamples"
+      "All_833_biosamples": "All_833_biosamples"
     }
   },
   "vC": {
     "hg19": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
       "Cancer": "Cancer",
       "Female": "Female",
       "Female_donors": "Female",
@@ -947,7 +947,7 @@ export const groupsForRecommenderV1OptionGroup = {
       "Stem": "Stem",
     },
     "hg38": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
       "Cancer": "Cancer",
       "Female": "Female",
       "Female_donors": "Female",
@@ -963,7 +963,7 @@ export const groupsForRecommenderV1OptionGroup = {
   },
   "vF": {
     "hg19": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
     },
   },
   "vG": {
@@ -1010,7 +1010,7 @@ export const groupsForRecommenderV3OptionGroup = {
     "hg19": {
       "adult_blood_sample": "Adult_Blood_Sample",
       "adult_blood_reference": "Adult_Blood_Reference",
-      "all": "All_127_Roadmap_epigenomes",
+      "All_127_Roadmap_epigenomes": "All_127_Roadmap_epigenomes",
       "Blood_T-cell": "Blood_and_T-cells",
       "Brain": "Brain",
       "CellLine": "Cell_Line",
@@ -1054,7 +1054,7 @@ export const groupsForRecommenderV3OptionGroup = {
     "hg38": {
       "adult_blood_sample": "Adult_Blood_Sample",
       "adult_blood_reference": "Adult_Blood_Reference",
-      "all": "All_127_Roadmap_epigenomes",
+      "All_127_Roadmap_epigenomes": "All_127_Roadmap_epigenomes",
       "Blood_T-cell": "Blood_and_T-cells",
       "Brain": "Brain",
       "CellLine": "Cell_Line",
@@ -1098,7 +1098,7 @@ export const groupsForRecommenderV3OptionGroup = {
   },
   "vD": {
     "mm10": {
-      "all": "All_65_epigenomes",
+      "All_65_epigenomes": "All_65_epigenomes",
       "digestiveSystem": "Digestive_System",
       "e11.5": "Embryonic_day_11.5",
       "e11.5_vs_P0": "Embryonic_day_11.5_versus_Day-of-birth",
@@ -1125,15 +1125,15 @@ export const groupsForRecommenderV3OptionGroup = {
   },
   "vB": {
     "hg19": {
-      "all": "All_833_biosamples"
+      "All_833_biosamples": "All_833_biosamples"
     }
   },
   "vC": {
     "hg19": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
     },
     "hg38": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
       "Non-stem": "Non-stem",
     }
   },
@@ -1142,7 +1142,7 @@ export const groupsForRecommenderV3OptionGroup = {
   },
   "vF": {
     "hg19": {
-      "all": "All_833_biosamples",
+      "All_833_biosamples": "All_833_biosamples",
     },
   },
   "vG": {
@@ -1186,7 +1186,7 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
     "hg19": {
       "adult_blood_sample": "10k",
       "adult_blood_reference": "10k",
-      "all": "10k",
+      "All_127_Roadmap_epigenomes": "10k",
       "Blood_T-cell": "10k",
       "Brain": "10k",
       "CellLine": "10k",
@@ -1230,7 +1230,7 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
     "hg38": {
       "adult_blood_sample": "10k",
       "adult_blood_reference": "10k",
-      "all": "10k",
+      "All_127_Roadmap_epigenomes": "10k",
       "Blood_T-cell": "10k",
       "Brain": "10k",
       "CellLine": "10k",
@@ -1274,7 +1274,7 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
   },
   "vD": {
     "mm10": {
-      "all": "10k",
+      "All_65_epigenomes": "10k",
       "digestiveSystem": "10k",
       "e11.5": "10k",
       "e11.5_vs_P0": "10k",
@@ -1300,15 +1300,15 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
   },
   "vB": {
     "hg19": {
-      "all": "10k",
+      "All_833_biosamples": "10k",
     }
   },
   "vC": {
     "hg19": {
-      "all": "10k",
+      "All_833_biosamples": "10k",
     },
     "hg38": {
-      "all": "10k",
+      "All_833_biosamples": "10k",
       "Non-stem": "10k",
     }
   },
@@ -1317,7 +1317,7 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
   },
   "vF": {
     "hg19": {
-      "all": "10k",
+      "All_833_biosamples": "10k",
     },
   },
   "vG": {
@@ -1361,18 +1361,18 @@ export const windowSizeKeyForRecommenderV3OptionGroup = {
 
 export const defaultSingleGroupKeys = {
   "vA": {
-    "hg19": "all",
-    "hg38": "all",
+    "hg19": "All_127_Roadmap_epigenomes",
+    "hg38": "All_127_Roadmap_epigenomes",
   },
   "vB": {
-    "hg19": "all",
+    "hg19": "All_833_biosamples",
   },
   "vC": {
-    "hg19": "all",
-    "hg38": "all",
+    "hg19": "All_833_biosamples",
+    "hg38": "All_833_biosamples",
   },
   "vD": {
-    "mm10": "all",
+    "mm10": "All_65_epigenomes",
   },
   "vE": {
     "hg19": "Female",
@@ -1862,7 +1862,7 @@ export const portalHgViewParameters = {
   "genome": "hg38",
   "model": "18",
   "complexity": "KL",
-  "group": "all",
+  "group": "All_833_biosamples",
   "mode": "single",
   "paddingMidpoint": 33000,
   "epilogosHeaderNavbarHeight": 56,
@@ -1894,7 +1894,7 @@ export const viewerHgViewParameters = {
   "genome": "hg19",
   "model": "15",
   "complexity": "KL",
-  "group": "all",
+  "group": "All_127_Roadmap_epigenomes",
   "aggregation": "bkfq_2binWide_allSample",
   "mode": "single",
   "paddingMidpoint": 0,
@@ -2302,19 +2302,19 @@ export const sampleSetRowMetadataByGroup = {
   "vA": {
     "hg19": {
       "15": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E002", "E008", "E001", "E015", "E014", "E016", "E003", "E024", "E020", "E019", "E018", "E021", "E022", "E007", "E009", "E010", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E033", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E031", "E035", "E051", "E050", "E036", "E032", "E046", "E030", "E026", "E049", "E025", "E023", "E052", "E055", "E056", "E059", "E061", "E057", "E058", "E028", "E027", "E054", "E053", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E070", "E082", "E081", "E063", "E100", "E108", "E107", "E089", "E090", "E083", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E110", "E077", "E079", "E094", "E099", "E086", "E088", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E002": "ES-WA7", "E008": "H9", "E001": "ES-I3", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E024": "ES-UCSF4", "E020": "iPS-20b", "E019": "iPS-18", "E018": "iPS-15b", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E009": "H9 Derived Neuronal Progenitor Cultured", "E010": "H9 Derived Neuron Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E033": "Primary T cells from cord blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E031": "Primary B cells from cord blood", "E035": "Primary hematopoietic stem cells", "E051": "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036": "Primary hematopoietic stem cells short term culture", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E030": "Primary neutrophils from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025": "Adipose Derived Mesenchymal Stem Cell Cultured", "E023": "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052": "Muscle Satellite Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E057": "Foreskin Keratinocyte Primary Cells skin02", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E028": "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027": "Breast Myoepithelial Primary Cells", "E054": "Ganglion Eminence derived primary cultured neurospheres", "E053": "Cortex derived primary cultured neurospheres", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E070": "Brain Germinal Matrix", "E082": "Fetal Brain Female", "E081": "Fetal Brain Male", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E107": "Skeletal Muscle Male", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E083": "Fetal Heart", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E110": "Stomach Mucosa", "E077": "Duodenum Mucosa", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E086": "Fetal Kidney", "E088": "Fetal Lung", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
       },
       "18": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E008", "E015", "E014", "E016", "E003", "E020", "E019", "E021", "E022", "E007", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E050", "E032", "E046", "E026", "E049", "E055", "E056", "E059", "E061", "E058", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E063", "E100", "E108", "E089", "E090", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E079", "E094", "E099", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E008": "H9", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E020": "iPS-20b", "E019": "iPS-18", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
       },
       "25": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E002", "E008", "E001", "E015", "E014", "E016", "E003", "E024", "E020", "E019", "E018", "E021", "E022", "E007", "E009", "E010", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E033", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E031", "E035", "E051", "E050", "E036", "E032", "E046", "E030", "E026", "E049", "E025", "E023", "E052", "E055", "E056", "E059", "E061", "E057", "E058", "E028", "E027", "E054", "E053", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E070", "E082", "E081", "E063", "E100", "E108", "E107", "E089", "E090", "E083", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E110", "E077", "E079", "E094", "E099", "E086", "E088", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E002": "ES-WA7", "E008": "H9", "E001": "ES-I3", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E024": "ES-UCSF4", "E020": "iPS-20b", "E019": "iPS-18", "E018": "iPS-15b", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E009": "H9 Derived Neuronal Progenitor Cultured", "E010": "H9 Derived Neuron Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E033": "Primary T cells from cord blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E031": "Primary B cells from cord blood", "E035": "Primary hematopoietic stem cells", "E051": "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036": "Primary hematopoietic stem cells short term culture", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E030": "Primary neutrophils from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025": "Adipose Derived Mesenchymal Stem Cell Cultured", "E023": "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052": "Muscle Satellite Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E057": "Foreskin Keratinocyte Primary Cells skin02", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E028": "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027": "Breast Myoepithelial Primary Cells", "E054": "Ganglion Eminence derived primary cultured neurospheres", "E053": "Cortex derived primary cultured neurospheres", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E070": "Brain Germinal Matrix", "E082": "Fetal Brain Female", "E081": "Fetal Brain Male", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E107": "Skeletal Muscle Male", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E083": "Fetal Heart", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E110": "Stomach Mucosa", "E077": "Duodenum Mucosa", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E086": "Fetal Kidney", "E088": "Fetal Lung", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
@@ -2322,19 +2322,19 @@ export const sampleSetRowMetadataByGroup = {
     },
     "hg38": {
       "15": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E002", "E008", "E001", "E015", "E014", "E016", "E003", "E024", "E020", "E019", "E018", "E021", "E022", "E007", "E009", "E010", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E033", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E031", "E035", "E051", "E050", "E036", "E032", "E046", "E030", "E026", "E049", "E025", "E023", "E052", "E055", "E056", "E059", "E061", "E057", "E058", "E028", "E027", "E054", "E053", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E070", "E082", "E081", "E063", "E100", "E108", "E107", "E089", "E090", "E083", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E110", "E077", "E079", "E094", "E099", "E086", "E088", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E002": "ES-WA7", "E008": "H9", "E001": "ES-I3", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E024": "ES-UCSF4", "E020": "iPS-20b", "E019": "iPS-18", "E018": "iPS-15b", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E009": "H9 Derived Neuronal Progenitor Cultured", "E010": "H9 Derived Neuron Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E033": "Primary T cells from cord blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E031": "Primary B cells from cord blood", "E035": "Primary hematopoietic stem cells", "E051": "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036": "Primary hematopoietic stem cells short term culture", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E030": "Primary neutrophils from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025": "Adipose Derived Mesenchymal Stem Cell Cultured", "E023": "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052": "Muscle Satellite Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E057": "Foreskin Keratinocyte Primary Cells skin02", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E028": "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027": "Breast Myoepithelial Primary Cells", "E054": "Ganglion Eminence derived primary cultured neurospheres", "E053": "Cortex derived primary cultured neurospheres", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E070": "Brain Germinal Matrix", "E082": "Fetal Brain Female", "E081": "Fetal Brain Male", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E107": "Skeletal Muscle Male", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E083": "Fetal Heart", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E110": "Stomach Mucosa", "E077": "Duodenum Mucosa", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E086": "Fetal Kidney", "E088": "Fetal Lung", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
       },
       "18": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E008", "E015", "E014", "E016", "E003", "E020", "E019", "E021", "E022", "E007", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E050", "E032", "E046", "E026", "E049", "E055", "E056", "E059", "E061", "E058", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E063", "E100", "E108", "E089", "E090", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E079", "E094", "E099", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E008": "H9", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E020": "iPS-20b", "E019": "iPS-18", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
       },
       "25": {
-        "all": {
+        "All_127_Roadmap_epigenomes": {
           "samples": ["E017", "E002", "E008", "E001", "E015", "E014", "E016", "E003", "E024", "E020", "E019", "E018", "E021", "E022", "E007", "E009", "E010", "E013", "E012", "E011", "E004", "E005", "E006", "E062", "E034", "E045", "E033", "E044", "E043", "E039", "E041", "E042", "E040", "E037", "E048", "E038", "E047", "E029", "E031", "E035", "E051", "E050", "E036", "E032", "E046", "E030", "E026", "E049", "E025", "E023", "E052", "E055", "E056", "E059", "E061", "E057", "E058", "E028", "E027", "E054", "E053", "E112", "E093", "E071", "E074", "E068", "E069", "E072", "E067", "E073", "E070", "E082", "E081", "E063", "E100", "E108", "E107", "E089", "E090", "E083", "E104", "E095", "E105", "E065", "E078", "E076", "E103", "E111", "E092", "E085", "E084", "E109", "E106", "E075", "E101", "E102", "E110", "E077", "E079", "E094", "E099", "E086", "E088", "E097", "E087", "E080", "E091", "E066", "E098", "E096", "E113", "E114", "E115", "E116", "E117", "E118", "E119", "E120", "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129"],
           "description": { "E017": "IMR90 fetal lung fibroblasts", "E002": "ES-WA7", "E008": "H9", "E001": "ES-I3", "E015": "HUES6", "E014": "HUES48", "E016": "HUES64", "E003": "H1", "E024": "ES-UCSF4", "E020": "iPS-20b", "E019": "iPS-18", "E018": "iPS-15b", "E021": "iPS DF 6.9", "E022": "iPS DF 19.11", "E007": "H1 Derived Neuronal Progenitor Cultured", "E009": "H9 Derived Neuronal Progenitor Cultured", "E010": "H9 Derived Neuron Cultured", "E013": "hESC Derived CD56+ Mesoderm Cultured", "E012": "hESC Derived CD56+ Ectoderm Cultured", "E011": "hESC Derived CD184+ Endoderm Cultured", "E004": "H1 BMP4 Derived Mesendoderm Cultured", "E005": "H1 BMP4 Derived Trophoblast Cultured", "E006": "H1 Derived Mesenchymal Stem Cells", "E062": "Primary mononuclear cells from peripheral blood", "E034": "Primary T cells from peripheral blood", "E045": "Primary T cells effector/memory enriched from peripheral blood", "E033": "Primary T cells from cord blood", "E044": "Primary T regulatory cells from peripheral blood", "E043": "Primary T helper cells from peripheral blood", "E039": "Primary T helper naive cells from peripheral blood", "E041": "Primary T helper cells PMA-I stimulated", "E042": "Primary T helper 17 cells PMA-I stimulated", "E040": "Primary T helper memory cells from peripheral blood 1", "E037": "Primary T helper memory cells from peripheral blood 2", "E048": "Primary T CD8+ memory cells from peripheral blood", "E038": "Primary T helper naive cells from peripheral blood", "E047": "Primary T CD8+ naive cells from peripheral blood", "E029": "Primary monocytes from peripheral blood", "E031": "Primary B cells from cord blood", "E035": "Primary hematopoietic stem cells", "E051": "Primary hematopoietic stem cells G-CSF-mobilized Male", "E050": "Primary hematopoietic stem cells G-CSF-mobilized Female", "E036": "Primary hematopoietic stem cells short term culture", "E032": "Primary B cells from peripheral blood", "E046": "Primary Natural Killer cells from peripheral blood", "E030": "Primary neutrophils from peripheral blood", "E026": "Bone Marrow Derived Cultured Mesenchymal Stem Cells", "E049": "Mesenchymal Stem Cell Derived Chondrocyte Cultured", "E025": "Adipose Derived Mesenchymal Stem Cell Cultured", "E023": "Mesenchymal Stem Cell Derived Adipocyte Cultured", "E052": "Muscle Satellite Cultured", "E055": "Foreskin Fibroblast Primary Cells skin01", "E056": "Foreskin Fibroblast Primary Cells skin02", "E059": "Foreskin Melanocyte Primary Cells skin01", "E061": "Foreskin Melanocyte Primary Cells skin03", "E057": "Foreskin Keratinocyte Primary Cells skin02", "E058": "Foreskin Keratinocyte Primary Cells skin03", "E028": "Breast variant Human Mammary Epithelial Cells (vHMEC)", "E027": "Breast Myoepithelial Primary Cells", "E054": "Ganglion Eminence derived primary cultured neurospheres", "E053": "Cortex derived primary cultured neurospheres", "E112": "Thymus", "E093": "Fetal Thymus", "E071": "Brain Hippocampus Middle", "E074": "Brain Substantia Nigra", "E068": "Brain Anterior Caudate", "E069": "Brain Cingulate Gyrus", "E072": "Brain Inferior Temporal Lobe", "E067": "Brain Angular Gyrus", "E073": "Brain_Dorsolateral_Prefrontal_Cortex", "E070": "Brain Germinal Matrix", "E082": "Fetal Brain Female", "E081": "Fetal Brain Male", "E063": "Adipose Nuclei", "E100": "Psoas Muscle", "E108": "Skeletal Muscle Female", "E107": "Skeletal Muscle Male", "E089": "Fetal Muscle Trunk", "E090": "Fetal Muscle Leg", "E083": "Fetal Heart", "E104": "Right Atrium", "E095": "Left Ventricle", "E105": "Right Ventricle", "E065": "Aorta", "E078": "Duodenum Smooth Muscle", "E076": "Colon Smooth Muscle", "E103": "Rectal Smooth Muscle", "E111": "Stomach Smooth Muscle", "E092": "Fetal Stomach", "E085": "Fetal Intestine Small", "E084": "Fetal Intestine Large", "E109": "Small Intestine", "E106": "Sigmoid Colon", "E075": "Colonic Mucosa", "E101": "Rectal Mucosa Donor 29", "E102": "Rectal Mucosa Donor 31", "E110": "Stomach Mucosa", "E077": "Duodenum Mucosa", "E079": "Esophagus", "E094": "Gastric", "E099": "Placenta Amnion", "E086": "Fetal Kidney", "E088": "Fetal Lung", "E097": "Ovary", "E087": "Pancreatic Islets", "E080": "Fetal Adrenal Gland", "E091": "Placenta", "E066": "Liver", "E098": "Pancreas", "E096": "Lung", "E113": "Spleen", "E114": "A549 EtOH 0.02pct Lung Carcinoma", "E115": "Dnd41 TCell Leukemia", "E116": "GM12878 Lymphoblastoid", "E117": "HeLa-S3 Cervical Carcinoma", "E118": "HepG2 Hepatocellular Carcinoma", "E119": "HMEC Mammary Epithelial Primary Cells", "E120": "HSMM Skeletal Muscle Myoblasts", "E121": "HSMM cell derived Skeletal Muscle Myotubes", "E122": "HUVEC Umbilical Vein Endothelial Primary Cells", "E123": "K562 Leukemia", "E124": "Monocytes-CD14+ RO01746 Primary Cells", "E125": "NH-A Astrocytes Primary Cells", "E126": "NHDF-Ad Adult Dermal Fibroblast Primary Cells", "E127": "NHEK-Epidermal Keratinocyte Primary Cells", "E128": "NHLF Lung Fibroblast Primary Cells", "E129": "Osteoblast Primary Cells" }
         }
@@ -2344,7 +2344,7 @@ export const sampleSetRowMetadataByGroup = {
   "vD": {
     "mm10": {
       "15": {
-        "all": {
+        "All_65_epigenomes": {
           "samples": ["e11.5_forebrain", "e12.5_forebrain", "e13.5_forebrain", "e14.5_forebrain", "e15.5_forebrain", "e16.5_forebrain", "P0_forebrain", "e11.5_midbrain", "e12.5_midbrain", "e13.5_midbrain", "e14.5_midbrain", "e15.5_midbrain", "e16.5_midbrain", "P0_midbrain", "e11.5_hindbrain", "e12.5_hindbrain", "e13.5_hindbrain", "e14.5_hindbrain", "e15.5_hindbrain", "e16.5_hindbrain", "P0_hindbrain", "e11.5_neural-tube", "e12.5_neural-tube", "e13.5_neural-tube", "e14.5_neural-tube", "e15.5_neural-tube", "e11.5_heart", "e12.5_heart", "e13.5_heart", "e14.5_heart", "e15.5_heart", "e16.5_heart", "P0_heart", "e14.5_lung", "e15.5_lung", "e16.5_lung", "P0_lung", "e14.5_kidney", "e15.5_kidney", "e16.5_kidney", "P0_kidney", "e11.5_liver", "e12.5_liver", "e13.5_liver", "e14.5_liver", "e15.5_liver", "e16.5_liver", "P0_liver", "e14.5_intestine", "e15.5_intestine", "e16.5_intestine", "P0_intestine", "e14.5_stomach", "e15.5_stomach", "e16.5_stomach", "P0_stomach", "e11.5_limb", "e12.5_limb", "e13.5_limb", "e14.5_limb", "e15.5_limb", "e11.5_facial-prominence", "e12.5_facial-prominence", "e13.5_facial-prominence", "e14.5_facial-prominence", "e15.5_facial-prominence"],
           "description": { "e11.5_forebrain": "Embryonic day 11.5 forebrain", "e12.5_forebrain": "Embryonic day 12.5 forebrain", "e13.5_forebrain": "Embryonic day 13.5 forebrain", "e14.5_forebrain": "Embryonic day 14.5 forebrain", "e15.5_forebrain": "Embryonic day 15.5 forebrain", "e16.5_forebrain": "Embryonic day 16.5 forebrain", "P0_forebrain": "Day-of-birth forebrain", "e11.5_midbrain": "Embryonic day 11.5 midbrain", "e12.5_midbrain": "Embryonic day 12.5 midbrain", "e13.5_midbrain": "Embryonic day 13.5 midbrain", "e14.5_midbrain": "Embryonic day 14.5 midbrain", "e15.5_midbrain": "Embryonic day 15.5 midbrain", "e16.5_midbrain": "Embryonic day 16.5 midbrain", "P0_midbrain": "Day-of-birth midbrain", "e11.5_hindbrain": "Embryonic day 11.5 hindbrain", "e12.5_hindbrain": "Embryonic day 12.5 hindbrain", "e13.5_hindbrain": "Embryonic day 13.5 hindbrain", "e14.5_hindbrain": "Embryonic day 14.5 hindbrain", "e15.5_hindbrain": "Embryonic day 15.5 hindbrain", "e16.5_hindbrain": "Embryonic day 16.5 hindbrain", "P0_hindbrain": "Day-of-birth hindbrain", "e11.5_neural-tube": "Embryonic day 11.5 neural tube", "e12.5_neural-tube": "Embryonic day 12.5 neural tube", "e13.5_neural-tube": "Embryonic day 13.5 neural tube", "e14.5_neural-tube": "Embryonic day 14.5 neural tube", "e15.5_neural-tube": "Embryonic day 15.5 neural tube", "e11.5_heart": "Embryonic day 11.5 heart", "e12.5_heart": "Embryonic day 12.5 heart", "e13.5_heart": "Embryonic day 13.5 heart", "e14.5_heart": "Embryonic day 14.5 heart", "e15.5_heart": "Embryonic day 15.5 heart", "e16.5_heart": "Embryonic day 16.5 heart", "P0_heart": "Day-of-birth heart", "e14.5_lung": "Embryonic day 14.5 lung", "e15.5_lung": "Embryonic day 15.5 lung", "e16.5_lung": "Embryonic day 16.5 lung", "P0_lung": "Day-of-birth lung", "e14.5_kidney": "Embryonic day 14.5 kidney", "e15.5_kidney": "Embryonic day 15.5 kidney", "e16.5_kidney": "Embryonic day 16.5 kidney", "P0_kidney": "Day-of-birth kidney", "e11.5_liver": "Embryonic day 11.5 liver", "e12.5_liver": "Embryonic day 12.5 liver", "e13.5_liver": "Embryonic day 13.5 liver", "e14.5_liver": "Embryonic day 14.5 liver", "e15.5_liver": "Embryonic day 15.5 liver", "e16.5_liver": "Embryonic day 16.5 liver", "P0_liver": "Day-of-birth liver", "e14.5_intestine": "Embryonic day 14.5 intestine", "e15.5_intestine": "Embryonic day 15.5 intestine", "e16.5_intestine": "Embryonic day 16.5 intestine", "P0_intestine": "Day-of-birth intestine", "e14.5_stomach": "Embryonic day 14.5 stomach", "e15.5_stomach": "Embryonic day 15.5 stomach", "e16.5_stomach": "Embryonic day 16.5 stomach", "P0_stomach": "Day-of-birth stomach", "e11.5_limb": "Embryonic day 11.5 limb", "e12.5_limb": "Embryonic day 12.5 limb", "e13.5_limb": "Embryonic day 13.5 limb", "e14.5_limb": "Embryonic day 14.5 limb", "e15.5_limb": "Embryonic day 15.5 limb", "e11.5_facial-prominence": "Embryonic day 11.5 facial prominence", "e12.5_facial-prominence": "Embryonic day 12.5 facial prominence", "e13.5_facial-prominence": "Embryonic day 13.5 facial prominence", "e14.5_facial-prominence": "Embryonic day 14.5 facial prominence", "e15.5_facial-prominence": "Embryonic day 15.5 facial prominence" }
         }
@@ -2450,9 +2450,9 @@ export const defaultApplicationSampleSet = "vA";
 // ?group=xyz
 // export const applicationGroups = groupsByGenome;
 // export const applicationGroupKeys = Object.keys(applicationGroups[defaultApplicationSampleSet][defaultApplicationGenome]);
-export const defaultApplicationGroup = "all";
-export const defaultApplicationGroupVC = "all";
-export const defaultApplicationGroupVD = "all";
+export const defaultApplicationGroup = "All_127_Roadmap_epigenomes";
+export const defaultApplicationGroupVC = "All_833_biosamples";
+export const defaultApplicationGroupVD = "All_65_epigenomes";
 export const defaultApplicationGroupVG = "All_1698_biosamples";
 
 // ?chr=xyz

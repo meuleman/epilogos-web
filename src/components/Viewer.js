@@ -3263,7 +3263,7 @@ class Viewer extends Component {
             tempHgViewParams.genome = "hg38";
             tempHgViewParams.model = "18";
             tempHgViewParams.complexity = "KL";
-            tempHgViewParams.group = "all";
+            tempHgViewParams.group = "All_833_biosamples";
             tempHgViewParams.mode = "single";
           }
         }
@@ -3273,7 +3273,7 @@ class Viewer extends Component {
           tempHgViewParams.genome = "mm10";
           tempHgViewParams.model = "15";
           tempHgViewParams.complexity = "KL";
-          tempHgViewParams.group = "all";
+          tempHgViewParams.group = "All_65_epigenomes";
           tempHgViewParams.mode = "single";
         }
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vC")) {
@@ -3281,7 +3281,7 @@ class Viewer extends Component {
           tempHgViewParams.genome = "hg38";
           tempHgViewParams.model = "18";
           tempHgViewParams.complexity = "KL";
-          tempHgViewParams.group = "all";
+          tempHgViewParams.group = "All_833_biosamples";
           tempHgViewParams.mode = "single";
         }
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vH")) {
@@ -3295,6 +3295,9 @@ class Viewer extends Component {
         if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
           tempHgViewParams.genome = "hg19";
           tempHgViewParams.model = "18";
+          tempHgViewParams.complexity = "KL";
+          tempHgViewParams.group = "All_127_Roadmap_epigenomes";
+          tempHgViewParams.mode = "single";
         }
         if ((tempHgViewParams.sampleSet === "vG") || (tempHgViewParams.sampleSet === "vH")) {
           tempHgViewParams.genome = "hg38";
@@ -3317,7 +3320,27 @@ class Viewer extends Component {
       // adjust by mode
       //
       if ((tempHgViewParams.mode === "single") && (this.state.hgViewParams.mode === "paired")) {
-        tempHgViewParams.group = ((tempHgViewParams.sampleSet !== "vG") && (tempHgViewParams.sampleSet !== "vH")) ? "all" : "All_1698_biosamples";
+        // tempHgViewParams.group = ((tempHgViewParams.sampleSet !== "vG") && (tempHgViewParams.sampleSet !== "vH")) ? "all" : "All_1698_biosamples";
+        switch (tempHgViewParams.sampleSet) {
+          case 'vA':
+            tempHgViewParams.group = "All_127_Roadmap_epigenomes";
+            break;
+          case 'vC':
+            tempHgViewParams.group = "All_833_biosamples";
+            break;
+          case 'vD':
+            tempHgViewParams.group = "All_65_epigenomes";
+            break;
+          case 'vH':
+            tempHgViewParams.group = "All_1698_biosamples";
+            break;
+          case 'vI':
+            tempHgViewParams.group = "All_52_biosamples";
+            break;
+          default:
+            tempHgViewParams.group = "All_1698_biosamples";
+            break;
+        }
       }
       else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
         if (tempHgViewParams.sampleSet === "vA") {

@@ -281,19 +281,19 @@ class DrawerContent extends Component {
     if (targetName === "sampleSet") {
       switch (event.target.value) {
         case "vA":
-          newViewParams.group = "all";
+          newViewParams.group = "All_127_Roadmap_epigenomes";
           newViewParams.mode = "single";
           newViewParams.model = "15";
           newViewParams.genome = "hg38";
           break;
         case "vC":
-          newViewParams.group = "all";
+          newViewParams.group = "All_833_biosamples";
           newViewParams.mode = "single";
           newViewParams.model = "18";
           newViewParams.genome = "hg38";
           break;
         case "vD":
-          newViewParams.group = "all";
+          newViewParams.group = "All_65_epigenomes";
           newViewParams.mode = "single";
           newViewParams.model = "15";
           newViewParams.genome = "mm10";
@@ -739,7 +739,7 @@ class DrawerContent extends Component {
     const activeMode = this.state.viewParams.mode;
     const coreComplexities = () => {
       const activeGenome = (sampleSet === 'vD') ? "mm10" : "hg38"; // this.state.viewParams.genome;
-      const activeGroup = (sampleSet === 'vC' && activeMode === 'paired' && activeGenome === 'hg38') ? 'Male_donors_versus_Female_donors' : ((sampleSet === 'vG' || sampleSet === 'vH') && activeMode === 'single' && activeGenome === 'hg38' && this.state.viewParams.group === 'all') ? "All_1698_biosamples" : this.state.viewParams.group;
+      const activeGroup = (sampleSet === 'vC' && activeMode === 'paired' && activeGenome === 'hg38') ? 'Male_donors_versus_Female_donors' : ((sampleSet === 'vG' || sampleSet === 'vH') && activeMode === 'single' && activeGenome === 'hg38') ? "All_1698_biosamples" : this.state.viewParams.group;
       // console.log(`coreComplexities -> sampleSet ${sampleSet} activeGenome ${activeGenome} activeGroup ${activeGroup}`);
       try {
         const availableComplexities = Manifest.groupsByGenome[sampleSet][activeGenome][activeGroup].availableForComplexities;
@@ -787,7 +787,7 @@ class DrawerContent extends Component {
         if ((activeSampleSet === "vA") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Roadmap
         if ((activeSampleSet === "vD") && (activeMode === "paired") && (k === "KLss")) isDisabled = true; // do not show KLss/S3 entries for paired Gorkin
         if ((activeSampleSet === "vC") && (activeMode === "paired") && (activeComplexity === "KL") && (kValue === "KLs")) isDisabled = true;
-        if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KL") && (activeGroup !== "all") && (kValue === "KLs")) isDisabled = true;
+        if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KL") && (activeGroup !== "All_833_biosamples") && (kValue === "KLs")) isDisabled = true;
         if (isDisabled) return;
         let kButtonKey = kButtonPrefix + kButtonIdx;
         let kButtonParentKey = kButtonParentPrefix + kButtonIdx;
@@ -835,7 +835,7 @@ class DrawerContent extends Component {
     let md = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
-        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18], availableForComplexities:["KL", "KLs"] }
+        "All_833_biosamples" : { type:"group", subtype:"single", value:"All_833_biosamples", sortValue:"001", text:"All 833 biosamples", enabled:true, preferred: true, availableForModels:[18], availableForComplexities:["KL", "KLs"] }
       };
     }
 
@@ -901,7 +901,7 @@ class DrawerContent extends Component {
     let md = Manifest.groupsByGenome[activeSampleSet][activeGenome];
     if ((activeSampleSet === "vC") && (activeMode === "single") && (activeComplexity === "KLs")) {
       md = {
-        "all" : { type:"group", subtype:"single", value:"all", sortValue:"001", text:"833 samples", enabled:true, preferred: true, availableForModels:[18] }
+        "All_833_biosamples" : { type:"group", subtype:"single", value:"All_833_biosamples", sortValue:"001", text:"All 833 samples", enabled:true, preferred: true, availableForModels:[18] }
       };
     }
     if (!md) return null;

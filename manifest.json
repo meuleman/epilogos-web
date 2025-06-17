@@ -40,8 +40,8 @@
           "availableModes": ["single", "paired"],
           "availableAssemblies": ["hg19", "hg38"],
           "defaultAssembly": "hg19",
-          "defaultGroup": "all",
-          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultGroup": "All_127_Roadmap_epigenomes",
+          "defaultSingleGroup": {"hg19": "All_127_Roadmap_epigenomes", "hg38": "All_127_Roadmap_epigenomes"},
           "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_vs_Female"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
@@ -49,10 +49,10 @@
           "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "hg19": {
-              "all": {
+              "All_127_Roadmap_epigenomes": {
                 "type": "group",
                 "subtype": "single",
-                "value": "all",
+                "value": "All_127_Roadmap_epigenomes",
                 "sortValue": "001",
                 "text": "All 127 biosamples",
                 "mediaKey": "All_127_Roadmap_epigenomes",
@@ -281,10 +281,10 @@
               }
             },
             "hg38": {
-              "all": {
+              "All_127_Roadmap_epigenomes": {
                 "type": "group",
                 "subtype": "single",
-                "value": "all",
+                "value": "All_127_Roadmap_epigenomes",
                 "text": "All 127 biosamples",
                 "mediaKey": "All_127_Roadmap_epigenomes",
                 "enabled": true,
@@ -763,8 +763,8 @@
           "availableModes": ["single", "paired"],
           "availableAssemblies": ["hg19", "hg38"],
           "defaultAssembly": "hg38",
-          "defaultGroup": "all",
-          "defaultSingleGroup": {"hg19": "all", "hg38": "all"},
+          "defaultGroup": "All_833_biosamples",
+          "defaultSingleGroup": {"hg19": "All_833_biosamples", "hg38": "All_833_biosamples"},
           "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
@@ -772,10 +772,10 @@
           "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "hg19": {
-              "all": {
+              "All_833_biosamples": {
                 "type": "group",
                 "subtype": "single",
-                "value": "all",
+                "value": "All_833_biosamples",
                 "sortValue": "000",
                 "text": "All 833 biosamples",
                 "mediaKey": "All_833_biosamples",
@@ -967,10 +967,10 @@
               }
             },
             "hg38": {
-              "all": {
+              "All_833_biosamples": {
                 "type": "group",
                 "subtype": "single",
-                "value": "all",
+                "value": "All_833_biosamples",
                 "text": "All 833 biosamples",
                 "mediaKey": "All_833_biosamples",
                 "enabled": true,
@@ -1267,8 +1267,8 @@
           "availableModes": ["single", "paired"],
           "availableAssemblies": ["mm10"],
           "defaultAssembly": "mm10",
-          "defaultGroup": "all",
-          "defaultSingleGroup": {"mm10": "all"},
+          "defaultGroup": "All_65_epigenomes",
+          "defaultSingleGroup": {"mm10": "All_65_epigenomes"},
           "defaultPairedGroup": {"mm10": "P0_vs_e11.5"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
@@ -1276,10 +1276,10 @@
           "simsearchMediaServer": "https://explore.altius.org/tabix/recommender/v2",
           "setMetadataByGenome": {
             "mm10": {
-              "all": {
+              "All_65_epigenomes": {
                 "type": "group",
                 "subtype": "single",
-                "value": "all",
+                "value": "All_65_epigenomes",
                 "sortValue": "001",
                 "text": "All 65 biosamples",
                 "mediaKey": "All_65_epigenomes",
