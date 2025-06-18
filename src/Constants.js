@@ -1045,7 +1045,6 @@ export const groupsForRecommenderV3OptionGroup = {
       "cord_blood_sample": "Cord_Blood_Sample",
       "cord_blood_reference": "Cord_Blood_Reference",
       "Digestive": "Digestive",
-      "ENCODE2012": "ENCODE_2012",
       "Epithelial": "Epithelial",
       "ES-deriv": "ESC_derived",
       "ESC": "ESC",
