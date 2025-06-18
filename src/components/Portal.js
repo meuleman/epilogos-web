@@ -1048,37 +1048,6 @@ class Portal extends Component {
           </Container>
             
         </div>
- 
-<!--       
-        <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsContent = ref}>
-          <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-tools"><span className="epilogos-content-column-header-emphasis">tools</span></div>
-        </div>
-        
-        <Container fluid style={{"padding":0, "userSelect":"text"}}>
-          
-            <Row nogutter className="epilogos-offscreen-content-row" style={{backgroundColor:"#bfd5ef"}}>
-              <Col lg={6} className="epilogos-offscreen-content-row-img-block">
-                <div className="epilogos-offscreen-content-placeholder-img-left">
-                  <div className="epilogos-offscreen-content-placeholder-table-container">
-                    <div className="epilogos-offscreen-content-placeholder-table-container-item">
-                      <a href="https://epilogos-search.altius.org/" onClick={this.onClick} data-id="https://epilogos-search.altius.org/"><img className="epilogos-offscreen-content-img" src="assets/img/portal/meme_thumbnail_v5.png" alt="epilogos-search" /></a>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-              <Col lg={6} className="epilogos-offscreen-content-row-text-block">
-                <div className="epilogos-offscreen-content-placeholder-text-right" style={{display:"grid", placeItems:"center", height:"100%"}}>
-                  <div className="epilogos-offscreen-content-placeholder-table-container">
-                    <div className="epilogos-offscreen-content-placeholder-table-container-item">
-                      The <a href="https://epilogos-search.altius.org/" onClick={this.onClick} data-id="https://epilogos-search.altius.org/">epilogos Search</a> tool discovers chromatin state logos — <em>epilogos</em> — in your genomic intervals.
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            
-        </Container>
--->       
         
         <div className="epilogos-offscreen-content" ref={(ref) => this.offscreenToolsCreditsContent = ref}>
           <div className="epilogos-content-column-header epilogos-offscreen-content-column-header epilogos-content-column-header-credits"><span className="epilogos-content-column-header-emphasis">credits</span></div>
