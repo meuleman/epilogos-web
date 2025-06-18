@@ -89,10 +89,10 @@
                   "KLss"
                 ]
               },
-              "Female": {
+              "Female_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Female",
+                "value": "Female_donors",
                 "text": "Female donors",
                 "mediaKey": "Female_donors",
                 "enabled": true,
@@ -129,10 +129,10 @@
                   "KLss"
                 ]
               },
-              "Male": {
+              "Male_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Male",
+                "value": "Male_donors",
                 "text": "Male donors",
                 "mediaKey": "Male_donors",
                 "enabled": true,
@@ -227,10 +227,10 @@
                   "KLs"
                 ]
               },
-              "Male_vs_Female": {
+              "Male_donors_vs_Female_donors": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "Male_vs_Female",
+                "value": "Male_donors_vs_Female_donors",
                 "text": "Male donors vs. Female donors",
                 "mediaKey": "Male_donors_versus_Female_donors",
                 "enabled": true,
@@ -321,10 +321,10 @@
                   "KLss"
                 ]
               },
-              "Female": {
+              "Female_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Female",
+                "value": "Female_donors",
                 "text": "Female donors",
                 "mediaKey": "Female_donors",
                 "enabled": true,
@@ -361,10 +361,10 @@
                   "KLss"
                 ]
               },
-              "Male": {
+              "Male_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Male",
+                "value": "Male_donors",
                 "text": "Male donors",
                 "mediaKey": "Male_donors",
                 "enabled": true,
@@ -459,10 +459,10 @@
                   "KLs"
                 ]
               },
-              "Male_vs_Female": {
+              "Male_donors_vs_Female_donors": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "Male_vs_Female",
+                "value": "Male_donors_vs_Female_donors",
                 "text": "Male donors vs. Female donors",
                 "mediaKey": "Male_donors_versus_Female_donors",
                 "enabled": true,
@@ -1294,10 +1294,10 @@
                   "KLss"
                 ]
               },
-              "digestiveSystem": {
+              "Digestive_System": {
                 "type": "group",
                 "subtype": "single",
-                "value": "digestiveSystem",
+                "value": "Digestive_System",
                 "sortValue": "002",
                 "text": "Digestive System",
                 "mediaKey": "Digestive_System",
@@ -1312,10 +1312,10 @@
                   "KLss"
                 ]
               },
-              "e11.5": {
+              "Embryonic_day_11.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e11.5",
+                "value": "Embryonic_day_11.5",
                 "sortValue": "003",
                 "text": "Embryonic day 11.5",
                 "mediaKey": "Embryonic_day_11.5",
@@ -1330,10 +1330,10 @@
                   "KLss"
                 ]
               },
-              "e12.5": {
+              "Embryonic_day_12.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e12.5",
+                "value": "Embryonic_day_12.5",
                 "text": "Embryonic day 12.5",
                 "mediaKey": "Embryonic_day_12.5",
                 "enabled": true,
@@ -1347,10 +1347,10 @@
                   "KLss"
                 ]
               },
-              "e13.5": {
+              "Embryonic_day_13.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e13.5",
+                "value": "Embryonic_day_13.5",
                 "text": "Embryonic day 13.5",
                 "mediaKey": "Embryonic_day_13.5",
                 "enabled": true,
@@ -1364,10 +1364,10 @@
                   "KLss"
                 ]
               },
-              "e14.5": {
+              "Embryonic_day_14.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e14.5",
+                "value": "Embryonic_day_14.5",
                 "text": "Embryonic day 14.5",
                 "mediaKey": "Embryonic_day_14.5",
                 "enabled": true,
@@ -1381,10 +1381,10 @@
                   "KLss"
                 ]
               },
-              "e15.5": {
+              "Embryonic_day_15.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e15.5",
+                "value": "Embryonic_day_15.5",
                 "text": "Embryonic day 15.5",
                 "mediaKey": "Embryonic_day_15.5",
                 "enabled": true,
@@ -1398,10 +1398,10 @@
                   "KLss"
                 ]
               },
-              "e16.5": {
+              "Embryonic_day_16.5": {
                 "type": "group",
                 "subtype": "single",
-                "value": "e16.5",
+                "value": "Embryonic_day_16.5",
                 "text": "Embryonic day 16.5",
                 "mediaKey": "Embryonic_day_16.5",
                 "enabled": false,
@@ -1415,10 +1415,10 @@
                   "KLss"
                 ]
               },
-              "facial-prominence": {
+              "Facial_Prominence": {
                 "type": "group",
                 "subtype": "single",
-                "value": "facial-prominence",
+                "value": "Facial_Prominence",
                 "text": "Facial prominence",
                 "mediaKey": "Facial_Prominence",
                 "enabled": true,
@@ -1432,10 +1432,10 @@
                   "KLss"
                 ]
               },
-              "forebrain": {
+              "Forebrain": {
                 "type": "group",
                 "subtype": "single",
-                "value": "forebrain",
+                "value": "Forebrain",
                 "text": "Forebrain",
                 "mediaKey": "Forebrain",
                 "enabled": true,
@@ -1449,10 +1449,10 @@
                   "KLss"
                 ]
               },
-              "forebrain_vs_hindbrain": {
+              "Forebrain_versus_Hindbrain": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "forebrain_vs_hindbrain",
+                "value": "Forebrain_versus_Hindbrain",
                 "text": "Forebrain vs. Hindbrain",
                 "mediaKey": "Forebrain_versus_Hindbrain",
                 "enabled": true,
@@ -1465,10 +1465,10 @@
                   "KLs"
                 ]
               },
-              "heart": {
+              "Heart": {
                 "type": "group",
                 "subtype": "single",
-                "value": "heart",
+                "value": "Heart",
                 "text": "Heart",
                 "mediaKey": "Heart",
                 "enabled": true,
@@ -1482,10 +1482,10 @@
                   "KLss"
                 ]
               },
-              "hindbrain": {
+              "Hindbrain": {
                 "type": "group",
                 "subtype": "single",
-                "value": "hindbrain",
+                "value": "Hindbrain",
                 "text": "Hindbrain",
                 "mediaKey": "Hindbrain",
                 "enabled": true,
@@ -1499,10 +1499,10 @@
                   "KLss"
                 ]
               },
-              "intestine": {
+              "Intestine": {
                 "type": "group",
                 "subtype": "single",
-                "value": "intestine",
+                "value": "Intestine",
                 "text": "Intestine",
                 "mediaKey": "Intestine",
                 "enabled": true,
@@ -1516,10 +1516,10 @@
                   "KLss"
                 ]
               },
-              "kidney": {
+              "Kidney": {
                 "type": "group",
                 "subtype": "single",
-                "value": "kidney",
+                "value": "Kidney",
                 "text": "Kidney",
                 "mediaKey": "Kidney",
                 "enabled": true,
@@ -1533,10 +1533,10 @@
                   "KLss"
                 ]
               },
-              "limb": {
+              "Limb": {
                 "type": "group",
                 "subtype": "single",
-                "value": "limb",
+                "value": "Limb",
                 "text": "Limb",
                 "mediaKey": "Limb",
                 "enabled": true,
@@ -1550,10 +1550,10 @@
                   "KLss"
                 ]
               },
-              "liver": {
+              "Liver": {
                 "type": "group",
                 "subtype": "single",
-                "value": "liver",
+                "value": "Liver",
                 "text": "Liver",
                 "mediaKey": "Liver",
                 "enabled": true,
@@ -1567,10 +1567,10 @@
                   "KLss"
                 ]
               },
-              "lung": {
+              "Lung": {
                 "type": "group",
                 "subtype": "single",
-                "value": "lung",
+                "value": "Lung",
                 "text": "Lung",
                 "mediaKey": "Lung",
                 "enabled": true,
@@ -1584,10 +1584,10 @@
                   "KLss"
                 ]
               },
-              "neural-tube": {
+              "Neural_Tube": {
                 "type": "group",
                 "subtype": "single",
-                "value": "neural-tube",
+                "value": "Neural_Tube",
                 "text": "Neural Tube",
                 "mediaKey": "Neural_Tube",
                 "enabled": true,
@@ -1601,10 +1601,10 @@
                   "KLss"
                 ]
               },
-              "P0": {
+              "Day-of-birth": {
                 "type": "group",
                 "subtype": "single",
-                "value": "P0",
+                "value": "Day-of-birth",
                 "sortValue": "004",
                 "text": "Day-of-birth",
                 "mediaKey": "Day-of-birth",
@@ -1619,12 +1619,12 @@
                   "KLss"
                 ]
               },
-              "e11.5_vs_P0": {
+              "Day-of-birth_versus_Embryonic_day_11.5": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "e11.5_vs_P0",
-                "text": "Embryonic day 11.5 vs. Day-of-birth",
-                "mediaKey": "Embryonic_day_11.5_versus_Day-of-birth",
+                "value": "Day-of-birth_versus_Embryonic_day_11.5",
+                "text": "Day-of-birth vs. Embryonic day 11.5",
+                "mediaKey": "Day-of-birth_versus_Embryonic_day_11.5",
                 "enabled": true,
                 "preferred": true,
                 "availableForModels": [
@@ -1635,10 +1635,10 @@
                   "KLs"
                 ]
               },
-              "stomach": {
+              "Stomach": {
                 "type": "group",
                 "subtype": "single",
-                "value": "stomach",
+                "value": "Stomach",
                 "text": "Stomach",
                 "mediaKey": "Stomach",
                 "enabled": true,

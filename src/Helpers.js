@@ -1402,6 +1402,7 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
     },
   };
   const overlaps = { overlaps: [], windowSize: tabixWindowSize, windowSizeKb: tabixWindowSizeKb, scaleLevel: tabixScaleLevel, tabixUrl: tabixUrl };
+  console.log(`overlaps/pre ${JSON.stringify(overlaps)}`);
   const handleError = (error) => {
     console.error(`Error fetching simsearch static overlaps: ${error}`);
     return overlaps;
@@ -1427,6 +1428,7 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
         overlaps.overlaps.push(overlap);
       })
       .catch(handleError);
+      console.log(`overlaps/post ${JSON.stringify(overlaps)}`);
     return overlaps;
   }
   return tabixCall();
