@@ -1475,28 +1475,28 @@ export const defaultSingleGroupKeys = {
 
 export const defaultPairedGroupKeys = {
   "vA": {
-    "hg19": "ESC_vs_NonES-like",
-    "hg38": "ESC_vs_NonES-like",
+    "hg19": "Male_donors_versus_Female_donors",
+    "hg38": "Male_donors_versus_Female_donors",
   },
   "vB": {
   },
   "vC": {
-    "hg19": "Male_vs_Female",
+    "hg19": "Male_donors_versus_Female_donors",
     "hg38": "Male_donors_versus_Female_donors",
   },
   "vD": {
-    "mm10": "e11.5_vs_P0"
+    "mm10": "Day-of-birth_versus_Embryonic_day_11.5"
   },
   "vE": {
   },
   "vF": {
-    "hg19": "Male_vs_Female",
+    "hg19": "Male_donors_versus_Female_donors",
   },
   "vG": {
-    "hg38": "Male_vs_Female",
+    "hg38": "Male_donors_versus_Female_donors",
   },
   "vH": {
-    "hg38": "Male_vs_Female",
+    "hg38": "Male_donors_versus_Female_donors",
   },
   "vI": {
   },

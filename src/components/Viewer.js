@@ -3344,16 +3344,16 @@ class Viewer extends Component {
       }
       else if ((tempHgViewParams.mode === "paired") && (this.state.hgViewParams.mode === "single")) {
         if (tempHgViewParams.sampleSet === "vA") {
-          tempHgViewParams.group = "Male_vs_Female";
+          tempHgViewParams.group = "Male_donors_versus_Female_donors";
         }
         if (tempHgViewParams.sampleSet === "vC") {
           tempHgViewParams.group = "Male_donors_versus_Female_donors";
         }
         if (tempHgViewParams.sampleSet === "vD") {
-          tempHgViewParams.group = "P0_vs_e11.5";
+          tempHgViewParams.group = "Day-of-birth_versus_Embryonic_day_11.5";
         }
         if (tempHgViewParams.sampleSet === "vG") {
-          tempHgViewParams.group = "Male_vs_Female";
+          tempHgViewParams.group = "Male_donors_versus_Female_donors";
         }
         if (tempHgViewParams.sampleSet === "vH") {
           tempHgViewParams.group = "MalePaired_versus_FemalePaired";
@@ -3374,7 +3374,7 @@ class Viewer extends Component {
           //
           tempHgViewParams.group = Manifest.defaultPairedGroupKeys[tempHgViewParams.sampleSet][tempHgViewParams.genome];
           if ((this.state.hgViewParams.sampleSet === "vD") && (tempHgViewParams.sampleSet === "vA")) {
-            tempHgViewParams.group = "Male_vs_Female";
+            tempHgViewParams.group = "Male_donors_versus_Female_donors";
           }
           const substituteGroupNameVsToVersus = this.state.hgViewParams.group.replace("_vs_", "_versus_");
           const substituteGroupNameVersusToVs = this.state.hgViewParams.group.replace("_versus_", "_vs_");
@@ -3428,9 +3428,9 @@ class Viewer extends Component {
       if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg38") && (tempHgViewParams.group === "Male_vs_Female")) {
         tempHgViewParams.group = "Male_donors_versus_Female_donors";
       }
-      else if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg19") && (tempHgViewParams.group === "Male_donors_versus_Female_donors")) {
-        tempHgViewParams.group = "Male_vs_Female";
-      }
+      // else if ((tempHgViewParams.sampleSet === "vC") && (tempHgViewParams.genome === "hg19") && (tempHgViewParams.group === "Male_donors_versus_Female_donors")) {
+      //   tempHgViewParams.group = "Male_vs_Female";
+      // }
       
       //
       // revert to single mode, if visiting internal production site

@@ -42,7 +42,7 @@
           "defaultAssembly": "hg19",
           "defaultGroup": "All_127_Roadmap_epigenomes",
           "defaultSingleGroup": {"hg19": "All_127_Roadmap_epigenomes", "hg38": "All_127_Roadmap_epigenomes"},
-          "defaultPairedGroup": {"hg19": "Male_donors_vs_Female_donors", "hg38": "Male_donors_vs_Female_donors"},
+          "defaultPairedGroup": {"hg19": "Male_donors_versus_Female_donors", "hg38": "Male_donors_versus_Female_donors"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
           "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
@@ -227,10 +227,10 @@
                   "KLs"
                 ]
               },
-              "Male_donors_vs_Female_donors": {
+              "Male_donors_versus_Female_donors": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "Male_donors_vs_Female_donors",
+                "value": "Male_donors_versus_Female_donors",
                 "text": "Male donors vs. Female donors",
                 "mediaKey": "Male_donors_versus_Female_donors",
                 "enabled": true,
@@ -459,10 +459,10 @@
                   "KLs"
                 ]
               },
-              "Male_donors_vs_Female_donors": {
+              "Male_donors_versus_Female_donors": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "Male_donors_vs_Female_donors",
+                "value": "Male_donors_versus_Female_donors",
                 "text": "Male donors vs. Female donors",
                 "mediaKey": "Male_donors_versus_Female_donors",
                 "enabled": true,
@@ -765,7 +765,7 @@
           "defaultAssembly": "hg38",
           "defaultGroup": "All_833_biosamples",
           "defaultSingleGroup": {"hg19": "All_833_biosamples", "hg38": "All_833_biosamples"},
-          "defaultPairedGroup": {"hg19": "Male_vs_Female", "hg38": "Male_donors_versus_Female_donors"},
+          "defaultPairedGroup": {"hg19": "Male_donors_versus_Female_donors", "hg38": "Male_donors_versus_Female_donors"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
           "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",
@@ -789,10 +789,10 @@
                   "KLs"
                 ]
               },
-              "Male_vs_Female": {
+              "Male_donors_versus_Female_donors": {
                 "type": "group",
                 "subtype": "paired",
-                "value": "Male_vs_Female",
+                "value": "Male_donors_versus_Female_donors",
                 "text": "Male donors vs. Female donors",
                 "mediaKey": "Male_donors_versus_Female_donors",
                 "enabled": true,
@@ -805,10 +805,10 @@
                   "KL"
                 ]
               },
-              "Male": {
+              "Male_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Male",
+                "value": "Male_donors",
                 "text": "Male donors",
                 "mediaKey": "Male",
                 "enabled": true,
@@ -821,10 +821,10 @@
                   "KL"
                 ]
               },
-              "Female": {
+              "Female_donors": {
                 "type": "group",
                 "subtype": "single",
-                "value": "Female",
+                "value": "Female_donors",
                 "text": "Female donors",
                 "mediaKey": "Female",
                 "enabled": true,
