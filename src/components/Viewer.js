@@ -5444,7 +5444,7 @@ class Viewer extends Component {
         let complexity = params.complexity;
         let newComplexity = Constants.complexitiesForDataExport[complexity];
         
-        let tabixURL = `${Constants.applicationTabixRootURL}/epilogos/${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.gz`;
+        let tabixURL = `${Constants.applicationTabixRootURL}/scores/${sampleSet}.${genome}.${model}.${newGroup}.${newComplexity}.gz`;
         let tabixRange = "";
         // if chrs are equal, we can spit out a range directly
         if (coord.chrLeft === coord.chrRight) {

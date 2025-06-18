@@ -1383,9 +1383,9 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
                           (tabixWindowSizeKb < 100 + 50) ? 75 : 
                           (tabixWindowSizeKb < 150 + 50) ? 100 : null;
   const tabixScaleLevel = parseInt(tabixWindowSize / 5);
-  const tabixUrl = `${tabixUrlRoot}/${tabixDatasetAltname}/${tabixAssembly}/${tabixStateModel}/${tabixGroup}/${tabixSaliency}/${tabixScaleLevel}/${tabixWindowSize}/recommendations.bed.gz`;
+  const tabixUrl = `${tabixUrlRoot}/simsearch/${tabixDatasetAltname}/${tabixAssembly}/${tabixStateModel}/${tabixGroup}/${tabixSaliency}/${tabixScaleLevel}/${tabixWindowSize}/recommendations.bed.gz`;
   // /usr/bin/tabix https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025/vC/hg38/18/All_833_biosamples/S1/10/50/recommendations.bed.gz chr19:54620800-54689200
-  // console.log(`tabixUrl ${tabixUrl}`);
+  console.log(`tabixUrl ${tabixUrl}`);
   const ti = new TabixIndexedFile({
     url: tabixUrl,
     tbiUrl: `${tabixUrl}.tbi`,
