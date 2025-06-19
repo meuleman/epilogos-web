@@ -734,6 +734,8 @@ class Viewer extends Component {
         keepSuggestionInterval,
         "constructor",
       );
+      console.log(`Viewer.updateWithDefaults | initialized with mode=${mode}, genome=${genome}, model=${model}, complexity=${complexity}, group=${group}, sampleSet=${sampleSet}, chrLeft=${self.state.currentPosition.chrLeft}, chrRight=${self.state.currentPosition.chrRight}, startLeft=${self.state.currentPosition.startLeft}, stopRight=${self.state.currentPosition.stopRight}`);
+      console.log(`${JSON.stringify(self.state.mainHgViewconf)}`);
     }
     
     // 
@@ -840,6 +842,8 @@ class Viewer extends Component {
                 self.state.queryTargetLocalMinMax = newMinMax;
                 self.state.queryTargetGlobalMinMax = newMinMax;
                 self.simSearchRegionsUpdate(res.hits[0], updateWithSimSearchRegionsInMemory, self);
+                console.log(`Viewer.handleSimSearchQueryForChromInfo | qt viewconf loaded for ${queryChr}:${queryStart}-${queryEnd} with ${res.hits.length} hits`);
+                console.log(`${JSON.stringify(self.state.mainHgViewconf)}`);
               })
               // eslint-disable-next-line no-unused-vars
               .catch((err) => {
