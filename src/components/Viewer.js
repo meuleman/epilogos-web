@@ -1721,7 +1721,7 @@ class Viewer extends Component {
       });
     }
     else if (mode === "single") {
-      // console.log(`this.state.simSearchQueryCount: ${this.state.simSearchQueryCount}`);
+      console.log(`this.state.simSearchQueryCount: ${this.state.simSearchQueryCount}`);
       if (this.state.simSearchQueryCount > 0) {
         this.setState({
           simSearchQueryCountIsVisible: true,
@@ -6490,6 +6490,7 @@ class Viewer extends Component {
     simSearchQueryPromise.then((res) => {
       // console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
       if (!res.overlaps || res.overlaps.length === 0) {
+        console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
         this.setState({
           simSearchQueryCount: -1,
           simSearchQueryCountIsVisible: false,
@@ -6540,7 +6541,7 @@ class Viewer extends Component {
         processedTabixObject.query.hitCount = 1;
         processedTabixObject.query.hitDistance = minDistance;
         // console.log(`processedTabixObject = ${JSON.stringify(processedTabixObject, null, 2)}`);
-        // console.log(`tabixLines = ${JSON.stringify(tabixLines, null, 2)}`);
+        console.log(`tabixLines = ${JSON.stringify(tabixLines, null, 2)}`);
       }
 
       const newSimSearchQueryCount = (tabixLines && tabixLines.segment && tabixLines.segment.hits) ? tabixLines.segment.hits.length - 1 : 0;
