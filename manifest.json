@@ -2149,7 +2149,7 @@
           "defaultAssembly": "hg38",
           "defaultGroup": "All_1698_biosamples",
           "defaultSingleGroup": {"hg38": "All_1698_biosamples"},
-          "defaultPairedGroup": {"hg38": "MalePaired_versus_FemalePaired"},
+          "defaultPairedGroup": {"hg38": "MalePaired100_versus_FemalePaired100"},
           "hgTrackServer": "https://meuleman-higlass-us-west-2.altius.org/api/v1",
           "hgMediaServer": "https://meuleman-higlass-us-west-2.altius.org/media",
           "simsearchDataServer": "https://explore.altius.org/tabix/recommender/v2",

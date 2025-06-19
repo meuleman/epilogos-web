@@ -1496,7 +1496,7 @@ export const defaultPairedGroupKeys = {
     "hg38": "Male_donors_versus_Female_donors",
   },
   "vH": {
-    "hg38": "Male_donors_versus_Female_donors",
+    "hg38": "MalePaired100_versus_FemalePaired100",
   },
   "vI": {
   },
