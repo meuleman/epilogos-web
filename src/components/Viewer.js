@@ -734,8 +734,6 @@ class Viewer extends Component {
         keepSuggestionInterval,
         "constructor",
       );
-      console.log(`Viewer.updateWithDefaults | initialized with mode=${mode}, genome=${genome}, model=${model}, complexity=${complexity}, group=${group}, sampleSet=${sampleSet}, chrLeft=${self.state.currentPosition.chrLeft}, chrRight=${self.state.currentPosition.chrRight}, startLeft=${self.state.currentPosition.startLeft}, stopRight=${self.state.currentPosition.stopRight}`);
-      console.log(`${JSON.stringify(self.state.mainHgViewconf)}`);
     }
     
     // 
@@ -788,6 +786,8 @@ class Viewer extends Component {
           self.state.hgViewParams.hgViewconfEndpointURL,
           newViewconfUUID, 
           self.state.hgViewParams.hgViewconfEndpointURLSuffix);
+
+        console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
 
         axios.get(newHgViewconfURL)
           .then((res) => {
