@@ -901,9 +901,10 @@ class Viewer extends Component {
         });
       }, 0);
       this._gemRefreshTimer = setInterval(() => {
-        if (!this.isProductionSite) {
-          this.restartGemAnimation();
-        }
+        // if (!this.isProductionSite) {
+        //   this.restartGemAnimation();
+        // }
+        this.restartGemAnimation();
       }, Constants.defaultRecommenderGemRefreshInViewerApplicationTimer);
     }, 2500);
     window.addEventListener("resize", this.updateViewportDimensions);
@@ -1721,7 +1722,7 @@ class Viewer extends Component {
       });
     }
     else if (mode === "single") {
-      console.log(`this.state.simSearchQueryCount: ${this.state.simSearchQueryCount}`);
+      // console.log(`this.state.simSearchQueryCount: ${this.state.simSearchQueryCount}`);
       if (this.state.simSearchQueryCount > 0) {
         this.setState({
           simSearchQueryCountIsVisible: true,
@@ -5997,7 +5998,7 @@ class Viewer extends Component {
 
   suggestionButtonCanBeEnabled = () => {
     let test = true;
-    if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
+    // if ((this.isProductionSite) || (this.isProductionProxySite)) test = false;
     if (!this.state.suggestionsAreLoaded) test = false;
     return test;
   }
@@ -6490,7 +6491,7 @@ class Viewer extends Component {
     simSearchQueryPromise.then((res) => {
       // console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
       if (!res.overlaps || res.overlaps.length === 0) {
-        console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
+        // console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
         this.setState({
           simSearchQueryCount: -1,
           simSearchQueryCountIsVisible: false,
@@ -6541,7 +6542,7 @@ class Viewer extends Component {
         processedTabixObject.query.hitCount = 1;
         processedTabixObject.query.hitDistance = minDistance;
         // console.log(`processedTabixObject = ${JSON.stringify(processedTabixObject, null, 2)}`);
-        console.log(`tabixLines = ${JSON.stringify(tabixLines, null, 2)}`);
+        // console.log(`tabixLines = ${JSON.stringify(tabixLines, null, 2)}`);
       }
 
       const newSimSearchQueryCount = (tabixLines && tabixLines.segment && tabixLines.segment.hits) ? tabixLines.segment.hits.length - 1 : 0;
@@ -6554,8 +6555,8 @@ class Viewer extends Component {
           simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
           simSearchQueryCountIsEnabled: newSimSearchQueryCountIsEnabled,
         }, () => {
-          console.log(`simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
-          console.log(`simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
+          // console.log(`simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+          // console.log(`simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
           this.setState({
             simSearchQueryInProgress: false,
           });
@@ -6627,11 +6628,11 @@ class Viewer extends Component {
   }
   roiButtonForStyle = (side) => {
 
-    if ((this.isProductionSite) || (this.isProductionProxySite)) {
-      return (
-        <span />
-      )
-    }
+    // if ((this.isProductionSite) || (this.isProductionProxySite)) {
+    //   return (
+    //     <span />
+    //   )
+    // }
     return (
       <RoiButton
         ref={(component) => this.epilogosViewerRoiButton = component}

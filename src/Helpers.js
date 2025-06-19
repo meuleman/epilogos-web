@@ -1385,7 +1385,7 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
   const tabixScaleLevel = parseInt(tabixWindowSize / 5);
   const tabixUrl = `${tabixUrlRoot}/simsearch/${tabixDatasetAltname}/${tabixAssembly}/${tabixStateModel}/${tabixGroup}/${tabixSaliency}/${tabixScaleLevel}/${tabixWindowSize}/recommendations.bed.gz`;
   // /usr/bin/tabix https://d1ddvkxbzb0gom.cloudfront.net/28Feb2025/vC/hg38/18/All_833_biosamples/S1/10/50/recommendations.bed.gz chr19:54620800-54689200
-  console.log(`tabixUrl ${tabixUrl}`);
+  // console.log(`tabixUrl ${tabixUrl}`);
   const ti = new TabixIndexedFile({
     url: tabixUrl,
     tbiUrl: `${tabixUrl}.tbi`,
@@ -1402,7 +1402,7 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
     },
   };
   const overlaps = { overlaps: [], windowSize: tabixWindowSize, windowSizeKb: tabixWindowSizeKb, scaleLevel: tabixScaleLevel, tabixUrl: tabixUrl };
-  console.log(`overlaps/pre ${JSON.stringify(overlaps)}`);
+  // console.log(`overlaps/pre ${JSON.stringify(overlaps)}`);
   const handleError = (error) => {
     console.error(`Error fetching simsearch static overlaps: ${error}`);
     return overlaps;
@@ -1428,7 +1428,7 @@ export const simsearchStaticOverlapsQueryPromise = (qChr, qStart, qEnd, qWindowS
         overlaps.overlaps.push(overlap);
       })
       .catch(handleError);
-      console.log(`overlaps/post ${JSON.stringify(overlaps)}`);
+      // console.log(`overlaps/post ${JSON.stringify(overlaps)}`);
     return overlaps;
   }
   return tabixCall();
