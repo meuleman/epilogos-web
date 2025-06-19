@@ -3356,7 +3356,7 @@ class Viewer extends Component {
           tempHgViewParams.group = "Male_donors_versus_Female_donors";
         }
         if (tempHgViewParams.sampleSet === "vH") {
-          tempHgViewParams.group = "MalePaired_versus_FemalePaired";
+          tempHgViewParams.group = "MalePaired100_versus_FemalePaired100";
         }
       }
 
