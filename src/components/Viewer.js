@@ -6554,6 +6554,8 @@ class Viewer extends Component {
           simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
           simSearchQueryCountIsEnabled: newSimSearchQueryCountIsEnabled,
         }, () => {
+          console.log(`simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+          console.log(`simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
           this.setState({
             simSearchQueryInProgress: false,
           });
@@ -6651,11 +6653,11 @@ class Viewer extends Component {
   }
 
   suggestionSearchButtonForStyle = (side) => {
-    if ((this.isProductionSite) || (this.isProductionProxySite)) {
-      return (
-        <span />
-      )
-    }
+    // if ((this.isProductionSite) || (this.isProductionProxySite)) {
+    //   return (
+    //     <span />
+    //   )
+    // }
     switch (this.state.suggestionStyle) {
       case "overload":
         return (
