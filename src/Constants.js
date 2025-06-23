@@ -3290,6 +3290,8 @@ export const sampleSetToPublication = {
   "vA": "Roadmap_Consortium_127_sample",
   "vC": "Boix_et_al_833_sample",
   "vD": "Gorkin_et_al_65_sample",
+  "vH": "IHEC_1698_sample",
+  "vI": "SyS_52_sample"
 };
 
 export const defaultGlobalEpilogosMinMaxRange = { "min": -0.5, "max": 12 };
@@ -3297,3 +3299,208 @@ export const defaultGlobalEpilogosMinMaxRange = { "min": -0.5, "max": 12 };
 export const globalEpilogosMinMaxRanges = { "Roadmap_Consortium_127_sample": { "hg19": { "15": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.50252, "max": 10.2925 }, "S2": { "min": -0.08202, "max": 13.13 }, "S3": { "min": 0.0, "max": 15.6786 } }, "Cancer": { "S1": { "min": -0.31731, "max": 10.0907 }, "S2": { "min": 0.0, "max": 15.2178 }, "S3": { "min": 0.0, "max": 19.5325 } }, "Female": { "S1": { "min": -0.47723, "max": 10.4966 }, "S2": { "min": -0.07314, "max": 13.1603 }, "S3": { "min": 0.0, "max": 15.5338 } }, "Immune": { "S1": { "min": -0.47788, "max": 10.2774 }, "S2": { "min": -0.04645, "max": 12.9313 }, "S3": { "min": 0.0, "max": 15.8141 } }, "Male": { "S1": { "min": -0.49549, "max": 10.2935 }, "S2": { "min": -0.07912, "max": 13.4069 }, "S3": { "min": 0.0, "max": 15.9296 } }, "Neural": { "S1": { "min": -0.44497, "max": 11.6373 }, "S2": { "min": -0.03281, "max": 14.0061 }, "S3": { "min": 0.0, "max": 16.2702 } }, "Non-cancer": { "S1": { "min": -0.49807, "max": 10.4365 }, "S2": { "min": -0.07937, "max": 13.3061 }, "S3": { "min": 0.0, "max": 15.6399 } }, "Non-immune": { "S1": { "min": -0.4968, "max": 10.4265 }, "S2": { "min": -0.0798, "max": 13.0595 }, "S3": { "min": 0.0, "max": 15.9292 } }, "Non-neural": { "S1": { "min": -0.5001, "max": 10.1518 }, "S2": { "min": -0.08258, "max": 12.9819 }, "S3": { "min": 0.0, "max": 15.7301 } }, "Non-stem": { "S1": { "min": -0.49322, "max": 10.3125 }, "S2": { "min": -0.07811, "max": 13.2167 }, "S3": { "min": 0.0, "max": 15.7988 } }, "Stem": { "S1": { "min": -0.42663, "max": 10.416 }, "S2": { "min": -0.0399, "max": 12.7388 }, "S3": { "min": 0.0, "max": 15.7379 } } }, "18": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.48164, "max": 9.30514 }, "S2": { "min": -0.09117, "max": 12.4329 }, "S3": { "min": 0.0, "max": 15.6911 } }, "Cancer": { "S1": { "min": -0.31999, "max": 10.1695 }, "S2": { "min": 0.0, "max": 15.0463 }, "S3": { "min": 0.0, "max": 18.8418 } }, "Female": { "S1": { "min": -0.45202, "max": 9.74297 }, "S2": { "min": -0.06788, "max": 12.9998 }, "S3": { "min": 0.0, "max": 15.6847 } }, "Immune": { "S1": { "min": -0.45058, "max": 10.0357 }, "S2": { "min": -0.0518, "max": 12.1174 }, "S3": { "min": 0.0, "max": 16.123 } }, "Male": { "S1": { "min": -0.48085, "max": 9.15259 }, "S2": { "min": -0.09428, "max": 12.5891 }, "S3": { "min": 0.0, "max": 15.6387 } }, "Neural": { "S1": { "min": -0.38591, "max": 10.8665 }, "S2": { "min": 0.0, "max": 14.1374 }, "S3": { "min": 0.0, "max": 16.9507 } }, "Non-cancer": { "S1": { "min": -0.48735, "max": 9.37349 }, "S2": { "min": -0.09267, "max": 12.4486 }, "S3": { "min": 0.0, "max": 15.6738 } }, "Non-immune": { "S1": { "min": -0.47962, "max": 9.19034 }, "S2": { "min": -0.09495, "max": 12.2209 }, "S3": { "min": 0.0, "max": 15.9513 } }, "Non-neural": { "S1": { "min": -0.48119, "max": 9.23895 }, "S2": { "min": -0.09619, "max": 12.3691 }, "S3": { "min": 0.0, "max": 15.6034 } }, "Non-stem": { "S1": { "min": -0.48337, "max": 9.56688 }, "S2": { "min": -0.0934, "max": 12.2682 }, "S3": { "min": 0.0, "max": 15.5559 } }, "Stem": { "S1": { "min": -0.3778, "max": 11.2796 }, "S2": { "min": 0.0, "max": 13.7342 }, "S3": { "min": 0.0, "max": 17.2909 } } }, "25": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.48244, "max": 9.13798 }, "S2": { "min": -0.01632, "max": 12.1556 }, "S3": { "min": 0.0, "max": 16.2024 } }, "Cancer": { "S1": { "min": -0.4156, "max": 9.3339 }, "S2": { "min": 0.0, "max": 15.189 }, "S3": { "min": 0.0, "max": 17.8743 } }, "Female": { "S1": { "min": -0.45542, "max": 9.0291 }, "S2": { "min": -0.007, "max": 12.0617 }, "S3": { "min": 0.0, "max": 15.9554 } }, "Immune": { "S1": { "min": -0.44785, "max": 10.0083 }, "S2": { "min": 0.0, "max": 13.3326 }, "S3": { "min": 0.0, "max": 16.1773 } }, "Male": { "S1": { "min": -0.46866, "max": 9.14135 }, "S2": { "min": -0.011, "max": 12.0984 }, "S3": { "min": 0.0, "max": 16.2212 } }, "Neural": { "S1": { "min": -0.41411, "max": 9.10629 }, "S2": { "min": 0.0, "max": 13.6859 }, "S3": { "min": 0.0, "max": 16.3909 } }, "Non-cancer": { "S1": { "min": -0.48195, "max": 9.13721 }, "S2": { "min": -0.01622, "max": 12.1662 }, "S3": { "min": 0.0, "max": 16.1972 } }, "Non-immune": { "S1": { "min": -0.47923, "max": 9.15549 }, "S2": { "min": -0.01649, "max": 11.9145 }, "S3": { "min": 0.0, "max": 16.1824 } }, "Non-neural": { "S1": { "min": -0.47574, "max": 9.18466 }, "S2": { "min": -0.01652, "max": 12.443 }, "S3": { "min": 0.0, "max": 16.5677 } }, "Non-stem": { "S1": { "min": -0.48065, "max": 9.21234 }, "S2": { "min": -0.01569, "max": 12.3311 }, "S3": { "min": 0.0, "max": 16.6485 } }, "Stem": { "S1": { "min": -0.41191, "max": 9.60157 }, "S2": { "min": 0.0, "max": 12.8333 }, "S3": { "min": 0.0, "max": 17.2035 } } } }, "hg38": { "15": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.50018, "max": 10.1894 }, "S2": { "min": -0.09217, "max": 13.0258 }, "S3": { "min": 0.0, "max": 15.5861 } }, "Cancer": { "S1": { "min": -0.30622, "max": 9.98776 }, "S2": { "min": 0.0, "max": 15.1473 }, "S3": { "min": 0.0, "max": 19.429 } }, "Female": { "S1": { "min": -0.47692, "max": 10.3922 }, "S2": { "min": -0.08046, "max": 13.0571 }, "S3": { "min": 0.0, "max": 15.4411 } }, "Immune": { "S1": { "min": -0.47596, "max": 10.1749 }, "S2": { "min": -0.05089, "max": 12.8314 }, "S3": { "min": 0.0, "max": 15.7189 } }, "Male": { "S1": { "min": -0.49821, "max": 10.1892 }, "S2": { "min": -0.08776, "max": 13.3022 }, "S3": { "min": 0.0, "max": 15.8488 } }, "Neural": { "S1": { "min": -0.44583, "max": 11.5331 }, "S2": { "min": -0.03926, "max": 13.9035 }, "S3": { "min": 0.0, "max": 16.174 } }, "Non-cancer": { "S1": { "min": -0.49533, "max": 10.3335 }, "S2": { "min": -0.0899, "max": 13.202 }, "S3": { "min": 0.0, "max": 15.5473 } }, "Non-immune": { "S1": { "min": -0.49284, "max": 10.323 }, "S2": { "min": -0.08858, "max": 12.9548 }, "S3": { "min": 0.0, "max": 15.8378 } }, "Non-neural": { "S1": { "min": -0.49874, "max": 10.0489 }, "S2": { "min": -0.09074, "max": 12.8777 }, "S3": { "min": 0.0, "max": 15.6371 } }, "Non-stem": { "S1": { "min": -0.48902, "max": 10.2087 }, "S2": { "min": -0.08834, "max": 13.1126 }, "S3": { "min": 0.0, "max": 15.7154 } }, "Stem": { "S1": { "min": -0.42168, "max": 10.3119 }, "S2": { "min": -0.04595, "max": 12.638 }, "S3": { "min": 0.0, "max": 15.6327 } } }, "18": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.47972, "max": 9.20427 }, "S2": { "min": -0.10293, "max": 12.3283 }, "S3": { "min": 0.0, "max": 15.6001 } }, "Cancer": { "S1": { "min": -0.30565, "max": 10.0698 }, "S2": { "min": 0.0, "max": 14.9719 }, "S3": { "min": 0.0, "max": 18.8397 } }, "Female": { "S1": { "min": -0.45225, "max": 9.63801 }, "S2": { "min": -0.07543, "max": 12.8946 }, "S3": { "min": 0.0, "max": 15.5895 } }, "Immune": { "S1": { "min": -0.44898, "max": 9.93591 }, "S2": { "min": -0.05975, "max": 12.0162 }, "S3": { "min": 0.0, "max": 16.0304 } }, "Male": { "S1": { "min": -0.47989, "max": 9.0514 }, "S2": { "min": -0.10485, "max": 12.4844 }, "S3": { "min": 0.0, "max": 15.5485 } }, "Neural": { "S1": { "min": -0.38612, "max": 10.7639 }, "S2": { "min": 0.0, "max": 14.0376 }, "S3": { "min": 0.0, "max": 16.8668 } }, "Non-cancer": { "S1": { "min": -0.48318, "max": 9.27261 }, "S2": { "min": -0.10367, "max": 12.344 }, "S3": { "min": 0.0, "max": 15.5814 } }, "Non-immune": { "S1": { "min": -0.47453, "max": 9.08928 }, "S2": { "min": -0.10451, "max": 12.1157 }, "S3": { "min": 0.0, "max": 15.8599 } }, "Non-neural": { "S1": { "min": -0.4787, "max": 9.13786 }, "S2": { "min": -0.10645, "max": 12.2646 }, "S3": { "min": 0.0, "max": 15.5132 } }, "Non-stem": { "S1": { "min": -0.48184, "max": 9.46661 }, "S2": { "min": -0.1032, "max": 12.1635 }, "S3": { "min": 0.0, "max": 15.4658 } }, "Stem": { "S1": { "min": -0.37765, "max": 11.1749 }, "S2": { "min": 0.0, "max": 13.6303 }, "S3": { "min": 0.0, "max": 17.1942 } } }, "25": { "All_127_Roadmap_epigenomes": { "S1": { "min": -0.48016, "max": 9.03747 }, "S2": { "min": -0.01795, "max": 12.0531 }, "S3": { "min": 0.0, "max": 16.1042 } }, "Cancer": { "S1": { "min": -0.406, "max": 9.22963 }, "S2": { "min": 0.0, "max": 15.0834 }, "S3": { "min": 0.0, "max": 17.7689 } }, "Female": { "S1": { "min": -0.45199, "max": 8.92436 }, "S2": { "min": -0.00975, "max": 11.9596 }, "S3": { "min": 0.0, "max": 15.8525 } }, "Immune": { "S1": { "min": -0.44647, "max": 9.91046 }, "S2": { "min": 0.0, "max": 13.2355 }, "S3": { "min": 0.0, "max": 16.0757 } }, "Male": { "S1": { "min": -0.46621, "max": 9.04079 }, "S2": { "min": -0.01305, "max": 12.0132 }, "S3": { "min": 0.0, "max": 16.1173 } }, "Neural": { "S1": { "min": -0.41102, "max": 9.00158 }, "S2": { "min": 0.0, "max": 13.5882 }, "S3": { "min": 0.0, "max": 16.2965 } }, "Non-cancer": { "S1": { "min": -0.47868, "max": 9.03668 }, "S2": { "min": -0.01783, "max": 12.0635 }, "S3": { "min": 0.0, "max": 16.0987 } }, "Non-immune": { "S1": { "min": -0.47653, "max": 9.05129 }, "S2": { "min": -0.01756, "max": 11.811 }, "S3": { "min": 0.0, "max": 16.0781 } }, "Non-neural": { "S1": { "min": -0.47183, "max": 9.08425 }, "S2": { "min": -0.01837, "max": 12.3402 }, "S3": { "min": 0.0, "max": 16.4703 } }, "Non-stem": { "S1": { "min": -0.47809, "max": 9.11207 }, "S2": { "min": -0.01706, "max": 12.2286 }, "S3": { "min": 0.0, "max": 16.5523 } }, "Stem": { "S1": { "min": -0.40334, "max": 9.49631 }, "S2": { "min": 0.0, "max": 12.7369 }, "S3": { "min": 0.0, "max": 17.098 } } } } }, "Boix_et_al_833_sample": { "hg19": { "18": { "All_833_biosamples": { "S1": { "min": -0.49906, "max": 9.94065 }, "S2": { "min": -0.06083, "max": 12.7316 }, "S3": { "min": 0.0, "max": 16.3236 } }, "Cancer": { "S1": { "min": -0.4903, "max": 9.98408 }, "S2": { "min": -0.05441, "max": 12.5138 }, "S3": { "min": 0.0, "max": 15.5663 } }, "Female": { "S1": { "min": -0.49465, "max": 10.0239 }, "S2": { "min": -0.0581, "max": 12.9266 }, "S3": { "min": 0.0, "max": 16.3613 } }, "Immune": { "S1": { "min": -0.49553, "max": 9.7453 }, "S2": { "min": -0.04638, "max": 11.7893 }, "S3": { "min": 0.0, "max": 15.013 } }, "Male": { "S1": { "min": -0.50061, "max": 9.86389 }, "S2": { "min": -0.06162, "max": 12.7348 }, "S3": { "min": 0.0, "max": 16.341 } }, "Neural": { "S1": { "min": -0.49404, "max": 11.2335 }, "S2": { "min": -0.04309, "max": 13.7433 }, "S3": { "min": 0.0, "max": 17.092 } }, "Non-cancer": { "S1": { "min": -0.50208, "max": 10.0742 }, "S2": { "min": -0.05977, "max": 12.8059 }, "S3": { "min": 0.0, "max": 16.4234 } }, "Non-immune": { "S1": { "min": -0.5, "max": 10.0786 }, "S2": { "min": -0.05771, "max": 12.813 }, "S3": { "min": 0.0, "max": 16.5089 } }, "Non-neural": { "S1": { "min": -0.50539, "max": 9.87723 }, "S2": { "min": -0.06155, "max": 12.6595 }, "S3": { "min": 0.0, "max": 16.2037 } }, "Non-stem": { "S1": { "min": -0.49907, "max": 9.91903 }, "S2": { "min": -0.06123, "max": 12.7392 }, "S3": { "min": 0.0, "max": 16.3437 } }, "Stem": { "S1": { "min": -0.442, "max": 11.7098 }, "S2": { "min": -0.03478, "max": 14.0829 }, "S3": { "min": 0.0, "max": 17.2459 } } } }, "hg38": { "18": { "All_833_biosamples": { "S1": { "min": -0.49602, "max": 9.83657 }, "S2": { "min": -0.06856, "max": 12.6269 }, "S3": { "min": 0.0, "max": 16.2237 } }, "Cancer": { "S1": { "min": -0.48569, "max": 9.88088 }, "S2": { "min": -0.06012, "max": 12.4088 }, "S3": { "min": 0.0, "max": 15.4622 } }, "Female": { "S1": { "min": -0.49239, "max": 9.9195 }, "S2": { "min": -0.06489, "max": 12.8219 }, "S3": { "min": 0.0, "max": 16.2566 } }, "Immune": { "S1": { "min": -0.4935, "max": 9.64112 }, "S2": { "min": -0.05145, "max": 11.6933 }, "S3": { "min": 0.0, "max": 14.9087 } }, "Male": { "S1": { "min": -0.5015, "max": 9.76002 }, "S2": { "min": -0.06952, "max": 12.63 }, "S3": { "min": 0.0, "max": 16.237 } }, "Neural": { "S1": { "min": -0.49124, "max": 11.1282 }, "S2": { "min": -0.0473, "max": 13.6382 }, "S3": { "min": 0.0, "max": 16.9865 } }, "Non-cancer": { "S1": { "min": -0.49793, "max": 9.96996 }, "S2": { "min": -0.06598, "max": 12.7012 }, "S3": { "min": 0.0, "max": 16.3224 } }, "Non-immune": { "S1": { "min": -0.49787, "max": 9.9744 }, "S2": { "min": -0.06444, "max": 12.7081 }, "S3": { "min": 0.0, "max": 16.4053 } }, "Non-neural": { "S1": { "min": -0.50259, "max": 9.77324 }, "S2": { "min": -0.06916, "max": 12.5547 }, "S3": { "min": 0.0, "max": 16.1 } }, "Non-stem": { "S1": { "min": -0.49776, "max": 9.81498 }, "S2": { "min": -0.06858, "max": 12.6345 }, "S3": { "min": 0.0, "max": 16.2382 } }, "Stem": { "S1": { "min": -0.43778, "max": 11.6048 }, "S2": { "min": -0.0391, "max": 13.9783 }, "S3": { "min": 0.0, "max": 17.1403 } } } } }, "Gorkin_et_al_65_sample": { "mm10": { "15": { "All_65_epigenomes": { "S1": { "min": -0.49248, "max": 9.2642 }, "S2": { "min": -0.05399, "max": 11.8224 }, "S3": { "min": 0.0, "max": 15.1781 } }, "Embryonic_day_11.5": { "S1": { "min": -0.47612, "max": 10.1559 }, "S2": { "min": 0.0, "max": 13.7459 }, "S3": { "min": 0.0, "max": 16.6049 } }, "Embryonic_day_14.5": { "S1": { "min": -0.47005, "max": 9.46605 }, "S2": { "min": 0.0, "max": 12.8897 }, "S3": { "min": 0.0, "max": 15.9875 } }, "Facial_Prominence": { "S1": { "min": -0.39992, "max": 10.0008 }, "S2": { "min": 0.0, "max": 13.6505 }, "S3": { "min": 0.0, "max": 17.8454 } }, "Hindbrain": { "S1": { "min": -0.44167, "max": 9.43364 }, "S2": { "min": 0.0, "max": 13.5219 }, "S3": { "min": 0.0, "max": 17.0813 } }, "Limb": { "S1": { "min": -0.39856, "max": 9.94811 }, "S2": { "min": 0.0, "max": 14.2474 }, "S3": { "min": 0.0, "max": 17.6524 } }, "Neural_Tube": { "S1": { "min": -0.3925, "max": 9.5272 }, "S2": { "min": 0.0, "max": 14.3663 }, "S3": { "min": 0.0, "max": 17.9226 } }, "Day-of-birth": { "S1": { "min": -0.47059, "max": 10.1156 }, "S2": { "min": 0.0, "max": 13.5187 }, "S3": { "min": 0.0, "max": 16.4949 } }, "Embryonic_day_12.5": { "S1": { "min": -0.43835, "max": 9.29778 }, "S2": { "min": 0.0, "max": 13.6816 }, "S3": { "min": 0.0, "max": 16.1449 } }, "Embryonic_day_15.5": { "S1": { "min": -0.46633, "max": 9.04335 }, "S2": { "min": -0.01304, "max": 13.0589 }, "S3": { "min": 0.0, "max": 15.896 } }, "Forebrain": { "S1": { "min": -0.44249, "max": 9.53001 }, "S2": { "min": 0.0, "max": 12.9371 }, "S3": { "min": 0.0, "max": 17.1184 } }, "Intestine": { "S1": { "min": -0.36343, "max": 10.0528 }, "S2": { "min": 0.0, "max": 14.9817 }, "S3": { "min": 0.0, "max": 18.3272 } }, "Liver": { "S1": { "min": -0.41927, "max": 9.08385 }, "S2": { "min": 0.0, "max": 13.3718 }, "S3": { "min": 0.0, "max": 17.0702 } }, "Stomach": { "S1": { "min": -0.36909, "max": 10.0408 }, "S2": { "min": 0.0, "max": 16.2008 }, "S3": { "min": 0.0, "max": 18.6556 } }, "Digestive_System": { "S1": { "min": -0.47511, "max": 9.96876 }, "S2": { "min": 0.0, "max": 13.3386 }, "S3": { "min": 0.0, "max": 16.8216 } }, "Embryonic_day_13.5": { "S1": { "min": -0.43006, "max": 8.95379 }, "S2": { "min": 0.0, "max": 13.3432 }, "S3": { "min": 0.0, "max": 15.8808 } }, "Embryonic_day_16.5": { "S1": { "min": -0.46679, "max": 9.1723 }, "S2": { "min": 0.0, "max": 13.4872 }, "S3": { "min": 0.0, "max": 15.9767 } }, "Heart": { "S1": { "min": -0.41354, "max": 8.7911 }, "S2": { "min": 0.0, "max": 13.4929 }, "S3": { "min": 0.0, "max": 16.2164 } }, "Kidney": { "S1": { "min": -0.34675, "max": 9.49048 }, "S2": { "min": 0.0, "max": 15.5278 }, "S3": { "min": 0.0, "max": 19.0067 } }, "Lung": { "S1": { "min": -0.35582, "max": 9.58985 }, "S2": { "min": 0.0, "max": 15.323 }, "S3": { "min": 0.0, "max": 17.9422 } } } } } };
 
 export const hideClipboardCopiedAlertTime = 750;
+
+export const simsearchHgViewconf = {
+  "editable": false,
+  "zoomFixed": false,
+  "trackSourceServers": [
+    "/api/v1",
+    "http://higlass.io/api/v1"
+  ],
+  "exportViewUrl": "/api/v1/viewconfs/",
+  "views": [
+    {
+      "tracks": {
+        "top": [
+          {
+            "name": "hg19.15.all.KL.bed.multires.mv5",
+            "created": "2019-04-11T15:11:40.187119Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://explore.altius.org/api/v1",
+            "tilesetUid": "CXUbWkQ8QOaec_ip0CSiHw",
+            "uid": "UjPwsfbLQpiBVpSNokoeHw",
+            "type": "horizontal-stacked-bar",
+            "options": {
+              "labelPosition": "hidden",
+              "labelColor": "black",
+              "labelTextOpacity": 0.4,
+              "valueScaling": "exponential",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "backgroundColor": "black",
+              "barBorder": false,
+              "sortLargestOnTop": true,
+              "colorScale": [
+                "#ff0000",
+                "#ff4500",
+                "#ff4501",
+                "#ff4502",
+                "#008000",
+                "#006400",
+                "#c2e105",
+                "#c2e106",
+                "#ffc34d",
+                "#ffc34e",
+                "#ffff00",
+                "#66cdaa",
+                "#8a91d0",
+                "#cd5c5c",
+                "#bdb76b",
+                "#808080",
+                "#c0c0c0",
+                "#ffffff"
+              ],
+              "name": "hg19.15.all.KL.bed.multires.mv5"
+            },
+            "width": 1371,
+            "height": 200,
+            "position": "top",
+            "resolutions": [
+              13107200,
+              6553600,
+              3276800,
+              1638400,
+              819200,
+              409600,
+              204800,
+              102400,
+              51200,
+              25600,
+              12800,
+              6400,
+              3200,
+              1600,
+              800,
+              400,
+              200
+            ]
+          },
+          {
+            "name": "hg19.15.all.bed.multires.2bin_bgfq_allSamples.json.mv5",
+            "created": "2019-04-11T15:14:45.621908Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://explore.altius.org/api/v1",
+            "tilesetUid": "IV1GUK7ySuqbZ2vPVQ1_cw",
+            "uid": "bezs5b3sESuGXWwG8RC2ZXg",
+            "type": "horizontal-categorical-stacked-bar",
+            "options": {
+              "labelPosition": "hidden",
+              "labelColor": "black",
+              "labelTextOpacity": 0.4,
+              "valueScaling": "linear",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "barBorder": false
+            },
+            "width": 20,
+            "height": 20,
+            "position": "top"
+          },
+          {
+            "name": "ChromosomeAxis",
+            "created": "2019-04-11T15:11:47.798450Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://explore.altius.org/api/v1",
+            "tilesetUid": "e7yehSFuSvWu0_9uEK1Apw",
+            "uid": "SRCJX1o9TMCGnrwq4Z0W7g",
+            "type": "horizontal-chromosome-labels",
+            "options": {
+              "color": "#777777",
+              "stroke": "#FFFFFF",
+              "fontSize": 12,
+              "fontIsAligned": false,
+              "showMousePosition": false,
+              "mousePositionColor": "#999999"
+            },
+            "width": 1371,
+            "height": 35,
+            "position": "top"
+          },
+          {
+            "name": "gencode.hg19.v19.annotation.v2.hgnc.longest.gtf.bed14.db",
+            "created": "2019-04-11T15:12:04.391612Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://explore.altius.org/api/v1",
+            "tilesetUid": "OAc6qvgJRP2cEr78Eoj79w",
+            "uid": "Kb0SxGWESISX2AJSZMEThQ",
+            "type": "horizontal-gene-annotations",
+            "options": {
+              "fontSize": 11,
+              "labelColor": "black",
+              "labelPosition": "hidden",
+              "labelLeftMargin": 0,
+              "labelRightMargin": 0,
+              "labelTopMargin": 0,
+              "labelBottomMargin": 0,
+              "plusStrandColor": "blue",
+              "minusStrandColor": "red",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "showMousePosition": false,
+              "mousePositionColor": "#999999",
+              "geneAnnotationHeight": 10,
+              "geneLabelPosition": "outside",
+              "geneStrandSpacing": 4,
+              "name": "hg19.gencode.v19.annotation.hgnc.longest.gtf.bed14.db"
+            },
+            "width": 1371,
+            "height": 55,
+            "header": "1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14",
+            "position": "top"
+          }
+        ],
+        "left": [],
+        "center": [],
+        "right": [],
+        "bottom": [],
+        "whole": [],
+        "gallery": []
+      },
+      "initialXDomain": [
+        1876561899.0000381,
+        1876585959.9999616
+      ],
+      "initialYDomain": [
+        1876567558.863259,
+        1876580300.1367414
+      ],
+      "layout": {
+        "w": 12,
+        "h": 12,
+        "x": 0,
+        "y": 0,
+        "i": "CLH4ybW8ToynSKBby7aB4g",
+        "moved": false,
+        "static": false
+      },
+      "uid": "ee7ac3c4-8269-42c9-8577-2b00d7e9fc80",
+      "genomePositionSearchBoxVisible": true,
+      "genomePositionSearchBox": {
+        "autocompleteServer": "http://higlass.io/api/v1",
+        "chromInfoServer": "http://higlass.io/api/v1",
+        "visible": true,
+        "chromInfoId": "hg19"
+      }
+    }
+  ],
+  "zoomLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "locationLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  },
+  "valueScaleLocks": {
+    "locksByViewUid": {},
+    "locksDict": {}
+  }
+}

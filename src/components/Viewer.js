@@ -789,22 +789,26 @@ class Viewer extends Component {
 
         console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
 
-        axios.get(newHgViewconfURL)
-          .then((res) => {
-            if (!res.data) {
-              throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
-            }
+        // axios.get(newHgViewconfURL)
+          // .then((res) => {
+            // if (!res.data) {
+              // throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
+            // }
             //
             // update track features
             //
-            self.state.mainHgViewconf = res.data;
+            // self.state.mainHgViewconf = res.data;
+            self.state.mainHgViewconf = Constants.simsearchHgViewconf;
             const newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(
-              newTempHgViewParams.sampleSet, 
-              newTempHgViewParams.genome, 
-              newTempHgViewParams.model, 
-              newTempHgViewParams.group, 
+              newTempHgViewParams.sampleSet,
+              newTempHgViewParams.genome,
+              newTempHgViewParams.model,
+              newTempHgViewParams.group,
               newTempHgViewParams.complexity
             );
+            console.log(`newEpilogosTrackFilename = ${newEpilogosTrackFilename}`);
+            console.log(`newTempHgViewParams = ${JSON.stringify(newTempHgViewParams)}`);
+
             const newEpilogosTrackUUIDQueryPromise = Helpers.uuidQueryPromise(newEpilogosTrackFilename, this);
             newEpilogosTrackUUIDQueryPromise.then((res) => {
               self.state.mainHgViewconf.views[0].uid = uuid4();
@@ -849,11 +853,11 @@ class Viewer extends Component {
               .catch((err) => {
                 console.error(`Could not retrieve view configuration`);
               });
-            });
-          })
+            // });
+          // })
 
         // eslint-disable-next-line no-unused-vars
-        .catch((err) => {})
+        // .catch((err) => {})
       }
 
       const genome = this.state.hgViewParams.genome;
