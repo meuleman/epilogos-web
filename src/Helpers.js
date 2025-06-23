@@ -1518,7 +1518,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
 
-  // console.log(`recommenderV3URL | ${recommenderV3URL}`);
+  console.log(`recommenderV3URL | ${recommenderV3URL}`);
 
   return axios.get(recommenderV3URL).then((res) => {
     if (res.data) {

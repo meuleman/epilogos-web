@@ -120,6 +120,7 @@ class QueryTargetViewer extends Component {
     this.queryTargetRecommendationTableRef = React.createRef();
 
     this.resize = this.debounce(() => {
+      console.log(`resize`);
       if (this.state.panelViewsLocked) {
         // console.log(`resize - locked`);
         const newQueryTargetLockedHgViewconf = {...this.state.queryTargetLockedHgViewconf};

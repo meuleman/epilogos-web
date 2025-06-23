@@ -3333,7 +3333,7 @@ export const simsearchHgViewconf = {
             "server": "https://epilogoshg.bcgsc.ca/api/v1",
             "tilesetUid": "YyRBItWATBaJFgzxuVMlBA",
             "uid": "89d0ba02-651d-44cb-b113-cd6b710f1e2d",
-            "type": "horizontal-multivec",
+            "type": "horizontal-stacked-bar",
             "options": {
               "labelPosition": "hidden",
               "labelColor": "black",
@@ -3509,7 +3509,7 @@ export const simsearchHgViewconf = {
             "server": "https://epilogoshg.bcgsc.ca/api/v1",
             "tilesetUid": "YyRBItWATBaJFgzxuVMlBA",
             "uid": "89d0ba02-651d-44cb-b113-cd6b710f1e2d",
-            "type": "horizontal-multivec",
+            "type": "horizontal-stacked-bar",
             "options": {
               "labelPosition": "hidden",
               "labelColor": "black",

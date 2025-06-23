@@ -781,13 +781,14 @@ class Viewer extends Component {
 
       const handleSimSearchQueryForChromInfoFn = function handleSimSearchQueryForChromInfo(chromInfo, self) {
 
-        const newViewconfUUID = Constants.viewerHgViewconfTemplates[newTempHgViewParams.mode];
-        const newHgViewconfURL = Helpers.hgViewconfDownloadURL(
-          self.state.hgViewParams.hgViewconfEndpointURL,
-          newViewconfUUID, 
-          self.state.hgViewParams.hgViewconfEndpointURLSuffix);
+        // const newViewconfUUID = Constants.viewerHgViewconfTemplates[newTempHgViewParams.mode];
+        
+        // const newHgViewconfURL = Helpers.hgViewconfDownloadURL(
+        //   self.state.hgViewParams.hgViewconfEndpointURL,
+        //   newViewconfUUID, 
+        //   self.state.hgViewParams.hgViewconfEndpointURLSuffix);
 
-        console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
+        // console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
 
         // axios.get(newHgViewconfURL)
           // .then((res) => {
