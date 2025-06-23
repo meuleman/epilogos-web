@@ -3313,15 +3313,27 @@ export const simsearchHgViewconf = {
       "tracks": {
         "top": [
           {
-            "name": "hg19.15.all.KL.bed.multires.mv5",
+            name: 'spacer',
+            tilesetUid: '',
+            uid: "89d0ba02-651d-44cb-b113-cd6b710f1e21",
+            position: 'top',
+            width: 1371,
+            height: 20,
+            type: 'empty',
+            options: {
+              backgroundColor: 'black'
+            }
+          },
+          {
+            "name": "vA.hg38.15.All_127_Roadmap_epigenomes.mv5",
             "created": "2019-04-11T15:11:40.187119Z",
             "project": "bLwQYp24jRG2YyAxGaGGwMg",
             "project_name": "",
             "description": "",
-            "server": "https://explore.altius.org/api/v1",
-            "tilesetUid": "CXUbWkQ8QOaec_ip0CSiHw",
-            "uid": "UjPwsfbLQpiBVpSNokoeHw",
-            "type": "horizontal-stacked-bar",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "YyRBItWATBaJFgzxuVMlBA",
+            "uid": "89d0ba02-651d-44cb-b113-cd6b710f1e2d",
+            "type": "horizontal-multivec",
             "options": {
               "labelPosition": "hidden",
               "labelColor": "black",
@@ -3332,83 +3344,99 @@ export const simsearchHgViewconf = {
               "backgroundColor": "black",
               "barBorder": false,
               "sortLargestOnTop": true,
-              "colorScale": [
-                "#ff0000",
-                "#ff4500",
-                "#ff4501",
-                "#ff4502",
-                "#008000",
-                "#006400",
-                "#c2e105",
-                "#c2e106",
-                "#ffc34d",
-                "#ffc34e",
-                "#ffff00",
-                "#66cdaa",
-                "#8a91d0",
-                "#cd5c5c",
-                "#bdb76b",
-                "#808080",
-                "#c0c0c0",
-                "#ffffff"
+              "colorRange": [
+                "rgba(255,0,0,1)",
+                "rgba(255,69,0,1)",
+                "rgba(50,205,50,1)",
+                "rgba(0,128,0,1)",
+                "rgba(0,100,0,1)",
+                "rgba(194,225,5,1)",
+                "rgba(255,255,0,1)",
+                "rgba(102,205,170,1)",
+                "rgba(138,145,208,1)",
+                "rgba(205,92,92,1)",
+                "rgba(233,150,122,1)",
+                "rgba(189,183,107,1)",
+                "rgba(128,128,128,1)",
+                "rgba(192,192,192,1)",
+                "rgba(255,255,255,1)"
               ],
-              "name": "hg19.15.all.KL.bed.multires.mv5"
+              "colorLabels": {
+                "1": [
+                  "Active TSS",
+                  "#ff0000"
+                ],
+                "2": [
+                  "Flanking Active TSS",
+                  "#ff4500"
+                ],
+                "3": [
+                  "Transcription at gene 5' and 3'",
+                  "#32cd32"
+                ],
+                "4": [
+                  "Strong transcription",
+                  "#008000"
+                ],
+                "5": [
+                  "Weak transcription",
+                  "#006400"
+                ],
+                "6": [
+                  "Genic enhancers",
+                  "#c2e105"
+                ],
+                "7": [
+                  "Enhancers",
+                  "#ffff00"
+                ],
+                "8": [
+                  "ZNF genes + repeats",
+                  "#66cdaa"
+                ],
+                "9": [
+                  "Heterochromatin",
+                  "#8a91d0"
+                ],
+                "10": [
+                  "Bivalent/Poised TSS",
+                  "#cd5c5c"
+                ],
+                "11": [
+                  "Flanking Bivalent TSS/Enh",
+                  "#e9967a"
+                ],
+                "12": [
+                  "Bivalent Enhancer",
+                  "#bdb76b"
+                ],
+                "13": [
+                  "Repressed PolyComb",
+                  "#808080"
+                ],
+                "14": [
+                  "Weak Repressed PolyComb",
+                  "#c0c0c0"
+                ],
+                "15": [
+                  "Quiescent/Low",
+                  "#ffffff"
+                ]
+              },
             },
             "width": 1371,
             "height": 200,
-            "position": "top",
-            "resolutions": [
-              13107200,
-              6553600,
-              3276800,
-              1638400,
-              819200,
-              409600,
-              204800,
-              102400,
-              51200,
-              25600,
-              12800,
-              6400,
-              3200,
-              1600,
-              800,
-              400,
-              200
-            ]
-          },
-          {
-            "name": "hg19.15.all.bed.multires.2bin_bgfq_allSamples.json.mv5",
-            "created": "2019-04-11T15:14:45.621908Z",
-            "project": "bLwQYp24jRG2YyAxGaGGwMg",
-            "project_name": "",
-            "description": "",
-            "server": "https://explore.altius.org/api/v1",
-            "tilesetUid": "IV1GUK7ySuqbZ2vPVQ1_cw",
-            "uid": "bezs5b3sESuGXWwG8RC2ZXg",
-            "type": "horizontal-categorical-stacked-bar",
-            "options": {
-              "labelPosition": "hidden",
-              "labelColor": "black",
-              "labelTextOpacity": 0.4,
-              "valueScaling": "linear",
-              "trackBorderWidth": 0,
-              "trackBorderColor": "black",
-              "barBorder": false
-            },
-            "width": 20,
-            "height": 20,
             "position": "top"
           },
           {
-            "name": "ChromosomeAxis",
+            "name": "chromosomes_hg38",
             "created": "2019-04-11T15:11:47.798450Z",
             "project": "bLwQYp24jRG2YyAxGaGGwMg",
             "project_name": "",
             "description": "",
-            "server": "https://explore.altius.org/api/v1",
-            "tilesetUid": "e7yehSFuSvWu0_9uEK1Apw",
-            "uid": "SRCJX1o9TMCGnrwq4Z0W7g",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "W4MlGNdlT62pEEv9BrtpHg",
+            "uid": "672b2027-81df-4e01-b70b-1c2752243780",
             "type": "horizontal-chromosome-labels",
             "options": {
               "color": "#777777",
@@ -3416,21 +3444,23 @@ export const simsearchHgViewconf = {
               "fontSize": 12,
               "fontIsAligned": false,
               "showMousePosition": false,
-              "mousePositionColor": "#999999"
+              "mousePositionColor": "#999999",
+              "name": "chromosomes_hg38",
+              "backgroundColor": "white"
             },
             "width": 1371,
-            "height": 35,
+            "height": 25,
             "position": "top"
           },
           {
-            "name": "gencode.hg19.v19.annotation.v2.hgnc.longest.gtf.bed14.db",
+            "name": "annotations_GENCODE_v28",
             "created": "2019-04-11T15:12:04.391612Z",
             "project": "bLwQYp24jRG2YyAxGaGGwMg",
             "project_name": "",
             "description": "",
-            "server": "https://explore.altius.org/api/v1",
-            "tilesetUid": "OAc6qvgJRP2cEr78Eoj79w",
-            "uid": "Kb0SxGWESISX2AJSZMEThQ",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "XvTj8Y1-S1-rNS_do-sKKg",
+            "uid": "708996fe-2880-41f5-bdd9-8b95a16b1185",
             "type": "horizontal-gene-annotations",
             "options": {
               "fontSize": 11,
@@ -3449,13 +3479,191 @@ export const simsearchHgViewconf = {
               "geneAnnotationHeight": 10,
               "geneLabelPosition": "outside",
               "geneStrandSpacing": 4,
-              "name": "hg19.gencode.v19.annotation.hgnc.longest.gtf.bed14.db"
+              "name": "annotations_GENCODE_v28",
+              "backgroundColor": "white",
+              "showTooltip": true
             },
             "width": 1371,
-            "height": 55,
+            "height": 123,
             "header": "1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14",
             "position": "top"
-          }
+          },
+          {
+            name: 'spacer',
+            tilesetUid: '',
+            uid: "89d0ba02-651d-44cb-b113-cd6b710f1e22",
+            position: 'top',
+            width: 1371,
+            height: 20,
+            type: 'empty',
+            options: {
+              backgroundColor: 'black'
+            }
+          },
+          {
+            "name": "vA.hg38.15.All_127_Roadmap_epigenomes.mv5",
+            "created": "2019-04-11T15:11:40.187119Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "YyRBItWATBaJFgzxuVMlBA",
+            "uid": "89d0ba02-651d-44cb-b113-cd6b710f1e2d",
+            "type": "horizontal-multivec",
+            "options": {
+              "labelPosition": "hidden",
+              "labelColor": "black",
+              "labelTextOpacity": 0.4,
+              "valueScaling": "exponential",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "backgroundColor": "black",
+              "barBorder": false,
+              "sortLargestOnTop": true,
+              "colorRange": [
+                "rgba(255,0,0,1)",
+                "rgba(255,69,0,1)",
+                "rgba(50,205,50,1)",
+                "rgba(0,128,0,1)",
+                "rgba(0,100,0,1)",
+                "rgba(194,225,5,1)",
+                "rgba(255,255,0,1)",
+                "rgba(102,205,170,1)",
+                "rgba(138,145,208,1)",
+                "rgba(205,92,92,1)",
+                "rgba(233,150,122,1)",
+                "rgba(189,183,107,1)",
+                "rgba(128,128,128,1)",
+                "rgba(192,192,192,1)",
+                "rgba(255,255,255,1)"
+              ],
+              "colorLabels": {
+                "1": [
+                  "Active TSS",
+                  "#ff0000"
+                ],
+                "2": [
+                  "Flanking Active TSS",
+                  "#ff4500"
+                ],
+                "3": [
+                  "Transcription at gene 5' and 3'",
+                  "#32cd32"
+                ],
+                "4": [
+                  "Strong transcription",
+                  "#008000"
+                ],
+                "5": [
+                  "Weak transcription",
+                  "#006400"
+                ],
+                "6": [
+                  "Genic enhancers",
+                  "#c2e105"
+                ],
+                "7": [
+                  "Enhancers",
+                  "#ffff00"
+                ],
+                "8": [
+                  "ZNF genes + repeats",
+                  "#66cdaa"
+                ],
+                "9": [
+                  "Heterochromatin",
+                  "#8a91d0"
+                ],
+                "10": [
+                  "Bivalent/Poised TSS",
+                  "#cd5c5c"
+                ],
+                "11": [
+                  "Flanking Bivalent TSS/Enh",
+                  "#e9967a"
+                ],
+                "12": [
+                  "Bivalent Enhancer",
+                  "#bdb76b"
+                ],
+                "13": [
+                  "Repressed PolyComb",
+                  "#808080"
+                ],
+                "14": [
+                  "Weak Repressed PolyComb",
+                  "#c0c0c0"
+                ],
+                "15": [
+                  "Quiescent/Low",
+                  "#ffffff"
+                ]
+              },
+            },
+            "width": 1371,
+            "height": 200,
+            "position": "top"
+          },
+          {
+            "name": "chromosomes_hg38",
+            "created": "2019-04-11T15:11:47.798450Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "W4MlGNdlT62pEEv9BrtpHg",
+            "uid": "672b2027-81df-4e01-b70b-1c2752243780",
+            "type": "horizontal-chromosome-labels",
+            "options": {
+              "color": "#777777",
+              "stroke": "#FFFFFF",
+              "fontSize": 12,
+              "fontIsAligned": false,
+              "showMousePosition": false,
+              "mousePositionColor": "#999999",
+              "name": "chromosomes_hg38",
+              "backgroundColor": "white"
+            },
+            "width": 1371,
+            "height": 25,
+            "position": "top"
+          },
+          {
+            "name": "annotations_GENCODE_v28",
+            "created": "2019-04-11T15:12:04.391612Z",
+            "project": "bLwQYp24jRG2YyAxGaGGwMg",
+            "project_name": "",
+            "description": "",
+            "server": "https://epilogoshg.bcgsc.ca/api/v1",
+            "tilesetUid": "XvTj8Y1-S1-rNS_do-sKKg",
+            "uid": "708996fe-2880-41f5-bdd9-8b95a16b1185",
+            "type": "horizontal-gene-annotations",
+            "options": {
+              "fontSize": 11,
+              "labelColor": "black",
+              "labelPosition": "hidden",
+              "labelLeftMargin": 0,
+              "labelRightMargin": 0,
+              "labelTopMargin": 0,
+              "labelBottomMargin": 0,
+              "plusStrandColor": "blue",
+              "minusStrandColor": "red",
+              "trackBorderWidth": 0,
+              "trackBorderColor": "black",
+              "showMousePosition": false,
+              "mousePositionColor": "#999999",
+              "geneAnnotationHeight": 10,
+              "geneLabelPosition": "outside",
+              "geneStrandSpacing": 4,
+              "name": "annotations_GENCODE_v28",
+              "backgroundColor": "white",
+              "showTooltip": true
+            },
+            "width": 1371,
+            "height": 123,
+            "header": "1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14",
+            "position": "top"
+          },
         ],
         "left": [],
         "center": [],
@@ -3482,11 +3690,11 @@ export const simsearchHgViewconf = {
         "static": false
       },
       "uid": "ee7ac3c4-8269-42c9-8577-2b00d7e9fc80",
-      "genomePositionSearchBoxVisible": true,
+      "genomePositionSearchBoxVisible": false,
       "genomePositionSearchBox": {
         "autocompleteServer": "http://higlass.io/api/v1",
         "chromInfoServer": "http://higlass.io/api/v1",
-        "visible": true,
+        "visible": false,
         "chromInfoId": "hg19"
       }
     }
