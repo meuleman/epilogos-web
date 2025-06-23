@@ -853,12 +853,13 @@ class Viewer extends Component {
               .catch((err) => {
                 console.error(`Could not retrieve view configuration`);
               });
+            });
             // });
           // })
 
         // eslint-disable-next-line no-unused-vars
         // .catch((err) => {})
-      }
+      // }
 
       const genome = this.state.hgViewParams.genome;
       const chromInfoCacheExists = Object.prototype.hasOwnProperty.call(this.chromInfoCache, genome);
