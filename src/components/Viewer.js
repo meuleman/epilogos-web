@@ -6500,9 +6500,9 @@ class Viewer extends Component {
     const queryWindowSize = parseInt(parseInt(queryScale.diff) / 1000); // kb
     const simSearchQueryPromise = Helpers.simsearchStaticOverlapsQueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, this, true);
     simSearchQueryPromise.then((res) => {
-      // console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
+      console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
       if (!res.overlaps || res.overlaps.length === 0) {
-        // console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
+        console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
         this.setState({
           simSearchQueryCount: -1,
           simSearchQueryCountIsVisible: false,
