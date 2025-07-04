@@ -6727,15 +6727,15 @@ class Viewer extends Component {
         }
         else if (side === "right") {
           return (
-            <div />
-            // <SimsearchPill 
-            //   ref={(component) => this.epilogosViewerSuggestionPill = component}
-            //   onClick={this.simsearchPillOnClick}
-            //   count={this.state.simSearchQueryCount}
-            //   isVisible={this.state.simSearchQueryCountIsVisible}
-            //   isEnabled={this.state.simSearchQueryCountIsEnabled}
-            //   inProgress={this.state.recommenderV3SearchInProgress}
-            //   />
+            // <div />
+            <SimsearchPill 
+              ref={(component) => this.epilogosViewerSuggestionPill = component}
+              onClick={this.simsearchPillOnClick}
+              count={this.state.simSearchQueryCount}
+              isVisible={this.state.simSearchQueryCountIsVisible}
+              isEnabled={this.state.simSearchQueryCountIsEnabled}
+              inProgress={this.state.recommenderV3SearchInProgress}
+              />
           );
         }
       // eslint-disable-next-line no-fallthrough
