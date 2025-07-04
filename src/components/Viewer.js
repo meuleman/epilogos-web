@@ -6500,9 +6500,9 @@ class Viewer extends Component {
     const queryWindowSize = parseInt(parseInt(queryScale.diff) / 1000); // kb
     const simSearchQueryPromise = Helpers.simsearchStaticOverlapsQueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, this, true);
     simSearchQueryPromise.then((res) => {
-      console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
+      // console.log(`simSearchClientQuery: ${JSON.stringify(res, null, 2)}`);
       if (!res.overlaps || res.overlaps.length === 0) {
-        console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
+        // console.log(`No overlaps found for query: ${queryChr}:${queryStart}-${queryEnd}`);
         this.setState({
           simSearchQueryCount: -1,
           simSearchQueryCountIsVisible: false,
@@ -6566,8 +6566,9 @@ class Viewer extends Component {
           simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
           simSearchQueryCountIsEnabled: newSimSearchQueryCountIsEnabled,
         }, () => {
-          // console.log(`simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
-          // console.log(`simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
+          console.log(`[simSearchClientQuery] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
+          console.log(`[simSearchClientQuery] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+          console.log(`[simSearchClientQuery] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
           this.setState({
             simSearchQueryInProgress: false,
           });
@@ -6670,6 +6671,10 @@ class Viewer extends Component {
     //     <span />
     //   )
     // }
+    console.log(`[suggestionSearchButtonForStyle] suggestionStyle = ${this.state.suggestionStyle}`);
+    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
+    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
     switch (this.state.suggestionStyle) {
       case "overload":
         return (

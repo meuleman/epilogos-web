@@ -22,7 +22,7 @@ export const applicationTabixRootURL = `${process.env.REACT_APP_TABIX_SERVICE_PR
 export const applicationRecommenderV1DatabaseRootURL = "file:///home/ubuntu/recommender-proxy/assets/MatrixDatabase";
 
 export const urlProxyURL = `${process.env.REACT_APP_URL_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_URL_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_URL_PROXY_SERVICE_PORT}`;
-export const recommenderProxyURL = `${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PORT}`;
+export const recommenderProxyURL = `${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PROTOCOL}://${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_HOSTNAME}:${process.env.REACT_APP_RECOMMENDER_PROXY_SERVICE_PORT}/proxy`;
 
 export const defaultHgViewClickPageX = -1;
 export const defaultHgViewClickTimePrevious = -1;
