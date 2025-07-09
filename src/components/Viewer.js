@@ -825,6 +825,9 @@ class Viewer extends Component {
               self.state.tempHgViewParams = newTempHgViewParams;
               const newSimSearchQuery = Helpers.recommenderV3QueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
               newSimSearchQuery.then((res) => {
+
+                console.log(`Viewer.handleSimSearchQueryForChromInfo | newSimSearchQuery = ${JSON.stringify(res)}`);
+
                 const queryRegionIndicatorData = {
                   chromosome: res.query.chromosome,
                   start: res.query.start,
@@ -839,7 +842,9 @@ class Viewer extends Component {
                   hitEndDiff: res.query.hitEndDiff,
                   minMax: JSON.parse(res.query.minmax),
                 };
-                
+
+                console.log(`Viewer.handleSimSearchQueryForChromInfo | queryRegionIndicatorData = ${JSON.stringify(queryRegionIndicatorData)}`);
+
                 const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
 
                 self.state.queryTargetModeWillRequireFullExpand = true;

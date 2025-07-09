@@ -1575,6 +1575,7 @@ export const uuidQueryPromise = function(fn, self, endpointURL) {
       err.response = {};
       err.response.status = "404";
       err.response.statusText = "No tileset data found for specified UUID";
+      console.log(`[uuidQueryPromise] No tileset data found for specified UUID for track query`);
       throw err;
     }
   })
@@ -1603,8 +1604,8 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
         uuidQueryPromise(singleMarksTrackFn, this, endpointURL),
       ];
       arePromisesValid = Promise.all(promiseArraySingle).then((uuidArray) => {
-        // console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
-        // console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
+        console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
+        console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
         // if either or both UUIDs are undefined, return false
         if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined")) {
           return false;
