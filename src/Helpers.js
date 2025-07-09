@@ -1479,6 +1479,7 @@ export const simsearchStaticMinmaxQueryUrl = (scaleLevel, windowSize, self) => {
 }
 
 export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
+  console.log(`Helpers.simSearchQueryPromise | qChr: ${qChr} | qStart: ${qStart} | qEnd: ${qEnd} | qWindowSizeKb: ${qWindowSizeKb}`);
   if (qWindowSizeKb === 0) return Promise.reject(new Error('Invalid window size')).then(
     (result) => { return {'resolved': true} }, (result) => { return {'rejected': true} }
   );
@@ -1508,7 +1509,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   }
 
   let scaleLevel = parseInt(windowSize / 5);
-  let tabixUrlEncoded = encodeURIComponent(Constants.applicationTabixRootURL);
+  let tabixUrlEncoded = `${encodeURIComponent(Constants.applicationTabixRootURL)}/proxy`;
   let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
   
   const recommenderV3QueryDefaultURL = Constants.recommenderProxyURL;
