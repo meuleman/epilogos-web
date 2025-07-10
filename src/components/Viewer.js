@@ -781,25 +781,25 @@ class Viewer extends Component {
 
       const handleSimSearchQueryForChromInfoFn = function handleSimSearchQueryForChromInfo(chromInfo, self) {
 
-        // const newViewconfUUID = Constants.viewerHgViewconfTemplates[newTempHgViewParams.mode];
+        const newViewconfUUID = Constants.viewerHgViewconfTemplates[newTempHgViewParams.mode];
         
-        // const newHgViewconfURL = Helpers.hgViewconfDownloadURL(
-        //   self.state.hgViewParams.hgViewconfEndpointURL,
-        //   newViewconfUUID, 
-        //   self.state.hgViewParams.hgViewconfEndpointURLSuffix);
+        const newHgViewconfURL = Helpers.hgViewconfDownloadURL(
+          self.state.hgViewParams.hgViewconfEndpointURL,
+          newViewconfUUID, 
+          self.state.hgViewParams.hgViewconfEndpointURLSuffix);
 
-        // console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
+        console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
 
-        // axios.get(newHgViewconfURL)
-          // .then((res) => {
-            // if (!res.data) {
-              // throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
-            // }
+        axios.get(newHgViewconfURL)
+          .then((res) => {
+            if (!res.data) {
+              throw String("Error: New viewconf not returned from query to " + newHgViewconfURL);
+            }
             //
             // update track features
             //
-            // self.state.mainHgViewconf = res.data;
-            self.state.mainHgViewconf = Constants.simsearchHgViewconf;
+            self.state.mainHgViewconf = res.data;
+            // self.state.mainHgViewconf = Constants.simsearchHgViewconf;
             const newEpilogosTrackFilename = Helpers.epilogosTrackFilenameForSingleSampleSet(
               newTempHgViewParams.sampleSet,
               newTempHgViewParams.genome,
@@ -860,12 +860,10 @@ class Viewer extends Component {
                 console.error(`Could not retrieve view configuration`);
               });
             });
-            // });
-          // })
+          })
 
         // eslint-disable-next-line no-unused-vars
-        // .catch((err) => {})
-      // }
+        .catch((err) => {})
       }
 
       const genome = this.state.hgViewParams.genome;
