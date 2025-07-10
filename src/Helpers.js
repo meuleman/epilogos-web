@@ -1479,7 +1479,7 @@ export const simsearchStaticMinmaxQueryUrl = (scaleLevel, windowSize, self) => {
 }
 
 export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, ignoreNoHits) => {
-  console.log(`Helpers.simSearchQueryPromise | qChr: ${qChr} | qStart: ${qStart} | qEnd: ${qEnd} | qWindowSizeKb: ${qWindowSizeKb}`);
+  // console.log(`Helpers.simSearchQueryPromise | qChr: ${qChr} | qStart: ${qStart} | qEnd: ${qEnd} | qWindowSizeKb: ${qWindowSizeKb}`);
   if (qWindowSizeKb === 0) return Promise.reject(new Error('Invalid window size')).then(
     (result) => { return {'resolved': true} }, (result) => { return {'rejected': true} }
   );
@@ -1519,7 +1519,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 
   let recommenderV3URL = `${recommenderV3QueryURL}/v2?datasetAltname=${datasetAltname}&assembly=${assembly}&stateModel=${stateModel}&groupEncoded=${groupEncoded}&saliencyLevel=${saliencyLevel}&chromosome=${chromosome}&start=${start}&end=${end}&tabixUrlEncoded=${tabixUrlEncoded}&outputFormat=${outputFormat}&windowSize=${windowSize}&scaleLevel=${scaleLevel}`;
 
-  console.log(`recommenderV3URL | ${recommenderV3URL}`);
+  // console.log(`recommenderV3URL | ${recommenderV3URL}`);
 
   return axios.get(recommenderV3URL).then((res) => {
     if (res.data) {
@@ -1566,7 +1566,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
 //
 export const uuidQueryPromise = function(fn, self, endpointURL) {
   const hgUUIDQueryURL = (!endpointURL) ? `${Constants.viewerHgViewParameters.hgViewconfEndpointURL}/api/v1/tilesets?ac=${fn}` : `${endpointURL}/tilesets?ac=${fn}`;
-  console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
+  // console.log(`hgUUIDQueryURL ${hgUUIDQueryURL}`);
   return axios.get(hgUUIDQueryURL).then((res) => {
     if (res.data && res.data.results && res.data.results[0]) {
       return res.data.results[0].uuid;
@@ -1576,7 +1576,7 @@ export const uuidQueryPromise = function(fn, self, endpointURL) {
       err.response = {};
       err.response.status = "404";
       err.response.statusText = "No tileset data found for specified UUID";
-      console.log(`[uuidQueryPromise] No tileset data found for specified UUID for track query`);
+      // console.log(`[uuidQueryPromise] No tileset data found for specified UUID for track query`);
       throw err;
     }
   })
@@ -1605,8 +1605,8 @@ export const isHgViewParamsObjectValidPromise = (hgViewParams) => {
         uuidQueryPromise(singleMarksTrackFn, this, endpointURL),
       ];
       arePromisesValid = Promise.all(promiseArraySingle).then((uuidArray) => {
-        console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
-        console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
+        // console.log(`singleEpilogosTrackFn ${singleEpilogosTrackFn} | uuid ${uuidArray[0]}`);
+        // console.log(`singleMarksTrackFn ${singleMarksTrackFn} | uuid ${uuidArray[1]}`);
         // if either or both UUIDs are undefined, return false
         if ((typeof uuidArray[0] === "undefined") || (typeof uuidArray[1] === "undefined")) {
           return false;

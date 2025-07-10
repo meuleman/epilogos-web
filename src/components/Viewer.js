@@ -788,7 +788,7 @@ class Viewer extends Component {
           newViewconfUUID, 
           self.state.hgViewParams.hgViewconfEndpointURLSuffix);
 
-        console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
+        // console.log(`newHgViewconfURL = ${newHgViewconfURL}`);
 
         axios.get(newHgViewconfURL)
           .then((res) => {
@@ -807,8 +807,8 @@ class Viewer extends Component {
               newTempHgViewParams.group,
               newTempHgViewParams.complexity
             );
-            console.log(`newEpilogosTrackFilename = ${newEpilogosTrackFilename}`);
-            console.log(`newTempHgViewParams = ${JSON.stringify(newTempHgViewParams)}`);
+            // console.log(`newEpilogosTrackFilename = ${newEpilogosTrackFilename}`);
+            // console.log(`newTempHgViewParams = ${JSON.stringify(newTempHgViewParams)}`);
 
             const newEpilogosTrackUUIDQueryPromise = Helpers.uuidQueryPromise(newEpilogosTrackFilename, this);
             newEpilogosTrackUUIDQueryPromise.then((res) => {
@@ -826,7 +826,7 @@ class Viewer extends Component {
               const newSimSearchQuery = Helpers.recommenderV3QueryPromise(queryChr, queryStart, queryEnd, queryWindowSize, self);
               newSimSearchQuery.then((res) => {
 
-                console.log(`Viewer.handleSimSearchQueryForChromInfo | newSimSearchQuery = ${JSON.stringify(res)}`);
+                // console.log(`Viewer.handleSimSearchQueryForChromInfo | newSimSearchQuery = ${JSON.stringify(res)}`);
 
                 const queryRegionIndicatorData = {
                   chromosome: res.query.chromosome,
@@ -843,7 +843,7 @@ class Viewer extends Component {
                   minMax: JSON.parse(res.query.minmax),
                 };
 
-                console.log(`Viewer.handleSimSearchQueryForChromInfo | queryRegionIndicatorData = ${JSON.stringify(queryRegionIndicatorData)}`);
+                // console.log(`Viewer.handleSimSearchQueryForChromInfo | queryRegionIndicatorData = ${JSON.stringify(queryRegionIndicatorData)}`);
 
                 const newMinMax = { 'min': -queryRegionIndicatorData.minMax['abs_val_sum'].min, 'max': queryRegionIndicatorData.minMax['abs_val_sum'].max };
 
@@ -852,8 +852,8 @@ class Viewer extends Component {
                 self.state.queryTargetLocalMinMax = newMinMax;
                 self.state.queryTargetGlobalMinMax = newMinMax;
                 self.simSearchRegionsUpdate(res.hits[0], updateWithSimSearchRegionsInMemory, self);
-                console.log(`Viewer.handleSimSearchQueryForChromInfo | qt viewconf loaded for ${queryChr}:${queryStart}-${queryEnd} with ${res.hits.length} hits`);
-                console.log(`${JSON.stringify(self.state.mainHgViewconf)}`);
+                // console.log(`Viewer.handleSimSearchQueryForChromInfo | qt viewconf loaded for ${queryChr}:${queryStart}-${queryEnd} with ${res.hits.length} hits`);
+                // console.log(`${JSON.stringify(self.state.mainHgViewconf)}`);
               })
               // eslint-disable-next-line no-unused-vars
               .catch((err) => {
@@ -6569,9 +6569,9 @@ class Viewer extends Component {
           simSearchQueryCountIsVisible: newSimSearchQueryCountIsVisible,
           simSearchQueryCountIsEnabled: newSimSearchQueryCountIsEnabled,
         }, () => {
-          console.log(`[simSearchClientQuery] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
-          console.log(`[simSearchClientQuery] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
-          console.log(`[simSearchClientQuery] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
+          // console.log(`[simSearchClientQuery] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
+          // console.log(`[simSearchClientQuery] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+          // console.log(`[simSearchClientQuery] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
           this.setState({
             simSearchQueryInProgress: false,
           });
@@ -6674,10 +6674,10 @@ class Viewer extends Component {
     //     <span />
     //   )
     // }
-    console.log(`[suggestionSearchButtonForStyle] suggestionStyle = ${this.state.suggestionStyle}`);
-    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
-    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
-    console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
+    // console.log(`[suggestionSearchButtonForStyle] suggestionStyle = ${this.state.suggestionStyle}`);
+    // console.log(`[suggestionSearchButtonForStyle] simSearchQueryCount = ${this.state.simSearchQueryCount}`);
+    // console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsVisible = ${this.state.simSearchQueryCountIsVisible}`);
+    // console.log(`[suggestionSearchButtonForStyle] simSearchQueryCountIsEnabled = ${this.state.simSearchQueryCountIsEnabled}`);
     switch (this.state.suggestionStyle) {
       case "overload":
         return (
