@@ -1509,7 +1509,7 @@ export const simSearchQueryPromise = (qChr, qStart, qEnd, qWindowSizeKb, self, i
   }
 
   let scaleLevel = parseInt(windowSize / 5);
-  let tabixUrlEncoded = `${encodeURIComponent(Constants.applicationTabixRootURL)}%2Fproxy`;
+  let tabixUrlEncoded = `${encodeURIComponent(Constants.applicationTabixRootURL)}%2Fsimsearch`;
   let outputFormat = Constants.defaultApplicationRecommenderV3OutputFormat;
   
   const recommenderV3QueryDefaultURL = Constants.recommenderProxyURL;
