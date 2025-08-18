@@ -1087,7 +1087,7 @@ class Portal extends Component {
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line">
                       <div>Quon, Reynolds, et al.</div>
                       <div><em>Epilogos: information-theoretic navigation of multi-tissue functional genomic annotations.</em></div> 
-                      <div>bioRxiv (2025)</div>
+                      <div><a href="https://www.biorxiv.org/content/10.1101/2025.06.18.660301v1" onClick={this.onClick} data-id="https://www.biorxiv.org/content/10.1101/2025.06.18.660301v1" data-target="_blank">bioRxiv</a></div>
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line epilogos-offscreen-content-placeholder-table-container-item-line-header" style={{paddingTop:"10px"}}>
                       source code
