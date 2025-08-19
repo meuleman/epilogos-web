@@ -1073,7 +1073,7 @@ class Portal extends Component {
                     </div>
                     <div className="epilogos-offscreen-content-placeholder-table-container-item-line">
                       Many thanks to <em>Peter Kerpedjiev</em>, <em>Fritz Lekschas</em>, <em>Nezar Abdennur</em>, <em>Danielle Nguyen</em> and the rest of the <a href="http://higlass.io/about" data-id="http://higlass.io/about" data-target="_blank" onClick={this.onClick}>HiGlass</a> team for their high-performance visualization toolkit, for multivec generation and visualization tools and extensions, and for their help with deployment and modification (<a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1486-1" onClick={this.onClick} data-id="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1486-1" data-target="_blank">citation</a>).
-                      Thanks to the <a href="https://bcgsc.ca/labs/systems" onClick={this.onClick} data-id="https://bcgsc.ca/labs/systems" data-target="_blank">Systems team at Canada's Michael Smith Genome Sciences Centre</a> for graceuously hosting this website.
+                      Thanks to the <a href="https://bcgsc.ca/labs/systems" onClick={this.onClick} data-id="https://bcgsc.ca/labs/systems" data-target="_blank">Systems team at Canada's Michael Smith Genome Sciences Centre</a> for graciously hosting this website.
                     </div>
                   </div>
                 </div>
